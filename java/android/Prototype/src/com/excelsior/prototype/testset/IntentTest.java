@@ -18,17 +18,18 @@ public class IntentTest extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.intent_test);
 		Uri url = getIntent().getData();
-		WebView webView = (WebView)findViewById(R.id.intent_test_web_view);
+		WebView webView = (WebView) findViewById(R.id.intent_test_web_view);
 		webView.setWebViewClient(new Callback());
 		webView.loadUrl(url.toString());
 	}
+
 	private class Callback extends WebViewClient {
 		@Override
 		public boolean shouldOverrideUrlLoading(WebView webView, String url) {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
