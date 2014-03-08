@@ -17,7 +17,7 @@ private:
 };
 
 template <typename T>
-class file_iterator {    
+class file_iterator {     
 public:
 	typedef T value_type;
 	typedef T & reference;
