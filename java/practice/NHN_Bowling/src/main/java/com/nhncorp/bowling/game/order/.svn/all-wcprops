@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/sample_newcomer/!svn/ver/7015/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game/order
+END
+GameOrder.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/sample_newcomer/!svn/ver/7999/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game/order/GameOrder.java
+END
+GameFinishOrder.java
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/sample_newcomer/!svn/ver/7999/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game/order/GameFinishOrder.java
+END
+PlayerCheckOrder.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/sample_newcomer/!svn/ver/7999/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game/order/PlayerCheckOrder.java
+END
+FrameFinishOrder.java
+K 25
+svn:wc:ra_dav:version-url
+V 132
+/sample_newcomer/!svn/ver/7999/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game/order/FrameFinishOrder.java
+END
+FrameContinueOrder.java
+K 25
+svn:wc:ra_dav:version-url
+V 134
+/sample_newcomer/!svn/ver/7999/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game/order/FrameContinueOrder.java
+END
+Order.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/sample_newcomer/!svn/ver/7999/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game/order/Order.java
+END

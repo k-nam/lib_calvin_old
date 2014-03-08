@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	package="com.excelsior.prototype"
+	android:versionCode="1"
+	android:versionName="1.0">
+	<uses-sdk
+		android:minSdkVersion="11"
+		android:targetSdkVersion="18" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<application
+		android:name="com.excelsior.prototype.Prototype"
+		android:allowBackup="true"
+		android:icon="@drawable/ic_launcher"
+		android:label="@string/app_name"
+		android:theme="@style/AppTheme">
+		<activity
+			android:name="com.excelsior.prototype.maintab.MainTab"
+			android:label="@string/main_tab__title">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="com.excelsior.prototype.testset.TestSet"
+			android:label="@string/test_set__title"
+			android:windowSoftInputMode="stateHidden">
+			<!-- android:theme="@android:style/Theme.Dialog" -->
+			<intent-filter>
+				<action android:name="com.excelsior.prototype.TestSet" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="com.excelsior.prototype.testset.IntentTest"
+			android:label="@string/intent_test__title">
+			<intent-filter>
+				<action android:name="com.excelsior.prototype.IntentTest" />
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<data android:scheme="http" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="com.excelsior.prototype.testset.LoginTest"
+			android:label="@string/login_test__title">
+			<intent-filter>
+				<action android:name="com.excelsior.prototype.LoginTest" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="com.excelsior.prototype.testset.FragmentTest"
+			android:label="@string/fragment_test__title">
+			<intent-filter>
+				<action android:name="com.excelsior.prototype.FragmentTest" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="com.excelsior.prototype.testset.BuiltInAppsTest"
+			android:label="@string/built_in_apps_test__title">
+			<intent-filter>
+				<action android:name="com.excelsior.prototype.BuiltInAppsTest" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="com.excelsior.prototype.maintab.Test01Notification"
+			android:label="@string/test_01_notification__title">
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="com.excelsior.prototype.basicinfo.BasicInfo"
+			android:label="@string/basic_info__title">
+		</activity>
+		<activity
+			android:name="com.excelsior.prototype.testset.NavigationDrawerTest"
+			android:label="@string/navigation_drawer_test__title">
+			<intent-filter>
+				<action android:name="com.excelsior.prototype.NavigationDrawerTest" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<meta-data
+			android:name="com.facebook.sdk.ApplicationId"
+			android:value="@string/app_id" />
+		<activity
+			android:name="com.excelsior.prototype.wholikesme.WhoLikesMe"
+			android:label="@string/who_likes_me__title">
+			<intent-filter>
+				<action android:name="com.excelsior.prototype.WhoLikesMe" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="com.facebook.LoginActivity"
+			android:theme="@android:style/Theme.Translucent.NoTitleBar"
+			android:label="@string/app_name" />
+	</application>
+</manifest>

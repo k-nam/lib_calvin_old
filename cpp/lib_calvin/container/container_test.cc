@@ -1,0 +1,61 @@
+#include "container_test.h"
+#include "b_tree_test.h"
+#include <vector>
+
+void lib_calvin_container::containerTest()
+{
+	std::cout << "\n---------- Beginning container test -----------\n";
+
+	//vectorTest();
+	setTest();
+	//mapTest();
+	//searchAlgoTest();
+	//bTreeTest();
+}
+
+lib_calvin_container::HeavyObject::HeavyObject(int size) {
+	init(); 
+	int start = size % 100;
+	for (int i = start; i < start + size % 10000; ++i) {
+		value_.push_back(i); 
+	}
+}
+
+lib_calvin_container::HeavyObject::~HeavyObject() {
+	if (sanityCheckNumber == 22) { 
+		//std::cout << "HeavyObject destructor normal\n"; 
+		sanityCheckNumber = 12; 
+	} else if (sanityCheckNumber == 12)	{ 
+		std::cout << "HeavyObject destructor error: double delete!\n"; 
+		exit(0); 
+	} else {
+		std::cout << "HeavyObject destructor error: no object!\n"; 
+		exit(0);
+	}
+	objectDestroyed();
+}
+
+void lib_calvin_container::HeavyObject::init() {
+	sanityCheckNumber = 22;
+	objectCreated();
+}
+
+void lib_calvin_container::HeavyObject::objectCreated() {
+	objectCount++;
+}
+
+void lib_calvin_container::HeavyObject::objectDestroyed() {
+	objectCount--;
+}
+
+void lib_calvin_container::HeavyObject::countThisObject() {
+	std::cout << "HeavyObject current count is: \"" << objectCount << "\": ";
+	if (objectCount == 0) {
+		std::cout << "O.K\n\n";
+	} else {
+		std::cout << "memory leak!!!\n";
+		exit(0);
+	}
+}
+
+int lib_calvin_container::HeavyObject::objectCount = 0;

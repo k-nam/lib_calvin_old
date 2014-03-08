@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/sample_newcomer/!svn/ver/7143/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/room
+END
+BowlingLane.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/sample_newcomer/!svn/ver/7999/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/room/BowlingLane.java
+END
+BowlingRoomId.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/sample_newcomer/!svn/ver/6991/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/room/BowlingRoomId.java
+END
+BowlingRoom.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/sample_newcomer/!svn/ver/6991/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/room/BowlingRoom.java
+END
+BowlingLaneId.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/sample_newcomer/!svn/ver/6991/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/room/BowlingLaneId.java
+END

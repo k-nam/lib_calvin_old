@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/sample_newcomer/!svn/ver/7191/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game
+END
+SinglePlayerControl.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/sample_newcomer/!svn/ver/7999/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game/SinglePlayerControl.java
+END
+PlayerScorePair.java
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/sample_newcomer/!svn/ver/7999/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game/PlayerScorePair.java
+END
+MultiPlayerControl.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/sample_newcomer/!svn/ver/8032/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game/MultiPlayerControl.java
+END
+BowlingGame.java
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/sample_newcomer/!svn/ver/8039/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game/BowlingGame.java
+END
+PlayerScorePairComparator.java
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/sample_newcomer/!svn/ver/7999/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game/PlayerScorePairComparator.java
+END
+BowlingPlayer.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/sample_newcomer/!svn/ver/7999/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/game/BowlingPlayer.java
+END

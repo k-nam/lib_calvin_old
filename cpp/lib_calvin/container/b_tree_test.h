@@ -1,0 +1,123 @@
+#ifndef LIB_CALVIN__CONTAINER__B_TREE_TEST_H
+#define LIB_CALVIN__CONTAINER__B_TREE_TEST_H
+
+#include "b_tree.h"
+#include "b_plus_tree.h"
+#include "container.h"
+
+namespace lib_calvin_container
+{
+void bTreeTest();
+void bTreeMemoryTest(); 
+
+template <typename T, typename Comp, typename K, typename ExtractKey>
+class BTreeTest
+{
+public:
+	void bTreeNodeTest();
+	void bTreeIteratorTest();
+	void addToNodeTest();
+	void mergeNodeTest();
+	void eraseTest();
+	void searchAlgoTest(); 
+};
+
+template <typename T, typename Comp, typename K, typename ExtractKey>
+void BTreeTest<T, Comp, K, ExtractKey>::bTreeNodeTest() {
+	BTree<T> tree;	
+	tree.insert(1);
+	tree.insert(3);
+	tree.insert(5);
+	tree.insert(7);
+	tree.insert(9);
+	tree.insert(3);		
+	for (int i = 100; i > 0 ; --i) {
+		tree.insert(i);
+	}	
+	tree.print();
+}
+
+template <typename T, typename Comp, typename K, typename ExtractKey>
+void BTreeTest<T, Comp, K, ExtractKey>::bTreeIteratorTest() {
+	BTree<T> tree;
+	tree.insert(1);
+	tree.insert(3);
+	tree.insert(5);
+	tree.insert(2);
+	for (int i = 100; i > 0 ; --i) {
+		tree.insert(i);
+	}	
+	BTree<T>::Node *node = tree.getFirstNode();
+	tree.printNode(node);
+	BTree<T>::iterator iter = tree.begin();
+	for ( ; iter != tree.end(); ++iter) {
+		std::cout << "this iter: " << *iter << "\n";
+	}
+	BTree<T>::reverse_iterator r_iter = tree.rbegin();
+	for ( ; r_iter != tree.rend(); ++r_iter) {
+		std::cout << "this iter: " << *r_iter << "\n";
+	}
+}
+
+template <typename T, typename Comp, typename K, typename ExtractKey>
+void BTreeTest<T, Comp, K, ExtractKey>::addToNodeTest() {
+	BTree<T> tree;
+	tree.insert(1);
+	tree.insert(3);
+	tree.insert(5);
+	tree.insert(7);
+	tree.print();
+	tree.addToNode(tree.getFirstNode(), 0);
+	tree.print();
+}
+template <typename T, typename Comp, typename K, typename ExtractKey>
+void BTreeTest<T, Comp, K, ExtractKey>::mergeNodeTest() {
+	BTree<T> tree;
+	tree.insert(1);
+	tree.insert(3);
+	tree.insert(5);
+	tree.insert(7);
+	tree.insert(8);
+	tree.insert(9);
+	tree.print();
+	tree.mergeNode(tree.getFirstNode(), 0);
+	tree.print();
+}
+template <typename T, typename Comp, typename K, typename ExtractKey>
+void BTreeTest<T, Comp, K, ExtractKey>::eraseTest() {
+	BTree<T> tree;
+	tree.insert(1);
+	tree.insert(3);
+	tree.insert(5);
+	tree.insert(7);
+	tree.insert(9);
+	tree.print();
+	tree.erase(1);
+	tree.erase(7);
+	tree.print();
+}
+
+template <typename T, typename Comp, typename K, typename ExtractKey>
+void BTreeTest<T, Comp, K, ExtractKey>::searchAlgoTest() {
+	BTree<int> tree;
+	int testArray[10] = { 0, 1, 1, 2, 3, 4, 4, 5, 6, 7 };
+
+	cout << "sequential: \n";
+	cout << "0: " << sequentialSearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 0) << "\n";
+	cout << "1: " << sequentialSearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 1) << "\n";
+	cout << "2: " << sequentialSearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 2) << "\n";
+	cout << "4: " << sequentialSearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 4) << "\n";
+	cout << "8: " << sequentialSearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 8) << "\n";
+	
+	cout << "binary: \n";
+	cout << "0: " << binarySearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 0) << "\n";
+	cout << "1: " << binarySearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 1) << "\n";
+	cout << "2: " << binarySearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 2) << "\n";
+	cout << "4: " << binarySearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 4) << "\n";
+	cout << "8: " << binarySearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 8) << "\n";
+}
+
+}
+
+#endif
+

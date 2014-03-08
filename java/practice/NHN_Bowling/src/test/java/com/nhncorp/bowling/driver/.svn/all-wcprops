@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/sample_newcomer/!svn/ver/6994/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/test/java/com/nhncorp/bowling/driver
+END
+ApplyManagerTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/sample_newcomer/!svn/ver/6825/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/test/java/com/nhncorp/bowling/driver/ApplyManagerTest.java
+END
+BettingManagerTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/sample_newcomer/!svn/ver/8000/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/test/java/com/nhncorp/bowling/driver/BettingManagerTest.java
+END
+BowlingGameDriver.java
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/sample_newcomer/!svn/ver/8000/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/test/java/com/nhncorp/bowling/driver/BowlingGameDriver.java
+END
+GameRecordTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/sample_newcomer/!svn/ver/6994/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/test/java/com/nhncorp/bowling/driver/GameRecordTest.java
+END
+LogOnManagerTest.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/sample_newcomer/!svn/ver/7864/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/test/java/com/nhncorp/bowling/driver/LogOnManagerTest.java
+END

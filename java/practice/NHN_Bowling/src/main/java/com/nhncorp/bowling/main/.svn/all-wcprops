@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/sample_newcomer/!svn/ver/7673/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/main
+END
+GameScheduleBuffer.java
+K 25
+svn:wc:ra_dav:version-url
+V 128
+/sample_newcomer/!svn/ver/7999/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/main/GameScheduleBuffer.java
+END
+HappyBeanAccount.java
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/sample_newcomer/!svn/ver/7999/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/main/HappyBeanAccount.java
+END
+FakeClient.java
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/sample_newcomer/!svn/ver/8032/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/main/FakeClient.java
+END
+BowlingServer.java
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/sample_newcomer/!svn/ver/8032/tdd_2nd_04/trunk/NHN_Bowling_4Team/src/main/java/com/nhncorp/bowling/main/BowlingServer.java
+END

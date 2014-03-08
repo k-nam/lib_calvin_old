@@ -1,0 +1,92 @@
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	android:paddingBottom="@dimen/activity_vertical_margin"
+	android:paddingLeft="@dimen/activity_horizontal_margin"
+	android:paddingRight="@dimen/activity_horizontal_margin"
+	android:paddingTop="@dimen/activity_vertical_margin"
+	tools:context=".TestSet">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical">
+		<EditText
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:inputType="text" />
+		<Button
+			android:id="@+android:id/test_set__simple_dialog_button"
+			android:text="@string/test_set__simple_dialog_button_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" />
+		<Button
+			android:id="@+android:id/test_set__progress_dialog_button"
+			android:text="@string/test_set__progress_dialog_button_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" />
+		<Button
+			android:id="@+android:id/test_set__complex_progress_dialog_button"
+			android:text="@string/test_set__complex_progress_dialog_button_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" />
+		<Button
+			android:id="@+android:id/test_set__open_login_test_button"
+			android:text="@string/test_set__open_login_test_button_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:onClick="onClickLoginTestButton" />
+		<Button
+			android:id="@+android:id/test_set__open_intent_test_button"
+			android:text="@string/test_set__open_intent_test_button_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:onClick="onClickIntentTestButton" />
+		<Button
+			android:id="@+android:id/test_set__open_fragment_test_button"
+			android:text="@string/test_set__open_fragment_test_button_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:onClick="onClickFragmentTestButton" />
+		<Button
+			android:id="@+android:id/test_set__open_built_in_apps_test_button"
+			android:text="@string/test_set__open_built_in_apps_test_button_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:onClick="onClickBuiltInAppsTestButton" />
+		<Button
+			android:id="@+android:id/test_set__show_notification_button"
+			android:text="@string/test_set__show_notification_button_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:onClick="onClickShowNotificationButton" />
+		<Button
+			android:id="@+android:id/test_set__open_navigation_drawer_test_button"
+			android:text="@string/test_set__open_navigation_drawer_test_button_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:onClick="onClickNavigationDrawerTestButton" />
+		<Button
+	android:text="@string/test_set__open_facebook_test_button_text"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:onClick="onClickFacebookTestButton" />
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+			<Button
+				android:text="@string/test_set__ok_button_text"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1" />
+			<Button
+				android:text="@string/test_set__cancel_button_text"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1" />
+		</LinearLayout>
+	</LinearLayout>
+</ScrollView>
