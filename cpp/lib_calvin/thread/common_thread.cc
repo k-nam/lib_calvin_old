@@ -1,4 +1,5 @@
 #include "common_thread.h"
+// abc
 
 #ifdef WIN32
 
@@ -15,7 +16,7 @@ namespace lib_calvin_thread
 	}
 
 	void thread_yield() {
-		SwitchToThread();  
+		SwitchToThread(); 
 	}
 
 	lock_type create_lock() {
