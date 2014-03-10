@@ -27,19 +27,16 @@ import com.excelsior.prototype.wholikesme.WhoLikesMe;
 import com.facebook.Session;
 
 public class MainTab extends FragmentActivity {
-
+	// test
 	String lifeCycleTag = "Life cycle: ";
 	int notificationID = 1;
-
 	int loginRequestCode = 0;
 	int infoTestRequestCode = 1;
-
 	// fragment for each tabs
 	BasicInfo basicInfo;
 	TestSet testSet;
 	PhotoSelector photoSelector;
 	WhoLikesMe whoLikesMe;
-	
 	PagerAdapter fragmentPagerAdapter;
 	ViewPager viewPager;
 
@@ -47,7 +44,6 @@ public class MainTab extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_tab);
-
 		basicInfo = new BasicInfo();
 		testSet = new TestSet();
 		photoSelector = new PhotoSelector();
@@ -65,7 +61,6 @@ public class MainTab extends FragmentActivity {
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		ActionBar.TabListener listener = new ActionBar.TabListener() {
 			public void onTabReselected(Tab tab, FragmentTransaction ft) {
-
 			}
 
 			public void onTabSelected(Tab tab, FragmentTransaction ft) {
@@ -75,7 +70,6 @@ public class MainTab extends FragmentActivity {
 			public void onTabUnselected(Tab tab, FragmentTransaction ft) {
 			}
 		};
-
 		Tab basicInfoTab = actionBar.newTab();
 		Tab testSetTab = actionBar.newTab();
 		Tab photoSelectorTab = actionBar.newTab();
@@ -114,7 +108,6 @@ public class MainTab extends FragmentActivity {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_launcher)
 				.setContentTitle("Systemt alarm").setContentText("Kill him at 3 PM")
 				.setVibrate(new long[] { 100, 250, 100, 500 }).setContentIntent(pendingIntent);
-
 		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		nm.notify(notificationID, builder.build());
 	}
@@ -220,13 +213,7 @@ public class MainTab extends FragmentActivity {
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
-		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-		} else {
-
-		}
-		if (newConfig.keyboardHidden == Configuration.KEYBOARDHIDDEN_NO) {
-
-		}
+		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {} else {}
+		if (newConfig.keyboardHidden == Configuration.KEYBOARDHIDDEN_NO) {}
 	}
 }
