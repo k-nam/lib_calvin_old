@@ -1,14 +1,9 @@
 package com.excelsior.prototype.maintab;
 
-import android.app.Activity;
-import android.app.NotificationManager;
-import android.os.Bundle;
-import android.view.Menu;
-import android.widget.Toast;
-
 import com.excelsior.prototype.R;
 
 public class Test01Notification extends Activity {
+	// test
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
