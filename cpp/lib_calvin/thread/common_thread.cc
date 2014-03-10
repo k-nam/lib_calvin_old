@@ -15,7 +15,7 @@ namespace lib_calvin_thread
 	}
 
 	void thread_yield() {
-		SwitchToThread();
+		SwitchToThread();  
 	}
 
 	lock_type create_lock() {
