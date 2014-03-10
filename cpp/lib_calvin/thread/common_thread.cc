@@ -23,7 +23,7 @@ namespace lib_calvin_thread
 	}
 
 	void acquire_lock(lock_type lock) {
-		WaitForSingleObject(lock, INFINITE);
+		WaitForSingleObject(lock, INFINITE); 
 	}
 
 	void release_lock(lock_type lock) {
