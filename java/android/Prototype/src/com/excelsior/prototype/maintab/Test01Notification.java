@@ -1,5 +1,11 @@
 package com.excelsior.prototype.maintab;
 
+import android.app.Activity;
+import android.app.NotificationManager;
+import android.os.Bundle;
+import android.view.Menu;
+import android.widget.Toast;
+
 import com.excelsior.prototype.R;
 
 public class Test01Notification extends Activity {
@@ -15,6 +21,7 @@ public class Test01Notification extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		// test comment
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.test01_notification, menu);
 		return true;
