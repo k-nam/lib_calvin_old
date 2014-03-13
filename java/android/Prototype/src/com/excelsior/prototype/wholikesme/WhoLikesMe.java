@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -38,39 +38,52 @@ import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 
 public class WhoLikesMe extends Fragment implements OnClickListener {
-	private static class User {
+	private static class User implements Comparable<User> {
 		User(String id, String name) {
 			this.id = id;
 			this.name = name;
+			friendIds = new HashSet<String>();
+			postIds = new HashSet<String>();
 		}
 
 		final String id;
 		final String name;
+		Set<String> friendIds;
+		Set<String> postIds;
+
+		@Override
+		public int compareTo(User another) {
+			return this.id.compareTo(another.id);
+		}
 	}
 
-	private static class Post {
-		Post(String postId, String posterId, String message) {
-			this.postId = postId;
+	private static class Post implements Comparable<Post> {
+		Post(String id, String posterId, String message) {
+			this.id = id;
 			this.posterId = posterId;
 			this.message = message;
+			likerIds = new HashSet<String>();
 		}
 
-		final String postId;
+		final String id;
 		final String posterId;
 		final String message;
+		Set<String> likerIds;
+
+		@Override
+		public int compareTo(Post another) {
+			return this.id.compareTo(another.id);
+		}
 	}
 
 	MainTab mainTabActivity;
 	List<ListCell> listCells;
 	ListAdapter mAdapter;
 	LoginButton mLoginButton;
-	ConcurrentHashMap<String, Set<String>> userToFriends = new ConcurrentHashMap<String, Set<String>>();
-	ConcurrentHashMap<String, Set<String>> userToPosts = new ConcurrentHashMap<String, Set<String>>();
-	ConcurrentHashMap<String, Set<String>> postToLikes = new ConcurrentHashMap<String, Set<String>>();
-	ConcurrentHashMap<String, User> userIdToUser = new ConcurrentHashMap<String, User>();
-	ConcurrentHashMap<String, Post> postIdToPost = new ConcurrentHashMap<String, Post>();
-	String userId;
+	ConcurrentSkipListSet<User> users = new ConcurrentSkipListSet<User>();
+	ConcurrentSkipListSet<Post> posts = new ConcurrentSkipListSet<Post>();
 	boolean isApiCalling;
+	String myId;
 
 	public WhoLikesMe() {
 		listCells = new ArrayList<ListCell>();
@@ -138,36 +151,47 @@ public class WhoLikesMe extends Fragment implements OnClickListener {
 	public void showToYouList() {
 	}
 
-	private void showFromYouList() {
-		int totalNumOfLikes = 0;
-		for (String postId : postToLikes.keySet()) {
-			totalNumOfLikes += postToLikes.get(postId).size();
+	private Post getPostById(String id) {
+		for (Post post : posts) {
+			if (post.id.equals(id)) {
+				return post;
+			}
 		}
-		Log.d("ui", "FromYou-----userToFriends:" + userToFriends.size() + " userToPosts:" + userToPosts.size()
-				+ " postToLikes:" + postToLikes.size() + " userIdToUser:" + userIdToUser.size() + " postIdToPost:"
-				+ postIdToPost.size() + " total # of likes " + totalNumOfLikes);
+		return null;
+	}
+
+	private User getUserById(String id) {
+		for (User user : users) {
+			if (user.id.equals(id)) {
+				return user;
+			}
+		}
+		return null;
+	}
+
+	private void showFromYouList() {
 		HashMap<String, Integer> friendIdToNumLikesFromMe = new HashMap<String, Integer>();
-		for (String friendId : userToPosts.keySet()) {
+		for (User friend : users) {
 			int numLikesFromMe = 0;
-			for (String postId : userToPosts.get(friendId)) {
-				for (String likerId : postToLikes.get(postId)) {
-					if (likerId.equals(userId)) {
+			for (String postId : friend.postIds) {
+				for (String likerId : getPostById(postId).likerIds) {
+					if (likerId.equals(myId)) {
 						numLikesFromMe++;
 					}
 				}
 			}
-			friendIdToNumLikesFromMe.put(friendId, Integer.valueOf(numLikesFromMe));
+			friendIdToNumLikesFromMe.put(friend.id, Integer.valueOf(numLikesFromMe));
 		}
 		List<String> sortedFriendIds = new ArrayList<String>(sortByValues(friendIdToNumLikesFromMe).keySet());
 		listCells.clear();
 		for (String friendId : sortedFriendIds) {
-			listCells.add(new ListItem(userIdToUser.get(friendId).name, friendIdToNumLikesFromMe.get(friendId).intValue()));
+			listCells.add(new ListItem(getUserById(friendId).name, friendIdToNumLikesFromMe.get(friendId).intValue()));
 		}
 		this.mAdapter.notifyDataSetChanged();
 		Log.d("ui", "finishedFromYou");
 	}
 
-	private void GetUser() {
+	private void GetUser(final String userId, final ConcurrentSkipListSet<User> users) {
 		if (userId == null) {
 			// add the user himself first
 			Request.newMeRequest(Session.getActiveSession(), new Request.GraphUserCallback() {
@@ -177,9 +201,9 @@ public class WhoLikesMe extends Fragment implements OnClickListener {
 						Log.e("get user", error.getErrorMessage());
 						return;
 					} else {
-						userId = user.getId();
-						userIdToUser.put(userId, new User(userId, user.getName()));
-						Log.d("get user", "user id is " + userId + " user name is " + user.getName());
+						users.add(new User(user.getId(), user.getName()));
+						myId = user.getId();
+						Log.d("get user", "user id is " + user.getId() + " user name is " + user.getName());
 					}
 				}
 			}).executeAndWait();
@@ -192,25 +216,25 @@ public class WhoLikesMe extends Fragment implements OnClickListener {
 						return;
 					} else {
 						GraphUser user = response.getGraphObjectAs(GraphUser.class);
-						userIdToUser.put(userId, new User(userId, user.getName()));
-						Log.d("get user", "user id is " + userId + " user name is " + user.getName());
+						users.add(new User(user.getId(), user.getName()));
+						Log.d("get user", "user id is " + user.getId() + " user name is " + user.getName());
 					}
 				}
 			}).executeAndWait();
 		}
 	}
 
-	private void GetRealFriendsOf(String userId, Map<String, Integer> friendToNumLikes) {
+	private void GetRealFriendsOf(final String userId, Map<String, Integer> friendToNumLikes) {
 		// select people who liked my post
-		Map<String, Set<String>> userToPosts = new HashMap<String, Set<String>>();
-		Map<String, Post> postIdToPost = new HashMap<String, Post>();
-		Map<String, Set<String>> postToLikes = new HashMap<String, Set<String>>();
-		GetUserToPosts(Arrays.asList(userId), userToPosts, postIdToPost);
-		Set<String> posts = userToPosts.get(userId);
-		GetPostToLikes(new ArrayList<String>(posts), postToLikes);
-		for (String postId : postToLikes.keySet()) {
-			Set<String> likes = postToLikes.get(postId);
-			for (String friendId : likes) {
+		final ConcurrentSkipListSet<User> users = new ConcurrentSkipListSet<User>();
+		final ConcurrentSkipListSet<Post> posts = new ConcurrentSkipListSet<Post>();
+		GetUser(userId, users);
+		GetUserToPosts(users.first(), posts);
+		for (Post post : posts) {
+			GetPostToLikes(post);
+		}
+		for (Post post : posts) {
+			for (String friendId : post.likerIds) {
 				if (friendToNumLikes.containsKey(friendId) == false) {
 					friendToNumLikes.put(friendId, Integer.valueOf(1));
 				} else {
@@ -221,111 +245,104 @@ public class WhoLikesMe extends Fragment implements OnClickListener {
 		}
 	}
 
-	private void GetUserToFriends(final Map<String, User> userIdToUser, final Map<String, Set<String>> userToFriends) {
+	private void GetUserToFriends(final User user, final ConcurrentSkipListSet<User> users) {
 		List<Request> requests = new ArrayList<Request>();
-		for (final String userId : userIdToUser.keySet()) {
-			if (userToFriends.containsKey(userId) == false) {
-				userToFriends.put(userId, new HashSet<String>());
-			}
-			Log.d("get friend", "adding api call for " + userId);
-			requests.add(new Request(Session.getActiveSession(), "/" + userId + "/friends", null, HttpMethod.GET,
-					new Request.Callback() {
-						public void onCompleted(Response response) {
-							FacebookRequestError error = response.getError();
-							if (error != null) {
-								Log.d("get friend", error.getErrorMessage());
-								return;
-							} else {
-								List<GraphObject> apiResult = response.getGraphObject().getPropertyAsList("data", GraphObject.class);
-								for (GraphObject friend : apiResult) {
-									String friendId = (String) friend.getProperty("id");
-									userToFriends.get(userId).add(friendId);
-									if (userIdToUser.containsKey(friendId) == false) {
-										String friendName = (String) friend.getProperty("name");
-										Log.d("get friend", "found friend: " + friendName + " " + friendId);
-										userIdToUser.put(friendId, new User(friendId, friendName));
-									}
+		Log.d("get friend", "adding api call for " + user.id);
+		if (user == null) {
+			Log.e("hash key", "user null");
+		} else {
+			Log.e("hash key", "user not null");
+		}
+		if (users == null) {
+			Log.e("hash key", "users null");
+		} else {
+			Log.e("hash key", "users not null");
+		}
+		requests.add(new Request(Session.getActiveSession(), "/" + user.id + "/friends", null, HttpMethod.GET,
+				new Request.Callback() {
+					public void onCompleted(Response response) {
+						FacebookRequestError error = response.getError();
+						if (error != null) {
+							Log.d("get friend", error.getErrorMessage());
+							return;
+						} else {
+							List<GraphObject> apiResult = response.getGraphObject().getPropertyAsList("data", GraphObject.class);
+							for (GraphObject friend : apiResult) {
+								String friendId = (String) friend.getProperty("id");
+								user.friendIds.add(friendId);
+								if (getUserById(friendId) == null) {
+									String friendName = (String) friend.getProperty("name");
+									Log.d("get friend", "found friend: " + friendName + " " + friendId);
+									users.add(new User(friendId, friendName));
 								}
 							}
 						}
-					}));
-		}
+					}
+				}));
 		Log.d("get friend", "executing batch");
 		ExecuteBatch(requests);
 	}
 
-	public void GetUserToPosts(final List<String> userIds, final Map<String, Set<String>> userToPosts,
-			final Map<String, Post> postIdToPost) {
+	public void GetUserToPosts(final User user, final ConcurrentSkipListSet<Post> posts) {
 		List<Request> requests = new ArrayList<Request>();
-		Log.d("get post", "userId size is " + userIds.size());
-		for (final String userId : userIds) {
-			if (userToPosts.containsKey(userId) == false) {
-				userToPosts.put(userId, new HashSet<String>());
-			}
-			requests.add(new Request(Session.getActiveSession(), "/" + userId + "/feed", null, HttpMethod.GET,
-					new Request.Callback() {
-						public void onCompleted(Response response) {
-							FacebookRequestError error = response.getError();
-							if (error != null) {
-								Log.e("get post", error.getErrorMessage());
-								return;
-							}
-							if (response.getGraphObject() != null) {
-								List<GraphObject> apiResult = response.getGraphObject().getPropertyAsList("data", GraphObject.class);
-								for (GraphObject object : apiResult) {
-									if (object.asMap().containsKey("message")) {
-										String postId = (String) object.getProperty("id");
-										String message = (String) object.getProperty("message");
-										userToPosts.get(userId).add(postId);
-										Post post = new Post(postId, userId, message);
-										postIdToPost.put(postId, post);
-										Log.d("get post", postId + "  " + message);
-									} else { // post without message is garbage
-										Log.e("get post", "post without message!");
-									}
-								}
-							} else {
-								Log.e("get post", "result was null");
-							}
+		requests.add(new Request(Session.getActiveSession(), "/" + user.id + "/feed", null, HttpMethod.GET,
+				new Request.Callback() {
+					public void onCompleted(Response response) {
+						FacebookRequestError error = response.getError();
+						if (error != null) {
+							Log.e("get post", error.getErrorMessage());
+							return;
 						}
-					}));
-			// 680, 1130 - feed
-			// 712, 1321 - post
-		}
+						if (response.getGraphObject() != null) {
+							List<GraphObject> apiResult = response.getGraphObject().getPropertyAsList("data", GraphObject.class);
+							for (GraphObject object : apiResult) {
+								if (object.asMap().containsKey("message")) {
+									String postId = (String) object.getProperty("id");
+									String message = (String) object.getProperty("message");
+									user.postIds.add(postId);
+									Post post = new Post(postId, user.id, message);
+									posts.add(post);
+									Log.d("get post", postId + "  " + message);
+								} else { // post without message is garbage
+									Log.e("get post", "post without message!");
+								}
+							}
+						} else {
+							Log.e("get post", "result was null");
+						}
+					}
+				}));
+		// 680, 1130 - feed
+		// 712, 1321 - post
 		Log.d("get post", "executing batch");
 		ExecuteBatch(requests);
 	}
 
-	private void GetPostToLikes(List<String> postIds, final Map<String, Set<String>> postToLikes) {
+	private void GetPostToLikes(final Post post) {
 		List<Request> requests = new ArrayList<Request>();
-		for (final String postId : postIds) {
-			if (postToLikes.containsKey(postId) == false) {
-				postToLikes.put(postId, new HashSet<String>());
-			}
-			requests.add(new Request(Session.getActiveSession(), "/" + postId + "/likes", null, HttpMethod.GET,
-					new Request.Callback() {
-						public void onCompleted(Response response) {
-							FacebookRequestError error = response.getError();
-							if (error != null) {
-								Log.e("get likes", error.getErrorMessage());
-								// return;
-							}
-							if (response.getGraphObject() != null) {
-								List<GraphObject> apiResult = response.getGraphObject().getPropertyAsList("data", GraphObject.class);
-								for (GraphObject object : apiResult) {
-									if (object.asMap().containsKey("id") && object.asMap().containsKey("name")) {
-										String likerId = (String) object.getProperty("id");
-										String likerName = (String) object.getProperty("name");
-										Log.d("get likes", likerName);
-										postToLikes.get(postId).add(likerId);
-									}
-								}
-							} else {
-								Log.e("get likes", "result was null");
-							}
+		requests.add(new Request(Session.getActiveSession(), "/" + post.id + "/likes", null, HttpMethod.GET,
+				new Request.Callback() {
+					public void onCompleted(Response response) {
+						FacebookRequestError error = response.getError();
+						if (error != null) {
+							Log.e("get likes", error.getErrorMessage());
+							// return;
 						}
-					}));
-		}
+						if (response.getGraphObject() != null) {
+							List<GraphObject> apiResult = response.getGraphObject().getPropertyAsList("data", GraphObject.class);
+							for (GraphObject object : apiResult) {
+								if (object.asMap().containsKey("id") && object.asMap().containsKey("name")) {
+									String likerId = (String) object.getProperty("id");
+									String likerName = (String) object.getProperty("name");
+									Log.d("get likes", likerName);
+									post.likerIds.add(likerId);
+								}
+							}
+						} else {
+							Log.e("get likes", "result was null");
+						}
+					}
+				}));
 		ExecuteBatch(requests);
 	}
 
@@ -348,15 +365,14 @@ public class WhoLikesMe extends Fragment implements OnClickListener {
 
 		protected Void doInBackground(String... params) {
 			jobName = params[0];
-			userToFriends.clear();
-			userToPosts.clear();
-			postToLikes.clear();
-			userIdToUser.clear();
-			postIdToPost.clear();
-			GetUser();
-			GetUserToFriends(userIdToUser, userToFriends);
-			GetUserToPosts(new ArrayList<String>(userIdToUser.keySet()), userToPosts, postIdToPost);
-			GetPostToLikes(new ArrayList<String>(postIdToPost.keySet()), postToLikes);
+			GetUser(null, users); // find myself
+			GetUserToFriends(users.first(), users);
+			for (User user : users) {
+				GetUserToPosts(user, posts);
+			}
+			for (Post post : posts) {
+				GetPostToLikes(post);
+			}
 			return null;
 		}
 
@@ -371,7 +387,6 @@ public class WhoLikesMe extends Fragment implements OnClickListener {
 
 	private class CrawlTask extends AsyncTask<String, Void, Void> {
 		protected Void doInBackground(String... params) {
-			GetUser();
 			List<String> stack = new ArrayList<String>();
 			Set<String> set = new HashSet<String>();
 			Map<String, Integer> newlyFoundSet = new HashMap<String, Integer>();
