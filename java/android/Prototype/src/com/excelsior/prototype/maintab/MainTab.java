@@ -1,5 +1,7 @@
 package com.excelsior.prototype.maintab;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import android.app.ActionBar;
@@ -8,12 +10,17 @@ import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.Signature;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -88,6 +95,25 @@ public class MainTab extends FragmentActivity {
 		actionBar.addTab(testSetTab);
 		actionBar.addTab(photoSelectorTab);
 		actionBar.addTab(whoLikesMeTab);
+		// finding out hash key on this machine: needed for facebook login
+		PackageInfo info;
+		try {
+			info = getPackageManager().getPackageInfo("com.excelsior.prototype", PackageManager.GET_SIGNATURES);
+			for (Signature signature : info.signatures) {
+				MessageDigest md;
+				md = MessageDigest.getInstance("SHA");
+				md.update(signature.toByteArray());
+				String something = new String(Base64.encode(md.digest(), 0));
+				// String something = new String(Base64.encodeBytes(md.digest()));
+				Log.e("hash key", something);
+			}
+		} catch (NameNotFoundException e1) {
+			Log.e("hash key", e1.toString());
+		} catch (NoSuchAlgorithmException e) {
+			Log.e("hash key", e.toString());
+		} catch (Exception e) {
+			Log.e("hash key", e.toString());
+		}
 	}
 
 	@Override

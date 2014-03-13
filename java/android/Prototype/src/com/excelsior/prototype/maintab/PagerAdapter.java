@@ -21,7 +21,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub2
 		return 4;
 	}
 

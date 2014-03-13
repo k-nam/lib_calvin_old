@@ -118,6 +118,11 @@ public class WhoLikesMe extends Fragment implements OnClickListener {
 	}
 
 	public void onClickFromYouButton(View v) {
+		if (Session.getActiveSession().isOpened()) {
+			Log.d("ui", "Session exists");
+		} else {
+			Log.d("ui", "Session NOT exists");
+		}
 		Log.d("ui", "onClickFromYou");
 		new GetDataTask().execute("FromYou");
 	}

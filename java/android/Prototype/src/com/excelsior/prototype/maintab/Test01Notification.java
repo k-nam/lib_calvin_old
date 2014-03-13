@@ -21,7 +21,7 @@ public class Test01Notification extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// test comment2
+		// test comment23
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.test01_notification, menu);
 		return true;
