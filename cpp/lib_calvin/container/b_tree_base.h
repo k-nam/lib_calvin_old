@@ -235,6 +235,7 @@ private:
 	// add one more element to a node from its brother
 	// look into its right brother unless it is the rightmost children
 	// returns whether the operation actually took place
+	void addToLeafNode(Node *node, Node *brother, int parentIndex, bool fromLeft);
 	bool addToNode(Node *node, int parentIndex);
 	// merge with its brother (other things are similar to above method)
 	// returns the merged node
@@ -1251,6 +1252,34 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::splitNode(Node *node, int parentIndex) {
 }
 
 template <typename T, typename Comp, typename K, typename ExtractKey>
+void
+B_TREE_BASE<T, Comp, K, ExtractKey>::addToLeafNode(Node *node, Node *brotherNode, int parentIndex, 
+																										bool isFromRightBrother) {
+#ifdef BPLUS
+#define ADD_TO_NODE_ROUTINE_LEAF(ARG2, ARG4, ARG6, ARG7, ARG8) \
+	node->ARG7(brotherNode->ARG4()); \
+	node->increaseSizeByOne(); \
+	brotherNode->ARG6(); \
+	brotherNode->decreaseSizeByOne(); \
+	/* set the key of parent as the rightmost key of left node */ \
+	node->getParent()->assignElement(parentIndex ARG2, ARG8->getLastElement());
+#else
+#define ADD_TO_NODE_ROUTINE_LEAF(ARG2, ARG4, ARG6, ARG7, ARG8) \
+	node->ARG7(node->getParent()->getElement(parentIndex ARG2)); \
+	node->increaseSizeByOne(); \
+	node->getParent()->assignElement(parentIndex ARG2, std::move(brotherNode->ARG4())); \
+	brotherNode->ARG6(); \
+	brotherNode->decreaseSizeByOne();
+#endif
+	if (isFromRightBrother) {
+		ADD_TO_NODE_ROUTINE_LEAF( , getFirstElement, eraseFirstElement, insertLastElement, node)
+	} else {
+		ADD_TO_NODE_ROUTINE_LEAF(-1, getLastElement, eraseLastElement, insertFirstElement, brotherNode)
+	}
+#undef ADD_TO_NODE_ROUTINE_LEAF
+}
+
+template <typename T, typename Comp, typename K, typename ExtractKey>
 bool
 B_TREE_BASE<T, Comp, K, ExtractKey>::addToNode(Node *node, int parentIndex) {
 	if (root_ == node) { // should not have been called
@@ -1264,23 +1293,6 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::addToNode(Node *node, int parentIndex) {
 	// getRightBrother returns null if this is the rightmost children
 	Node *brotherNode = NULL;
 
-#ifdef BPLUS
-#define ADD_TO_NODE_ROUTINE_LEAF(ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8) \
-	node->ARG7(brotherNode->ARG4()); \
-	node->increaseSizeByOne(); \
-	brotherNode->ARG6(); \
-	brotherNode->decreaseSizeByOne(); \
-	/* set the key of parent as the rightmost key of left node */ \
-	node->getParent()->assignElement(parentIndex ARG2, ARG8->getLastElement());
-#else
-#define ADD_TO_NODE_ROUTINE_LEAF(ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8) \
-	node->ARG7(node->getParent()->getElement(parentIndex ARG2)); \
-	node->increaseSizeByOne(); \
-	node->getParent()->assignElement(parentIndex ARG2, std::move(brotherNode->ARG4())); \
-	brotherNode->ARG6(); \
-	brotherNode->decreaseSizeByOne();
-#endif
-
 #define ADD_TO_NODE_ROUTINE_INTERNAL(ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8) \
 	static_cast<InternalNode *>(node)->ARG1( \
 		node->getParent()->getElement(parentIndex ARG2), \
@@ -1292,35 +1304,34 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::addToNode(Node *node, int parentIndex) {
 	static_cast<InternalNode *>(brotherNode)->ARG5(); \
 	brotherNode->decreaseSizeByOne();
 
-#define ADD_TO_NODE_ROUTINE(ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8) \
-	if (node->isLeafNode()) { \
-		ADD_TO_NODE_ROUTINE_LEAF(ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8) \
-	} else { \
-		ADD_TO_NODE_ROUTINE_INTERNAL(ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8) \
-	}
-
 	if (parentIndex < node->getParent()->getSize()) { 
 		brotherNode = static_cast<InternalNode *>(node->getParent())-> 
 			getChild(parentIndex + 1); 
 		if (brotherNode->isLeast()) {
 			return false;
 		}
-		ADD_TO_NODE_ROUTINE(insertLastElementAndChild, , getFirstChild, getFirstElement,
-			eraseFirstElementAndChild, eraseFirstElement, insertLastElement, node)
+		if (node->isLeafNode()) {
+			addToLeafNode(node, brotherNode, parentIndex, true);
+		} else {
+			ADD_TO_NODE_ROUTINE_INTERNAL(insertLastElementAndChild, , getFirstChild, getFirstElement,
+				eraseFirstElementAndChild, eraseFirstElement, insertLastElement, node)
+		}
 	} else { /* this is the rightmost child; look into its left brother */ 
 		brotherNode = static_cast<InternalNode *>(node->getParent())-> 
 			getChild(parentIndex - 1); 
 		if (brotherNode->isLeast()) {
 			return false;
 		}
-		ADD_TO_NODE_ROUTINE(insertFirstElementAndChild, -1, getLastChild, getLastElement,
-			eraseLastElementAndChild, eraseLastElement, insertFirstElement, brotherNode)
+		if (node->isLeafNode()) {
+			addToLeafNode(node, brotherNode, parentIndex, false);
+		} else {
+			ADD_TO_NODE_ROUTINE_INTERNAL(insertFirstElementAndChild, -1, getLastChild, getLastElement,
+				eraseLastElementAndChild, eraseLastElement, insertFirstElement, brotherNode)
+		}
 	} 	
 	return true;
 }
-#undef ADD_TO_NODE_ROUTINE_LEAF
 #undef ADD_TO_NODE_ROUTINE_INTERNAL
-#undef ADD_TO_NODE_ROUTINE
 
 template <typename T, typename Comp, typename K, typename ExtractKey>
 typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node *
