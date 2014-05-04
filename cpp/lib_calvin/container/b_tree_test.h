@@ -10,7 +10,7 @@ namespace lib_calvin_container
 void bTreeTest();
 void bTreeMemoryTest(); 
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T>
 class BTreeTest
 {
 public:
@@ -22,8 +22,8 @@ public:
 	void searchAlgoTest(); 
 };
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void BTreeTest<T, Comp, K, ExtractKey>::bTreeNodeTest() {
+template <typename T>
+void BTreeTest<T>::bTreeNodeTest() {
 	BTree<T> tree;	
 	tree.insert(1);
 	tree.insert(3);
@@ -37,8 +37,8 @@ void BTreeTest<T, Comp, K, ExtractKey>::bTreeNodeTest() {
 	tree.print();
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void BTreeTest<T, Comp, K, ExtractKey>::bTreeIteratorTest() {
+template <typename T>
+void BTreeTest<T>::bTreeIteratorTest() {
 	BTree<T> tree;
 	tree.insert(1);
 	tree.insert(3);
@@ -59,8 +59,8 @@ void BTreeTest<T, Comp, K, ExtractKey>::bTreeIteratorTest() {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void BTreeTest<T, Comp, K, ExtractKey>::addToNodeTest() {
+template <typename T>
+void BTreeTest<T>::addToNodeTest() {
 	BTree<T> tree;
 	tree.insert(1);
 	tree.insert(3);
@@ -70,8 +70,8 @@ void BTreeTest<T, Comp, K, ExtractKey>::addToNodeTest() {
 	tree.addToNode(tree.getFirstNode(), 0);
 	tree.print();
 }
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void BTreeTest<T, Comp, K, ExtractKey>::mergeNodeTest() {
+template <typename T>
+void BTreeTest<T>::mergeNodeTest() {
 	BTree<T> tree;
 	tree.insert(1);
 	tree.insert(3);
@@ -83,8 +83,8 @@ void BTreeTest<T, Comp, K, ExtractKey>::mergeNodeTest() {
 	tree.mergeNode(tree.getFirstNode(), 0);
 	tree.print();
 }
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void BTreeTest<T, Comp, K, ExtractKey>::eraseTest() {
+template <typename T>
+void BTreeTest<T>::eraseTest() {
 	BTree<T> tree;
 	tree.insert(1);
 	tree.insert(3);
@@ -97,8 +97,8 @@ void BTreeTest<T, Comp, K, ExtractKey>::eraseTest() {
 	tree.print();
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void BTreeTest<T, Comp, K, ExtractKey>::searchAlgoTest() {
+template <typename T>
+void BTreeTest<T>::searchAlgoTest() {
 	BTree<int> tree;
 	int testArray[10] = { 0, 1, 1, 2, 3, 4, 4, 5, 6, 7 };
 

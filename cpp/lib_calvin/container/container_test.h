@@ -11,7 +11,7 @@
 namespace lib_calvin_container
 {
 void containerTest();
-
+ 
 struct LightObject {
 public:
 	LightObject(): value_(0) { }

@@ -516,7 +516,7 @@ ptrdiff_t distanceBetweenIterator(Iterator begin, Iterator end, std::forward_ite
 		exit(0);
 }
 
-template <typename T, typename Comp = std::less<T>, typename K = T, typename ExtractKey = std::identity<T>>
+template <typename T>
 class BTreeTest;
 
 } // lib_calvin_container
