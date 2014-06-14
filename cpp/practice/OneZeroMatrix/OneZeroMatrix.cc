@@ -2,16 +2,17 @@
 #include <iostream>
 
 int one_zero_matrix::calculate(int dimension, int numberOfOnesPerLine) {
+	typedef __int64 int64_t;
 	// Variables for each matrix elements
 	int *elements = new int[dimension*dimension];
 	// Get the number of total cases
-	int numTotalCases = 1;
+	int64_t numTotalCases = 1;
 	for (int i = 0; i < dimension*dimension; ++i) {
 		numTotalCases *= 2;
 	}
 	// A number to represent a matrix
 	// Each digits represents each element in the matrix
-	int matrix = 0;
+	int64_t matrix = 0;
 	int rightAnswer = 0;
 	for (; matrix < numTotalCases; ++matrix) {
 		//std::cout << "matrix is: " << matrix << "\n";
@@ -26,10 +27,10 @@ int one_zero_matrix::calculate(int dimension, int numberOfOnesPerLine) {
 				sum += elements[j];
 			}
 			if (sum == numberOfOnesPerLine) {
-				} else {
+			} else {
 					isCorrect = false;
-					break;
-				}
+					break;	
+			}
 		}
 		for (int i = 0; i < dimension; ++i) { // chech i'th column
 			int sum = 0;
