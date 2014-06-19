@@ -69,10 +69,10 @@
 			android:layout_height="wrap_content"
 			android:onClick="onClickNavigationDrawerTestButton" />
 		<Button
-	android:text="@string/test_set__open_facebook_test_button_text"
-	android:layout_width="match_parent"
-	android:layout_height="wrap_content"
-	android:onClick="onClickFacebookTestButton" />
+			android:text="@string/test_set__open_facebook_test_button_text"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:onClick="onClickFacebookTestButton" />
 		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"

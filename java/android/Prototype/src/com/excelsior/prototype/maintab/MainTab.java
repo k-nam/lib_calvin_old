@@ -31,13 +31,12 @@ import com.excelsior.prototype.basicinfo.BasicInfo;
 import com.excelsior.prototype.photoselector.PhotoSelector;
 import com.excelsior.prototype.testset.TestSet;
 import com.excelsior.prototype.wholikesme.WhoLikesMe;
-import com.facebook.Session;
 
 public class MainTab extends FragmentActivity {
 	// test
 	String lifeCycleTag = "Life cycle: ";
 	int notificationID = 1;
-	int loginRequestCode = 0;
+	int loginTestRequestCode = 0;
 	int infoTestRequestCode = 1;
 	// fragment for each tabs
 	BasicInfo basicInfo;
@@ -140,7 +139,7 @@ public class MainTab extends FragmentActivity {
 
 	public void onClickLoginTestButton(View v) {
 		Intent intent = new Intent("com.excelsior.prototype.LoginTest");
-		startActivityForResult(intent, loginRequestCode);
+		startActivityForResult(intent, loginTestRequestCode);
 	}
 
 	public void onClickIntentTestButton(View v) {
@@ -156,8 +155,7 @@ public class MainTab extends FragmentActivity {
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
-		if (requestCode == loginRequestCode) {
+		if (requestCode == loginTestRequestCode) {
 			if (resultCode == RESULT_OK) {
 				Toast.makeText(this, "Back to the main activity!", Toast.LENGTH_SHORT).show();
 				Toast.makeText(this, "Login data: " + data.getData().toString(), Toast.LENGTH_SHORT).show();
@@ -187,8 +185,8 @@ public class MainTab extends FragmentActivity {
 	}
 
 	public void onClickFacebookTestButton(View v) {
-		Intent intent = new Intent("com.excelsior.prototype.FacebookTest");
-		startActivity(intent);
+		// Intent intent = new Intent("com.excelsior.prototype.FacebookTest");
+		// startActivity(intent);
 	}
 
 	@Override

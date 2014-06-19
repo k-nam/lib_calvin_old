@@ -290,7 +290,7 @@ typename Array<T>::iterator Array<T>::insert(const_iterator const &pos, T1 &&ele
 template <typename T>
 template <typename Iterator>
 typename Array<T>::iterator Array<T>::insert(const_iterator const &pos, 
-																						 Iterator const &begin, Iterator const &end) {
+												Iterator const &begin, Iterator const &end) {
 	ptrdiff_t insertingIndex = pos - begin();
 	size_t numElementsToInsert = distanceBetweenIterator(begin, end);
 	if (size_ + numElementsToInsert > capacity_) {
