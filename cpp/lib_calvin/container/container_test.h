@@ -21,6 +21,7 @@ public:
 	bool operator<(LightObject const &rhs) const { return value_ < rhs.value_; }
 	friend std::ostream &operator<< (std::ostream &os, LightObject const &lightObject) 
 		{ os << lightObject.value_; return os; }
+	operator int() const { return 0; }
 private:
 	int value_;
 	int dummy_[2];
@@ -49,7 +50,7 @@ public:
 	bool operator<(HeavyObject const &rhs) const { return value_ < rhs.value_; }
 	friend std::ostream &operator<< (std::ostream &os, HeavyObject const &heavyObject) 
 		{ os << heavyObject.value_.size(); return os; }
-	//operator int() { return static_cast<int>(value_.size()); }
+	operator int() const { return static_cast<int>(value_.size()); }
 	static void countThisObject();
 private:
 	ContainerType value_;

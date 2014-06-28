@@ -221,10 +221,14 @@ Array<T>::operator= (Array<T> const &rhs) {
 	for (size_t i = 0; i < size_; ++i) {
 		array_[i].~T();
 	}
-	operator delete (array_);
-	size_ = rhs.size_;	
+	// reuse memory we appropriate
+	if (rhs.size_ <= capacity_ && rhs.size_*VECTOR_REALLOC_MULTIPLIER >= capacity_) {
+	} else {
+		operator delete (array_);
+		array_ = (T *)operator new(sizeof(T)*rhs.capacity_);
+	}
+	size_ = rhs.size_;
 	capacity_ = rhs.capacity_;
-	array_ = (T *)operator new(sizeof(T)*capacity_);
 	copyConstruct(rhs.array_, array_, size_);
 	return *this;
 }

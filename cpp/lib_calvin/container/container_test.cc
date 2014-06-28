@@ -6,7 +6,7 @@ void lib_calvin_container::containerTest()
 {
 	std::cout << "\n---------- Beginning container test -----------\n";
 
-	//vectorTest();
+	vectorTest();
 	setTest();
 	//mapTest();
 	//searchAlgoTest();
@@ -15,7 +15,7 @@ void lib_calvin_container::containerTest()
 
 lib_calvin_container::HeavyObject::HeavyObject(int size) {
 	init(); 
-	int start = size % 100;
+	int start = size % 1000;
 	for (int i = start; i < start + size % 10000; ++i) {
 		value_.push_back(i); 
 	}
