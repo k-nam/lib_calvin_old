@@ -4,6 +4,7 @@
 #include "stopwatch.h"
 #include <iostream>
 #include <fstream>
+#include <cstdint>
 
 namespace lib_calvin_sort
 {
@@ -41,9 +42,9 @@ void fileOpenTest() {
 	fout.close();
 }
 
-_int64 const testSize =  (_int64)1024*1024*1024; // in bytes
+int64_t const testSize = (int64_t)1024 * 1024 * 1024; // in bytes
 int const blockSize = 4; // in bytes
-_int64 const numBlocks = testSize / blockSize;
+int64_t const numBlocks = testSize / blockSize;
 int const wordsInBlock = blockSize / sizeof(int);
 int dataBlock[wordsInBlock];
 
@@ -57,7 +58,7 @@ void diskWriteBenchmark(std::string fileName) {
 		exit(0);
 	}
 	watch.start();		
-	for (_int64 i = 0; i < numBlocks; ++i) {
+	for (int64_t i = 0; i < numBlocks; ++i) {
 		fout.write((char *)dataBlock, blockSize);
 	}
 	fout.flush();
@@ -79,7 +80,7 @@ void diskReadBenchmark(std::string fileName) {
 	}
 	watch.start();
 	/*
-	for (_int64 i = 0; i <= totalWords; ++i) {
+	for (int64_t i = 0; i <= totalWords; ++i) {
 		if (i % wordsInBlock == 0) {
 			if (fin.eof()) {
 				std::cout << "reading error;\n";

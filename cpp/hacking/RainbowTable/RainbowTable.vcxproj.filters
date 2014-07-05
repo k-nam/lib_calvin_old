@@ -18,12 +18,18 @@
     <ClInclude Include="md5.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="rainbow_table.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="md5.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rainbow_table.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

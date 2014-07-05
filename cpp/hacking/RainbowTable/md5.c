@@ -1,49 +1,5 @@
-/*
-*  RFC 1321 compliant MD5 implementation
-*
-*  Copyright (C) 2006-2014, Brainspark B.V.
-*
-*  This file is part of PolarSSL (http://www.polarssl.org)
-*  Lead Maintainer: Paul Bakker <polarssl_maintainer at polarssl.org>
-*
-*  All rights reserved.
-*
-*  This program is free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  This program is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License along
-*  with this program; if not, write to the Free Software Foundation, Inc.,
-*  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
-/*
-*  The MD5 algorithm was designed by Ron Rivest in 1991.
-*
-*  http://www.ietf.org/rfc/rfc1321.txt
-*/
-
-
-
 #include "md5.h"
 #include "stdio.h"
-
-#if defined(POLARSSL_FS_IO) || defined(POLARSSL_SELF_TEST)
-#include <stdio.h>
-#endif
-
-#if defined(POLARSSL_PLATFORM_C)
-#include "polarssl/platform.h"
-#else
-#define polarssl_printf printf
-#endif
-
-#if !defined(POLARSSL_MD5_ALT)
 
 /*
 * 32-bit integer manipulation macros (little endian)
@@ -71,7 +27,7 @@
 /*
 * MD5 context setup
 */
-void md5_starts(md5_context *ctx)
+void hacking__rainbow_table::md5_starts(md5_context *ctx)
 {
 	ctx->total[0] = 0;
 	ctx->total[1] = 0;
@@ -82,7 +38,7 @@ void md5_starts(md5_context *ctx)
 	ctx->state[3] = 0x10325476;
 }
 
-void md5_process(md5_context *ctx, const unsigned char data[64])
+void hacking__rainbow_table::md5_process(md5_context *ctx, const unsigned char data[64])
 {
 	uint32_t X[16], A, B, C, D;
 
@@ -208,7 +164,7 @@ void md5_process(md5_context *ctx, const unsigned char data[64])
 /*
 * MD5 process buffer
 */
-void md5_update(md5_context *ctx, const unsigned char *input, size_t ilen)
+void hacking__rainbow_table::md5_update(md5_context *ctx, const unsigned char *input, size_t ilen)
 {
 	size_t fill;
 	uint32_t left;
@@ -255,7 +211,7 @@ static const unsigned char md5_padding[64] =
 /*
 * MD5 final digest
 */
-void md5_finish(md5_context *ctx, unsigned char output[16])
+void hacking__rainbow_table::md5_finish(md5_context *ctx, unsigned char output[16])
 {
 	uint32_t last, padn;
 	uint32_t high, low;
@@ -280,12 +236,11 @@ void md5_finish(md5_context *ctx, unsigned char output[16])
 	PUT_UINT32_LE(ctx->state[3], output, 12);
 }
 
-#endif /* !POLARSSL_MD5_ALT */
 
 /*
 * output = MD5( input buffer )
 */
-void md5(const unsigned char *input, size_t ilen, unsigned char output[16])
+void hacking__rainbow_table::md5(const unsigned char *input, size_t ilen, unsigned char output[16])
 {
 	md5_context ctx;
 
@@ -296,43 +251,11 @@ void md5(const unsigned char *input, size_t ilen, unsigned char output[16])
 	memset(&ctx, 0, sizeof(md5_context));
 }
 
-#if defined(POLARSSL_FS_IO)
-/*
-* output = MD5( file contents )
-*/
-int md5_file(const char *path, unsigned char output[16])
-{
-	FILE *f;
-	size_t n;
-	md5_context ctx;
-	unsigned char buf[1024];
-
-	if ((f = fopen(path, "rb")) == NULL)
-		return(POLARSSL_ERR_MD5_FILE_IO_ERROR);
-
-	md5_starts(&ctx);
-
-	while ((n = fread(buf, 1, sizeof(buf), f)) > 0)
-		md5_update(&ctx, buf, n);
-
-	md5_finish(&ctx, output);
-
-	memset(&ctx, 0, sizeof(md5_context));
-
-	if (ferror(f) != 0) {
-		fclose(f);
-		return(POLARSSL_ERR_MD5_FILE_IO_ERROR);
-	}
-
-	fclose(f);
-	return(0);
-}
-#endif /* POLARSSL_FS_IO */
 
 /*
 * MD5 HMAC context setup
 */
-void md5_hmac_starts(md5_context *ctx, const unsigned char *key, size_t keylen)
+void hacking__rainbow_table::md5_hmac_starts(md5_context *ctx, const unsigned char *key, size_t keylen)
 {
 	size_t i;
 	unsigned char sum[16];
@@ -360,7 +283,7 @@ void md5_hmac_starts(md5_context *ctx, const unsigned char *key, size_t keylen)
 /*
 * MD5 HMAC process buffer
 */
-void md5_hmac_update(md5_context *ctx, const unsigned char *input, size_t ilen)
+void hacking__rainbow_table::md5_hmac_update(md5_context *ctx, const unsigned char *input, size_t ilen)
 {
 	md5_update(ctx, input, ilen);
 }
@@ -368,7 +291,7 @@ void md5_hmac_update(md5_context *ctx, const unsigned char *input, size_t ilen)
 /*
 * MD5 HMAC final digest
 */
-void md5_hmac_finish(md5_context *ctx, unsigned char output[16])
+void hacking__rainbow_table::md5_hmac_finish(md5_context *ctx, unsigned char output[16])
 {
 	unsigned char tmpbuf[16];
 
@@ -384,7 +307,7 @@ void md5_hmac_finish(md5_context *ctx, unsigned char output[16])
 /*
 * MD5 HMAC context reset
 */
-void md5_hmac_reset(md5_context *ctx)
+void hacking__rainbow_table::md5_hmac_reset(md5_context *ctx)
 {
 	md5_starts(ctx);
 	md5_update(ctx, ctx->ipad, 64);
@@ -393,7 +316,7 @@ void md5_hmac_reset(md5_context *ctx)
 /*
 * output = HMAC-MD5( hmac key, input buffer )
 */
-void md5_hmac(const unsigned char *key, size_t keylen,
+void hacking__rainbow_table::md5_hmac(const unsigned char *key, size_t keylen,
 	const unsigned char *input, size_t ilen,
 	unsigned char output[16])
 {
@@ -510,7 +433,7 @@ static const unsigned char md5_hmac_test_sum[7][16] =
 /*
 * Checkup routine
 */
-int md5_self_test(int verbose)
+int hacking__rainbow_table::md5_self_test(int verbose)
 {
 	int i, buflen;
 	unsigned char buf[1024];
@@ -519,27 +442,27 @@ int md5_self_test(int verbose)
 
 	for (i = 0; i < 7; i++) {
 		if (verbose != 0)
-			polarssl_printf("  MD5 test #%d: ", i + 1);
+			printf("  MD5 test #%d: ", i + 1);
 
 		md5(md5_test_buf[i], md5_test_buflen[i], md5sum);
 
 		if (memcmp(md5sum, md5_test_sum[i], 16) != 0) {
 			if (verbose != 0)
-				polarssl_printf("failed\n");
+				printf("failed\n");
 
 			return(1);
 		}
 
 		if (verbose != 0)
-			polarssl_printf("passed\n");
+			printf("passed\n");
 	}
 
 	if (verbose != 0)
-		polarssl_printf("\n");
+		printf("\n");
 
 	for (i = 0; i < 7; i++) {
 		if (verbose != 0)
-			polarssl_printf("  HMAC-MD5 test #%d: ", i + 1);
+			printf("  HMAC-MD5 test #%d: ", i + 1);
 
 		if (i == 5 || i == 6) {
 			memset(buf, '\xAA', buflen = 80);
@@ -557,17 +480,17 @@ int md5_self_test(int verbose)
 
 		if (memcmp(md5sum, md5_hmac_test_sum[i], buflen) != 0) {
 			if (verbose != 0)
-				polarssl_printf("failed\n");
+				printf("failed\n");
 
 			return(1);
 		}
 
 		if (verbose != 0)
-			polarssl_printf("passed\n");
+			printf("passed\n");
 	}
 
 	if (verbose != 0)
-		polarssl_printf("\n");
+		printf("\n");
 
 	return(0);
 }
