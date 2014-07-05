@@ -30,22 +30,6 @@ class TextFileCopier(val sourceFileName: String, val targetFileName: String, val
 		case Break => print("well done")
 		case e: Exception => print("error")
 	}
-	/*
-	try {
-		for (iter <- Source.fromFile(sourceFileName).getLines()) {
-			if (remainingNumLines > 0) {
-				writer.write(iter)
-				writer.write('\n')
-				remainingNumLines -= 1
-			} else {
-				throw Break
-			}
-		}
-	} catch {
-		case Break => print("well done")
-		case e: Exception => print("error")
-	}
-*/
-	writer.close()
 
+	writer.close()
 }
