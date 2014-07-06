@@ -27,7 +27,7 @@
 /*
 * MD5 context setup
 */
-void hacking__rainbow_table::md5_starts(md5_context *ctx)
+void hacking__md5::md5_starts(md5_context *ctx)
 {
 	ctx->total[0] = 0;
 	ctx->total[1] = 0;
@@ -38,7 +38,7 @@ void hacking__rainbow_table::md5_starts(md5_context *ctx)
 	ctx->state[3] = 0x10325476;
 }
 
-void hacking__rainbow_table::md5_process(md5_context *ctx, const unsigned char data[64])
+void hacking__md5::md5_process(md5_context *ctx, const unsigned char data[64])
 {
 	uint32_t X[16], A, B, C, D;
 
@@ -164,7 +164,7 @@ void hacking__rainbow_table::md5_process(md5_context *ctx, const unsigned char d
 /*
 * MD5 process buffer
 */
-void hacking__rainbow_table::md5_update(md5_context *ctx, const unsigned char *input, size_t ilen)
+void hacking__md5::md5_update(md5_context *ctx, const unsigned char *input, size_t ilen)
 {
 	size_t fill;
 	uint32_t left;
@@ -211,7 +211,7 @@ static const unsigned char md5_padding[64] =
 /*
 * MD5 final digest
 */
-void hacking__rainbow_table::md5_finish(md5_context *ctx, unsigned char output[16])
+void hacking__md5::md5_finish(md5_context *ctx, unsigned char output[16])
 {
 	uint32_t last, padn;
 	uint32_t high, low;
@@ -238,30 +238,15 @@ void hacking__rainbow_table::md5_finish(md5_context *ctx, unsigned char output[1
 
 
 /*
-* output = MD5( input buffer )
-*/
-void hacking__rainbow_table::md5(const unsigned char *input, size_t ilen, unsigned char output[16])
-{
-	md5_context ctx;
-
-	md5_starts(&ctx);
-	md5_update(&ctx, input, ilen);
-	md5_finish(&ctx, output);
-
-	memset(&ctx, 0, sizeof(md5_context));
-}
-
-
-/*
 * MD5 HMAC context setup
 */
-void hacking__rainbow_table::md5_hmac_starts(md5_context *ctx, const unsigned char *key, size_t keylen)
+void hacking__md5::md5_hmac_starts(md5_context *ctx, const unsigned char *key, size_t keylen)
 {
 	size_t i;
 	unsigned char sum[16];
 
 	if (keylen > 64) {
-		md5(key, keylen, sum);
+		hacking__rainbow_table::md5(key, keylen, sum);
 		keylen = 16;
 		key = sum;
 	}
@@ -283,7 +268,7 @@ void hacking__rainbow_table::md5_hmac_starts(md5_context *ctx, const unsigned ch
 /*
 * MD5 HMAC process buffer
 */
-void hacking__rainbow_table::md5_hmac_update(md5_context *ctx, const unsigned char *input, size_t ilen)
+void hacking__md5::md5_hmac_update(md5_context *ctx, const unsigned char *input, size_t ilen)
 {
 	md5_update(ctx, input, ilen);
 }
@@ -291,7 +276,7 @@ void hacking__rainbow_table::md5_hmac_update(md5_context *ctx, const unsigned ch
 /*
 * MD5 HMAC final digest
 */
-void hacking__rainbow_table::md5_hmac_finish(md5_context *ctx, unsigned char output[16])
+void hacking__md5::md5_hmac_finish(md5_context *ctx, unsigned char output[16])
 {
 	unsigned char tmpbuf[16];
 
@@ -307,7 +292,7 @@ void hacking__rainbow_table::md5_hmac_finish(md5_context *ctx, unsigned char out
 /*
 * MD5 HMAC context reset
 */
-void hacking__rainbow_table::md5_hmac_reset(md5_context *ctx)
+void hacking__md5::md5_hmac_reset(md5_context *ctx)
 {
 	md5_starts(ctx);
 	md5_update(ctx, ctx->ipad, 64);
@@ -316,7 +301,7 @@ void hacking__rainbow_table::md5_hmac_reset(md5_context *ctx)
 /*
 * output = HMAC-MD5( hmac key, input buffer )
 */
-void hacking__rainbow_table::md5_hmac(const unsigned char *key, size_t keylen,
+void hacking__md5::md5_hmac(const unsigned char *key, size_t keylen,
 	const unsigned char *input, size_t ilen,
 	unsigned char output[16])
 {
@@ -430,11 +415,29 @@ static const unsigned char md5_hmac_test_sum[7][16] =
 	0x1F, 0xB1, 0xF5, 0x62, 0xDB, 0x3A, 0xA5, 0x3E }
 };
 
+
+
+/*
+* output = MD5( input buffer )
+*/
+void hacking__rainbow_table::md5(const unsigned char *input, size_t ilen, unsigned char output[16])
+{
+	using namespace hacking__md5;
+	md5_context ctx;
+
+	md5_starts(&ctx);
+	md5_update(&ctx, input, ilen);
+	md5_finish(&ctx, output);
+
+	memset(&ctx, 0, sizeof(md5_context));
+}
+
 /*
 * Checkup routine
 */
 int hacking__rainbow_table::md5_self_test(int verbose)
 {
+	using namespace hacking__md5;
 	int i, buflen;
 	unsigned char buf[1024];
 	unsigned char md5sum[16];
@@ -494,5 +497,3 @@ int hacking__rainbow_table::md5_self_test(int verbose)
 
 	return(0);
 }
-
-

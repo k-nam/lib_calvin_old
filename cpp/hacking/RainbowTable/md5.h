@@ -4,7 +4,7 @@
 #include <string.h>
 #include <cstdint>
 
-namespace hacking__rainbow_table
+namespace hacking__md5
 {
 typedef struct
 {
@@ -43,15 +43,6 @@ void md5_finish(md5_context *ctx, unsigned char output[16]);
 /* Internal use */
 void md5_process(md5_context *ctx, const unsigned char data[64]);
 
-
-/**
-* \brief          Output = MD5( input buffer )
-*
-* \param input    buffer holding the  data
-* \param ilen     length of the input data
-* \param output   MD5 checksum result
-*/
-void md5(const unsigned char *input, size_t ilen, unsigned char output[16]);
 
 /**
 * \brief          Output = MD5( file contents )
@@ -116,6 +107,20 @@ void md5_hmac(const unsigned char *key, size_t keylen,
 *
 * \return         0 if successful, or 1 if the test failed
 */
+
+}
+
+namespace hacking__rainbow_table
+{
+/**
+* \brief          Output = MD5( input buffer )
+*
+* \param input    buffer holding the  data
+* \param ilen     length of the input data
+* \param output   MD5 checksum result
+*/
+void md5(const unsigned char *input, size_t ilen, unsigned char output[16]);
 int md5_self_test(int verbose);
 }
+
 #endif /* md5.h */
