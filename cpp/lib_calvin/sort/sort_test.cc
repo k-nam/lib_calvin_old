@@ -37,8 +37,8 @@ void lib_calvin_sort::sortTest (void (*sortingAlg) (T *first, T *last),
   stopwatch watch;
   bool correct  = true;
   bool stable   = true;
-	int arraySize[] = { 1000, 10000, 100000, 1000000, 10000000, 100000000 };
-	int numIteration[] = { 100, 100, 10, 3, 1, 1 };
+	int arraySize[] = { 1000, 10000, 100000, 1000000, 10000000 };
+	int numIteration[] = { 100, 100, 10, 3, 1 };
 	std::srand(1232); // reset seed to give identical input to algorithms
   for (int i = 0; i < numTestCases; ++i) { 
 		if (arraySize[i] == 0) {

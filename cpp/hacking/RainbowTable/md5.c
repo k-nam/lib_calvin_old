@@ -200,6 +200,8 @@ void hacking__md5::md5_update(md5_context *ctx, const unsigned char *input, size
 	}
 }
 
+namespace hacking__md5
+{
 static const unsigned char md5_padding[64] =
 {
 	0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -207,6 +209,7 @@ static const unsigned char md5_padding[64] =
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
+}
 
 /*
 * MD5 final digest
@@ -314,6 +317,8 @@ void hacking__md5::md5_hmac(const unsigned char *key, size_t keylen,
 	memset(&ctx, 0, sizeof(md5_context));
 }
 
+namespace hacking__md5
+{
 /*
 * RFC 1321 test vectors
 */
@@ -414,7 +419,7 @@ static const unsigned char md5_hmac_test_sum[7][16] =
 	{ 0x6F, 0x63, 0x0F, 0xAD, 0x67, 0xCD, 0xA0, 0xEE,
 	0x1F, 0xB1, 0xF5, 0x62, 0xDB, 0x3A, 0xA5, 0x3E }
 };
-
+} // end namespace hacking__md5
 
 
 /*
