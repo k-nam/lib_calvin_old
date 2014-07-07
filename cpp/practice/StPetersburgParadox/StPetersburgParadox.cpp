@@ -4,8 +4,8 @@
 #include <ctime>
 #include <cstdlib>
 
-__int64 doGambleAndGetResult(std::mt19937_64 &engine) {
-	__int64 earnedMoney = 1;
+int64_t doGambleAndGetResult(std::mt19937_64 &engine) {
+	int64_t earnedMoney = 1;
 	while (true) {
 		if (engine() % 2 == 1) {
 			earnedMoney *= 2;
@@ -17,13 +17,13 @@ __int64 doGambleAndGetResult(std::mt19937_64 &engine) {
 	return earnedMoney;
 }
 
-__int64 getAverageResultOfGames(int numberOfTries) {
+int64_t getAverageResultOfGames(int numberOfTries) {
 	std::random_device randomSeed;
 	std::mt19937_64 engine(randomSeed());
-	__int64 totalEarnedMoney = 0;
-	__int64 jackpot = 0;
+	int64_t totalEarnedMoney = 0;
+	int64_t jackpot = 0;
 	for (int i = 0; i < numberOfTries; i++) {
-		__int64 earnedMoney = doGambleAndGetResult(engine);
+		int64_t earnedMoney = doGambleAndGetResult(engine);
 		totalEarnedMoney += earnedMoney;
 		if (earnedMoney > jackpot) {
 			jackpot = earnedMoney;

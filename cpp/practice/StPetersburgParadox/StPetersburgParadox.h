@@ -1,4 +1,5 @@
 #include <random>
+#include <cinttypes>
 
-__int64 doGambleAndGetResult(std::mt19937_64 &engine);
-__int64 getAverageResultOfGames(int numberOfTries);
+int64_t doGambleAndGetResult(std::mt19937_64 &engine);
+int64_t getAverageResultOfGames(int numberOfTries);
