@@ -1,10 +1,13 @@
 package com.excelsior.prototype.testset;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -20,9 +23,9 @@ import com.excelsior.prototype.maintab.MainTab;
 
 public class TestSet extends Fragment implements OnClickListener {
 	MainTab mainTabActivity;
-
 	CharSequence[] dialogItems = { "Apple", "Samsung", "LG" };
 	boolean[] dialogItemsCheckingStatus = new boolean[dialogItems.length];
+	int infoTestRequestCode = 1;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		mainTabActivity = (MainTab) getActivity();
@@ -39,6 +42,8 @@ public class TestSet extends Fragment implements OnClickListener {
 		b.setOnClickListener(this);
 		b = (Button) view.findViewById(R.id.test_set__complex_progress_dialog_button);
 		b.setOnClickListener(this);
+		b = (Button) view.findViewById(R.id.test_set__open_intent_test_button);
+		b.setOnClickListener(this);
 	}
 
 	@Override
@@ -53,6 +58,9 @@ public class TestSet extends Fragment implements OnClickListener {
 				break;
 			case R.id.test_set__complex_progress_dialog_button:
 				onClickComplexProgressDialogButton(v);
+				break;
+			case R.id.test_set__open_intent_test_button:
+				onClickOpenIntentTestButton(v);
 				break;
 			default:
 		}
@@ -152,4 +160,26 @@ public class TestSet extends Fragment implements OnClickListener {
 		new MyComplexProgressDialog().show(getFragmentManager(), "aa");
 	}
 
+	public void onClickOpenIntentTestButton(View v) {
+		Intent intent = new Intent("com.excelsior.prototype.IntentTest");
+		intent.putExtra("extra1", "This is a string extra");
+		intent.putExtra("extra2", 177);
+		Bundle bundle = new Bundle();
+		bundle.putString("string extra", "This is a string extra in bundle");
+		bundle.putInt("int extra", 151);
+		intent.putExtras(bundle);
+		intent.setData(Uri.parse("http://www.naver.com"));
+		startActivityForResult(Intent.createChooser(intent, "Choose for intent test activity"), infoTestRequestCode);
+	}
+
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == infoTestRequestCode) {
+			if (resultCode == Activity.RESULT_OK) {
+				Toast.makeText(mainTabActivity, "Back to the main activity!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(mainTabActivity, data.getData().toString(), Toast.LENGTH_SHORT).show();
+				Toast.makeText(mainTabActivity, Integer.toString(data.getIntExtra("int extra", 0)), Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
 }

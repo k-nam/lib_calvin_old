@@ -155,16 +155,11 @@ public class MainTab extends FragmentActivity {
 	}
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == loginTestRequestCode) {
 			if (resultCode == RESULT_OK) {
 				Toast.makeText(this, "Back to the main activity!", Toast.LENGTH_SHORT).show();
 				Toast.makeText(this, "Login data: " + data.getData().toString(), Toast.LENGTH_SHORT).show();
-			}
-		} else if (requestCode == infoTestRequestCode) {
-			if (resultCode == RESULT_OK) {
-				Toast.makeText(this, "Back to the main activity!", Toast.LENGTH_SHORT).show();
-				Toast.makeText(this, data.getData().toString(), Toast.LENGTH_SHORT).show();
-				Toast.makeText(this, Integer.toString(data.getIntExtra("int extra", 0)), Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
