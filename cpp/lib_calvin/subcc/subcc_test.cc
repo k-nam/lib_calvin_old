@@ -1,13 +1,9 @@
-#include "subcc_test.h"
 #include <iostream>
-#include "fcntl.h" // for open, read
-//#include "unistd.h" // for constants
-#include <Windows.h>
 #include <fstream>
 #include <streambuf>
+#include "subcc_test.h"
 #include "compiler.h"
    
-
 void subcc::subccTest(int argc, char *argv[]) {
 	using namespace subcc;
 	using std::string;
