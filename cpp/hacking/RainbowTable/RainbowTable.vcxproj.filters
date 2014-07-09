@@ -21,10 +21,7 @@
     <ClInclude Include="rainbow_table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="rainbow_table_test.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="md5_cpp.h">
+    <ClInclude Include="odbc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -36,9 +33,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="rainbow_table.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="rainbow_table_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

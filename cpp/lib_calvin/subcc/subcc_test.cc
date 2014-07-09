@@ -16,11 +16,12 @@ void subcc::subccTest(int argc, char *argv[]) {
 		inputFileName = argv[1];
 	}
 
-	std::ifstream t(inputFileName);
-	t.seekg(0, std::ios::end);   
-	sourceText.reserve(t.tellg());
-	t.seekg(0, std::ios::beg);
-	sourceText.assign((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+	std::ifstream stream(inputFileName);
+	stream.seekg(std::ios::end);   
+	sourceText.reserve(stream.tellg());
+	stream.seekg(std::ios::beg);
+	sourceText.assign((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+	stream.close();
 
 	cout << "input size is: " << sourceText.size() << "\n";
   string header("void printStr( char s[80] ); \n void printInt ( int a ); \n\
