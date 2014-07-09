@@ -13,9 +13,9 @@ object Main {
 		//new BinaryFileCopier("realhuman_phill.txt", "output.txt", 1000000)
 
 		//new SqlServerDbManager("aaa").start
-		new TextFileLoader("E:\\hacking/password_under_20digit.txt", new SqlServerDbManager("Hacking").connection).
-			loadPasswordList("Password.CommonPasswordUnder20Digit")
-		//new TextFileLoader("E:\\hacking/chain.txt", new SqlServerDbManager("Hacking").connection).
-		//loadChainList("RainbowTableChain.Md5_20Digit_SimpleReduce_10Iter")
+		//new TextFileLoader("E:\\hacking/password_under_20digit.txt", new SqlServerDbManager("Hacking").connection).
+		//loadPasswordList("Password.CommonPasswordUnder20Digit")
+		new TextFileLoader("E:\\hacking/chain.txt", new SqlServerDbManager("Hacking").connection).
+			loadChainList("RainbowTable.Md5_20Digit_SimpleReverse_10Iter")
 	}
 }

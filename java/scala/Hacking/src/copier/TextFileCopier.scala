@@ -28,7 +28,7 @@ class TextFileCopier(val sourceFileName: String, val targetFileName: String, val
 			if (remainingNumLines > 0) {
 				val line = reader.readLine()
 				if (line != null) {
-					if (line.length <= maxLineLength && TextFileCopier.isAsciiString(line) && line != "") {
+					if (line.length <= maxLineLength && TextFileCopier.isAsciiString(line) && line.length() != 0) {
 						if (remainingNumLines < numLines) { // not first line
 							writer.write('\n')
 						}

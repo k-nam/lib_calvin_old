@@ -13,9 +13,9 @@ int main() {
 	std::cout << "next of " << password << " is " << hacking__rainbow_table::getNextInChain(password) << "\n";
 
 
-	getChainListFromPasswordList("E:\\password.txt", "E:\\chain.txt");
+	//getChainListFromPasswordList("E:\\password.txt", "E:\\chain.txt");
 
 	
-	//getChainListFromPasswordList("E:\\password_under_20digit.txt", "E:\\chain.txt");
+	getChainListFromPasswordList("E:\\hacking/password_under_20digit.txt", "E:\\chain.txt");
 
 }
