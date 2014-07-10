@@ -185,7 +185,7 @@ abstract class DbManager extends Thread {
 		builder.toString
 	}
 
-	def pushData() {
+	def truncate: Unit = {
 		val tableName = "TEST"
 		val insertStmt = connection.createStatement()
 		try {
@@ -194,6 +194,10 @@ abstract class DbManager extends Thread {
 		} catch {
 			case _: Throwable => print("trunc fail");
 		}
+	}
+
+	def pushData() {
+		val tableName = "TEST"
 		Thread.sleep(1000)
 		val stmt = connection.prepareStatement(
 			"INSERT into " + tableName + " values (?, ?)")
@@ -201,7 +205,7 @@ abstract class DbManager extends Thread {
 		val shortString = "남기웅남기웅남기웅남기웅남기웅남기웅"
 		val wordString = "남기웅"
 		val startTime: Double = System.currentTimeMillis()
-		val testSize = 1000000
+		val testSize = 100000
 		val rowSize = 200
 		for (i <- 1 to testSize) {
 			stmt.setInt(1, i)

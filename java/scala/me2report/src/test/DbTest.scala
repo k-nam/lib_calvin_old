@@ -20,8 +20,12 @@ object DbTest {
 		for (i <- 1 to 2) {
 			dbManagers = new SqlServerDbManager() :: dbManagers
 		}
+		dbManagers(0).truncate
 		for (dbManager <- dbManagers) {
 			dbManager.start
+		}
+		for (dbManager <- dbManagers) {
+			dbManager.join
 		}
 		//println(dbManager.getDesc("nkw0705")) 
 		//val test = "2009-12-11T02:00:59Z"
