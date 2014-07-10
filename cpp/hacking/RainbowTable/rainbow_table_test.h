@@ -3,7 +3,8 @@
 
 namespace hacking__rainbow_table
 {
-	void md5ReverseTest();
-	void md5GenerateChainTest();
+	void hashStringTest();
+	void getFirstAndLastTest();
+	void getChainTest();
 }
 #endif

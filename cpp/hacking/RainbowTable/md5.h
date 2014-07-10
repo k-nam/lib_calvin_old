@@ -103,16 +103,6 @@ void md5_hmac(const unsigned char *key, size_t keylen,
 							unsigned char output[16]);
 
 /**
-* \brief          Checkup routine
-*
-* \return         0 if successful, or 1 if the test failed
-*/
-
-}
-
-namespace hacking__rainbow_table
-{
-/**
 * \brief          Output = MD5( input buffer )
 *
 * \param input    buffer holding the  data
@@ -120,7 +110,13 @@ namespace hacking__rainbow_table
 * \param output   MD5 checksum result
 */
 void md5(const unsigned char *input, size_t ilen, unsigned char output[16]);
+
+/**
+* \brief          Checkup routine
+*
+* \return         0 if successful, or 1 if the test failed
+*/
 int md5_self_test(int verbose);
 }
 
-#endif /* md5.h */
+#endif /* Md5Func.h */

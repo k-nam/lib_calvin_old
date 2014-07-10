@@ -150,13 +150,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="md5.h" />
-    <ClInclude Include="odbc.h" />
     <ClInclude Include="rainbow_table.h" />
+    <ClInclude Include="rainbow_table_test.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cc" />
     <ClCompile Include="md5.c" />
     <ClCompile Include="rainbow_table.cc" />
+    <ClCompile Include="rainbow_table_test.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

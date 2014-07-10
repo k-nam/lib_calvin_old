@@ -3,19 +3,14 @@
 
 #include "md5.h"
 #include "rainbow_table.h"
+#include "rainbow_table_test.h"
 
 int main() {
 	using namespace hacking__rainbow_table;
-	md5_self_test(1);
+	hashStringTest();
+	getFirstAndLastTest();
 
-	std::string password = "aaa21112f";
-	std::cout << "hash of " << password << " is " << hacking__rainbow_table::readHashOfPassword(password) << "\n";
-	std::cout << "next of " << password << " is " << hacking__rainbow_table::getNextInChain(password) << "\n";
-
-
-	//getChainListFromPasswordList("E:\\password.txt", "E:\\chain.txt");
-
-	
-	getChainListFromPasswordList("E:\\hacking/password_under_20digit.txt", "E:\\chain.txt");
+	//getFirstAndLast("E:\\password.txt", "E:\\chain.txt");
+	//getFirstAndLast("E:\\hacking/password_under_20digit.txt", "E:\\chain2.txt", CHAIN_LENGHTH);
 
 }

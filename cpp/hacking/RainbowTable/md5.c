@@ -249,7 +249,7 @@ void hacking__md5::md5_hmac_starts(md5_context *ctx, const unsigned char *key, s
 	unsigned char sum[16];
 
 	if (keylen > 64) {
-		hacking__rainbow_table::md5(key, keylen, sum);
+		md5(key, keylen, sum);
 		keylen = 16;
 		key = sum;
 	}
@@ -425,7 +425,7 @@ static const unsigned char md5_hmac_test_sum[7][16] =
 /*
 * output = MD5( input buffer )
 */
-void hacking__rainbow_table::md5(const unsigned char *input, size_t ilen, unsigned char output[16])
+void hacking__md5::md5(const unsigned char *input, size_t ilen, unsigned char output[16])
 {
 	using namespace hacking__md5;
 	md5_context ctx;
@@ -440,7 +440,7 @@ void hacking__rainbow_table::md5(const unsigned char *input, size_t ilen, unsign
 /*
 * Checkup routine
 */
-int hacking__rainbow_table::md5_self_test(int verbose)
+int hacking__md5::md5_self_test(int verbose)
 {
 	using namespace hacking__md5;
 	int i, buflen;
