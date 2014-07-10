@@ -4,12 +4,12 @@
 #include <iostream>
 #include <fstream>
 
+hacking__rainbow_table::Md5Hash::Md5Hash(Md5Hash const &rhs) {
+	copyDataFrom(rhs.getData());
+}
 
-
-hacking__rainbow_table::Md5Hash::Md5Hash(unsigned char const hash[20]) {
-	for (int i =  0; i < MD5_HASH_LENGTH; i++) {
-		hash_[i] = hash[i];
-	}
+hacking__rainbow_table::Md5Hash::Md5Hash(unsigned char const hash[MD5_HASH_LENGTH]) {
+	copyDataFrom(hash);
 }
 
 hacking__rainbow_table::Md5Hash::Md5Hash(std::string stringHash) {
@@ -35,6 +35,21 @@ hacking__rainbow_table::Md5Hash::Md5Hash(std::string stringHash) {
 		  return;
     }
   }
+}
+
+hacking__rainbow_table::Md5Hash &
+hacking__rainbow_table::Md5Hash::operator=(Md5Hash const &rhs) {
+	if (this != &rhs) {
+		copyDataFrom(rhs.getData());
+	}
+	return *this;
+}
+
+void
+hacking__rainbow_table::Md5Hash::copyDataFrom(unsigned char const source[MD5_HASH_LENGTH]) {
+	for (int i =  0; i < MD5_HASH_LENGTH; i++) {
+		hash_[i] = source[i];
+	}
 }
 
 std::string
@@ -85,11 +100,11 @@ hacking__rainbow_table::Md5ReverseFunc::operator()(const unsigned char hash[16],
 	}
 }
 
-std::string 
-hacking__rainbow_table::getReverseOfHash(const unsigned char hash[16], int index) {
+std::string
+hacking__rainbow_table::Md5ReverseFunc::operator()(Md5Hash hash, int indexInChain) const {
 	char password[MAX_PASSWORD_LENGTH];
-	size_t passwordLength;
-	Md5ReverseFunc()(hash, index, password, passwordLength);
+	size_t passwordLength = 0;
+	Md5ReverseFunc()(hash.getData(), indexInChain, password, passwordLength);
 	return std::string(password, passwordLength);
 }
 
@@ -100,9 +115,8 @@ hacking__rainbow_table::readHashOfPassword(std::string password) {
 
 std::string 
 hacking__rainbow_table::getNextInChain(std::string password, int index) {
-	unsigned char hash[16];
-	Md5Func()(reinterpret_cast<const unsigned char *>(password.c_str()), password.length(), hash);
-	return getReverseOfHash(hash, index);
+	Md5Hash hash = Md5Func()(password);
+	return Md5ReverseFunc()(hash, index);
 }
 
 std::pair<std::string, std::string> 
@@ -159,23 +173,56 @@ hacking__rainbow_table::getChain(
 							std::string hashFileName, std::string outFileName, int chainLength) {
 	std::ifstream inStream(hashFileName);
 	std::ofstream outStream(outFileName);
-	std::string hash;
+	std::string line;
 	bool isFirstLine = true;
-	while (std::getline(inStream, hash)) {
-		//vector<std::string> chain = 
+	bool isFirstPassword = true;
+	while (std::getline(inStream, line)) {
+		auto chain = getChain(Md5Hash(line), chainLength);
 		if (isFirstLine) {
 			isFirstLine = false;
 		} else {
 			outStream << "\n\n";
 		}
+		isFirstPassword = true;
+		for (auto password: chain) {
+			if (isFirstPassword) {
+				isFirstPassword = false;
+			} else {
+				outStream << "\n";
+			}
+			outStream << password;
+		}
 	}
 }
 
-
 std::vector<std::string> 
-hacking__rainbow_table::getChain(std::string hash, int chainLength) {
+hacking__rainbow_table::getChain(Md5Hash hash, int chainLength) {
 	using namespace std;
-	vector<string> chain(chainLength);
+	vector<string> chain;
+	std::string password;
 	for (int i = 0; i < chainLength; i++) {
+		password = Md5ReverseFunc()(hash, i);
+		for (int j = i + 1; j < chainLength; j++) {
+			password = getNextInChain(password, j);
+		}
+		chain.push_back(password);
+	}
+	return chain;
+}
+
+void 
+hacking__rainbow_table::hash(std::string passwordFileName, std::string outFileName) {
+	std::ifstream inStream(passwordFileName);
+	std::ofstream outStream(outFileName);
+	std::string line;
+	bool isFirstLine = true;
+	while (std::getline(inStream, line)) {
+		if (isFirstLine) {
+			isFirstLine = false;
+		} else {
+			outStream << "\n";
+		}
+		Md5Hash hash = Md5Func()(line);
+		outStream << hash.toHexString();
 	}
 }

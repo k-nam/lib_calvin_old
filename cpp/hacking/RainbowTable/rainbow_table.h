@@ -11,16 +11,19 @@ namespace hacking__rainbow_table
 	int const MAX_PASSWORD_LENGTH = 20;
 	int const CHAIN_LENGHTH = 10;
 
-
-
 	class Md5Hash {
 	public:
-		Md5Hash(unsigned char const hash[20]);
-		Md5Hash(std::string hexString);
+		Md5Hash(Md5Hash const &rhs);
+		explicit Md5Hash(unsigned char const hash[MD5_HASH_LENGTH]);
+		explicit Md5Hash(std::string hexString);
+		Md5Hash & operator=(Md5Hash const &rhs);
+	public:
 		std::string toHexString() const;
 		unsigned char const *getData() const;
 	private:
-		unsigned char hash_[20];
+		void copyDataFrom(unsigned char const source[MD5_HASH_LENGTH]);
+	private:
+		unsigned char hash_[MD5_HASH_LENGTH];
 	};
 
 	struct Md5Func {
@@ -30,17 +33,27 @@ namespace hacking__rainbow_table
 	struct Md5ReverseFunc {
 		void operator()(unsigned char const hash[16], int indexInChain,
 									char *password, size_t &generatedPasswordLength) const;
+		std::string operator()(Md5Hash hash, int indexInChain) const;
 	};
 
-	std::string getReverseOfHash(const unsigned char hash[16], int index);
 	std::string readHashOfPassword(std::string password);
 	std::string getNextInChain(std::string password, int index);
 
 	std::pair<std::string, std::string> getFirstAndLast(std::string password, int chainLength);
 	std::pair<std::string, std::string> getFirstAndLast2(std::string password, int chainLength);
-	std::vector<std::string> getChain(std::string hash, int chainLength);
+	std::vector<std::string> getChain(Md5Hash hash, int chainLength);
 	
+	void hash(std::string passwordFileName, std::string outFileName);
+	
+
+	// preceding operation before hacking to build up hash data
+	// password -> first_last
 	void getFirstAndLast(std::string passwordFileName, std::string outFileName, int chainLength);
+
+	// hacking operations after getting hold of hash values
+	// hash -> chain
 	void getChain(std::string hashFileName, std::string outFileName, int chainLength);
+	// first -> cracked_password
+	void getPassword(std::string firstFileName, std::string outFileName, int chainLength);
 }
 #endif
