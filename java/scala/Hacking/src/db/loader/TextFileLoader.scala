@@ -5,9 +5,8 @@ import java.sql.{ DriverManager, Connection, PreparedStatement };
 import scala.collection.mutable._;
 
 class TextFileLoader(val sourceFileName: String, val connection: Connection) {
-	def loadPasswordList(tableName: String): Unit = {
+	def loadPassword(tableName: String): Unit = {
 		val reader = new BufferedReader(new InputStreamReader(new FileInputStream(sourceFileName), "UTF8"))
-		val insertStmt = connection.createStatement
 		val batchStmt = connection.prepareStatement("INSERT INTO " + tableName + " values (?)")
 		val batchSize = 10000
 		connection.setAutoCommit(false)
@@ -38,9 +37,8 @@ class TextFileLoader(val sourceFileName: String, val connection: Connection) {
 		print("loadPasswordList completed")
 	}
 
-	def loadChainList(tableName: String): Unit = {
+	def loadFirstLast(tableName: String): Unit = {
 		val reader = new BufferedReader(new InputStreamReader(new FileInputStream(sourceFileName), "UTF8"))
-		val insertStmt = connection.createStatement
 		val batchStmt = connection.prepareStatement(
 			"INSERT INTO " + tableName + " values (?, ?)")
 		var first: String = null
@@ -98,7 +96,6 @@ class TextFileLoader(val sourceFileName: String, val connection: Connection) {
 		executeBatchOrQueries(batchStmt, querySet)
 		querySet.clear
 		connection.commit
-
 			// do batch, or do each queries if fails
 			def executeBatchOrQueries(batch: PreparedStatement, querySet: Set[PreparedStatement]): Unit = {
 				try {

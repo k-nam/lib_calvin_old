@@ -17,6 +17,7 @@ namespace hacking__rainbow_table
 		explicit Md5Hash(unsigned char const hash[MD5_HASH_LENGTH]);
 		explicit Md5Hash(std::string hexString);
 		Md5Hash & operator=(Md5Hash const &rhs);
+		bool operator==(Md5Hash const &rhs) const;
 	public:
 		std::string toHexString() const;
 		unsigned char const *getData() const;
@@ -42,9 +43,10 @@ namespace hacking__rainbow_table
 	std::pair<std::string, std::string> getFirstAndLast(std::string password, int chainLength);
 	std::pair<std::string, std::string> getFirstAndLast2(std::string password, int chainLength);
 	std::vector<std::string> getChain(Md5Hash hash, int chainLength);
+	std::vector<std::string> getCrackedPassword(Md5Hash hash, std::string first, int chainLength);
+	
 	
 	void hash(std::string passwordFileName, std::string outFileName);
-	
 
 	// preceding operation before hacking to build up hash data
 	// password -> first_last
@@ -53,7 +55,8 @@ namespace hacking__rainbow_table
 	// hacking operations after getting hold of hash values
 	// hash -> chain
 	void getChain(std::string hashFileName, std::string outFileName, int chainLength);
+	// using above chain and db, we should find first (done with scala now)
 	// first -> cracked_password
-	void getPassword(std::string firstFileName, std::string outFileName, int chainLength);
+	void getCrackedPassword(std::string firstFileName, std::string outFileName, int chainLength);
 }
 #endif

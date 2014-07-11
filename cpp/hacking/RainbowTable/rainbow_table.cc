@@ -45,6 +45,16 @@ hacking__rainbow_table::Md5Hash::operator=(Md5Hash const &rhs) {
 	return *this;
 }
 
+bool
+hacking__rainbow_table::Md5Hash::operator==(Md5Hash const &rhs) const {
+	for (int i =  0; i < MD5_HASH_LENGTH; i++) {
+		if (hash_[i] != rhs.getData()[i]) {
+			return false;
+		}
+	}	
+	return true;
+}
+
 void
 hacking__rainbow_table::Md5Hash::copyDataFrom(unsigned char const source[MD5_HASH_LENGTH]) {
 	for (int i =  0; i < MD5_HASH_LENGTH; i++) {
@@ -150,6 +160,56 @@ hacking__rainbow_table::getFirstAndLast2(std::string password, int chainLength) 
 	return std::make_pair(password, last);
 }
 
+std::vector<std::string> 
+hacking__rainbow_table::getChain(Md5Hash hash, int chainLength) {
+	using namespace std;
+	vector<string> chain;
+	std::string password;
+	for (int i = 0; i < chainLength; i++) {
+		password = Md5ReverseFunc()(hash, i);
+		for (int j = i + 1; j < chainLength; j++) {
+			password = getNextInChain(password, j);
+		}
+		chain.push_back(password);
+	}
+	return chain;
+}
+
+std::vector<std::string>
+hacking__rainbow_table::getCrackedPassword(Md5Hash hash, std::string first, int chainLength) {
+	std::cout << "get cracked hash: " << hash.toHexString() << " first: " << first << "\n";
+	std::vector<std::string> crackedPassword;
+	std::string password = first;
+	for (int i = 0; i < chainLength - 1; i++) {
+		std::cout << "current password:___" << password << "___\n";
+		Md5Hash currentHash = Md5Func()(password);
+		std::cout << "current hash: " << currentHash.toHexString() << "\n";
+		if (currentHash == hash) {
+			crackedPassword.push_back(password);
+		} else {
+			password = Md5ReverseFunc()(currentHash, i);
+		}
+	}
+	return crackedPassword;
+}
+
+void 
+hacking__rainbow_table::hash(std::string passwordFileName, std::string outFileName) {
+	std::ifstream inStream(passwordFileName);
+	std::ofstream outStream(outFileName);
+	std::string line;
+	bool isFirstLine = true;
+	while (std::getline(inStream, line)) {
+		if (isFirstLine) {
+			isFirstLine = false;
+		} else {
+			outStream << "\n";
+		}
+		Md5Hash hash = Md5Func()(line);
+		outStream << hash.toHexString();
+	}
+}
+
 void 
 hacking__rainbow_table::getFirstAndLast(
 							std::string passwordFileName, std::string outFileName, int chainLength) {
@@ -183,46 +243,48 @@ hacking__rainbow_table::getChain(
 		} else {
 			outStream << "\n\n";
 		}
+		outStream << line;
 		isFirstPassword = true;
 		for (auto password: chain) {
-			if (isFirstPassword) {
-				isFirstPassword = false;
-			} else {
-				outStream << "\n";
-			}
+			outStream << "\n";
 			outStream << password;
 		}
 	}
 }
 
-std::vector<std::string> 
-hacking__rainbow_table::getChain(Md5Hash hash, int chainLength) {
-	using namespace std;
-	vector<string> chain;
-	std::string password;
-	for (int i = 0; i < chainLength; i++) {
-		password = Md5ReverseFunc()(hash, i);
-		for (int j = i + 1; j < chainLength; j++) {
-			password = getNextInChain(password, j);
-		}
-		chain.push_back(password);
-	}
-	return chain;
-}
 
 void 
-hacking__rainbow_table::hash(std::string passwordFileName, std::string outFileName) {
-	std::ifstream inStream(passwordFileName);
+hacking__rainbow_table::getCrackedPassword(
+				std::string firstFileName, std::string outFileName, int chainLength) {
+	std::ifstream inStream(firstFileName);
 	std::ofstream outStream(outFileName);
 	std::string line;
+	unsigned char dummy[MD5_HASH_LENGTH]; // Md5Hash doesn't have default ctor
+	Md5Hash hash(dummy);
+	bool isFirstParagraph = true;
 	bool isFirstLine = true;
 	while (std::getline(inStream, line)) {
 		if (isFirstLine) {
+			if (isFirstParagraph) {
+				isFirstParagraph = false;
+			} else {
+				outStream << "\n\n";
+			}
+			hash = Md5Hash(line); // read hex string
+			outStream << line;
 			isFirstLine = false;
 		} else {
-			outStream << "\n";
+			if (line == "") {
+				isFirstLine = true;
+			} else {
+				auto passwords = getCrackedPassword(hash, line, chainLength);
+				for (auto password: passwords) {
+					outStream << "\n";
+					outStream << password;
+				}
+			}
 		}
-		Md5Hash hash = Md5Func()(line);
-		outStream << hash.toHexString();
 	}
 }
+
+
