@@ -14,12 +14,12 @@ object Main {
 		//new BinaryFileCopier("realhuman_phill.txt", "output.txt", 1000000)
 
 		//new SqlServerDbManager("aaa").start
-		new TextFileLoader("E:\\hacking/password_under_20digit.txt", new SqlServerDbManager("Hacking").connection).
-			loadPassword("Password.CommonPasswordUnder20Digit")
-		//new TextFileLoader("E:\\hacking/chain.txt", new SqlServerDbManager("Hacking").connection).
+		//new TextFileLoader("E:\\hacking/password_under_20digit.txt", new SqlServerDbManager("Hacking").connection).
+		//	loadPassword("Password.CommonPasswordUnder20Digit")
+		//new TextFileLoader("E:\\hacking/password_under_20digit_first_last.txt", new SqlServerDbManager("Hacking").connection).
 		//loadFirstLast("RainbowTable.FirstLast_Md5_20Digit_SimpleReverse_10Iter")
 
-		//new ChainLookup("E:\\chain.txt", "E:\\first.txt", new SqlServerDbManager("Hacking").connection).
-		//lookUpChain("RainbowTable.FirstLast_Md5_20Digit_SimpleReverse_10Iter")
+		new ChainLookup("E:\\chain.txt", "E:\\first.txt", new SqlServerDbManager("Hacking").connection).
+			lookUpChain("RainbowTable.FirstLast_Md5_20Digit_SimpleReverse_10Iter")
 	}
 }

@@ -181,14 +181,14 @@ hacking__rainbow_table::getCrackedPassword(Md5Hash hash, std::string first, int 
 	std::vector<std::string> crackedPassword;
 	std::string password = first;
 	for (int i = 0; i < chainLength - 1; i++) {
-		std::cout << "current password:___" << password << "___\n";
+		//std::cout << "current password:___" << password << "___\n";
 		Md5Hash currentHash = Md5Func()(password);
-		std::cout << "current hash: " << currentHash.toHexString() << "\n";
+		//std::cout << "current hash: " << currentHash.toHexString() << "\n";
 		if (currentHash == hash) {
 			crackedPassword.push_back(password);
 		} else {
-			password = Md5ReverseFunc()(currentHash, i);
 		}
+		password = Md5ReverseFunc()(currentHash, i);
 	}
 	return crackedPassword;
 }
@@ -208,6 +208,8 @@ hacking__rainbow_table::hash(std::string passwordFileName, std::string outFileNa
 		Md5Hash hash = Md5Func()(line);
 		outStream << hash.toHexString();
 	}
+	inStream.close();
+	outStream.close();
 }
 
 void 
@@ -226,6 +228,8 @@ hacking__rainbow_table::getFirstAndLast(
 		}
 		outStream << chain.first << "\n" << chain.second;
 	}
+	inStream.close();
+	outStream.close();
 }
 
 void 
@@ -250,6 +254,8 @@ hacking__rainbow_table::getChain(
 			outStream << password;
 		}
 	}
+	inStream.close();
+	outStream.close();
 }
 
 
@@ -285,6 +291,8 @@ hacking__rainbow_table::getCrackedPassword(
 			}
 		}
 	}
+	inStream.close();
+	outStream.close();
 }
 
 
