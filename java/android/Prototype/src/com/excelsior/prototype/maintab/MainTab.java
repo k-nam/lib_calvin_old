@@ -30,6 +30,7 @@ import com.excelsior.prototype.R;
 import com.excelsior.prototype.basicinfo.BasicInfo;
 import com.excelsior.prototype.photoselector.PhotoSelector;
 import com.excelsior.prototype.testset.TestSet;
+import com.excelsior.prototype.vividcamera.VividCamera;
 import com.excelsior.prototype.wholikesme.WhoLikesMe;
 
 public class MainTab extends FragmentActivity {
@@ -43,6 +44,7 @@ public class MainTab extends FragmentActivity {
 	TestSet testSet;
 	PhotoSelector photoSelector;
 	WhoLikesMe whoLikesMe;
+	VividCamera vividCamera;
 	PagerAdapter fragmentPagerAdapter;
 	ViewPager viewPager;
 
@@ -54,8 +56,9 @@ public class MainTab extends FragmentActivity {
 		testSet = new TestSet();
 		photoSelector = new PhotoSelector();
 		whoLikesMe = new WhoLikesMe();
+		vividCamera = new VividCamera();
 		fragmentPagerAdapter = new PagerAdapter(getSupportFragmentManager(), Arrays.asList(basicInfo, testSet,
-				photoSelector, whoLikesMe));
+				photoSelector, whoLikesMe, vividCamera));
 		viewPager = (ViewPager) findViewById(R.id.main_tab_view_pager);
 		viewPager.setAdapter(fragmentPagerAdapter);
 		viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -80,20 +83,24 @@ public class MainTab extends FragmentActivity {
 		Tab testSetTab = actionBar.newTab();
 		Tab photoSelectorTab = actionBar.newTab();
 		Tab whoLikesMeTab = actionBar.newTab();
+		Tab vividCameraTab = actionBar.newTab();
 		basicInfoTab.setText("Basic info");
 		testSetTab.setText("Test");
 		photoSelectorTab.setText("Photo");
 		whoLikesMeTab.setText("WhoLikesMe");
+		vividCameraTab.setText("VividCamera");
 		// basicInfoTab.setIcon(R.drawable.icon_basic_info_tab);
 		// testSetTab.setIcon(R.drawable.icon_test_set_tab);
 		basicInfoTab.setTabListener(listener);
 		testSetTab.setTabListener(listener);
 		photoSelectorTab.setTabListener(listener);
 		whoLikesMeTab.setTabListener(listener);
+		vividCameraTab.setTabListener(listener);
 		actionBar.addTab(basicInfoTab);
 		actionBar.addTab(testSetTab);
 		actionBar.addTab(photoSelectorTab);
 		actionBar.addTab(whoLikesMeTab);
+		actionBar.addTab(vividCameraTab);
 		// finding out hash key on this machine: needed for facebook login
 		PackageInfo info;
 		try {

@@ -21,8 +21,8 @@ public class PagerAdapter extends FragmentPagerAdapter {
 
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub2
-		return 4;
+		// TODO Auto-generated method stub2w
+		return 5;
 	}
 
 	public CharSequence getPageTitle(int tabIndex) {
@@ -34,6 +34,8 @@ public class PagerAdapter extends FragmentPagerAdapter {
 			return "Photo";
 		} else if (tabIndex == 3) {
 			return "Facebook";
+		} else if (tabIndex == 4) {
+			return "VividCamera23213";
 		} else {
 			return "error";
 		}
