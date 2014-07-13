@@ -43,8 +43,8 @@ public:
 			return IteratorImpl(pointer_ + offset); }
 		IteratorImpl const operator-(ptrdiff_t offset) const { 
 			return IteratorImpl(pointer_ - offset); }
-		IteratorImpl & operator+=(ptrdiff_t offset) { pointer += offset; return *this;}
-		IteratorImpl & operator-=(ptrdiff_t offset) { pointer -= offset; return *this;}
+		IteratorImpl & operator+=(ptrdiff_t offset) { pointer_ += offset; return *this;}
+		IteratorImpl & operator-=(ptrdiff_t offset) { pointer_ -= offset; return *this;}
 		IteratorImpl & operator++() { ++pointer_; return *this; }
 		IteratorImpl & operator--() { --pointer_; return *this; }
 		IteratorImpl const operator++(int) { IteratorImpl temp = *this; ++(*this); return temp; }
