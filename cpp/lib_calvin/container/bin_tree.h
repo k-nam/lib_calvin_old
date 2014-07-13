@@ -127,9 +127,9 @@ private:
 	BinTreeNode<T> *getFirstNode() const; // for begin()
 	BinTreeNode<T> *deleteValueInNode(BinTreeNode<T> *); // erase this node
 	void copyFrom(BinTree const &rhs); // should be called only when empty
-	BinTreeNode<T> *makeNewNode(T const &elem) const;
-	BinTreeNode<T> *makeNewNode(T &&elem) const;
-	BinTreeNode<T> *makeNewNode(BinTreeNode<T> const *rhs) const;
+	virtual BinTreeNode<T> *makeNewNode(T const &elem) const;
+	virtual BinTreeNode<T> *makeNewNode(T &&elem) const;
+	virtual BinTreeNode<T> *makeNewNode(BinTreeNode<T> const *rhs) const;
 	BinTreeNode<T> *makeEndNode() const;
 	// Copy nodes recursively. A copy of the tree pointed by 'srcNode' will 
 	// be created, and 'targetNode' shall point to the root of copied tree.
@@ -476,16 +476,11 @@ void BinTree<T, Comp, K, ExtractKey>::insert(InputIterator beg, InputIterator en
 
 template <typename T, typename Comp, typename K, typename ExtractKey>
 size_t BinTree<T, Comp, K, ExtractKey>::erase(K const &key) {
-	BinTreeNode<T> *deleted = erase_impl(key);
-	if (deleted == NULL) {
+	BinTreeNode<T> *nodeToDelete = erase_impl(key);
+	if (nodeToDelete == NULL) {
 		return 0;
 	} else {
-		delete deleted;
-		size--;
-		if (empty()) {
-			operator delete (end_);
-			end_ = NULL;
-		}
+		delete nodeToDelete;
 		return 1;
 	}
 }
@@ -761,20 +756,19 @@ BinTree<T, Comp, K, ExtractKey>::binTreeNodeCopy(BinTreeNode<T> *srcNode, BinTre
 template <typename T, typename Comp, typename K, typename ExtractKey>
 BinTreeNode<T> *
 BinTree<T, Comp, K, ExtractKey>::makeNewNode(T &&key) const { 
-	return new RbTreeNode<T>(std::forward<T>(key)); 
+	return new BinTreeNode<T>(std::forward<T>(key)); 
 }
 
 template <typename T, typename Comp, typename K, typename ExtractKey>
 BinTreeNode<T> *
 BinTree<T, Comp, K, ExtractKey>::makeNewNode(T const &key) const { 
-	return new RbTreeNode<T>(key); 
+	return new BinTreeNode<T>(key); 
 }
 
 template <typename T, typename Comp, typename K, typename ExtractKey>
 BinTreeNode<T> *
 BinTree<T, Comp, K, ExtractKey>::makeNewNode(BinTreeNode<T> const *rhs) const { 
-	return new RbTreeNode<T>(rhs->getKey(), 
-		static_cast<RbTreeNode<T> const *>(rhs)->getColor());
+	return new BinTreeNode<T>(rhs->getKey());
 }
 
 template <typename T, typename Comp, typename K, typename ExtractKey>

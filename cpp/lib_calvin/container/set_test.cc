@@ -29,8 +29,8 @@ void lib_calvin_container::setTest() {
 	//setRvalueTest(BPlusTree<HeavyObjectWithMessage>(), "BPlusTree / HeavyObject");
 
 	int const testSize = 1000;
-	setFunctionTest(lib_calvin::set<int>(), testSize, "lib_calvin::set");
-	//setFunctionTest(BinTree<int>(), testSize, "lib_calvin_container::BinTree");
+	//setFunctionTest(lib_calvin::set<int>(), testSize, "lib_calvin::set");
+	setFunctionTest(BinTree<int>(), testSize, "lib_calvin_container::BinTree");
 	setFunctionTest(RbTree<HeavyObject>(), testSize, "lib_calvin_container::RbTree");
 	setFunctionTest(BTree<HeavyObject>(), testSize, "lib_calvin_container::BTree");
 	setFunctionTest(BPlusTree<HeavyObject>(), testSize, "lib_calvin_container::BPlusTree");
@@ -120,9 +120,12 @@ void lib_calvin_container::setFunctionTest(Impl &&impl, size_t testSize, std::st
 	for (unsigned i = 0; i < testSize; ++i) {
 		//std::cout << i << "\n";
 		T temp = testVector[rand() % testSize];
+		T temp2 = testVector[i]; // to ensure erasing all elements during this test
 		size_t a = impl.erase(temp);
 		size_t b = stdSet.erase(temp);
-		if (a != b) {
+		size_t c = impl.erase(temp2);
+		size_t d = stdSet.erase(temp2);
+		if (a != b || c != d) {
 			cout << "erase error\n";
 			exit(0);
 		}
@@ -131,6 +134,13 @@ void lib_calvin_container::setFunctionTest(Impl &&impl, size_t testSize, std::st
 			exit(0);
 		} 
 	}		
+	// refill for next operations
+	for (unsigned i = 0; i < testSize; ++i) {
+		T temp = rand();
+		testVector[i] = temp;
+		impl.insert(temp);
+		stdSet.insert(temp);
+	}	
 
 	cout << "counting!\n"; 
 	for (unsigned i = 0; i < testSize; ++i) {
