@@ -23,12 +23,13 @@ public:
 		return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getParent()); }
 	RbTreeNode<T> *getLeftChild() const { 
 		return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getLeftChild()); }
-	RbTreeNode<T> *getRightChild() const;
-	typename RbTreeNode<T> *getChild(Direction direction) const;
+	RbTreeNode<T> *getRightChild() const { 
+		return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getRightChild()); }
+	RbTreeNode<T> *getChild(Direction direction) const { 
+		return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getChild(direction)); }
 private:
 	RbColor color_;
 };
-
 
 template <typename T, typename Comp = std::less<T>, typename K = T,
 						typename ExtractKey = std::identity<T>> 
@@ -52,11 +53,6 @@ public:
 	template <typename InputIterator>
 		void insert(InputIterator beg, InputIterator end);
 	size_t erase(K const &);
-public:
-	typedef typename BinTree::const_iterator const_iterator;
-	typedef typename BinTree::iterator iterator;
-	typedef typename BinTree::const_reverse_iterator const_reverse_iterator;
-	typedef typename BinTree::reverse_iterator reverse_iterator;
 
 private: 
 	template <typename T1>
@@ -96,17 +92,6 @@ RbTreeNode<T>::RbTreeNode(T const &key, RbColor color): BinTreeNode(key), color_
 
 template <typename T>
 RbTreeNode<T>::RbTreeNode(T &&key, RbColor color): BinTreeNode(std::forward<T>(key)), color_(color) { }
-
-template <typename T>
-RbTreeNode<T> *
-RbTreeNode<T>::getChild(Direction direction) const {
-	return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getChild(direction));
-}
-
-template <typename T>
-	RbTreeNode<T> *
-		RbTreeNode<T>::getRightChild() const { 
-		return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getRightChild()); }
 
 //-------------------------- RbTree public methods --------------------------//
 

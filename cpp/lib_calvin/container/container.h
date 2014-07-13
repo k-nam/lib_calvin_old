@@ -148,28 +148,26 @@ public:
 	typedef ptrdiff_t difference_type;
 	typedef typename Impl::iterator_category iterator_category;
 
-	Iterator(): ConstIterator<Impl>() { }
-	Iterator(Impl impl): ConstIterator<Impl>(impl) { }
-	Iterator(Iterator const &rhs): ConstIterator<Impl>(rhs) { }
-	Iterator & operator=(Iterator const &rhs) { ConstIterator<Impl>::operator=(rhs); return *this; }
+	Iterator(): ConstIterator() { }
+	Iterator(Impl impl): ConstIterator(impl) { }
+	Iterator(Iterator const &rhs): ConstIterator(rhs) { }
+	Iterator & operator=(Iterator const &rhs) { ConstIterator::operator=(rhs); return *this; }
 
 	operator ReverseIterator<Impl>() const { return ReverseIterator<Impl>(impl_); }
 	operator ConstReverseIterator<Impl>() const { return ConstReverseIterator<Impl>(impl_); }
 
-	reference operator*() const { return const_cast<reference>(ConstIterator<Impl>::operator*()); }
-	pointer operator->() const { return const_cast<pointer>(ConstIterator<Impl>::operator->()); }
+	reference operator*() const { return const_cast<reference>(ConstIterator::operator*()); }
+	pointer operator->() const { return const_cast<pointer>(ConstIterator::operator->()); }
 
 	Iterator const operator+(difference_type offset) const { return Iterator(impl_ + offset); }
 	Iterator const operator-(difference_type offset) const { return Iterator(impl_ - offset); }
 
-	Iterator & operator++() { ConstIterator<Impl>::operator++(); return *this; }
-	Iterator & operator--() { ConstIterator<Impl>::operator--(); return *this; }
+	Iterator & operator++() { ConstIterator::operator++(); return *this; }
+	Iterator & operator--() { ConstIterator::operator--(); return *this; }
 	Iterator const operator++(int) { Iterator temp = *this; ++(*this); return temp; }
 	Iterator const operator--(int) { Iterator temp = *this; --(*this); return temp; }
 
 	difference_type operator-(Iterator const &rhs) const { return impl_ - rhs.impl_; }
-protected:
-	using ConstIterator<Impl>::impl_;
 };
 
 template <typename Impl>
@@ -224,26 +222,24 @@ public:
 	typedef ptrdiff_t difference_type;
 	typedef std::bidirectional_iterator_tag iterator_category;
 
-	ReverseIterator(): ConstReverseIterator<Impl>() { }
-	ReverseIterator(Impl impl): ConstReverseIterator<Impl>(impl) { }
-	ReverseIterator(ReverseIterator const &rhs): ConstReverseIterator<Impl>(rhs) { }
-	ReverseIterator & operator=(ReverseIterator const &rhs) { ConstReverseIterator<Impl>::operator=(rhs); return *this; }
+	ReverseIterator(): ConstReverseIterator() { }
+	ReverseIterator(Impl impl): ConstReverseIterator(impl) { }
+	ReverseIterator(ReverseIterator const &rhs): ConstReverseIterator(rhs) { }
+	ReverseIterator & operator=(ReverseIterator const &rhs) { ConstReverseIterator::operator=(rhs); return *this; }
 
 	operator Iterator<Impl>() const { return Iterator<Impl>(impl_); }
 	operator ConstIterator<Impl>() const { return ConstIterator<Impl>(impl_); }
 
-	reference operator*() const { return const_cast<reference>(ConstReverseIterator<Impl>::operator*()); }
-	pointer operator->() const { return const_cast<pointer>(ConstReverseIterator<Impl>::operator->()); }
+	reference operator*() const { return const_cast<reference>(ConstReverseIterator::operator*()); }
+	pointer operator->() const { return const_cast<pointer>(ConstReverseIterator::operator->()); }
 
 	ReverseIterator const operator+(difference_type offset) const { return ReverseIterator(impl_ + offset); }
 	ReverseIterator const operator-(difference_type offset) const { return ReverseIterator(impl_ - offset); }
 
-	ReverseIterator & operator++() { ConstReverseIterator<Impl>::operator++(); return *this; }
-	ReverseIterator & operator--() { ConstReverseIterator<Impl>::operator--(); return *this; }
+	ReverseIterator & operator++() { ConstReverseIterator::operator++(); return *this; }
+	ReverseIterator & operator--() { ConstReverseIterator::operator--(); return *this; }
 	ReverseIterator const operator++(int) { ReverseIterator temp = *this; ++(*this); return temp; }
 	ReverseIterator const operator--(int) { ReverseIterator temp = *this; --(*this); return temp; }
-protected:
-	using ConstReverseIterator<Impl>::impl_;
 };
 
 // capacity of elements array is assumed
