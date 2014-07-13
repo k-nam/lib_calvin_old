@@ -42,7 +42,7 @@ private:
 // ExtractKey: function object T -> K
 // Comp: function object (K, K) -> bool
 template <typename T, typename Comp = std::less<T>, 
-	typename K = T, typename ExtractKey = std::identity<T>>
+	typename K = T, typename ExtractKey = lib_calvin_util::identity<T>>
 class BinTree {
 public:
 	typedef T value_type;
