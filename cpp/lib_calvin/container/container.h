@@ -148,22 +148,22 @@ public:
 	typedef ptrdiff_t difference_type;
 	typedef typename Impl::iterator_category iterator_category;
 
-	Iterator(): ConstIterator() { }
-	Iterator(Impl impl): ConstIterator(impl) { }
-	Iterator(Iterator const &rhs): ConstIterator(rhs) { }
-	Iterator & operator=(Iterator const &rhs) { ConstIterator::operator=(rhs); return *this; }
+	Iterator(): ConstIterator<Impl>() { }
+	Iterator(Impl impl): ConstIterator<Impl>(impl) { }
+	Iterator(Iterator const &rhs): ConstIterator<Impl>(rhs) { }
+	Iterator & operator=(Iterator const &rhs) { ConstIterator<Impl>::operator=(rhs); return *this; }
 
 	operator ReverseIterator<Impl>() const { return ReverseIterator<Impl>(impl_); }
 	operator ConstReverseIterator<Impl>() const { return ConstReverseIterator<Impl>(impl_); }
 
-	reference operator*() const { return const_cast<reference>(ConstIterator::operator*()); }
-	pointer operator->() const { return const_cast<pointer>(ConstIterator::operator->()); }
+	reference operator*() const { return const_cast<reference>(ConstIterator<Impl>::operator*()); }
+	pointer operator->() const { return const_cast<pointer>(ConstIterator<Impl>::operator->()); }
 
 	Iterator const operator+(difference_type offset) const { return Iterator(impl_ + offset); }
 	Iterator const operator-(difference_type offset) const { return Iterator(impl_ - offset); }
 
-	Iterator & operator++() { ConstIterator::operator++(); return *this; }
-	Iterator & operator--() { ConstIterator::operator--(); return *this; }
+	Iterator & operator++() { ConstIterator<Impl>::operator++(); return *this; }
+	Iterator & operator--() { ConstIterator<Impl>::operator--(); return *this; }
 	Iterator const operator++(int) { Iterator temp = *this; ++(*this); return temp; }
 	Iterator const operator--(int) { Iterator temp = *this; --(*this); return temp; }
 
