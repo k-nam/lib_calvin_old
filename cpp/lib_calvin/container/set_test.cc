@@ -34,7 +34,7 @@ void lib_calvin_container::setTest() {
 	setFunctionTest(RbTree<HeavyObject>(), testSize, "lib_calvin_container::RbTree");
 	setFunctionTest(BTree<HeavyObject>(), testSize, "lib_calvin_container::BTree");
 	setFunctionTest(BPlusTree<HeavyObject>(), testSize, "lib_calvin_container::BPlusTree");
-	//setFunctionTest(OrderedArray<HeavyObject>(), testSize, "lib_calvin_container::OrderedArray");
+	setFunctionTest(OrderedArray<HeavyObject>(), testSize, "lib_calvin_container::OrderedArray");
 	//setFunctionTest(PtrSet<int>(), testSize, "lib_calvin_container::PtrSet");
 	//setFunctionTest(HashTable<int>(), testSize,	"lib_calvin_container::HashTable");
 	//setFunctionTest(HashTable<HeavyObject>(), testSize, "lib_calvin_container::HashTable");
@@ -341,7 +341,7 @@ template <typename Impl>
 void lib_calvin_container::setPerformanceTest(Impl &&impl, int n, std::string title) {
 	cout << "Starting set performance test for " << title << "\n";
 	typedef Impl::value_type T;
-	vector<T> testVector(n), testVector2(n);
+	std::vector<T> testVector(n), testVector2(n);
 	
 	// Test case 1: random
 	for (int i = 0; i < n; ++i) {
