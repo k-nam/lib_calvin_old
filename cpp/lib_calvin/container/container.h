@@ -168,7 +168,7 @@ public:
 	Iterator const operator--(int) { Iterator temp = *this; --(*this); return temp; }
 
 	difference_type operator-(Iterator const &rhs) const { return impl_ - rhs.impl_; }
-public:
+protected:
 	using ConstIterator<Impl>::impl_;
 };
 
