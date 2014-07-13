@@ -98,7 +98,7 @@ void lib_calvin_container::setTest() {
 
 template <typename Impl>
 void lib_calvin_container::setFunctionTest(Impl &&impl, size_t testSize, std::string title) {
-	typedef Impl::value_type T;
+	typedef typename Impl::value_type T;
 	cout << "Starting set function test for " << title << "\n";
 	vector<T> testVector(testSize);
 	std::set<T> stdSet;
@@ -107,7 +107,7 @@ void lib_calvin_container::setFunctionTest(Impl &&impl, size_t testSize, std::st
 	for (unsigned i = 0; i < testSize; ++i) {
 		T temp = rand();
 		testVector[i] = temp;
-		std::pair<Impl::iterator, bool> a = impl.insert(temp);
+		std::pair<typename Impl::iterator, bool> a = impl.insert(temp);
 		std::pair<std::set<T>::iterator, bool> b = stdSet.insert(temp);
 		if (a.second != b.second || impl.size() != stdSet.size() || impl.count(temp) != stdSet.count(temp)) {			
 			correct = false;
@@ -268,11 +268,11 @@ void lib_calvin_container::setPerformanceTest_(Impl &impl, std::vector<Key> &dat
 	int numCacheHit3 = 0;
 	int numCacheHit4 = 0;
 	watch.start();
-	typename Impl::value_type iteratorCheckSum = 0;
+	typename typename Impl::value_type iteratorCheckSum = 0;
 	//int iteratorCheckSum = 0;
 	for (int i = 0; i < numIter; ++i) {
 		auto iter = impl.begin();
-		//for (Impl::iterator iter = impl.begin(); iter != impl.end(); ++iter) {
+		//for (typename Impl::iterator iter = impl.begin(); iter != impl.end(); ++iter) {
 		for (int j = 0; j < impl.size() - 10; j++) {
 			iteratorCheckSum = *iter;
 			/*
@@ -340,7 +340,7 @@ void lib_calvin_container::setPerformanceTest_(Impl &impl, std::vector<Key> &dat
 template <typename Impl>
 void lib_calvin_container::setPerformanceTest(Impl &&impl, int n, std::string title) {
 	cout << "Starting set performance test for " << title << "\n";
-	typedef Impl::value_type T;
+	typedef typename Impl::value_type T;
 	std::vector<T> testVector(n), testVector2(n);
 	
 	// Test case 1: random
@@ -422,13 +422,13 @@ void lib_calvin_container::setIteratorTest(Impl &&impl, std::string title) {
 	Impl & ref = impl;
 	Impl const & c_ref = impl;
 
-	Impl::const_iterator c_iter;
+	typename Impl::const_iterator c_iter;
 	c_iter = c_ref.begin();
 	c_iter = c_ref.end();
 	c_iter = ref.begin();
 	c_iter = ref.end();
 
-	Impl::iterator iter;
+	typename Impl::iterator iter;
 	// Below two line MUST produce compile errors
 	//iter = c_ref.begin();
 	//iter = c_ref.end();
@@ -442,7 +442,7 @@ void lib_calvin_container::setIteratorTest(Impl &&impl, std::string title) {
 	}
 	std::cout << "\n";
 	// Should produce in-order sequence
-	for (Impl::reverse_iterator r_iter = --ref.rend(); ; r_iter--) {
+	for (typename Impl::reverse_iterator r_iter = --ref.rend(); ; r_iter--) {
 		std::cout << *r_iter;
 		if (r_iter == ref.rbegin()) {
 			break;
@@ -450,12 +450,12 @@ void lib_calvin_container::setIteratorTest(Impl &&impl, std::string title) {
 	}
 	std::cout << "\n";
 	// Should produce reverse-order sequence
-	for (Impl::reverse_iterator r_iter = ref.rbegin(); r_iter != ref.rend(); ++r_iter) {
+	for (typename Impl::reverse_iterator r_iter = ref.rbegin(); r_iter != ref.rend(); ++r_iter) {
 		std::cout << *r_iter;
 	}
 	std::cout << "\n";
 	// Should produce reverse-order sequence
-	for (Impl::iterator iter = --ref.end(); ; iter--) {
+	for (typename Impl::iterator iter = --ref.end(); ; iter--) {
 		std::cout << *iter;
 		if (iter == ref.begin()) {
 			break;
@@ -466,7 +466,7 @@ void lib_calvin_container::setIteratorTest(Impl &&impl, std::string title) {
 
 template <typename Impl>
 void lib_calvin_container::setMemoryTest(Impl &&impl, std::string title) {
-	typedef Impl::value_type T;
+	typedef typename Impl::value_type T;
 	std::cout << "Starting memory test for: " << title << "\n";
 	for (int i = 1000000; i > 0; --i) {
 		for (int i = 0; i < 300; ++i) {
