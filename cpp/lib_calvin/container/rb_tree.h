@@ -24,7 +24,7 @@ public:
 	RbTreeNode<T> *getLeftChild() const { 
 		return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getLeftChild()); }
 	RbTreeNode<T> *getRightChild() const;
-	RbTreeNode<T> *getChild(Direction direction) const;
+	typename RbTreeNode<T> *getChild(Direction direction) const;
 private:
 	RbColor color_;
 };
