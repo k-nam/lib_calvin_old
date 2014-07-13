@@ -16,6 +16,7 @@ private:
 	// only leaf root grows (by reserve())
 	static int const B_TREE_FULL_NODE_CAPACITY = 127;
 	static int const B_TREE_ROOT_INIT_CAPACITY = 4;
+	static int const B_TREE_END_NODE_CAPACITY = 1;
 	static int const B_TREE_NODE_REALLOC_MULTIPLIER = 2;
 	class InternalNode;
 	// btree node. number of links in a node: t ~ 2t, number of elements in a node:
@@ -39,6 +40,8 @@ private:
 		T const &getElement(int index) const;
 		T const &getFirstElement() const;
 		T const &getLastElement() const;
+		T *getElementArray();
+		T const *getElementArray() const;
 		void constructElement(int index, T const &elem);
 		void constructElement(int index, T &&elem);
 		void assignElement(int index, T const &elem);
@@ -69,9 +72,6 @@ private:
 		void setNext(Node *next);
 		void setPrevious(Node *previous);
 #endif
-	private:
-		T *getElementArray();
-		T const *getElementArray() const;
 	private:
 		int getIndexInParent() const;
 		void setIndexInParent(int index);
@@ -281,7 +281,7 @@ private:
 	size_t size_;
 	Node *root_;
 public:
-	friend class BTreeTest<T>;
+	friend class BTreeTest<T, Comp, K, ExtractKey>;
 };
 
 template <typename T, typename Comp, typename K, typename ExtractKey>
@@ -1475,8 +1475,16 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::makeNewLeafNode(int capacity) {
 		fullNode->elements_ = fullNode->elements2_;
 		newNode = fullNode;
 	} else {
+		if (capacity < B_TREE_END_NODE_CAPACITY) {
+			std::cout << "makeNewLeafNode error\n";
+			exit(0);
+		}
 		newNode = static_cast<Node *>(operator new(sizeof(Node)));
-		newNode->elements_ = static_cast<T *>(operator new(sizeof(T) * capacity));
+		if (capacity > B_TREE_END_NODE_CAPACITY) {
+			newNode->elements_ = static_cast<T *>(operator new(sizeof(T) * capacity));
+		} else if (capacity == B_TREE_END_NODE_CAPACITY) {	
+			newNode->elements_ = NULL;
+		}
 	}
 	newNode->isLeafNode_ = true;
 	newNode->setSize(0);
@@ -1499,6 +1507,10 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::makeNewInternalNode(int capacity) {
 		fullNode->elements_ = fullNode->elements2_;
 		fullNode->children_ = fullNode->children2_;
 		newNode = fullNode;
+	} else if (capacity == B_TREE_END_NODE_CAPACITY) {
+		newNode = static_cast<InternalNode *>(operator new(sizeof(InternalNode)));
+		newNode->elements_ = NULL;
+		newNode->children_ = static_cast<Node **>(operator new(sizeof(Node *) * (capacity + 1)));
 	} else {
 		std::cout << "makeNewInternalNode error\n";
 		exit(0);
