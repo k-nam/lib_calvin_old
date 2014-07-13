@@ -224,10 +224,10 @@ public:
 	typedef ptrdiff_t difference_type;
 	typedef std::bidirectional_iterator_tag iterator_category;
 
-	ReverseIterator(): ConstReverseIterator() { }
-	ReverseIterator(Impl impl): ConstReverseIterator(impl) { }
-	ReverseIterator(ReverseIterator const &rhs): ConstReverseIterator(rhs) { }
-	ReverseIterator & operator=(ReverseIterator const &rhs) { ConstReverseIterator::operator=(rhs); return *this; }
+	ReverseIterator(): ConstReverseIterator<Impl>() { }
+	ReverseIterator(Impl impl): ConstReverseIterator<Impl>(impl) { }
+	ReverseIterator(ReverseIterator const &rhs): ConstReverseIterator<Impl>(rhs) { }
+	ReverseIterator & operator=(ReverseIterator const &rhs) { ConstReverseIterator<Impl>::operator=(rhs); return *this; }
 
 	operator Iterator<Impl>() const { return Iterator<Impl>(impl_); }
 	operator ConstIterator<Impl>() const { return ConstIterator<Impl>(impl_); }
@@ -238,8 +238,8 @@ public:
 	ReverseIterator const operator+(difference_type offset) const { return ReverseIterator(impl_ + offset); }
 	ReverseIterator const operator-(difference_type offset) const { return ReverseIterator(impl_ - offset); }
 
-	ReverseIterator & operator++() { ConstReverseIterator::operator++(); return *this; }
-	ReverseIterator & operator--() { ConstReverseIterator::operator--(); return *this; }
+	ReverseIterator & operator++() { ConstReverseIterator<Impl>::operator++(); return *this; }
+	ReverseIterator & operator--() { ConstReverseIterator<Impl>::operator--(); return *this; }
 	ReverseIterator const operator++(int) { ReverseIterator temp = *this; ++(*this); return temp; }
 	ReverseIterator const operator--(int) { ReverseIterator temp = *this; --(*this); return temp; }
 };
