@@ -25,11 +25,11 @@ public:
 		return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getLeftChild()); }
 	RbTreeNode<T> *getRightChild() const { 
 		return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getRightChild()); }
-	RbTreeNode<T> *getChild(Direction direction) const { 
-		return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getChild(direction)); }
+	RbTreeNode<T> *getChild(Direction direction) const;
 private:
 	RbColor color_;
 };
+
 
 template <typename T, typename Comp = std::less<T>, typename K = T,
 						typename ExtractKey = std::identity<T>> 
@@ -97,6 +97,13 @@ RbTreeNode<T>::RbTreeNode(T const &key, RbColor color): BinTreeNode(key), color_
 
 template <typename T>
 RbTreeNode<T>::RbTreeNode(T &&key, RbColor color): BinTreeNode(std::forward<T>(key)), color_(color) { }
+
+template <typename T>
+RbTreeNode<T> *
+RbTreeNode<T>::getChild(Direction direction) const {
+	return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getChild(direction));
+}
+
 
 //-------------------------- RbTree public methods --------------------------//
 
