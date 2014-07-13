@@ -5,8 +5,9 @@
 #endif
 
 #include "container.h"
+#include "utility.h"
 
-template <typename T, typename Comp = std::less<T>, typename K = T, typename ExtractKey = typename std::identity<T>>
+template <typename T, typename Comp = std::less<T>, typename K = T, typename ExtractKey = lib_calvin_util::identity<T>>
 class B_TREE_BASE 
 {
 private:

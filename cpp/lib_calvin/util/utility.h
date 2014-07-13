@@ -39,6 +39,13 @@ namespace lib_calvin_util
 
 	template <typename T>
 		T const &minimum(T const &, T const &);
+
+	template <typename T>
+		class identity {
+		public:
+			T const & operator()(T const &object) const { return object; }
+			T & operator()(T &object) { return object; }
+		};
 } 
  
 // print the elements the a container
