@@ -18,9 +18,6 @@
     <ClCompile Include="adt.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="container_main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="set_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -37,6 +34,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="container_test.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="container_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

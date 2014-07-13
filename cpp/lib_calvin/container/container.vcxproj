@@ -288,7 +288,7 @@
   <ItemGroup>
     <ClCompile Include="adt.cc" />
     <ClCompile Include="b_tree_test.cc" />
-    <ClCompile Include="container_main.cpp" />
+    <ClCompile Include="container_main.cc" />
     <ClCompile Include="container_test.cc" />
     <ClCompile Include="map_test.cc" />
     <ClCompile Include="set_test.cc" />
