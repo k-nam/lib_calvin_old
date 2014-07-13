@@ -39,24 +39,24 @@ namespace lib_calvin
 }
 
 #else
+#include <time.h>
+
 namespace lib_calvin
 {
 class stopwatch {
   public:
     stopwatch() {
-
     }
     void start() {
-
+			start_ = clock();
     }
     void stop() {
-
+			finish_ = clock();
     }
-    double read() {  }
+		double read() { return static_cast<float>(finish_ - start_) / CLOCKS_PER_SEC;  }
   private:
-    double start_;
-    double finish_;
-    double frequency_;
+		clock_t start_;
+		clock_t finish_;
   };
 }
 
