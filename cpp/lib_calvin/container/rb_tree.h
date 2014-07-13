@@ -53,6 +53,11 @@ public:
 	template <typename InputIterator>
 		void insert(InputIterator beg, InputIterator end);
 	size_t erase(K const &);
+public:
+	typedef typename BinTree::const_iterator const_iterator;
+	typedef typename BinTree::iterator iterator;
+	typedef typename BinTree::const_reverse_iterator const_reverse_iterator;
+	typedef typename BinTree::reverse_iterator reverse_iterator;
 
 private: 
 	template <typename T1>
