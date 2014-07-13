@@ -1,7 +1,7 @@
 #include "common_thread.h"
 // abc
 
-#ifdef WIN32
+#ifdef _WIN32
 
 // Windows version
 #include <Windows.h>

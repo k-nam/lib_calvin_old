@@ -1,6 +1,8 @@
 #ifndef LIB_CALVIN__UTIL__STOPWATCH_H
 #define LIB_CALVIN__UTIL__STOPWATCH_H
 
+#ifdef _WIN32
+
 #include <Windows.h>
 
 namespace lib_calvin_stopwatch
@@ -35,5 +37,31 @@ namespace lib_calvin
     double frequency_;
   };
 }
+
+#else
+namespace lib_calvin
+{
+class stopwatch {
+  public:
+    stopwatch() {
+
+    }
+    void start() {
+
+    }
+    void stop() {
+
+    }
+    double read() {  }
+  private:
+    double start_;
+    double finish_;
+    double frequency_;
+  };
+}
+
+#endif
+
+
 
 #endif

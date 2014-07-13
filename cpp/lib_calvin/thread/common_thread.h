@@ -4,7 +4,7 @@
 // Function type will be coerced to suitable type for each platform
 
 
-#ifdef WIN32
+#ifdef _WIN32
 
 // Windows version
 #include <Windows.h>
