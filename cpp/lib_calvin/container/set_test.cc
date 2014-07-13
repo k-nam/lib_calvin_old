@@ -484,7 +484,7 @@ void lib_calvin_container::setMemoryTest(Impl &&impl, std::string title) {
 template <typename Impl>
 void lib_calvin_container::setRvalueTest(Impl &&impl, std::string title) {
 	std::cout << "Starting set rvalue test for: " << title << "\n";
-	typedef Impl::value_type V;
+	typedef typename Impl::value_type V;
 	std::cout << "Test copy & assignment of container itself:\n";
 	Impl impl2;
 	impl2 = Impl();
