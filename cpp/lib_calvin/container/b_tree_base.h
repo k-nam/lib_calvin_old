@@ -122,8 +122,11 @@ private:
 		// for mergeNode method
 		void eraseChild(int index);
 		void eraseElementAndChild(int index);
-	public:
+	protected:
 		using Node::getSize;
+		using Node::eraseFirstElement;
+		using Node::eraseLastElement;
+		using Node::eraseElement;
 	private:
 		Node **children_;
 	};
