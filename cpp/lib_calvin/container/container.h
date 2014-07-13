@@ -242,6 +242,8 @@ public:
 	ReverseIterator & operator--() { ConstReverseIterator<Impl>::operator--(); return *this; }
 	ReverseIterator const operator++(int) { ReverseIterator temp = *this; ++(*this); return temp; }
 	ReverseIterator const operator--(int) { ReverseIterator temp = *this; --(*this); return temp; }
+protected:
+	using ConstReverseIterator<Impl>::impl_;
 };
 
 // capacity of elements array is assumed
