@@ -232,8 +232,8 @@ public:
 	operator Iterator<Impl>() const { return Iterator<Impl>(impl_); }
 	operator ConstIterator<Impl>() const { return ConstIterator<Impl>(impl_); }
 
-	reference operator*() const { return const_cast<reference>(ConstReverseIterator::operator*()); }
-	pointer operator->() const { return const_cast<pointer>(ConstReverseIterator::operator->()); }
+	reference operator*() const { return const_cast<reference>(ConstReverseIterator<Impl>::operator*()); }
+	pointer operator->() const { return const_cast<pointer>(ConstReverseIterator<Impl>::operator->()); }
 
 	ReverseIterator const operator+(difference_type offset) const { return ReverseIterator(impl_ + offset); }
 	ReverseIterator const operator-(difference_type offset) const { return ReverseIterator(impl_ - offset); }
