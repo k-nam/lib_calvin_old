@@ -23,8 +23,7 @@ public:
 		return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getParent()); }
 	RbTreeNode<T> *getLeftChild() const { 
 		return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getLeftChild()); }
-	RbTreeNode<T> *getRightChild() const { 
-		return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getRightChild()); }
+	RbTreeNode<T> *getRightChild() const;
 	RbTreeNode<T> *getChild(Direction direction) const;
 private:
 	RbColor color_;
@@ -104,6 +103,10 @@ RbTreeNode<T>::getChild(Direction direction) const {
 	return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getChild(direction));
 }
 
+template <typename T>
+	RbTreeNode<T> *
+		RbTreeNode<T>::getRightChild() const { 
+		return static_cast<RbTreeNode<T> *>(BinTreeNode<T>::getRightChild()); }
 
 //-------------------------- RbTree public methods --------------------------//
 
