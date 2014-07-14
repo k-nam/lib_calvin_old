@@ -206,14 +206,6 @@ public:
 // ..symmetry at all times.
 template <typename V, typename E>
 class undirected_graph: public lib_calvin::graph<V, E> {
-protected:
-  using graph<V, E>::numV_;
-  using graph<V, E>::numE_;
-  using graph<V, E>::isDynamic_;
-  using graph<V, E>::mapping_;
-  using graph<V, E>::dynamicData_;
-  using graph<V, E>::arrayData_;
-  using graph<V, E>::goStatic;
 public:
   // override some methods to ensure symmetry
   virtual ~undirected_graph() {}

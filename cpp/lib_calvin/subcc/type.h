@@ -70,7 +70,6 @@ class Type {
 
 class BaseType: public Type {
   public:
-    using Type::width_;
     BaseType(enum BaseTypes baseTypeValue);
 		~BaseType();
     virtual bool operator== (Type const &) const;
@@ -86,7 +85,6 @@ class BaseType: public Type {
 // Equality holds only for identical types: not structural equality!
 class RecordType: public Type {
   public:
-    using Type::width_;
     RecordType(string const &name, SymbolTable const &environment);
 		~RecordType();
     bool operator== (Type const &) const;
@@ -104,7 +102,6 @@ class RecordType: public Type {
 
 class ArrayType: public Type {
   public:
-    using Type::width_;
     ArrayType(int arraySize, shared_ptr<Type const> elementType): 
       Type(TYPE_ARRAY, elementType->getWidth() * arraySize), 
       arraySize_(arraySize), elementType_(elementType) { }
@@ -126,7 +123,6 @@ class ArrayType: public Type {
 // ..considered equal in comparison of each element types.
 class ProductType: public Type {
   public:
-    using Type::width_;
     ProductType(vector<shared_ptr<Type const>> const &types);
 		~ProductType();
     bool operator== (Type const &) const; // for function call arguments validity
@@ -140,7 +136,6 @@ class ProductType: public Type {
 // domain type is always product type
 class FuncType: public Type {
   public:
-    using Type::width_;
     FuncType(shared_ptr<ProductType const> domainType, 
 			shared_ptr<Type const> codomainType): 
       Type(TYPE_FUNC, 0), domainType_(domainType), codomainType_(codomainType) { }
