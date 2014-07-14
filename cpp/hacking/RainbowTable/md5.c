@@ -427,7 +427,6 @@ static const unsigned char md5_hmac_test_sum[7][16] =
 */
 void hacking__md5::md5(const unsigned char *input, size_t ilen, unsigned char output[16])
 {
-	using namespace hacking__md5;
 	md5_context ctx;
 
 	md5_starts(&ctx);

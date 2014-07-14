@@ -282,16 +282,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="abstract_string.cc" />
-    <ClCompile Include="string_main.cpp" />
+    <ClCompile Include="string_main.cc" />
     <ClCompile Include="string_test.cc" />
     <ClCompile Include="..\util\Stopwatch.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="abstract_string.h" />
     <ClInclude Include="string_test.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -175,7 +175,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="parser.cc" />
-    <ClCompile Include="parser_main.cpp" />
+    <ClCompile Include="parser_main.cc" />
     <ClCompile Include="parser_test.cc" />
   </ItemGroup>
   <ItemGroup>

@@ -204,7 +204,7 @@
     <ClCompile Include="..\subcc\type.cc" />
     <ClCompile Include="..\thread\common_thread.cc" />
     <ClCompile Include="..\util\stopwatch.cc" />
-    <ClCompile Include="test_main.cpp" />
+    <ClCompile Include="test_main.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

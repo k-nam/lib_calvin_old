@@ -32,9 +32,6 @@
     <ClCompile Include="file_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sort_main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="sort_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -43,6 +40,9 @@
     </ClCompile>
     <ClCompile Include="..\util\stopwatch.cc">
       <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sort_main.cc">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

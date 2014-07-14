@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="util_main.cpp">
+    <ClCompile Include="stopwatch.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stopwatch.cc">
+    <ClCompile Include="util_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,8 +29,5 @@
     <ClInclude Include="stopwatch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ReadMe.txt" />
   </ItemGroup>
 </Project>

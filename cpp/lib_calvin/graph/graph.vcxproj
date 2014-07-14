@@ -284,7 +284,7 @@
   <ItemGroup>
     <ClCompile Include="..\thread\common_thread.cc" />
     <ClCompile Include="graph.cc" />
-    <ClCompile Include="graph_main.cpp" />
+    <ClCompile Include="graph_main.cc" />
     <ClCompile Include="graph_test.cc" />
     <ClCompile Include="..\container\adt.cc" />
     <ClCompile Include="..\util\Stopwatch.cc" />
@@ -292,9 +292,6 @@
   <ItemGroup>
     <ClInclude Include="graph.h" />
     <ClInclude Include="graph_test.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

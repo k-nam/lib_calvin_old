@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="thread_main.cpp">
+    <ClCompile Include="common_thread.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="common_thread.cc">
+    <ClCompile Include="thread_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,8 +26,5 @@
     <ClInclude Include="common_thread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ReadMe.txt" />
   </ItemGroup>
 </Project>

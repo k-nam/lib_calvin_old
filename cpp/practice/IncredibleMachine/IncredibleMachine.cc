@@ -1,4 +1,3 @@
-#include "stdafx.h"
 #include "IncredibleMachine.h"
 
 #include <iostream>

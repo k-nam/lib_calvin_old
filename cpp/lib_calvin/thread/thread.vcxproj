@@ -270,13 +270,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="common_thread.cc" />
-    <ClCompile Include="thread_main.cpp" />
+    <ClCompile Include="thread_main.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common_thread.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

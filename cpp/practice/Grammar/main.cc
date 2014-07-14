@@ -1,13 +1,10 @@
-// Grammar.cpp : Defines the entry point for the console application.
-//
 
-#include "stdafx.h"
 #include "Shape.h"
 #include "predicate.h"
 
 using namespace calvin;
 
-int _tmain(int argc, _TCHAR* argv[])
+int main()
 {
 	Shape *shapes = new Shape[5];
 	Shape const *shapes2 = shapes;

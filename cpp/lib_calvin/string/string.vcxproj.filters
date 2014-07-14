@@ -18,14 +18,14 @@
     <ClCompile Include="abstract_string.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="string_main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="string_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\util\Stopwatch.cc">
       <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="string_main.cc">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -35,8 +35,5 @@
     <ClInclude Include="string_test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ReadMe.txt" />
   </ItemGroup>
 </Project>

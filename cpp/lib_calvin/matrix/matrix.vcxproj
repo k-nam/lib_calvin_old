@@ -257,7 +257,7 @@
   <ItemGroup>
     <ClCompile Include="..\thread\common_thread.cc" />
     <ClCompile Include="..\util\Stopwatch.cc" />
-    <ClCompile Include="matrix_main.cpp" />
+    <ClCompile Include="matrix_main.cc" />
     <ClCompile Include="matrix_test.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
