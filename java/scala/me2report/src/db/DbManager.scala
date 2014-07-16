@@ -190,7 +190,7 @@ abstract class DbManager extends Thread {
 		val insertStmt = connection.createStatement()
 		try {
 			insertStmt.executeUpdate("Truncate table " + tableName)
-			print("Trucate OK\n");
+			print("Truncate OK\n");
 		} catch {
 			case _: Throwable => print("trunc fail");
 		}
@@ -205,17 +205,17 @@ abstract class DbManager extends Thread {
 		val shortString = "남기웅남기웅남기웅남기웅남기웅남기웅"
 		val wordString = "남기웅"
 		val startTime: Double = System.currentTimeMillis()
-		val testSize = 100000
+		val testSize = 300000
 		val rowSize = 200
 		for (i <- 1 to testSize) {
 			stmt.setInt(1, i)
-			stmt.setString(2, longString)
+			stmt.setString(2, wordString)
 			stmt.addBatch()
-			if (i % 1000 == 0) {
+			if (i % 10000 == 0) {
 				stmt.executeBatch()
 				connection.commit
 			}
-			if (i % 100000 == 0) {
+			if (i % 10000 == 0) {
 				println("Now done " + i / 1000 + " k'th row")
 			}
 		}

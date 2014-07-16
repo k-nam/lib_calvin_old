@@ -5,7 +5,7 @@ void lib_calvin_matrix::matrixTest() {
 	std::cout << "\n---------- Beginning matrix test -----------\n";
 	using boost::numeric::ublas::matrix;
 	lib_calvin::stopwatch watch;
-	int const size = 1000;
+	int const size = 2000;
 	typedef double TYPE;
 	watch.start();
 	double rtv = doGigaOps();
@@ -35,7 +35,7 @@ void lib_calvin_matrix::matrixTest() {
 		}
 	}
 
-	lib_calvin::matrix<double> m1(size);
+	lib_calvin::matrix<int64_t> m1(size);
 	m1.check();
 
 	__m128 aa = _mm_set_ps(1, 2, 3, 4);

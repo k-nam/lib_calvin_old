@@ -739,7 +739,7 @@ int const matrix<T>::trans_thre_ =
 	lib_calvin_util::maximum((int)(sqrt((float)lib_calvin_misc::L1_SIZE/2.0/sizeof(T))), 3); 
     
 template <typename T>
-int const matrix<T>::mul_thre_ = 16;
+int const matrix<T>::mul_thre_ = 32;
 			//lib_calvin_util::maximum((int)(sqrt((float)L1_SIZE/3.0/sizeof(T))/2), 3);
 			
 

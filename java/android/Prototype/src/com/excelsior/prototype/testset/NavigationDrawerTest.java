@@ -11,22 +11,19 @@ import android.view.View;
 import com.excelsior.prototype.R;
 
 public class NavigationDrawerTest extends Activity {
-
 	DrawerLayout mDrawerLayout;
 	ActionBarDrawerToggle mToggle;
 	View mDrawerView;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.navigation_drawer_test);
-
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.navigation_drawer_test__drawer_layout);
 		mDrawerView = mDrawerLayout.findViewById(R.id.navigation_drawer_test__right_drawer);
 		mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.hello_world,
 				R.string.hello_world);
 		mDrawerLayout.setDrawerListener(mToggle);
-
 		// getActionBar().setDisplayHomeAsUpEnabled(true); // shows up button
 		getActionBar().setHomeButtonEnabled(true);
 	}
@@ -61,5 +58,4 @@ public class NavigationDrawerTest extends Activity {
 		// return true;
 		// }
 	}
-
 }

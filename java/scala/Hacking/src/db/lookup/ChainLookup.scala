@@ -23,7 +23,7 @@ class ChainLookup(val chainFileName: String, val outputFileName: String, val con
 				} else {
 					writer.write("\n\n")
 				}
-				println("hash is: " + line)
+				//println("hash is: " + line)
 				writer.write(line) // copy hash
 				turn = 1;
 			} else {

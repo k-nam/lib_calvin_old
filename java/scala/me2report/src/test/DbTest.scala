@@ -17,7 +17,7 @@ object DbTest {
 	def dbManagerTest() {
 		//val dbManager = new MysqlDbManager()
 		var dbManagers = List[DbManager]()
-		for (i <- 1 to 2) {
+		for (i <- 1 to 4) {
 			dbManagers = new SqlServerDbManager() :: dbManagers
 		}
 		dbManagers(0).truncate

@@ -177,7 +177,7 @@ hacking__rainbow_table::getChain(Md5Hash hash, int chainLength) {
 
 std::vector<std::string>
 hacking__rainbow_table::getCrackedPassword(Md5Hash hash, std::string first, int chainLength) {
-	std::cout << "get cracked hash: " << hash.toHexString() << " first: " << first << "\n";
+	//std::cout << "get cracked hash: " << hash.toHexString() << " first: " << first << "\n";
 	std::vector<std::string> crackedPassword;
 	std::string password = first;
 	for (int i = 0; i < chainLength - 1; i++) {
