@@ -5,10 +5,10 @@
 void lib_calvin_string::stringTest() { 
 	std::cout << "\n---------- Beginning string test -----------\n";
 	using namespace lib_calvin_string;
-  //matchingTest(naiveMatch, "Naive string matching");
+  matchingTest(naiveMatch, "Naive string matching");
   matchingTest(basicMatch, "Basic string matching(Z-alg)");
-  //matchingTest(kmp, "KMP");
-  //matchingTest(boyerMoore, "Boyer-Moore");
+  matchingTest(kmp, "KMP");
+  matchingTest(boyerMoore, "Boyer-Moore");
 }
 
 // string class is generic with alphabet type, but we can not unit-test unless

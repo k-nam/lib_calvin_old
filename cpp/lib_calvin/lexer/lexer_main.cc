@@ -3,7 +3,7 @@
 int main(int argc, char* argv[])
 {
 	while (true)
-	lib_calvin_lexer::lexerTest();
+		lib_calvin_lexer::lexerTest();
 	return 0;
 }
 

@@ -337,9 +337,6 @@ HashTable<T, HashFunc>::insert(T const &elem) {
 template <typename T, typename HashFunc>
 size_t
 HashTable<T, HashFunc>::erase(T const &elem) {
-	if (size_ == 982) {
-		std::cout << "aa";
-	}
 	node *bucket = getBucket(elem);
 	if (bucket->next_ == NULL) { // empty slot, no delete
 		return 0;

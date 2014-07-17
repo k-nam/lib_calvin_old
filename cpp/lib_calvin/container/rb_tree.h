@@ -48,12 +48,13 @@ public:
 	RbTree &operator=(RbTree const &rhs) { return static_cast<RbTree &>(BinTree::operator=(rhs)); }
 	RbTree &operator=(RbTree &&rhs) { return static_cast<RbTree &>(BinTree::operator=(std::forward<RbTree>(rhs))); }
 	~RbTree() { }
+	typedef BinTree<T, Comp, K, ExtractKey>::iterator iterator;
 	std::pair<iterator, bool> insert(T const &);
 	std::pair<iterator, bool> insert(T &&);
 	template <typename InputIterator>
 		void insert(InputIterator beg, InputIterator end);
 	size_t erase(K const &);
-
+	
 private: 
 	template <typename T1>
 		std::pair<typename BinTree<T, Comp, K, ExtractKey>::iterator, bool> insert_(T1 &&elem);

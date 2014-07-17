@@ -308,8 +308,7 @@ void abstract_string<Alphabet>::print() const {
 
 template <typename Alphabet>
 abstract_string<Alphabet> const
-lib_calvin::operator+ (
-    abstract_string<Alphabet> const &lhs, 
+operator+ (abstract_string<Alphabet> const &lhs, 
     abstract_string<Alphabet> const &rhs) {
   
   typedef typename Alphabet::CharType Char;
