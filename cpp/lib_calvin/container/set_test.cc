@@ -29,14 +29,17 @@ void lib_calvin_container::setTest() {
 	//setRvalueTest(BPlusTree<HeavyObjectWithMessage>(), "BPlusTree / HeavyObject");
 
 	int const testSize = 1000;
-	//setFunctionTest(lib_calvin::set<int>(), testSize, "lib_calvin::set");
+	setFunctionTest(lib_calvin::set<int>(), testSize, "lib_calvin::set");
 	setFunctionTest(BinTree<int>(), testSize, "lib_calvin_container::BinTree");
 	setFunctionTest(RbTree<HeavyObject>(), testSize, "lib_calvin_container::RbTree");
 	setFunctionTest(BTree<HeavyObject>(), testSize, "lib_calvin_container::BTree");
 	setFunctionTest(BPlusTree<HeavyObject>(), testSize, "lib_calvin_container::BPlusTree");
 	setFunctionTest(OrderedArray<HeavyObject>(), testSize, "lib_calvin_container::OrderedArray");
+	/* not completed */
 	//setFunctionTest(PtrSet<int>(), testSize, "lib_calvin_container::PtrSet");
-	//setFunctionTest(HashTable<int>(), testSize,	"lib_calvin_container::HashTable");
+	/* Hash table cannot iterate in order */
+	setFunctionTest(HashTable<int>(), testSize,	"lib_calvin_container::HashTable");
+	/* boost hash function does not apply to arbitrary object */
 	//setFunctionTest(HashTable<HeavyObject>(), testSize, "lib_calvin_container::HashTable");
 	
 	//setIteratorTest(RbTree<int>(), "RbTree iterator");
@@ -45,7 +48,7 @@ void lib_calvin_container::setTest() {
 
 	int const smallSize = 1000;
 	int const mediumSize = 10000;
-	int const largeSize = 1000000;	
+	int const largeSize = 100000;	
 	//setPerformanceTest(std::set<int>(), largeSize, "std::set / int");
 	//setPerformanceTest(boost::container::set<int>(), largeSize, "boost::set / int");
 	//setPerformanceTest(BinTree<int>(), largeSize, "RbTree / int");
@@ -94,6 +97,8 @@ void lib_calvin_container::setTest() {
 	randomAccessSpeedTest(largeSize);
 
 	HeavyObject::countThisObject();
+
+	std::cout << "set test completed\n";
 }
 
 template <typename Impl>
@@ -152,14 +157,16 @@ void lib_calvin_container::setFunctionTest(Impl &&impl, size_t testSize, std::st
 		}
 	}
 	
-	cout << "iterating!\n";
-	auto stdIter = stdSet.begin();
-	for (auto implIter = impl.begin(); implIter != impl.end(); ++implIter) {
-		if (*implIter != *stdIter) {
-			cout << "iterating error\n";
-			exit(0);
+	if (title != "lib_calvin_container::HashTable") {
+		cout << "iterating!\n";
+		auto stdIter = stdSet.begin();
+		for (auto implIter = impl.begin(); implIter != impl.end(); ++implIter) {
+			if (*implIter != *stdIter) {
+				cout << "iterating error\n";
+				exit(0);
+			}
+			++stdIter;
 		}
-		++stdIter;
 	}
 	/*
 	cout << "reverse iterating!\n";

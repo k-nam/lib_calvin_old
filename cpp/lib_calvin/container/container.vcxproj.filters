@@ -101,5 +101,8 @@
     <ClInclude Include="ordered_array.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="rb_tree_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
