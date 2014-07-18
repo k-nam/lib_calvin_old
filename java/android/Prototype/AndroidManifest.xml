@@ -99,6 +99,14 @@
 			</intent-filter>
 		</activity>
 		<activity
+	android:name="com.excelsior.prototype.vividcamera.Preview"
+	android:label="@string/vividcamera__preview__title">
+			<intent-filter>
+				<action android:name="com.excelsior.prototype.VividCameraPreview" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
 			android:name="com.facebook.LoginActivity"
 			android:theme="@android:style/Theme.Translucent.NoTitleBar"
 			android:label="@string/app_name" />
