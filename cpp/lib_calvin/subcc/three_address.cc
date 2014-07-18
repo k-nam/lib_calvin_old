@@ -241,7 +241,7 @@ ThreeAdressCode::ThreeAdressCode(shared_ptr<GlobalSymbolTable const> symbolTable
   symbolTable_(symbolTable) { }
 
 ThreeAdressCode::~ThreeAdressCode() {
-	for (int i = 0; i < instructions_.size(); ++i) {
+	for (size_t i = 0; i < instructions_.size(); ++i) {
 		delete instructions_[i];
 	}
 }

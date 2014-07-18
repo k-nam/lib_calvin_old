@@ -44,7 +44,7 @@ lib_calvin::itoa(int number) {
   }
   if (minus)
     digits.push_front('-');
-  size_t len = digits.size();
+  int len = static_cast<int>(digits.size());
   char *pString = new char[len];
   for (int i = 0; i < len; ++i)
     pString[i] = digits[i];

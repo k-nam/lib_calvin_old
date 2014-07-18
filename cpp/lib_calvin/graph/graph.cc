@@ -46,7 +46,7 @@ void lib_calvin_graph::dfs1 (vector<vector<int>> const &graph,
       isVisited[top] = true;
 			int src = top;
       // push every unvisited adjacent vertices
-			for (int i = 0; i < graph[src].size(); ++i) {
+			for (size_t i = 0; i < graph[src].size(); ++i) {
         int dest = graph[src][i];
 				if (isVisited[dest]) { // do nothing for already visited vertex
           continue;
@@ -110,7 +110,7 @@ void lib_calvin_graph::bfs (vector<vector<int>> const &graph,
   
   result.clear();
   result.resize(graph.size());
-	for (int i = 0; i < graph.size(); ++i) {
+	for (size_t i = 0; i < graph.size(); ++i) {
     result[i].predecessor_ = -1; // mark as unreachable 
 	}
   // My convention for source vertex
@@ -128,7 +128,7 @@ void lib_calvin_graph::bfs (vector<vector<int>> const &graph,
     int front = queue.front();
     int distance = result[front].weight_;
 		int src = front; // rename
-    for (int i = 0; i < graph[src].size(); ++i) {
+    for (size_t i = 0; i < graph[src].size(); ++i) {
 			int target = graph[src][i];
       if (isVisited[target] == false) { // if newly discovered, relax it
         isVisited[target] = true;

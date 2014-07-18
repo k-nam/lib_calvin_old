@@ -124,7 +124,7 @@ void fileIteratorTest(std::string fileName) {
 void readFileTest(std::string fileName) {
 	std::fstream file(fileName, std::ios::in | std::ios::out | std::ios::binary);
 	file.seekg(0, std::ios::end);
-	size_t fileSize = file.tellg();
+	size_t fileSize = static_cast<size_t>(file.tellg());
 	std::cout << "fileSize is: " << fileSize << "\n";
 	file_iterator<int> begin(file, 0);
 	file_iterator<int> end(file, fileSize/sizeof(int));
@@ -144,7 +144,7 @@ void readFileTest(std::string fileName) {
 void sortFileTest(std::string fileName) {
 	std::fstream file(fileName, std::ios::in | std::ios::out | std::ios::binary);
 	file.seekg(0, std::ios::end);
-	size_t fileSize = file.tellg();
+	size_t fileSize = static_cast<size_t>(file.tellg());
 	file_iterator<int> begin(file, 0);
 	file_iterator<int> end(file, fileSize/sizeof(int));
 	introSort(begin, end);

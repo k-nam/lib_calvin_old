@@ -1,11 +1,16 @@
 #include "matrix_test.h"
+
+#ifdef _WIN64 
+#define MKL_ILP64
+#endif
+
 #include "mkl/include/mkl_boost_ublas_matrix_prod.hpp"
 
 void lib_calvin_matrix::matrixTest() {
 	std::cout << "\n---------- Beginning matrix test -----------\n";
 	using boost::numeric::ublas::matrix;
 	lib_calvin::stopwatch watch;
-	int const size = 2000;
+	int const size = 300;
 	typedef double TYPE;
 	watch.start();
 	double rtv = doGigaOps();

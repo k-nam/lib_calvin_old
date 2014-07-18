@@ -115,8 +115,8 @@ public: // basic data access
       V const & get_source() const { return source_; }
       V const & get_vertex(int index) const { return path_[index].first; }
       E const & get_edge(int index) const { return path_[index].second; }
-			std::pair<V, E> const & get_pair(int index) const { return path_[index]; }
-			std::pair<V, E> const & operator[](int index) const { return path_[index]; }
+			std::pair<V, E> const & get_pair(size_t index) const { return path_[index]; }
+			std::pair<V, E> const & operator[](size_t index) const { return path_[index]; }
     protected:
       V const source_; // source vertex
 			vector<std::pair<V, E>> const path_; // does not contain source vertex
@@ -958,7 +958,7 @@ void dijkstra (vector<vector<pair<int, W>>> const &graph, int source,
     W weight = topElem.second;
     result[top].weight_ = weight;
     // relaxation
-		for (int i = 0; i < graph[top].size(); ++i) {
+		for (size_t i = 0; i < graph[top].size(); ++i) {
       pair<int, W> const &iter = graph[top][i];
       if (isFinished[iter.first]) // do nothing if already finished
         continue;
@@ -984,7 +984,7 @@ void vellmanFord (vector<vector<pair<int, W>>> const &graph,
 		finished = true;
     // relaxation for every edges  
     for (int src = 0; src < numV; src++) {
-			for (int j = 0; j < graph[src].size(); j++) {
+			for (size_t j = 0; j < graph[src].size(); j++) {
         pair<int, W> const &iter = graph[src][j];
         Arc<W> edge (src, iter.second);
         if (relax(result[src], edge, result[iter.first])) {
@@ -1000,7 +1000,7 @@ void vellmanFord (vector<vector<pair<int, W>>> const &graph,
   // negative weighted cycle detection
   vector<Arc<W>> temp = result;
   for (int src = 0; src < numV; src++) {
-    for (int i = 0; i < graph[src].size(); ++i) {
+    for (int i = 0; i < static_cast<int>(graph[src].size()); ++i) {
       pair<int, W> const &iter = graph[src][i];
       Arc<W> edge (src, iter.second);
       relax(result[src], edge, result[iter.first]);
@@ -1156,7 +1156,7 @@ void kruskal(vector<vector<pair<int, W>>> const &graph,
   result.clear();
   // Insert all edges into an array
 	for (int src = 0; src < numV; src++) {
-		for (int i = 0; i < graph[src].size(); ++i) {
+		for (int i = 0; i < static_cast<int>(graph[src].size()); ++i) {
       pair<int, W> const &iter = graph[src][i];
       // Take only half of the entire vertices.
       if (src < iter.first) {
@@ -1220,7 +1220,7 @@ void prim (vector<vector<pair<int, W>>>const &graph,
     total += topElem.second;
     // relaxation
 		int src = top; // rename
-		for (int i = 0; i < graph[src].size(); ++i) {
+		for (int i = 0; i < static_cast<int>(graph[src].size()); ++i) {
       pair<int, W> const &iter = graph[src][i];
       if (connected[iter.first]) // do nothing for already connected one
         continue;

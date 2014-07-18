@@ -66,7 +66,7 @@ void lib_calvin_graph::getClosestPathTest() {
 	testGraph.insert(2, 4);
 	testGraph.insert(2, 3);
 	graph<int, struct empty>::path path1 = testGraph.getClosestPath(1, 4);
-	for (int i = 0; i < path1.size(); ++i) {
+	for (size_t i = 0; i < path1.size(); ++i) {
 		std::cout << path1[i].first << "\n";
 	}
 	std::cout << "\n";

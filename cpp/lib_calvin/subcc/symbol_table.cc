@@ -92,7 +92,7 @@ SymbolTable::SymbolTable(GlobalSymbolTable const &globalTable):
 SymbolTable::~SymbolTable() {
 	symtabCount--; 
 	//std::cout << "Symtab destroyed: " << symtabCount << "\n";
-	for (int i = 0; i < children_.size(); ++i) {
+	for (size_t i = 0; i < children_.size(); ++i) {
 		delete children_[i];
 	}
 }
@@ -201,7 +201,7 @@ int GlobalSymbolTable::findIndex(string const &lexeme) const {
 
 shared_ptr<Symbol const>
 GlobalSymbolTable::lookUp(int index) const {
-  if (index >= array_.size()) {
+  if (index >= static_cast<int>(array_.size())) {
     cout << "symboltable lookup index error\n";
     exit(0);
   }

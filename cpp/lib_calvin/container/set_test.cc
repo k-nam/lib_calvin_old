@@ -290,7 +290,7 @@ void lib_calvin_container::setPerformanceTest_(Impl &impl, std::vector<Key> &dat
 	for (int i = 0; i < numIter; ++i) {
 		auto iter = impl.begin();
 		//for (typename Impl::iterator iter = impl.begin(); iter != impl.end(); ++iter) {
-		for (int j = 0; j < impl.size() - 10; j++) {
+		for (int j = 0; j < static_cast<int>(impl.size()) - 10; j++) {
 			iteratorCheckSum = *iter;
 			/*
 			auto copy = iter;
@@ -517,7 +517,7 @@ void lib_calvin_container::setRvalueTest(Impl &&impl, std::string title) {
 	std::cout << "\n";
 }
 
-void lib_calvin_container::randomAccessSpeedTest(size_t size) {
+void lib_calvin_container::randomAccessSpeedTest(int size) {
 	typedef BinTreeNode<int> object;
 	lib_calvin::vector<object> objectArray(size, 1);
 	lib_calvin::vector<int> indexArray(size, 0);

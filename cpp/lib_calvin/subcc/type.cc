@@ -206,14 +206,14 @@ ProductType::ProductType(vector<shared_ptr<Type const>> const &types):
     Type(TYPE_PRODUCT), types_(types) {
 
   width_ = 0;
-  for (int i = 0; i < types.size(); ++i) {
+  for (size_t i = 0; i < types.size(); ++i) {
     width_ += types_[i]->getWidth();
   }
 }
 
 ProductType::~ProductType() {
 	//std::cout << "product type deleted\n";
-	for (int i = 0; i < types_.size(); ++i) {
+	for (size_t i = 0; i < types_.size(); ++i) {
 		if (types_[i]->isBaseType() == false && types_[i]->isRecordType() == false) {
 			//types_[i]->print();
 		  //delete types_[i];

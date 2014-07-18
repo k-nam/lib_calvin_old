@@ -307,7 +307,7 @@ lib_calvin_lexer::NfaLexerGenerator<Alphabet>::NfaLexerGenerator():
 
 template <typename Alphabet>
 lib_calvin_lexer::NfaLexerGenerator<Alphabet>::~NfaLexerGenerator() {
-	for (int i = 0; i < pSentences_.size(); ++i) {
+	for (int i = 0; i < static_cast<int>(pSentences_.size()); ++i) {
 		delete pSentences_[i];
 	}
 }

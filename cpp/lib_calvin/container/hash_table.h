@@ -230,7 +230,7 @@ HashTable<T, HashFunc>::operator=(HashTable const &rhs) {
 	tableSize_ = rhs.tableSize_;
 	hashSetSizeIndex_ = rhs.hashSetSizeIndex_;
 	table_ = new node[tableSize_ + 1];
-	for (int i = 0; i < rhs.tableSize_; ++i) {
+	for (size_t i = 0; i < rhs.tableSize_; ++i) {
 		node *sourceBucket = &rhs.table_[i];
 		node *sourceNode = sourceBucket;
 		node *targetBucket = &table_[i];
@@ -379,7 +379,7 @@ void HashTable<T, HashFunc>::rehash() {
 	hashSetSizeIndex_++;
 	tableSize_ = HASH_SET_SIZES[hashSetSizeIndex_];
 	table_ = new node[tableSize_ + 1];
-	for (int i = 0; i < oldTableSize; ++i) {
+	for (size_t i = 0; i < oldTableSize; ++i) {
 		node *sourceBucket = &oldTable[i];
 		if (sourceBucket->next_ == NULL) {
 			continue;
@@ -451,7 +451,7 @@ template <typename T, typename HashFunc>
 void HashTable<T, HashFunc>::deleteTable(node *table, size_t tableSize) {
 	//std::cout << "Destruct buckets called on tableSize: " << tableSize << 
 	//	" size: " << this->size_ << "\n" ; 
-	for (int i = 0; i < tableSize; ++i) {
+	for (size_t i = 0; i < tableSize; ++i) {
 		node *bucket = &table[i];
 		if (bucket->next_ == NULL) { // empty slot
 			continue;

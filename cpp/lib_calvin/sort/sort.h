@@ -11,6 +11,7 @@
 #include "utility.h"
 #include <cstdlib>
 #include <algorithm>
+#include <inttypes.h>
 
 #include "vector.h"
 #include "common_thread.h"
@@ -48,7 +49,7 @@ void pointerSorting(Iterator first, Iterator last);
 
 template <typename Iterator>
 void introSortPointerSorting(Iterator first, Iterator last) {
-	pointerSorting<Iterator, introSortClass> (first, last);
+	pointerSorting<Iterator, IntroSort> (first, last);
 }
 
 // Test sorting algorithms with given object type T
@@ -155,7 +156,7 @@ size_t binSearch(elemType elem, Iterator firstPartitioner, Iterator lastPartitio
 // ratio = # samples / # totalElems, but only roughly (accuracy not guaranteed)
 // result will be a sorted array of different samples
 template <typename Iterator>
-void getSamples(Iterator first, Iterator last, int sampleSize, 
+void getSamples(Iterator first, Iterator last, size_t sampleSize, 
 								vector<typename iterator_traits<Iterator>::value_type> &result);
 
 template <typename T>
@@ -430,19 +431,19 @@ void lib_calvin_sort::pointerSorting(Iterator first, Iterator last)
 {
 	typedef typename iterator_traits<Iterator>::value_type valueType;
 	typedef SortingPointer<valueType> pointerType;
-	int numElem = last - first;
+	size_t numElem = last - first;
 	pointerType *pointerArray = 
 		(pointerType *) operator new (sizeof(pointerType) * numElem);
-	for (int i = 0; i < numElem; ++i) {
+	for (size_t i = 0; i < numElem; ++i) {
 		new (pointerArray + i) pointerType(*(first + i));
 	}
-	sorter<pointerType *>()(pointerArray, pointerArray + numElem);
+	sorter<pointerType *>()(std::make_pair(pointerArray, pointerArray + numElem));
 	
 	valueType *copyArray = (valueType *) operator new (sizeof(valueType) * numElem);
-	for (int i = 0; i < numElem; ++i) {
+	for (size_t i = 0; i < numElem; ++i) {
 		new (copyArray + i) valueType(*pointerArray[i]);
 	}
-	for (int i = 0; i < numElem; ++i) {
+	for (size_t i = 0; i < numElem; ++i) {
 		*(first + i) = copyArray[i];
 	}
 	operator delete(pointerArray);
@@ -471,25 +472,25 @@ size_t lib_calvin_sort::binSearch(elemType elem, Iterator first, Iterator last) 
 }
 
 template <typename Iterator>
-void lib_calvin_sort::getSamples(Iterator first, Iterator last, int sampleSize, 
+void lib_calvin_sort::getSamples(Iterator first, Iterator last, size_t sampleSize, 
 								vector<typename iterator_traits<Iterator>::value_type> &result) {
 
 	typedef typename iterator_traits<Iterator>::value_type elemType;
-	int const overSamplingRate = 20;
-	size_t size = last - first;
+	size_t const overSamplingRate = 20;
+	ptrdiff_t size = last - first;
 	size_t numberOfElementsInCacheLine = CACHE_LINE_SIZE / sizeof(elemType);
 	if (numberOfElementsInCacheLine == 0) {
 		numberOfElementsInCacheLine = 1;
 	}
 	vector<elemType> tempResult; // may contain duplicate elements
-	int candidateSize = overSamplingRate * sampleSize;
-	for (int resultSize = 0; resultSize < candidateSize; ) {
-		int startIndex = rand() % size;
-		size_t endIndex = startIndex + numberOfElementsInCacheLine;
+	size_t candidateSize = overSamplingRate * sampleSize;
+	for (size_t resultSize = 0; resultSize < candidateSize; ) {
+		ptrdiff_t startIndex = rand() % size;
+		ptrdiff_t endIndex = startIndex + numberOfElementsInCacheLine;
 		if (endIndex > size) {
 			endIndex = size;
 		}
-		for (int index = startIndex; index < endIndex; index++) {
+		for (ptrdiff_t index = startIndex; index < endIndex; index++) {
 			tempResult.push_back(*(first + index));
 			resultSize++;
 		}
@@ -501,7 +502,7 @@ void lib_calvin_sort::getSamples(Iterator first, Iterator last, int sampleSize,
 	result.clear();
 	result.reserve(sampleSize);
 
-	for (int i = overSamplingRate / 2; i < tempResult2.size(); i += overSamplingRate) {
+	for (ptrdiff_t i = overSamplingRate / 2; i < static_cast<ptrdiff_t>(tempResult2.size()); i += overSamplingRate) {
 		result.push_back(tempResult2[i]);		
 	}
 	if (result.empty()) {
@@ -515,7 +516,7 @@ void lib_calvin_sort::removeDuplicateElements(vector<T> const &original,
 	copy.clear();
 	copy.reserve(original.size());
 	copy.push_back(original[0]);
-	for (int i = 1; i < original.size(); ++i) {
+	for (size_t i = 1; i < original.size(); ++i) {
 		if (original[i - 1] < original[i]) {
 			copy.push_back(original[i]);
 		}
@@ -983,7 +984,7 @@ void lib_calvin_sort::merge2Reversed(Iterator first, Iterator middle,
 template <typename Iterator>
 void lib_calvin_sort::mergeSort2Ascending(Iterator first, Iterator last, 
 																				Iterator target) {
-  int num = last - first;
+  size_t num = last - first;
   Iterator targetLast = target + num;
   if (last - first < 10) {
     insertionSort (target, targetLast);
@@ -999,7 +1000,7 @@ void lib_calvin_sort::mergeSort2Ascending(Iterator first, Iterator last,
 template <typename Iterator>
 void lib_calvin_sort::mergeSort2Descending(Iterator first, Iterator last, 
 																				Iterator target) {
-  int num = last - first;
+  size_t num = last - first;
   Iterator targetLast = target + num;
   if (last - first < 10) {
     insertionSort_reversed(target, targetLast);
@@ -1141,19 +1142,21 @@ void lib_calvin_sort::introSortParallelAdvanced2(Iterator first, Iterator last)
 
 template <typename Iterator>
 void lib_calvin_sort::mergeSort(Iterator first, Iterator last) {
-  size_t num = last - first;
+  ptrdiff_t num = last - first;
   // additional array for operation
   typedef typename iterator_traits<Iterator>::pointer pointerType;
 	typedef typename iterator_traits<Iterator>::value_type valueType;
 	// prepare supplementary array
   pointerType tempArray = (pointerType)operator new (sizeof(valueType) * num);
-  for (auto original = first, copy = tempArray; original != last; ++original, ++copy) {
+	auto original = first;
+	auto copy = tempArray;
+  for ( ; original != last; ++original, ++copy) {
     new (copy) valueType(*original);
   }
 	// mergesort without redundant copying
   mergeSort(tempArray, tempArray + num, first);
 	// delete supplementary array
-	for (int i = 0; i < num; ++i) {
+	for (ptrdiff_t i = 0; i < num; ++i) {
     tempArray[i].~valueType();
   }
   operator delete(tempArray);
@@ -1192,7 +1195,7 @@ void lib_calvin_sort::mergeSortParallel(Iterator first, Iterator last) {
 // ..mergesort
 template <typename Iterator>
 void lib_calvin_sort::mergeSort2(Iterator first, Iterator last) {
-  int num = last - first;
+  size_t num = last - first;
   // additional array for operation
   typedef typename iterator_traits<Iterator>::pointer Pointer;
   Pointer tempArray;
@@ -1209,15 +1212,15 @@ void lib_calvin_sort::mergeSort2(Iterator first, Iterator last) {
 
 template <typename Iterator>
 void lib_calvin_sort::countingSort(Iterator first, Iterator last) {
-  int num = static_cast<int> (last - first);
+  size_t num = last - first;
   if(num < 20) {
     insertionSort(first, last);
     return;
   }
-  int min = first->get_value();
-  int max = min;
+  ptrdiff_t min = first->get_value();
+  ptrdiff_t max = min;
   for(Iterator iter = first + 1; iter < last; ++iter) {
-    int curValue = iter->get_value();
+    ptrdiff_t curValue = iter->get_value();
     if(curValue < min) {
       min = curValue;
 		} else if(curValue > max) {
@@ -1226,54 +1229,54 @@ void lib_calvin_sort::countingSort(Iterator first, Iterator last) {
   }
   if(min == max)
     return;
-  int avgBucketPop = 5;
-  int numOfBucket = num / avgBucketPop; // at least 2
-  int bucketSize = (max - min) / numOfBucket; // set bucketSize
+  size_t avgBucketPop = 5;
+  size_t numOfBucket = num / avgBucketPop; // at least 2
+  size_t bucketSize = (max - min) / numOfBucket; // set bucketSize
   
-  //printf("max = %d, min = %d\n", max, min);
-  //printf("num of bucket is %d\n", numOfBucket);
-  //printf("bucketSize is %d\n", bucketSize);
+  //std::cout << "max = " << max << "min = " << min << "\n";
+	//std::cout << "num of bucket is " << numOfBucket << "\n";
+	//std::cout << "bucketSize is " << bucketSize << "\n";;
   if(bucketSize == 0) { // almost all elements are equal
     introSort(first, last);
     return;
   }
   // set final numOfBucket
   numOfBucket = (max - min) / bucketSize + 1;
-  int *countArray; // calculating num of elements for each bucket
-  if((countArray = (int *)malloc((numOfBucket + 1)*4)) == NULL) {
-    printf("countingSort: Malloc error.\n");
+  size_t *countArray; // calculating num of elements for each bucket
+  if((countArray = (size_t *)malloc((numOfBucket + 1)*sizeof(size_t))) == NULL) {
+    std::cout << "countingSort: Malloc error.\n";
     exit(0);
   }
-  int *startArray; // marking starting position of each bucket in the array
-  if((startArray = (int *)malloc((numOfBucket + 1)*4)) == NULL) {
-    printf("countingSort: Malloc error.\n");
+  size_t *startArray; // marking starting position of each bucket in the array
+  if((startArray = (size_t *)malloc((numOfBucket + 1)*sizeof(size_t))) == NULL) {
+    std::cout << "countingSort: Malloc error.\n";
     exit(0);
   }
-  for(int i = 0; i <= numOfBucket; ++i)
+  for(size_t i = 0; i <= numOfBucket; ++i)
     countArray[i] = 0;
 
   // counting elements for each bucket
   for(Iterator iter = first; iter < last; ++iter) 
     countArray[(iter->get_value() - min) / bucketSize]++;
   // accumulate counters to startArray
-  int sum = 0;
-  for(int i = 0; i <= numOfBucket; ++i) {
+  size_t sum = 0;
+  for(size_t i = 0; i <= numOfBucket; ++i) {
     startArray[i] = sum;
     sum += countArray[i];
     countArray[i] = startArray[i]; // copy back
   }
   if(startArray[numOfBucket] != num) {
-    printf("error\n");
+    std::cout << "error\n";
     exit(0);
   }
 
   // put elements into right bucket.
   // countArray stores the current position to insert elements
-  int curIndex = 0; // start with the first bucket and proceed
+  size_t curIndex = 0; // start with the first bucket and proceed
   while(true) {
     //cout << "piont A\n";
     while(countArray[curIndex] == startArray[curIndex + 1]) { // this bucket is done already
-      int bucketSize = startArray[curIndex + 1] - startArray[curIndex];
+      size_t bucketSize = startArray[curIndex + 1] - startArray[curIndex];
       if(bucketSize > 30 ) { // if bucket size is greater than 30
         //quickSort(array + size*(startArray[j]), tempi, size, comp);
         heapSort(first + startArray[curIndex], first + startArray[curIndex + 1]);
@@ -1293,14 +1296,14 @@ void lib_calvin_sort::countingSort(Iterator first, Iterator last) {
     if(curIndex == numOfBucket) // all done
       break;
     // starting with the rightmost element of the bucket.
-    int initialIndex = startArray[curIndex + 1] - 1;
+    size_t initialIndex = startArray[curIndex + 1] - 1;
     typename iterator_traits<Iterator>::value_type store;
     store = *(first + initialIndex); // store initail element
     while(true) {
       //cout << "piont B\n";
       // decide which bucket and position to put into
-      int bucketNum = (store.get_value() - min) / bucketSize;
-      int targetIndex = countArray[bucketNum];
+      size_t bucketNum = (store.get_value() - min) / bucketSize;
+      size_t targetIndex = countArray[bucketNum];
       ++countArray[bucketNum];
       if(targetIndex == initialIndex) { // got around to start position
         *(first + targetIndex) = store;
@@ -1325,16 +1328,16 @@ void lib_calvin_sort::bucketSort(Iterator first, Iterator last) {
 	typedef typename iterator_traits<Iterator>::pointer pointerType;
 	vector<elemType> partitioners;
 	int bucketSize = L2_CACHE_SIZE / sizeof(elemType) / 2;
-	int sampleSize = (last - first) / bucketSize;
+	size_t sampleSize = (last - first) / bucketSize;
 	if (sampleSize == 0) {
 		sampleSize = 1;
 	}
 
 	getSamples(first, last, sampleSize, partitioners);
 
-	int numberOfPartitions = partitioners.size() + 1;
+	size_t numberOfPartitions = partitioners.size() + 1;
 	vector<vector<elemType>> queues(numberOfPartitions);
-	for (int i = 0; i < numberOfPartitions; ++i) {
+	for (size_t i = 0; i < numberOfPartitions; ++i) {
 		queues[i].reserve(bucketSize);
 	}
 	for (Iterator iter = first; iter < last; iter++) {
@@ -1344,11 +1347,11 @@ void lib_calvin_sort::bucketSort(Iterator first, Iterator last) {
 		queues[bucketIndex].push_back(*iter);
   }
 	Iterator target = first;
-	for (int i = 0; i < numberOfPartitions; ++i) {
+	for (size_t i = 0; i < numberOfPartitions; ++i) {
 		if (queues[i].empty())
 			continue;
 		mergeSort(queues[i].begin(), queues[i].end());
-		for (int j = 0; j < queues[i].size(); j++) {
+		for (size_t j = 0; j < queues[i].size(); j++) {
 			*target++ = queues[i][j];
 		}
 	}

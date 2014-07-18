@@ -18,7 +18,7 @@ void subcc::subccTest(int argc, char *argv[]) {
 
 	std::ifstream stream(inputFileName);
 	stream.seekg(std::ios::end);   
-	sourceText.reserve(stream.tellg());
+	sourceText.reserve(static_cast<size_t>(stream.tellg()));
 	stream.seekg(std::ios::beg);
 	sourceText.assign((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
 	stream.close();

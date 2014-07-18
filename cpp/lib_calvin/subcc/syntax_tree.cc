@@ -47,7 +47,7 @@ NonTerminalNode::~NonTerminalNode() {
 			//std::cout << "----avoiding double delete!\n";
 		}
 	}
-	for (; childToDelete < children_.size(); childToDelete++) {
+	for (; childToDelete < static_cast<int>(children_.size()); childToDelete++) {
 		//std::cout << "Nonternalnode deleting children\n";
 		delete children_[childToDelete];
 	}
