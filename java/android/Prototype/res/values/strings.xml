@@ -35,5 +35,5 @@
 	<string name="app_id">574220329331308</string>
 	<string name="who_likes_me__title">FacebookTest</string>
 	<string name="test_set__open_facebook_test_button_text">Facebook</string>
-	<string name="camera__open_camera_button_text">Click to take a picture</string>
+	<string name="vivid_camera__open_camera_button_text">Click to take a picture</string>
 </resources>
