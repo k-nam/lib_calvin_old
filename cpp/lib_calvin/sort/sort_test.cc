@@ -27,7 +27,6 @@ void lib_calvin_sort::sortTest() {
 	sortTest<ElemType>(mergeSort2, "mergeSort2");
 	sortTest<ElemType>(std::sort, "std::sort");
 	sortTest<ElemType>(std::stable_sort, "std::stable_sort");
-	
 	sortTest<ElemType>(countingSort, "countingSort");
 	sortTest<ElemType>(introSort2, "introSort+");
 }

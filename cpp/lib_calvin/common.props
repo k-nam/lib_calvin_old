@@ -18,6 +18,9 @@
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link />
+    <Link>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>
