@@ -5,10 +5,13 @@
 	android:versionCode="1"
 	android:versionName="1.0">
 	<uses-sdk
-		android:minSdkVersion="8"
+		android:minSdkVersion="14"
 		android:targetSdkVersion="19" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.VIBRATE" />
+	<uses-permission android:name="android.permission.CAMERA" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-feature android:name="android.hardware.camera" />
 	<application
 		android:name="com.excelsior.prototype.Prototype"
 		android:allowBackup="true"
@@ -99,8 +102,8 @@
 			</intent-filter>
 		</activity>
 		<activity
-	android:name="com.excelsior.prototype.vividcamera.Preview"
-	android:label="@string/vividcamera__preview__title">
+			android:name="com.excelsior.prototype.vividcamera.Preview"
+			android:label="@string/vividcamera__preview__title">
 			<intent-filter>
 				<action android:name="com.excelsior.prototype.VividCameraPreview" />
 				<category android:name="android.intent.category.DEFAULT" />
