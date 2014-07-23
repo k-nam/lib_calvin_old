@@ -12,7 +12,7 @@ import android.view.SurfaceView;
 public class SimpleSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 	private SurfaceHolder mHolder;
 	private Camera mCamera;
-	private String TAG = "Preview";
+	public String VIVIDCAMERA_TAG = "Preview";
 
 	public SimpleSurfaceView(Context context, Camera camera) {
 		super(context);
@@ -35,7 +35,7 @@ public class SimpleSurfaceView extends SurfaceView implements SurfaceHolder.Call
 			mCamera.setPreviewDisplay(holder);
 			mCamera.startPreview();
 		} catch (IOException e) {
-			Log.e(TAG, "Error setting camera preview: " + e.getMessage());
+			Log.e(VIVIDCAMERA_TAG, "Error setting camera preview: " + e.getMessage());
 		}
 	}
 
@@ -63,7 +63,7 @@ public class SimpleSurfaceView extends SurfaceView implements SurfaceHolder.Call
 			mCamera.setPreviewDisplay(mHolder);
 			mCamera.startPreview();
 		} catch (Exception e) {
-			Log.e(TAG, "Error starting camera preview: " + e.getMessage());
+			Log.e(VIVIDCAMERA_TAG, "Error starting camera preview: " + e.getMessage());
 		}
 	}
 }
