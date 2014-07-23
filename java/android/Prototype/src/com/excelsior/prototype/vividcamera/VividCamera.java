@@ -20,19 +20,20 @@ public class VividCamera extends Fragment {
 	Button openCameraButton;
 	TextView cameraInfo;
 	private Camera mCamera;
-	private Preview mPreview;
+	private SimpleSurfaceView mPreview;
+	private int cameraIdToUse = 1;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.vivid_camera, container, false);
-		mCamera = getCameraInstance();
+		mCamera = getCameraInstance(cameraIdToUse);
 		// Create our Preview view and set it as the content of our activity.
-		mPreview = new Preview(getActivity(), mCamera);
+		mPreview = new SimpleSurfaceView(getActivity(), mCamera);
 		if (mPreview == null) {
 			Log.e("Preview", "mPreview was null");
 		}
 		FrameLayout preview = (FrameLayout) view.findViewById(R.id.vivid_camera__preview);
 		preview.addView(mPreview);
-		setCameraDisplayOrientation(getActivity(), 0, mCamera);
+		setCameraDisplayOrientation(getActivity(), cameraIdToUse, mCamera);
 		this.openCameraButton = (Button) view.findViewById(R.id.vivid_camera__open_camera_button);
 		this.cameraInfo = (TextView) view.findViewById(R.id.vivid_camera__camera_info);
 		this.setButtonListener();
@@ -42,7 +43,7 @@ public class VividCamera extends Fragment {
 	private void setButtonListener() {
 		this.openCameraButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				testCamera();
+				testCamera(cameraIdToUse);
 			}
 		});
 	}
@@ -77,9 +78,9 @@ public class VividCamera extends Fragment {
 		camera.setDisplayOrientation(result);
 	}
 
-	private void testCamera() {
+	private void testCamera(int cameraId) {
 		CameraInfo info = new CameraInfo();
-		Camera.getCameraInfo(0, info);
+		Camera.getCameraInfo(cameraId, info);
 		String output = new String();
 		if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
 			output += "Front";
@@ -87,14 +88,16 @@ public class VividCamera extends Fragment {
 			output += "Rear";
 		}
 		output += info.orientation;
+		output += " Display orientation = ";
+		output += getActivity().getWindowManager().getDefaultDisplay().getRotation();
 		this.cameraInfo.setText(output);
 	}
 
 	/** A safe way to get an instance of the Camera object. */
-	public static Camera getCameraInstance() {
+	public static Camera getCameraInstance(int cameraId) {
 		Camera c = null;
 		try {
-			c = Camera.open(); // attempt to get a Camera instance
+			c = Camera.open(cameraId); // attempt to get a Camera instance
 		} catch (Exception e) {
 			// Camera is not available (in use or does not exist)
 		}

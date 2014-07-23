@@ -10,6 +10,7 @@ import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -51,6 +52,7 @@ public class MainTab extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		setContentView(R.layout.main_tab);
 		basicInfo = new BasicInfo();
 		testSet = new TestSet();
@@ -58,7 +60,7 @@ public class MainTab extends FragmentActivity {
 		whoLikesMe = new WhoLikesMe();
 		vividCamera = new VividCamera();
 		fragmentPagerAdapter = new PagerAdapter(getSupportFragmentManager(), Arrays.asList(basicInfo, testSet,
-				photoSelector, whoLikesMe, vividCamera));
+				photoSelector, whoLikesMe));
 		viewPager = (ViewPager) findViewById(R.id.main_tab_view_pager);
 		viewPager.setAdapter(fragmentPagerAdapter);
 		viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -100,7 +102,7 @@ public class MainTab extends FragmentActivity {
 		actionBar.addTab(testSetTab);
 		actionBar.addTab(photoSelectorTab);
 		actionBar.addTab(whoLikesMeTab);
-		actionBar.addTab(vividCameraTab);
+		// actionBar.addTab(vividCameraTab);
 		// finding out hash key on this machine: needed for facebook login
 		PackageInfo info;
 		try {

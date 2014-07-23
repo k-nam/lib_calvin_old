@@ -22,7 +22,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub2w
-		return 5;
+		return mFragments.size();
 	}
 
 	public CharSequence getPageTitle(int tabIndex) {
