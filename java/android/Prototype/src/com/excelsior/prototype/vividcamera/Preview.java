@@ -44,6 +44,7 @@ public class Preview extends Activity {
 	private Context activityContext = this;
 	private boolean isShutterCallbackBusy = false;
 	private boolean isJpegCallbackBusy = false;
+	private boolean isDataProcessingBusy = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +65,7 @@ public class Preview extends Activity {
 		mCamera = VividCamera.getCameraInstance(cameraIdToUse);
 		mSurfaceView = new SimpleSurfaceView(this, mCamera);
 		mPreview.addView(mSurfaceView);
+		mCamera.startPreview();
 		if (mSurfaceView == null) {
 			Log.e(VIVIDCAMERA_TAG, "mPreview was null");
 		}
@@ -85,6 +87,8 @@ public class Preview extends Activity {
 	public void onStop() {
 		super.onStop();
 		Log.i(VIVIDCAMERA_TAG, "onStop");
+		mPreview.removeAllViews();
+		mCamera.stopPreview();
 		mCamera.setPreviewCallback(null);
 		mSurfaceView.getHolder().removeCallback(mSurfaceView);
 		mCamera.release();
@@ -118,12 +122,13 @@ public class Preview extends Activity {
 	}
 
 	private boolean isCameraBusy() {
-		return isShutterCallbackBusy || isJpegCallbackBusy;
+		return isShutterCallbackBusy || isJpegCallbackBusy || isDataProcessingBusy;
 	}
 
 	private void setCameraBusy() {
 		isShutterCallbackBusy = true;
 		isJpegCallbackBusy = true;
+		isDataProcessingBusy = true;
 	}
 
 	public void takePicture() {
@@ -135,7 +140,9 @@ public class Preview extends Activity {
 		}
 		Log.w(VIVIDCAMERA_TAG, "Picture taken");
 		mCamera.takePicture(mShutter, null, mPicture);
+		Log.w(VIVIDCAMERA_TAG, "Picture taken2");
 		try {
+			Thread.sleep(400);
 			while (true) {
 				try {
 					mCamera.startPreview();
@@ -149,6 +156,7 @@ public class Preview extends Activity {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		isDataProcessingBusy = false;
 		Log.w(VIVIDCAMERA_TAG, "Restarted preview");
 	}
 
@@ -161,7 +169,6 @@ public class Preview extends Activity {
 	private PictureCallback mPicture = new PictureCallback() {
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
-			Log.w(VIVIDCAMERA_TAG, "PictureCallback");
 			File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 			if (pictureFile == null) {
 				Log.d(VIVIDCAMERA_TAG, "Error creating media file, check storage permission");
@@ -177,6 +184,7 @@ public class Preview extends Activity {
 				Log.d(VIVIDCAMERA_TAG, "Error accessing file: " + e.getMessage());
 			}
 			isJpegCallbackBusy = false;
+			Log.w(VIVIDCAMERA_TAG, "PictureCallback finished");
 		}
 	};
 	public static final int MEDIA_TYPE_IMAGE = 1;
