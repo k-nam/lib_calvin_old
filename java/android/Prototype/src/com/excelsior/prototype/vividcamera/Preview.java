@@ -1,6 +1,12 @@
 package com.excelsior.prototype.vividcamera;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,27 +16,34 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.hardware.Camera;
+import android.hardware.Camera.PictureCallback;
+import android.hardware.Camera.ShutterCallback;
 import android.hardware.Camera.Size;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.excelsior.prototype.R;
 
 public class Preview extends Activity {
+	private FrameLayout mPreview;
 	private SimpleSurfaceView mSurfaceView;
 	private Camera mCamera;
 	private int cameraIdToUse = 1;
 	int realWidth;
 	int realHeight;
-	public String VIVIDCAMERA_TAG = "Preview";
+	public static String VIVIDCAMERA_TAG = "Preview";
 	private Context activityContext = this;
+	private boolean isShutterCallbackBusy = false;
+	private boolean isJpegCallbackBusy = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,16 +53,17 @@ public class Preview extends Activity {
 		// getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 		// WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.vividcamera_preview);
+		mPreview = (FrameLayout) findViewById(R.id.vividcamera__preview);
+		setClickListener();
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
 		Log.i(VIVIDCAMERA_TAG, "onStart");
-		FrameLayout preview = (FrameLayout) findViewById(R.id.vividcamera__preview);
 		mCamera = VividCamera.getCameraInstance(cameraIdToUse);
 		mSurfaceView = new SimpleSurfaceView(this, mCamera);
-		preview.addView(mSurfaceView);
+		mPreview.addView(mSurfaceView);
 		if (mSurfaceView == null) {
 			Log.e(VIVIDCAMERA_TAG, "mPreview was null");
 		}
@@ -94,18 +108,128 @@ public class Preview extends Activity {
 		super.onDestroy();
 	}
 
+	private void setClickListener() {
+		mPreview.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				takePicture();
+			}
+		});
+	}
+
+	private boolean isCameraBusy() {
+		return isShutterCallbackBusy || isJpegCallbackBusy;
+	}
+
+	private void setCameraBusy() {
+		isShutterCallbackBusy = true;
+		isJpegCallbackBusy = true;
+	}
+
+	public void takePicture() {
+		if (isCameraBusy()) {
+			Log.e(VIVIDCAMERA_TAG, "Camera busy");
+			return;
+		} else {
+			setCameraBusy();
+		}
+		Log.w(VIVIDCAMERA_TAG, "Picture taken");
+		mCamera.takePicture(mShutter, null, mPicture);
+		try {
+			while (true) {
+				try {
+					mCamera.startPreview();
+					break;
+				} catch (Exception e) {
+					e.printStackTrace();
+					Thread.sleep(100);
+					Log.w(VIVIDCAMERA_TAG, "Waiting loop");
+				}
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		Log.w(VIVIDCAMERA_TAG, "Restarted preview");
+	}
+
+	private ShutterCallback mShutter = new ShutterCallback() {
+		public void onShutter() {
+			Log.w(VIVIDCAMERA_TAG, "ShutterCallback");
+			isShutterCallbackBusy = false;
+		}
+	};
+	private PictureCallback mPicture = new PictureCallback() {
+		@Override
+		public void onPictureTaken(byte[] data, Camera camera) {
+			Log.w(VIVIDCAMERA_TAG, "PictureCallback");
+			File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+			if (pictureFile == null) {
+				Log.d(VIVIDCAMERA_TAG, "Error creating media file, check storage permission");
+				return;
+			}
+			try {
+				FileOutputStream fos = new FileOutputStream(pictureFile);
+				fos.write(data);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				Log.d(VIVIDCAMERA_TAG, "File not found: " + e.getMessage());
+			} catch (IOException e) {
+				Log.d(VIVIDCAMERA_TAG, "Error accessing file: " + e.getMessage());
+			}
+			isJpegCallbackBusy = false;
+		}
+	};
+	public static final int MEDIA_TYPE_IMAGE = 1;
+	public static final int MEDIA_TYPE_VIDEO = 2;
+
+	/** Create a file Uri for saving an image or video */
+	private static Uri getOutputMediaFileUri(int type) {
+		return Uri.fromFile(getOutputMediaFile(type));
+	}
+
+	/** Create a File for saving an image or video */
+	private static File getOutputMediaFile(int type) {
+		// To be safe, you should check that the SDCard is mounted
+		// using Environment.getExternalStorageState() before doing this.
+		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+				"MyCameraApp");
+		// This location works best if you want the created images to be shared
+		// between applications and persist after your app has been uninstalled.
+		// Create the storage directory if it does not exist
+		if (!mediaStorageDir.exists()) {
+			if (!mediaStorageDir.mkdirs()) {
+				Log.d(VIVIDCAMERA_TAG, "failed to create directory");
+				return null;
+			}
+		}
+		// Create a media file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		File mediaFile;
+		if (type == MEDIA_TYPE_IMAGE) {
+			mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
+		} else if (type == MEDIA_TYPE_VIDEO) {
+			mediaFile = new File(mediaStorageDir.getPath() + File.separator + "VID_" + timeStamp + ".mp4");
+		} else {
+			return null;
+		}
+		Log.w(VIVIDCAMERA_TAG, "get outputfile " + mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
+		return mediaFile;
+	}
+
 	private void checkResolution() {
 		Camera.Parameters params = mCamera.getParameters();
 		for (Size size : params.getSupportedPictureSizes()) {
 			if (size.width > 1000) {
-				Log.v(VIVIDCAMERA_TAG, "Available picture: " + size.width + " " + size.height + " ratio: " + (float) size.width
-						/ size.height);
+				// Log.v(VIVIDCAMERA_TAG, "Available picture: " + size.width + " " +
+				// size.height + " ratio: " + (float) size.width
+				// / size.height);
 			}
 		}
 		for (Size size : params.getSupportedPreviewSizes()) {
 			if (size.width > 1000) {
-				Log.v(VIVIDCAMERA_TAG, "Available preview: " + size.width + " " + size.height + " ratio: " + (float) size.width
-						/ size.height);
+				// Log.v(VIVIDCAMERA_TAG, "Available preview: " + size.width + " " +
+				// size.height + " ratio: " + (float) size.width
+				// / size.height);
 			}
 		}
 		// params.setPictureSize(1920, 1080);
@@ -208,7 +332,6 @@ public class Preview extends Activity {
 			builder.setMessage("Now pose, and take the first selfy");
 			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					Toast.makeText(activityContext, "OK clicked", Toast.LENGTH_SHORT).show();
 				}
 			});
 			return builder.create();
