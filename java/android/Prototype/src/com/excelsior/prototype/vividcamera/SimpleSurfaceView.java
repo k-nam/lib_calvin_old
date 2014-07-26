@@ -17,7 +17,7 @@ public class SimpleSurfaceView extends SurfaceView implements SurfaceHolder.Call
 	public SimpleSurfaceView(Context context, Camera camera) {
 		super(context);
 		if (context == null) {
-			Log.e("Preview", "context was null");
+			Log.e(VIVIDCAMERA_TAG, "context was null");
 		}
 		mCamera = camera;
 		// Install a SurfaceHolder.Callback so we get notified when the

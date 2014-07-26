@@ -59,8 +59,8 @@ public class MainTab extends FragmentActivity {
 		photoSelector = new PhotoSelector();
 		whoLikesMe = new WhoLikesMe();
 		vividCamera = new VividCamera();
-		fragmentPagerAdapter = new PagerAdapter(getSupportFragmentManager(), Arrays.asList(basicInfo, testSet,
-				photoSelector, whoLikesMe, vividCamera));
+		fragmentPagerAdapter = new PagerAdapter(getSupportFragmentManager(), Arrays.asList(vividCamera, basicInfo, testSet,
+				photoSelector, whoLikesMe));
 		viewPager = (ViewPager) findViewById(R.id.main_tab_view_pager);
 		viewPager.setAdapter(fragmentPagerAdapter);
 		viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -98,11 +98,11 @@ public class MainTab extends FragmentActivity {
 		photoSelectorTab.setTabListener(listener);
 		whoLikesMeTab.setTabListener(listener);
 		vividCameraTab.setTabListener(listener);
+		actionBar.addTab(vividCameraTab);
 		actionBar.addTab(basicInfoTab);
 		actionBar.addTab(testSetTab);
 		actionBar.addTab(photoSelectorTab);
 		actionBar.addTab(whoLikesMeTab);
-		actionBar.addTab(vividCameraTab);
 		// finding out hash key on this machine: needed for facebook login
 		PackageInfo info;
 		try {
