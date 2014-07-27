@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,7 +18,12 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.SurfaceTexture;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.hardware.Camera.Size;
@@ -27,14 +35,16 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
+import android.view.TextureView;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.excelsior.prototype.R;
 
-public class Preview extends Activity {
+public class PreviewScreen extends Activity {
 	private FrameLayout mPreview;
+	private TextureView mTextureView;
 	private SimpleSurfaceView mSurfaceView;
 	private Camera mCamera;
 	private int cameraIdToUse = 1;
@@ -45,6 +55,7 @@ public class Preview extends Activity {
 	private boolean isShutterCallbackBusy = false;
 	private boolean isJpegCallbackBusy = false;
 	private boolean isDataProcessingBusy = false;
+	private boolean shouldCapturePreview = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +65,17 @@ public class Preview extends Activity {
 		// getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 		// WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.vividcamera_preview);
+		getScreenDimension();
+		Log.w(VIVIDCAMERA_TAG, "Screen width = " + realWidth + " height is: " + realHeight);
 		mPreview = (FrameLayout) findViewById(R.id.vividcamera__preview);
+		// mTextureView = new TextureView(this);
+		// mTextureView.setSurfaceTextureListener(this);
+		// setContentView(mTextureView);
 		setClickListener();
+	}
+
+	public void setPreviewCallback() {
+		mCamera.setPreviewCallback(mPreviewCallback);
 	}
 
 	@Override
@@ -63,18 +83,17 @@ public class Preview extends Activity {
 		super.onStart();
 		Log.i(VIVIDCAMERA_TAG, "onStart");
 		mCamera = VividCamera.getCameraInstance(cameraIdToUse);
-		mSurfaceView = new SimpleSurfaceView(this, mCamera);
+		mSurfaceView = new SimpleSurfaceView(this, mCamera); // mCamera.startPreview()
+																													// was called here
 		mPreview.addView(mSurfaceView);
-		mCamera.startPreview();
 		if (mSurfaceView == null) {
 			Log.e(VIVIDCAMERA_TAG, "mPreview was null");
 		}
 		Log.v(VIVIDCAMERA_TAG, "OS Version is" + Build.VERSION.SDK_INT);
 		setCameraDisplayOrientation(this, cameraIdToUse, mCamera);
-		checkResolution();
-		setScreenDimension();
-		adjustPreviewAspect();
-		showInstructionDialog();
+		adjustPictureAndPreviewSize();
+		adjustAspect();
+		// showInstructionDialog();
 	}
 
 	@Override
@@ -116,9 +135,19 @@ public class Preview extends Activity {
 		mPreview.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				takePicture();
+				// takePicture();
+				// restartPreview();
+				shouldCapturePreview = true;
 			}
 		});
+	}
+
+	private void restartPreview() {
+		mCamera.stopPreview();
+		try {
+			Thread.sleep(10);
+		} catch (Exception e) {}
+		mCamera.startPreview();
 	}
 
 	private boolean isCameraBusy() {
@@ -139,10 +168,10 @@ public class Preview extends Activity {
 			setCameraBusy();
 		}
 		Log.w(VIVIDCAMERA_TAG, "Picture taken");
-		mCamera.takePicture(mShutter, null, mPicture);
+		mCamera.takePicture(mShutterCallback, null, mPictureCallback);
 		Log.w(VIVIDCAMERA_TAG, "Picture taken2");
 		try {
-			Thread.sleep(400);
+			Thread.sleep(100);
 			while (true) {
 				try {
 					mCamera.startPreview();
@@ -160,13 +189,13 @@ public class Preview extends Activity {
 		Log.w(VIVIDCAMERA_TAG, "Restarted preview");
 	}
 
-	private ShutterCallback mShutter = new ShutterCallback() {
+	private ShutterCallback mShutterCallback = new ShutterCallback() {
 		public void onShutter() {
 			Log.w(VIVIDCAMERA_TAG, "ShutterCallback");
 			isShutterCallbackBusy = false;
 		}
 	};
-	private PictureCallback mPicture = new PictureCallback() {
+	private PictureCallback mPictureCallback = new PictureCallback() {
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
 			File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
@@ -199,6 +228,7 @@ public class Preview extends Activity {
 	private static File getOutputMediaFile(int type) {
 		// To be safe, you should check that the SDCard is mounted
 		// using Environment.getExternalStorageState() before doing this.
+		Log.e(VIVIDCAMERA_TAG, "External storage: " + Environment.getExternalStorageState());
 		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
 				"MyCameraApp");
 		// This location works best if you want the created images to be shared
@@ -224,28 +254,87 @@ public class Preview extends Activity {
 		return mediaFile;
 	}
 
-	private void checkResolution() {
-		Camera.Parameters params = mCamera.getParameters();
-		for (Size size : params.getSupportedPictureSizes()) {
-			if (size.width > 1000) {
-				// Log.v(VIVIDCAMERA_TAG, "Available picture: " + size.width + " " +
-				// size.height + " ratio: " + (float) size.width
-				// / size.height);
+	private Size[] getBestPictureAndPreviewSizes(List<Size> pictureSizes, List<Size> previewSizes) {
+		// We want biggest preview except for square type. It will be best if it
+		// fits screen.
+		for (Size size : sortSizeList(previewSizes)) {
+			if (getRatio(size) > 1.3) {
+				Size pictureSize = getBestPictureSize(pictureSizes, size);
+				if (pictureSize != null) {
+					return new Size[] { pictureSize, size };
+				}
 			}
 		}
-		for (Size size : params.getSupportedPreviewSizes()) {
-			if (size.width > 1000) {
-				// Log.v(VIVIDCAMERA_TAG, "Available preview: " + size.width + " " +
-				// size.height + " ratio: " + (float) size.width
-				// / size.height);
-			}
-		}
-		// params.setPictureSize(1920, 1080);
-		params.setPreviewSize(1920, 1080);
-		mCamera.setParameters(params);
+		return null;
 	}
 
-	private void setScreenDimension() {
+	private List<Size> sortSizeList(List<Size> list) {
+		for (int i = 1; i < list.size(); i++) {
+			Size thisSize = list.get(i);
+			for (int j = i - 1; j >= 0; j--) {
+				if (thisSize.width > list.get(j).width) { // sort in REVERSE order
+					Collections.swap(list, j, j + 1);
+				} else {
+					break;
+				}
+			}
+		}
+		return list;
+	}
+
+	private Size getBestPictureSize(List<Size> pictureSizes, Size previewSize) {
+		// Returns null if there is no close answer
+		for (Size size : sortSizeList(pictureSizes)) {
+			if (isSimiliarRatio(size, previewSize)) {
+				return size;
+			}
+		}
+		return null;
+	}
+
+	private boolean isSimiliarRatio(Size a, Size b) {
+		return isSimiliar(getRatio(a), getRatio(b));
+	}
+
+	private float getRatio(Size size) {
+		return (float) size.width / size.height;
+	}
+
+	private boolean isSimiliar(float a, float b) {
+		float diff = a - b;
+		return diff < 0.1 && diff > -0.1;
+	}
+
+	private void adjustPictureAndPreviewSize() {
+		Camera.Parameters params = mCamera.getParameters();
+		// pick largest resolution (except square type)
+		for (Size size : sortSizeList(params.getSupportedPictureSizes())) {
+			if (size.width > 300) {
+				Log.v(VIVIDCAMERA_TAG, "Available picture: " + size.width + " " + size.height + " ratio: " + getRatio(size));
+			}
+		}
+		// for (int[] fps : params.getSupportedPreviewFpsRange()) {
+		// Log.v(VIVIDCAMERA_TAG, "Supported FPS: " + fps[0] + " " + fps[1]);
+		// }
+		for (Size size : sortSizeList(params.getSupportedPreviewSizes())) {
+			if (size.width > 500) {
+				Log.v(VIVIDCAMERA_TAG, "Available preview: " + size.width + " " + size.height + " ratio: " + getRatio(size));
+			}
+		}
+		Size[] pictureAndPreviewSizes = this.getBestPictureAndPreviewSizes(params.getSupportedPictureSizes(),
+				params.getSupportedPreviewSizes());
+		if (pictureAndPreviewSizes != null) {
+			params.setPictureSize(pictureAndPreviewSizes[0].width, pictureAndPreviewSizes[0].height);
+			params.setPreviewSize(pictureAndPreviewSizes[1].width, pictureAndPreviewSizes[1].height);
+		}
+		mCamera.setParameters(params);
+		Log.v(VIVIDCAMERA_TAG, "Set picture size to: " + params.getPictureSize().width + " "
+				+ params.getPictureSize().height);
+		Log.v(VIVIDCAMERA_TAG, "Set preview size to: " + params.getPreviewSize().width + " "
+				+ params.getPreviewSize().height);
+	}
+
+	private void getScreenDimension() {
 		Display display = getWindowManager().getDefaultDisplay();
 		if (Build.VERSION.SDK_INT >= 17) {
 			// new pleasant way to get real metrics
@@ -274,19 +363,20 @@ public class Preview extends Activity {
 		}
 	}
 
-	private void adjustPreviewAspect() {
-		FrameLayout preview = (FrameLayout) findViewById(R.id.vividcamera__preview);
-		Camera.Size size = mCamera.getParameters().getPreviewSize();
+	private void adjustAspect() {
+		Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
+		Camera.Size pictureSize = mCamera.getParameters().getPictureSize();
 		// Log.v(VIVIDCAMERA_TAG, "screen size is " + realWidth + ", " +
 		// realHeight);
 		// Log.v(VIVIDCAMERA_TAG, "framelayout size is " + preview.getWidth() + ", "
 		// + preview.getHeight());
-		Log.v(VIVIDCAMERA_TAG, "preview size is " + size.width + ", " + size.height);
+		Log.v(VIVIDCAMERA_TAG, "picture size was " + pictureSize.width + ", " + pictureSize.height);
+		Log.v(VIVIDCAMERA_TAG, "preview size was " + previewSize.width + ", " + previewSize.height);
 		// landscape
-		float ratio = (float) size.width / size.height;
+		float ratio = getRatio(previewSize);
 		int rotation = getWindowManager().getDefaultDisplay().getRotation();
 		if (rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) {
-			ratio = (float) size.height / size.width;
+			ratio = (float) previewSize.height / previewSize.width;
 		}
 		// portrait
 		// float ratio = (float)size.height/size.width;
@@ -298,8 +388,8 @@ public class Preview extends Activity {
 			new_width = realWidth;
 			new_height = Math.round(realWidth / ratio);
 		}
-		Log.v(VIVIDCAMERA_TAG, "result size is " + new_width + ", " + new_height + " ratio is " + ratio);
-		preview.setLayoutParams(new LinearLayout.LayoutParams(new_width, new_height));
+		Log.v(VIVIDCAMERA_TAG, "result mPreview size is " + new_width + ", " + new_height + " ratio is " + ratio);
+		mPreview.setLayoutParams(new LinearLayout.LayoutParams(new_width, new_height));
 	}
 
 	// google's solution for setting appropriate rotation
@@ -348,5 +438,61 @@ public class Preview extends Activity {
 
 	private void showInstructionDialog() {
 		new InstructionDialog().show(getFragmentManager(), "aa");
+	}
+
+	private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
+		public void onPreviewFrame(byte[] data, Camera camera) {
+			Log.v(VIVIDCAMERA_TAG, "Preview callback");
+			if (shouldCapturePreview == false) {
+				return;
+			}
+			Parameters params = camera.getParameters();
+			Size previewSize = params.getPreviewSize();
+			int imageFormat = params.getPreviewFormat();
+			if (imageFormat == ImageFormat.NV21) {
+				Log.v(VIVIDCAMERA_TAG, "Preview 22!");
+				Rect rect = new Rect(0, 0, previewSize.width, previewSize.height);
+				YuvImage img = new YuvImage(data, ImageFormat.NV21, previewSize.width, previewSize.height, null);
+				OutputStream outStream = null;
+				File file = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+				try {
+					outStream = new FileOutputStream(file);
+					img.compressToJpeg(rect, 100, outStream);
+					outStream.flush();
+					outStream.close();
+					Log.v(VIVIDCAMERA_TAG, "Preview 33!");
+				} catch (FileNotFoundException e) {
+					Log.v(VIVIDCAMERA_TAG, "Preview 44!");
+					e.printStackTrace();
+				} catch (IOException e) {
+					Log.v(VIVIDCAMERA_TAG, "Preview 55!");
+					e.printStackTrace();
+				}
+			}
+			Log.e(VIVIDCAMERA_TAG, "Preview captured!");
+			shouldCapturePreview = false;
+		}
+	};
+
+	public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+		Log.v(VIVIDCAMERA_TAG, "TextureView ready");
+		try {
+			mCamera.setPreviewTexture(surface);
+			// mCamera.startPreview();
+		} catch (IOException ioe) {
+			// Something bad happened
+		}
+	}
+
+	public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+		// Ignored, Camera does all the work for us
+	}
+
+	public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+		return true;
+	}
+
+	public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+		// Invoked every time there's a new Camera preview frame
 	}
 }

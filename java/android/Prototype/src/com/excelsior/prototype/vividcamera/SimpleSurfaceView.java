@@ -13,6 +13,7 @@ public class SimpleSurfaceView extends SurfaceView implements SurfaceHolder.Call
 	private SurfaceHolder mHolder;
 	private Camera mCamera;
 	public String VIVIDCAMERA_TAG = "Preview";
+	private PreviewScreen preview = null;
 
 	public SimpleSurfaceView(Context context, Camera camera) {
 		super(context);
@@ -24,12 +25,14 @@ public class SimpleSurfaceView extends SurfaceView implements SurfaceHolder.Call
 		// underlying surface is created and destroyed.
 		mHolder = getHolder();
 		mHolder.addCallback(this);
+		preview = (PreviewScreen) context;
 	}
 
 	public void surfaceCreated(SurfaceHolder holder) {
 		// The Surface has been created, now tell the camera where to draw the
 		// preview.
 		try {
+			preview.setPreviewCallback();
 			mCamera.setPreviewDisplay(holder);
 			mCamera.startPreview();
 		} catch (IOException e) {
@@ -58,6 +61,7 @@ public class SimpleSurfaceView extends SurfaceView implements SurfaceHolder.Call
 		// reformatting changes here
 		// start preview with new settings
 		try {
+			preview.setPreviewCallback();
 			mCamera.setPreviewDisplay(mHolder);
 			mCamera.startPreview();
 		} catch (Exception e) {
