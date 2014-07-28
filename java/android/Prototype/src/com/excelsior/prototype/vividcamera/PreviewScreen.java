@@ -23,6 +23,7 @@ import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
@@ -72,10 +73,6 @@ public class PreviewScreen extends Activity {
 		getScreenDimension();
 		Log.w(VIVIDCAMERA_TAG, "Screen width = " + realWidth + " height is: " + realHeight);
 		mPreview = (FrameLayout) findViewById(R.id.vividcamera__preview);
-		// mTakePictureButton = (Button)
-		// findViewById(R.id.vividcamera__take_picture_button);
-		// mTakeScreenshotButton = (Button)
-		// findViewById(R.id.vividcamera__take_screenshot_button);
 		mButtonContainer = (LinearLayout) findViewById(R.id.vividcamera__buttons);
 		// mTextureView = new TextureView(this);
 		// mTextureView.setSurfaceTextureListener(this);
@@ -91,18 +88,6 @@ public class PreviewScreen extends Activity {
 	public void onStart() {
 		super.onStart();
 		Log.i(VIVIDCAMERA_TAG, "onStart");
-		mCamera = VividCamera.getCameraInstance(cameraIdToUse);
-		mSurfaceView = new SimpleSurfaceView(this, mCamera); // mCamera.startPreview()
-																													// was called here
-		mPreview.addView(mSurfaceView);
-		mButtonContainer.bringToFront();
-		if (mSurfaceView == null) {
-			Log.e(VIVIDCAMERA_TAG, "mPreview was null");
-		}
-		Log.v(VIVIDCAMERA_TAG, "OS Version is" + Build.VERSION.SDK_INT);
-		setCameraDisplayOrientation(this, cameraIdToUse, mCamera);
-		adjustPictureAndPreviewSize();
-		adjustAspect();
 		// showInstructionDialog();
 	}
 
@@ -116,7 +101,13 @@ public class PreviewScreen extends Activity {
 	public void onStop() {
 		super.onStop();
 		Log.i(VIVIDCAMERA_TAG, "onStop");
-		mPreview.removeAllViews();
+	}
+
+	@Override
+	public void onPause() {
+		Log.i(VIVIDCAMERA_TAG, "onPause");
+		super.onPause();
+		mPreview.removeView(mSurfaceView);
 		mCamera.stopPreview();
 		mCamera.setPreviewCallback(null);
 		mSurfaceView.getHolder().removeCallback(mSurfaceView);
@@ -124,15 +115,18 @@ public class PreviewScreen extends Activity {
 	}
 
 	@Override
-	public void onPause() {
-		Log.i(VIVIDCAMERA_TAG, "onPause");
-		super.onPause();
-	}
-
-	@Override
 	public void onResume() {
 		Log.i(VIVIDCAMERA_TAG, "onResume");
 		super.onResume();
+		mCamera = VividCamera.getCameraInstance(cameraIdToUse);
+		setPictureOrientation();
+		setCameraDisplayOrientation(this, cameraIdToUse, mCamera);
+		adjustPictureAndPreviewSize();
+		adjustAspect();
+		// mCamera.startPreview() is called here
+		mSurfaceView = new SimpleSurfaceView(this, mCamera);
+		mPreview.addView(mSurfaceView);
+		mButtonContainer.bringToFront();
 	}
 
 	@Override
@@ -360,6 +354,21 @@ public class PreviewScreen extends Activity {
 				+ params.getPreviewSize().height);
 	}
 
+	public void setPictureOrientation() {
+		int orientation = 0; // natural position
+		android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
+		android.hardware.Camera.getCameraInfo(cameraIdToUse, info);
+		int rotation = 0;
+		if (info.facing == CameraInfo.CAMERA_FACING_FRONT) {
+			rotation = (info.orientation - orientation + 360) % 360;
+		} else { // back-facing camera
+			rotation = (info.orientation + orientation) % 360;
+		}
+		Camera.Parameters params = mCamera.getParameters();
+		params.setRotation(rotation);
+		mCamera.setParameters(params);
+	}
+
 	private void getScreenDimension() {
 		Display display = getWindowManager().getDefaultDisplay();
 		if (Build.VERSION.SDK_INT >= 17) {
@@ -421,7 +430,7 @@ public class PreviewScreen extends Activity {
 	}
 
 	// google's solution for setting appropriate rotation
-	private static void setCameraDisplayOrientation(Activity activity, int cameraId, android.hardware.Camera camera) {
+	private void setCameraDisplayOrientation(Activity activity, int cameraId, android.hardware.Camera camera) {
 		android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
 		android.hardware.Camera.getCameraInfo(cameraId, info);
 		int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
