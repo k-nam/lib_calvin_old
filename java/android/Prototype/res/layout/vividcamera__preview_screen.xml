@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	android:orientation="vertical"
+	android:layout_height="match_parent"
+	android:layout_width="match_parent"
+	xmlns:tools="http://schemas.android.com/tools"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<FrameLayout
+		android:id="@+id/vividcamera__preview"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:fitsSystemWindows="false">
+		<LinearLayout
+			android:id="@+id/vividcamera__buttons"
+			android:layout_gravity="bottom"
+			android:layout_marginBottom="50sp"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+			<Button
+				android:id="@+id/vividcamera__take_picture_button"
+				android:text="@string/vividcamera__take_picture_button_text"
+				android:textSize="15sp"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:onClick="onClickTakePictureButton" />
+			<Button
+				android:id="@+id/vividcamera__take_screenshot_button"
+				android:text="@string/vividcamera__take_screenshot_button_text"
+				android:textSize="15sp"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:onClick="onClickTakeScreenshotButton" />
+		</LinearLayout>
+	</FrameLayout>
+</LinearLayout>

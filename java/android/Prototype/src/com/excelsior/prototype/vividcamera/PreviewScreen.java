@@ -37,6 +37,7 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -46,6 +47,9 @@ public class PreviewScreen extends Activity {
 	private FrameLayout mPreview;
 	private TextureView mTextureView;
 	private SimpleSurfaceView mSurfaceView;
+	private Button mTakePictureButton;
+	private Button mTakeScreenshotButton;
+	private LinearLayout mButtonContainer;
 	private Camera mCamera;
 	private int cameraIdToUse = 1;
 	int realWidth;
@@ -64,10 +68,15 @@ public class PreviewScreen extends Activity {
 		// requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 		// WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		setContentView(R.layout.vividcamera_preview);
+		setContentView(R.layout.vividcamera__preview_screen);
 		getScreenDimension();
 		Log.w(VIVIDCAMERA_TAG, "Screen width = " + realWidth + " height is: " + realHeight);
 		mPreview = (FrameLayout) findViewById(R.id.vividcamera__preview);
+		// mTakePictureButton = (Button)
+		// findViewById(R.id.vividcamera__take_picture_button);
+		// mTakeScreenshotButton = (Button)
+		// findViewById(R.id.vividcamera__take_screenshot_button);
+		mButtonContainer = (LinearLayout) findViewById(R.id.vividcamera__buttons);
 		// mTextureView = new TextureView(this);
 		// mTextureView.setSurfaceTextureListener(this);
 		// setContentView(mTextureView);
@@ -86,6 +95,7 @@ public class PreviewScreen extends Activity {
 		mSurfaceView = new SimpleSurfaceView(this, mCamera); // mCamera.startPreview()
 																													// was called here
 		mPreview.addView(mSurfaceView);
+		mButtonContainer.bringToFront();
 		if (mSurfaceView == null) {
 			Log.e(VIVIDCAMERA_TAG, "mPreview was null");
 		}
@@ -135,11 +145,17 @@ public class PreviewScreen extends Activity {
 		mPreview.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// takePicture();
-				// restartPreview();
-				shouldCapturePreview = true;
+				restartPreview();
 			}
 		});
+	}
+
+	public void onClickTakePictureButton(View v) {
+		takePicture();
+	}
+
+	public void onClickTakeScreenshotButton(View v) {
+		takeScreenshot();
 	}
 
 	private void restartPreview() {
@@ -147,6 +163,7 @@ public class PreviewScreen extends Activity {
 		try {
 			Thread.sleep(10);
 		} catch (Exception e) {}
+		setPreviewCallback();
 		mCamera.startPreview();
 	}
 
@@ -189,6 +206,10 @@ public class PreviewScreen extends Activity {
 		Log.w(VIVIDCAMERA_TAG, "Restarted preview");
 	}
 
+	public void takeScreenshot() {
+		shouldCapturePreview = true;
+	}
+
 	private ShutterCallback mShutterCallback = new ShutterCallback() {
 		public void onShutter() {
 			Log.w(VIVIDCAMERA_TAG, "ShutterCallback");
@@ -228,7 +249,8 @@ public class PreviewScreen extends Activity {
 	private static File getOutputMediaFile(int type) {
 		// To be safe, you should check that the SDCard is mounted
 		// using Environment.getExternalStorageState() before doing this.
-		Log.e(VIVIDCAMERA_TAG, "External storage: " + Environment.getExternalStorageState());
+		// Log.e(VIVIDCAMERA_TAG, "External storage: " +
+		// Environment.getExternalStorageState());
 		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
 				"MyCameraApp");
 		// This location works best if you want the created images to be shared
@@ -250,7 +272,8 @@ public class PreviewScreen extends Activity {
 		} else {
 			return null;
 		}
-		Log.w(VIVIDCAMERA_TAG, "get outputfile " + mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
+		// Log.w(VIVIDCAMERA_TAG, "get outputfile " + mediaStorageDir.getPath() +
+		// File.separator + "IMG_" + timeStamp + ".jpg");
 		return mediaFile;
 	}
 
@@ -270,9 +293,8 @@ public class PreviewScreen extends Activity {
 
 	private List<Size> sortSizeList(List<Size> list) {
 		for (int i = 1; i < list.size(); i++) {
-			Size thisSize = list.get(i);
 			for (int j = i - 1; j >= 0; j--) {
-				if (thisSize.width > list.get(j).width) { // sort in REVERSE order
+				if (less(list.get(j), list.get(j + 1))) { // sort in REVERSE order
 					Collections.swap(list, j, j + 1);
 				} else {
 					break;
@@ -280,6 +302,10 @@ public class PreviewScreen extends Activity {
 			}
 		}
 		return list;
+	}
+
+	private boolean less(Size a, Size b) {
+		return a.width < b.width || (a.width == b.width && a.height < b.height);
 	}
 
 	private Size getBestPictureSize(List<Size> pictureSizes, Size previewSize) {
@@ -309,7 +335,7 @@ public class PreviewScreen extends Activity {
 		Camera.Parameters params = mCamera.getParameters();
 		// pick largest resolution (except square type)
 		for (Size size : sortSizeList(params.getSupportedPictureSizes())) {
-			if (size.width > 300) {
+			if (size.width > 1000) {
 				Log.v(VIVIDCAMERA_TAG, "Available picture: " + size.width + " " + size.height + " ratio: " + getRatio(size));
 			}
 		}
@@ -317,15 +343,15 @@ public class PreviewScreen extends Activity {
 		// Log.v(VIVIDCAMERA_TAG, "Supported FPS: " + fps[0] + " " + fps[1]);
 		// }
 		for (Size size : sortSizeList(params.getSupportedPreviewSizes())) {
-			if (size.width > 500) {
+			if (size.width > 1000) {
 				Log.v(VIVIDCAMERA_TAG, "Available preview: " + size.width + " " + size.height + " ratio: " + getRatio(size));
 			}
 		}
-		Size[] pictureAndPreviewSizes = this.getBestPictureAndPreviewSizes(params.getSupportedPictureSizes(),
+		Size[] pictureAndPreviewSize = this.getBestPictureAndPreviewSizes(params.getSupportedPictureSizes(),
 				params.getSupportedPreviewSizes());
-		if (pictureAndPreviewSizes != null) {
-			params.setPictureSize(pictureAndPreviewSizes[0].width, pictureAndPreviewSizes[0].height);
-			params.setPreviewSize(pictureAndPreviewSizes[1].width, pictureAndPreviewSizes[1].height);
+		if (pictureAndPreviewSize != null) {
+			params.setPictureSize(pictureAndPreviewSize[0].width, pictureAndPreviewSize[0].height);
+			params.setPreviewSize(pictureAndPreviewSize[1].width, pictureAndPreviewSize[1].height);
 		}
 		mCamera.setParameters(params);
 		Log.v(VIVIDCAMERA_TAG, "Set picture size to: " + params.getPictureSize().width + " "
@@ -370,8 +396,10 @@ public class PreviewScreen extends Activity {
 		// realHeight);
 		// Log.v(VIVIDCAMERA_TAG, "framelayout size is " + preview.getWidth() + ", "
 		// + preview.getHeight());
-		Log.v(VIVIDCAMERA_TAG, "picture size was " + pictureSize.width + ", " + pictureSize.height);
-		Log.v(VIVIDCAMERA_TAG, "preview size was " + previewSize.width + ", " + previewSize.height);
+		// Log.v(VIVIDCAMERA_TAG, "picture size was " + pictureSize.width + ", " +
+		// pictureSize.height);
+		// Log.v(VIVIDCAMERA_TAG, "preview size was " + previewSize.width + ", " +
+		// previewSize.height);
 		// landscape
 		float ratio = getRatio(previewSize);
 		int rotation = getWindowManager().getDefaultDisplay().getRotation();
@@ -442,7 +470,7 @@ public class PreviewScreen extends Activity {
 
 	private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
 		public void onPreviewFrame(byte[] data, Camera camera) {
-			Log.v(VIVIDCAMERA_TAG, "Preview callback");
+			// Log.v(VIVIDCAMERA_TAG, "Preview callback!");
 			if (shouldCapturePreview == false) {
 				return;
 			}
@@ -450,7 +478,6 @@ public class PreviewScreen extends Activity {
 			Size previewSize = params.getPreviewSize();
 			int imageFormat = params.getPreviewFormat();
 			if (imageFormat == ImageFormat.NV21) {
-				Log.v(VIVIDCAMERA_TAG, "Preview 22!");
 				Rect rect = new Rect(0, 0, previewSize.width, previewSize.height);
 				YuvImage img = new YuvImage(data, ImageFormat.NV21, previewSize.width, previewSize.height, null);
 				OutputStream outStream = null;
@@ -460,12 +487,9 @@ public class PreviewScreen extends Activity {
 					img.compressToJpeg(rect, 100, outStream);
 					outStream.flush();
 					outStream.close();
-					Log.v(VIVIDCAMERA_TAG, "Preview 33!");
 				} catch (FileNotFoundException e) {
-					Log.v(VIVIDCAMERA_TAG, "Preview 44!");
 					e.printStackTrace();
 				} catch (IOException e) {
-					Log.v(VIVIDCAMERA_TAG, "Preview 55!");
 					e.printStackTrace();
 				}
 			}
