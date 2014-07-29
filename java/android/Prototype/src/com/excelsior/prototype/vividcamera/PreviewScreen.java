@@ -45,12 +45,13 @@ import android.widget.LinearLayout;
 import com.excelsior.prototype.R;
 
 public class PreviewScreen extends Activity {
-	private FrameLayout mPreview;
+	private FrameLayout mFrame;
 	private TextureView mTextureView;
 	private SimpleSurfaceView mSurfaceView;
 	private Button mTakePictureButton;
 	private Button mTakeScreenshotButton;
 	private LinearLayout mButtonContainer;
+	private FrameLayout mDarkScreen;
 	private Camera mCamera;
 	private int cameraIdToUse = 1;
 	int realWidth;
@@ -72,8 +73,10 @@ public class PreviewScreen extends Activity {
 		setContentView(R.layout.vividcamera__preview_screen);
 		getScreenDimension();
 		Log.w(VIVIDCAMERA_TAG, "Screen width = " + realWidth + " height is: " + realHeight);
-		mPreview = (FrameLayout) findViewById(R.id.vividcamera__preview);
+		mFrame = (FrameLayout) findViewById(R.id.vividcamera__preview);
 		mButtonContainer = (LinearLayout) findViewById(R.id.vividcamera__buttons);
+		mDarkScreen = (FrameLayout) findViewById(R.id.vividcamera__dark);
+		mDarkScreen.setBackgroundColor(0xB0000000);
 		// mTextureView = new TextureView(this);
 		// mTextureView.setSurfaceTextureListener(this);
 		// setContentView(mTextureView);
@@ -107,7 +110,7 @@ public class PreviewScreen extends Activity {
 	public void onPause() {
 		Log.i(VIVIDCAMERA_TAG, "onPause");
 		super.onPause();
-		mPreview.removeView(mSurfaceView);
+		mFrame.removeView(mSurfaceView);
 		mCamera.stopPreview();
 		mCamera.setPreviewCallback(null);
 		mSurfaceView.getHolder().removeCallback(mSurfaceView);
@@ -125,8 +128,9 @@ public class PreviewScreen extends Activity {
 		adjustAspect();
 		// mCamera.startPreview() is called here
 		mSurfaceView = new SimpleSurfaceView(this, mCamera);
-		mPreview.addView(mSurfaceView);
+		mFrame.addView(mSurfaceView);
 		mButtonContainer.bringToFront();
+		// makeDark();
 	}
 
 	@Override
@@ -136,7 +140,7 @@ public class PreviewScreen extends Activity {
 	}
 
 	private void setClickListener() {
-		mPreview.setOnClickListener(new View.OnClickListener() {
+		mFrame.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				restartPreview();
@@ -153,12 +157,15 @@ public class PreviewScreen extends Activity {
 	}
 
 	private void restartPreview() {
-		mCamera.stopPreview();
+		// mCamera.stopPreview();
+		makeDark();
 		try {
 			Thread.sleep(10);
-		} catch (Exception e) {}
-		setPreviewCallback();
-		mCamera.startPreview();
+		} catch (Exception e) {} finally {
+			// removeDark();
+		}
+		// setPreviewCallback();
+		// mCamera.startPreview();
 	}
 
 	private boolean isCameraBusy() {
@@ -171,6 +178,25 @@ public class PreviewScreen extends Activity {
 		isDataProcessingBusy = true;
 	}
 
+	private void makeDark() {
+		// ViewGroup.LayoutParams params = mDarkScreen.getLayoutParams();
+		// params.width = mFrame.getLayoutParams().width;
+		// params.height = mFrame.getLayoutParams().height;
+		// mDarkScreen.setLayoutParams(params);
+		if (mDarkScreen.getParent() != mFrame) {
+			mFrame.addView(mDarkScreen);
+		}
+		mFrame.bringChildToFront(mDarkScreen);
+	}
+
+	private void removeDark() {
+		mFrame.removeView(mDarkScreen);
+		// ViewGroup.LayoutParams params = mDarkScreen.getLayoutParams();
+		// params.width = 0;
+		// params.height = 0;
+		// mDarkScreen.setLayoutParams(params);
+	}
+
 	public void takePicture() {
 		if (isCameraBusy()) {
 			Log.e(VIVIDCAMERA_TAG, "Camera busy");
@@ -178,23 +204,24 @@ public class PreviewScreen extends Activity {
 		} else {
 			setCameraBusy();
 		}
-		Log.w(VIVIDCAMERA_TAG, "Picture taken");
+		makeDark();
 		mCamera.takePicture(mShutterCallback, null, mPictureCallback);
-		Log.w(VIVIDCAMERA_TAG, "Picture taken2");
 		try {
-			Thread.sleep(100);
+			Thread.sleep(300);
 			while (true) {
 				try {
 					mCamera.startPreview();
 					break;
 				} catch (Exception e) {
 					e.printStackTrace();
-					Thread.sleep(100);
-					Log.w(VIVIDCAMERA_TAG, "Waiting loop");
+					Thread.sleep(200);
+					// Log.w(VIVIDCAMERA_TAG, "Waiting loop");
 				}
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
+		} finally {
+			// removeDark();
 		}
 		isDataProcessingBusy = false;
 		Log.w(VIVIDCAMERA_TAG, "Restarted preview");
@@ -206,7 +233,7 @@ public class PreviewScreen extends Activity {
 
 	private ShutterCallback mShutterCallback = new ShutterCallback() {
 		public void onShutter() {
-			Log.w(VIVIDCAMERA_TAG, "ShutterCallback");
+			// Log.w(VIVIDCAMERA_TAG, "ShutterCallback");
 			isShutterCallbackBusy = false;
 		}
 	};
@@ -228,7 +255,7 @@ public class PreviewScreen extends Activity {
 				Log.d(VIVIDCAMERA_TAG, "Error accessing file: " + e.getMessage());
 			}
 			isJpegCallbackBusy = false;
-			Log.w(VIVIDCAMERA_TAG, "PictureCallback finished");
+			// Log.w(VIVIDCAMERA_TAG, "PictureCallback finished");
 		}
 	};
 	public static final int MEDIA_TYPE_IMAGE = 1;
@@ -330,7 +357,8 @@ public class PreviewScreen extends Activity {
 		// pick largest resolution (except square type)
 		for (Size size : sortSizeList(params.getSupportedPictureSizes())) {
 			if (size.width > 1000) {
-				Log.v(VIVIDCAMERA_TAG, "Available picture: " + size.width + " " + size.height + " ratio: " + getRatio(size));
+				// Log.v(VIVIDCAMERA_TAG, "Available picture: " + size.width + " " +
+				// size.height + " ratio: " + getRatio(size));
 			}
 		}
 		// for (int[] fps : params.getSupportedPreviewFpsRange()) {
@@ -338,7 +366,8 @@ public class PreviewScreen extends Activity {
 		// }
 		for (Size size : sortSizeList(params.getSupportedPreviewSizes())) {
 			if (size.width > 1000) {
-				Log.v(VIVIDCAMERA_TAG, "Available preview: " + size.width + " " + size.height + " ratio: " + getRatio(size));
+				// Log.v(VIVIDCAMERA_TAG, "Available preview: " + size.width + " " +
+				// size.height + " ratio: " + getRatio(size));
 			}
 		}
 		Size[] pictureAndPreviewSize = this.getBestPictureAndPreviewSizes(params.getSupportedPictureSizes(),
@@ -426,7 +455,7 @@ public class PreviewScreen extends Activity {
 			new_height = Math.round(realWidth / ratio);
 		}
 		Log.v(VIVIDCAMERA_TAG, "result mPreview size is " + new_width + ", " + new_height + " ratio is " + ratio);
-		mPreview.setLayoutParams(new LinearLayout.LayoutParams(new_width, new_height));
+		mFrame.setLayoutParams(new LinearLayout.LayoutParams(new_width, new_height));
 	}
 
 	// google's solution for setting appropriate rotation

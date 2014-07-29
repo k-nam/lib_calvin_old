@@ -20,7 +20,8 @@
 			<Button
 				android:id="@+id/vividcamera__take_picture_button"
 				android:text="@string/vividcamera__take_picture_button_text"
-				android:textSize="15sp"
+				android:textSize="25sp"
+				android:background="@android:color/transparent"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
@@ -28,11 +29,16 @@
 			<Button
 				android:id="@+id/vividcamera__take_screenshot_button"
 				android:text="@string/vividcamera__take_screenshot_button_text"
-				android:textSize="15sp"
+				android:textSize="25sp"
+				android:background="@android:color/transparent"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
 				android:layout_weight="1"
 				android:onClick="onClickTakeScreenshotButton" />
 		</LinearLayout>
+		<FrameLayout
+			android:id="@+id/vividcamera__dark"
+			android:layout_width="match_parent"
+			android:layout_height="match_parent" />
 	</FrameLayout>
 </LinearLayout>
