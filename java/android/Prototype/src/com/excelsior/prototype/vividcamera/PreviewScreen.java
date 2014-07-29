@@ -38,9 +38,11 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.excelsior.prototype.R;
 
@@ -51,6 +53,7 @@ public class PreviewScreen extends Activity {
 	private Button mTakePictureButton;
 	private Button mTakeScreenshotButton;
 	private LinearLayout mButtonContainer;
+	private TextView mInstructionTextView;
 	private FrameLayout mDarkScreen;
 	private Camera mCamera;
 	private int cameraIdToUse = 1;
@@ -77,6 +80,7 @@ public class PreviewScreen extends Activity {
 		mButtonContainer = (LinearLayout) findViewById(R.id.vividcamera__buttons);
 		mDarkScreen = (FrameLayout) findViewById(R.id.vividcamera__dark);
 		mDarkScreen.setBackgroundColor(0xB0000000);
+		mInstructionTextView = (TextView) findViewById(R.id.vividcamera__instruction_text);
 		// mTextureView = new TextureView(this);
 		// mTextureView.setSurfaceTextureListener(this);
 		// setContentView(mTextureView);
@@ -125,11 +129,12 @@ public class PreviewScreen extends Activity {
 		setPictureOrientation();
 		setCameraDisplayOrientation(this, cameraIdToUse, mCamera);
 		adjustPictureAndPreviewSize();
-		adjustAspect();
+		adjustFrameSize();
 		// mCamera.startPreview() is called here
 		mSurfaceView = new SimpleSurfaceView(this, mCamera);
 		mFrame.addView(mSurfaceView);
 		mButtonContainer.bringToFront();
+		prepareToTakeFirstPicture();
 		// makeDark();
 	}
 
@@ -146,6 +151,16 @@ public class PreviewScreen extends Activity {
 				restartPreview();
 			}
 		});
+	}
+
+	private void prepareToTakeFirstPicture() {
+		Log.e(VIVIDCAMERA_TAG, "prepareToTakeFirstPicture");
+		mInstructionTextView.setText("Now you will take two selfies. For each shot, look directly into the red dot. "
+				+ "Do not just move your eyeballs; direct your head to red dots. Touch anywhere to continue.");
+		mFrame.bringChildToFront(mInstructionTextView);
+		mInstructionTextView.bringToFront();
+		mFrame.invalidate();
+		mFrame.requestLayout();
 	}
 
 	public void onClickTakePictureButton(View v) {
@@ -179,10 +194,12 @@ public class PreviewScreen extends Activity {
 	}
 
 	private void makeDark() {
-		// ViewGroup.LayoutParams params = mDarkScreen.getLayoutParams();
-		// params.width = mFrame.getLayoutParams().width;
-		// params.height = mFrame.getLayoutParams().height;
-		// mDarkScreen.setLayoutParams(params);
+		ViewGroup.LayoutParams params = mDarkScreen.getLayoutParams();
+		params.width = mFrame.getLayoutParams().width;
+		params.height = mFrame.getLayoutParams().height;
+		// don't understand why this function call is needed, but it needs to be
+		// added in Galaxy S3
+		adjustDarkScreenSize();
 		if (mDarkScreen.getParent() != mFrame) {
 			mFrame.addView(mDarkScreen);
 		}
@@ -204,7 +221,7 @@ public class PreviewScreen extends Activity {
 		} else {
 			setCameraBusy();
 		}
-		makeDark();
+		// makeDark();
 		mCamera.takePicture(mShutterCallback, null, mPictureCallback);
 		try {
 			Thread.sleep(300);
@@ -221,7 +238,7 @@ public class PreviewScreen extends Activity {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {
-			// removeDark();
+			removeDark();
 		}
 		isDataProcessingBusy = false;
 		Log.w(VIVIDCAMERA_TAG, "Restarted preview");
@@ -427,7 +444,7 @@ public class PreviewScreen extends Activity {
 		}
 	}
 
-	private void adjustAspect() {
+	private void adjustFrameSize() {
 		Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
 		Camera.Size pictureSize = mCamera.getParameters().getPictureSize();
 		// Log.v(VIVIDCAMERA_TAG, "screen size is " + realWidth + ", " +
@@ -456,6 +473,15 @@ public class PreviewScreen extends Activity {
 		}
 		Log.v(VIVIDCAMERA_TAG, "result mPreview size is " + new_width + ", " + new_height + " ratio is " + ratio);
 		mFrame.setLayoutParams(new LinearLayout.LayoutParams(new_width, new_height));
+	}
+
+	private void adjustDarkScreenSize() {
+		ViewGroup.LayoutParams params = mDarkScreen.getLayoutParams();
+		params.width = mFrame.getLayoutParams().width;
+		params.height = mFrame.getLayoutParams().height;
+		// Log.v(VIVIDCAMERA_TAG, "adjust dark screen " + params.width + ", " +
+		// params.height);
+		mDarkScreen.setLayoutParams(params);
 	}
 
 	// google's solution for setting appropriate rotation
