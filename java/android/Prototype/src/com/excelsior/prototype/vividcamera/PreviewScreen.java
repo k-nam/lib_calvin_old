@@ -66,6 +66,12 @@ public class PreviewScreen extends Activity {
 	private boolean isDataProcessingBusy = false;
 	private boolean shouldCapturePreview = false;
 
+	private enum Stage {
+		Instruction, FirstShot, SecondShot, Completed
+	};
+
+	private Stage mCurrentStage;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -132,10 +138,13 @@ public class PreviewScreen extends Activity {
 		adjustFrameSize();
 		// mCamera.startPreview() is called here
 		mSurfaceView = new SimpleSurfaceView(this, mCamera);
+		// adjust subviews order. I don't change their order anywhere else;
+		// use alpha value to mimic the change of the order of child views
 		mFrame.addView(mSurfaceView);
 		mButtonContainer.bringToFront();
-		prepareToTakeFirstPicture();
-		// makeDark();
+		mDarkScreen.bringToFront();
+		mInstructionTextView.bringToFront();
+		enterInstructionStage();
 	}
 
 	@Override
@@ -148,27 +157,58 @@ public class PreviewScreen extends Activity {
 		mFrame.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				restartPreview();
+				switch (mCurrentStage) {
+					case Instruction:
+						enterFirstShotStage();
+						break;
+					case FirstShot:
+						break;
+					case SecondShot:
+						break;
+					case Completed:
+						break;
+					default:
+						break;
+				}
 			}
 		});
 	}
 
-	private void prepareToTakeFirstPicture() {
+	private void enterInstructionStage() {
+		makeDark();
 		Log.e(VIVIDCAMERA_TAG, "prepareToTakeFirstPicture");
-		mInstructionTextView.setText("Now you will take two selfies. For each shot, look directly into the red dot. "
-				+ "Do not just move your eyeballs; direct your head to red dots. Touch anywhere to continue.");
-		mFrame.bringChildToFront(mInstructionTextView);
+		mInstructionTextView.setText("Direct your head exactly toward red dot");
 		mInstructionTextView.bringToFront();
-		mFrame.invalidate();
-		mFrame.requestLayout();
+		mCurrentStage = Stage.Instruction;
+	}
+
+	private void enterFirstShotStage() {
+		removeDark();
+		mInstructionTextView.setAlpha(0.0f);
+		mCurrentStage = Stage.FirstShot;
+		// mFrame.removeView(mInstructionTextView);
+	}
+
+	private void enterSecondShotStage() {
+		mCurrentStage = Stage.SecondShot;
+	}
+
+	private void enterCompletedStage() {
+		mCurrentStage = Stage.Completed;
 	}
 
 	public void onClickTakePictureButton(View v) {
-		takePicture();
+		if (mCurrentStage == Stage.FirstShot) {
+			takePicture();
+			enterSecondShotStage();
+		} else if (mCurrentStage == Stage.SecondShot) {
+			takePicture();
+			enterCompletedStage();
+		}
 	}
 
 	public void onClickTakeScreenshotButton(View v) {
-		takeScreenshot();
+		// takeScreenshot();
 	}
 
 	private void restartPreview() {
@@ -200,14 +240,16 @@ public class PreviewScreen extends Activity {
 		// don't understand why this function call is needed, but it needs to be
 		// added in Galaxy S3
 		adjustDarkScreenSize();
-		if (mDarkScreen.getParent() != mFrame) {
-			mFrame.addView(mDarkScreen);
-		}
-		mFrame.bringChildToFront(mDarkScreen);
+		mDarkScreen.setAlpha(1.0f);
+		// if (mDarkScreen.getParent() != mFrame) {
+		// mFrame.addView(mDarkScreen);
+		// }
+		// mDarkScreen.bringToFront();
 	}
 
 	private void removeDark() {
-		mFrame.removeView(mDarkScreen);
+		mDarkScreen.setAlpha(0.0f);
+		// mFrame.removeView(mDarkScreen);
 		// ViewGroup.LayoutParams params = mDarkScreen.getLayoutParams();
 		// params.width = 0;
 		// params.height = 0;
