@@ -10,6 +10,8 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -18,6 +20,8 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
@@ -28,10 +32,12 @@ import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.hardware.Camera.Size;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -41,6 +47,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -50,6 +58,7 @@ public class PreviewScreen extends Activity {
 	private FrameLayout mFrame;
 	private TextureView mTextureView;
 	private SimpleSurfaceView mSurfaceView;
+	private ImageView mRedCircle;
 	private Button mTakePictureButton;
 	private Button mTakeScreenshotButton;
 	private LinearLayout mButtonContainer;
@@ -59,33 +68,92 @@ public class PreviewScreen extends Activity {
 	private int cameraIdToUse = 1;
 	int realWidth;
 	int realHeight;
-	public static String VIVIDCAMERA_TAG = "Preview";
 	private Context activityContext = this;
 	private boolean isShutterCallbackBusy = false;
 	private boolean isJpegCallbackBusy = false;
 	private boolean isDataProcessingBusy = false;
 	private boolean shouldCapturePreview = false;
+	private Handler mHandler = new Handler();
+	private String mPictureFileName1;
+	private String mPictureFileName2;
+	private Bitmap mBitmap1;
+	private Bitmap mBitmap2;
+	public static final int MEDIA_TYPE_IMAGE = 1;
+	public static final int MEDIA_TYPE_VIDEO = 2;
+	// should be 0 or positive when calculated later
+	private int exifImageRotation = -1;
 
 	private enum Stage {
-		Instruction, FirstShot, SecondShot, Completed
+		Instruction, FirstShot, Instruction2, SecondShot, Completed, ShowResult
 	};
+
+	private enum Position {
+		Left, Right
+	};
+
+	private final Runnable mTryEnterFirstShot = new Runnable() {
+		public void run() {
+			// Log.v(VividCamera.TAG, "runnable: mTryEnterFirstShot");
+			tryEnterStage(Stage.FirstShot);
+		}
+	};
+	private final Runnable mTryEnterSecondShot = new Runnable() {
+		public void run() {
+			// Log.v(VividCamera.TAG, "runnable: mTryEnterSecondShot");
+			tryEnterStage(Stage.SecondShot);
+		}
+	};
+	private final Runnable mTryEnterShowResult = new Runnable() {
+		public void run() {
+			// Log.v(VividCamera.TAG, "runnable: mCheckBitmaps");
+			if (mBitmap1 != null && mBitmap2 != null) { // OK
+				enterShowResultStage();
+			} else {
+				Log.i(VividCamera.TAG, "mTryEnterShowResult loop");
+				tryEnterShowResult();
+			}
+		}
+	};
+
+	private void enterStageDelayed(final Stage stage, int millisec) {
+		Timer myTimer = new Timer();
+		myTimer.schedule(new TimerTask() {
+			@Override
+			public void run() {
+				if (stage == Stage.FirstShot) {
+					mHandler.post(mTryEnterFirstShot);
+				} else if (stage == Stage.SecondShot) {
+					mHandler.post(mTryEnterSecondShot);
+				} else {}
+			}
+		}, millisec);
+	}
+
+	private void tryEnterShowResult() {
+		new Timer().schedule(new TimerTask() {
+			public void run() {
+				mHandler.post(mTryEnterShowResult);
+			}
+		}, 300);
+	}
 
 	private Stage mCurrentStage;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.i(VIVIDCAMERA_TAG, "onCreate");
+		Log.i(VividCamera.TAG, "onCreate");
 		// requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 		// WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.vividcamera__preview_screen);
 		getScreenDimension();
-		Log.w(VIVIDCAMERA_TAG, "Screen width = " + realWidth + " height is: " + realHeight);
+		Log.w(VividCamera.TAG, "Screen width = " + realWidth + " height is: " + realHeight);
 		mFrame = (FrameLayout) findViewById(R.id.vividcamera__preview);
+		mRedCircle = (ImageView) findViewById(R.id.vividcamera__redcircle);
 		mButtonContainer = (LinearLayout) findViewById(R.id.vividcamera__buttons);
 		mDarkScreen = (FrameLayout) findViewById(R.id.vividcamera__dark);
-		mDarkScreen.setBackgroundColor(0xB0000000);
+		mDarkScreen.setBackgroundColor(0xFFFFFFFF);
 		mInstructionTextView = (TextView) findViewById(R.id.vividcamera__instruction_text);
 		// mTextureView = new TextureView(this);
 		// mTextureView.setSurfaceTextureListener(this);
@@ -100,25 +168,25 @@ public class PreviewScreen extends Activity {
 	@Override
 	public void onStart() {
 		super.onStart();
-		Log.i(VIVIDCAMERA_TAG, "onStart");
+		Log.i(VividCamera.TAG, "onStart");
 		// showInstructionDialog();
 	}
 
 	@Override
 	public void onRestart() {
-		Log.i(VIVIDCAMERA_TAG, "onRestart");
+		Log.i(VividCamera.TAG, "onRestart");
 		super.onRestart();
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		Log.i(VIVIDCAMERA_TAG, "onStop");
+		Log.i(VividCamera.TAG, "onStop");
 	}
 
 	@Override
 	public void onPause() {
-		Log.i(VIVIDCAMERA_TAG, "onPause");
+		Log.i(VividCamera.TAG, "onPause");
 		super.onPause();
 		mFrame.removeView(mSurfaceView);
 		mCamera.stopPreview();
@@ -129,7 +197,7 @@ public class PreviewScreen extends Activity {
 
 	@Override
 	public void onResume() {
-		Log.i(VIVIDCAMERA_TAG, "onResume");
+		Log.i(VividCamera.TAG, "onResume");
 		super.onResume();
 		mCamera = VividCamera.getCameraInstance(cameraIdToUse);
 		setPictureOrientation();
@@ -141,15 +209,19 @@ public class PreviewScreen extends Activity {
 		// adjust subviews order. I don't change their order anywhere else;
 		// use alpha value to mimic the change of the order of child views
 		mFrame.addView(mSurfaceView);
+		mRedCircle.bringToFront();
 		mButtonContainer.bringToFront();
+		mButtonContainer.setAlpha(0.0f);
 		mDarkScreen.bringToFront();
 		mInstructionTextView.bringToFront();
 		enterInstructionStage();
+		mBitmap1 = null;
+		mBitmap2 = null;
 	}
 
 	@Override
 	public void onDestroy() {
-		Log.i(VIVIDCAMERA_TAG, "onDestroy");
+		Log.i(VividCamera.TAG, "onDestroy");
 		super.onDestroy();
 	}
 
@@ -157,57 +229,121 @@ public class PreviewScreen extends Activity {
 		mFrame.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				switch (mCurrentStage) {
-					case Instruction:
-						enterFirstShotStage();
-						break;
-					case FirstShot:
-						break;
-					case SecondShot:
-						break;
-					case Completed:
-						break;
-					default:
-						break;
-				}
+				onClickScreen();
 			}
 		});
 	}
 
+	private void onClickScreen() {
+		switch (mCurrentStage) {
+			case Instruction:
+				enterFirstShotStage();
+				break;
+			case FirstShot:
+				takePicture();
+				enterInstructionStage2();
+				break;
+			case SecondShot:
+				takePicture();
+				enterCompletedStage();
+				break;
+			default:
+				break;
+		}
+	}
+
+	private void tryEnterStage(Stage stage) {
+		switch (stage) {
+			case FirstShot:
+				if (mCurrentStage == Stage.Instruction) {
+					enterFirstShotStage();
+					// possible case due to delayed timer call
+				} else {}
+				break;
+			case SecondShot:
+				if (mCurrentStage == Stage.Instruction2) {
+					enterSecondShotStage();
+					// possible case due to delayed timer call
+				} else { // serious error
+					Log.e(VividCamera.TAG, "Stage order error.");
+					finish();
+				}
+				break;
+			default:
+				break;
+		}
+	}
+
 	private void enterInstructionStage() {
-		makeDark();
-		Log.e(VIVIDCAMERA_TAG, "prepareToTakeFirstPicture");
-		mInstructionTextView.setText("Direct your head exactly toward red dot");
-		mInstructionTextView.bringToFront();
+		Log.v(VividCamera.TAG, "enterInstructionStage");
 		mCurrentStage = Stage.Instruction;
+		hideRedCircle();
+		showInstruction("Direct your head exactly toward red dot, and Touch anywhere");
+		enterStageDelayed(Stage.FirstShot, 5000);
 	}
 
 	private void enterFirstShotStage() {
+		Log.v(VividCamera.TAG, "enterFirstShotStage");
 		removeDark();
-		mInstructionTextView.setAlpha(0.0f);
+		hideInstruction();
+		placeRedCircle(Position.Right);
 		mCurrentStage = Stage.FirstShot;
-		// mFrame.removeView(mInstructionTextView);
+	}
+
+	private void enterInstructionStage2() {
+		Log.v(VividCamera.TAG, "enterInstructionStage2");
+		mCurrentStage = Stage.Instruction2;
+		hideRedCircle();
+		showInstruction("One more time");
+		enterStageDelayed(Stage.SecondShot, 1000);
 	}
 
 	private void enterSecondShotStage() {
+		Log.v(VividCamera.TAG, "enterSecondShotStage");
+		removeDark();
+		hideInstruction();
+		placeRedCircle(Position.Left);
 		mCurrentStage = Stage.SecondShot;
 	}
 
 	private void enterCompletedStage() {
+		Log.v(VividCamera.TAG, "enterCompletedStage");
+		hideRedCircle();
 		mCurrentStage = Stage.Completed;
+		tryEnterShowResult();
 	}
 
-	public void onClickTakePictureButton(View v) {
-		if (mCurrentStage == Stage.FirstShot) {
-			takePicture();
-			enterSecondShotStage();
-		} else if (mCurrentStage == Stage.SecondShot) {
-			takePicture();
-			enterCompletedStage();
+	private void enterShowResultStage() {
+		Bitmap combined = ImageProcessor.combineBitmap(mBitmap1, mBitmap2);
+		ImageProcessor.saveBitmapToFile(combined, getOutputMediaFile(MEDIA_TYPE_IMAGE));
+	}
+
+	private void showInstruction(String text) {
+		makeDark();
+		mInstructionTextView.setAlpha(1.0f);
+		mInstructionTextView.setText(text);
+	}
+
+	private void hideInstruction() {
+		mInstructionTextView.setAlpha(0.0f);
+	}
+
+	private void hideRedCircle() {
+		mRedCircle.setAlpha(0.0f);
+	}
+
+	private void placeRedCircle(Position position) {
+		mRedCircle.setAlpha(1.0f);
+		FrameLayout.LayoutParams params = (LayoutParams) mRedCircle.getLayoutParams();
+		if (position == Position.Left) {
+			params.gravity = android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.LEFT;
+		} else {
+			params.gravity = android.view.Gravity.CENTER_VERTICAL | android.view.Gravity.RIGHT;
 		}
+		mRedCircle.setLayoutParams(params);
 	}
 
-	public void onClickTakeScreenshotButton(View v) {
+	private void onClickTakeScreenshotButton(View v) {
 		// takeScreenshot();
 	}
 
@@ -234,31 +370,19 @@ public class PreviewScreen extends Activity {
 	}
 
 	private void makeDark() {
-		ViewGroup.LayoutParams params = mDarkScreen.getLayoutParams();
-		params.width = mFrame.getLayoutParams().width;
-		params.height = mFrame.getLayoutParams().height;
 		// don't understand why this function call is needed, but it needs to be
 		// added in Galaxy S3
 		adjustDarkScreenSize();
-		mDarkScreen.setAlpha(1.0f);
-		// if (mDarkScreen.getParent() != mFrame) {
-		// mFrame.addView(mDarkScreen);
-		// }
-		// mDarkScreen.bringToFront();
+		mDarkScreen.setAlpha(0.8f);
 	}
 
 	private void removeDark() {
 		mDarkScreen.setAlpha(0.0f);
-		// mFrame.removeView(mDarkScreen);
-		// ViewGroup.LayoutParams params = mDarkScreen.getLayoutParams();
-		// params.width = 0;
-		// params.height = 0;
-		// mDarkScreen.setLayoutParams(params);
 	}
 
-	public void takePicture() {
+	private void takePicture() {
 		if (isCameraBusy()) {
-			Log.e(VIVIDCAMERA_TAG, "Camera busy");
+			Log.e(VividCamera.TAG, "Camera busy");
 			return;
 		} else {
 			setCameraBusy();
@@ -274,51 +398,90 @@ public class PreviewScreen extends Activity {
 				} catch (Exception e) {
 					e.printStackTrace();
 					Thread.sleep(200);
-					// Log.w(VIVIDCAMERA_TAG, "Waiting loop");
+					// Log.w(VividCamera.TAG, "Waiting loop");
 				}
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
-		} finally {
-			removeDark();
-		}
+		} finally {}
 		isDataProcessingBusy = false;
-		Log.w(VIVIDCAMERA_TAG, "Restarted preview");
+		Log.w(VividCamera.TAG, "Picture taken");
 	}
 
-	public void takeScreenshot() {
+	private void takeScreenshot() {
 		shouldCapturePreview = true;
 	}
 
 	private ShutterCallback mShutterCallback = new ShutterCallback() {
 		public void onShutter() {
-			// Log.w(VIVIDCAMERA_TAG, "ShutterCallback");
+			// Log.w(VividCamera.TAG, "ShutterCallback");
 			isShutterCallbackBusy = false;
 		}
 	};
 	private PictureCallback mPictureCallback = new PictureCallback() {
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
-			File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-			if (pictureFile == null) {
-				Log.d(VIVIDCAMERA_TAG, "Error creating media file, check storage permission");
-				return;
-			}
-			try {
-				FileOutputStream fos = new FileOutputStream(pictureFile);
-				fos.write(data);
-				fos.close();
-			} catch (FileNotFoundException e) {
-				Log.d(VIVIDCAMERA_TAG, "File not found: " + e.getMessage());
-			} catch (IOException e) {
-				Log.d(VIVIDCAMERA_TAG, "Error accessing file: " + e.getMessage());
+			if (exifImageRotation < 0) {
+				Log.e(VividCamera.TAG, "exifImageRotation : " + exifImageRotation);
+				File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+				if (pictureFile == null) {
+					Log.d(VividCamera.TAG, "Error creating media file, check storage permission");
+					return;
+				}
+				try {
+					FileOutputStream fos = new FileOutputStream(pictureFile);
+					fos.write(data);
+					fos.close();
+				} catch (FileNotFoundException e) {
+					Log.d(VividCamera.TAG, "File not found: " + e.getMessage());
+				} catch (IOException e) {
+					Log.d(VividCamera.TAG, "Error accessing file: " + e.getMessage());
+				}
+				exifImageRotation = calculateExifImageRotation(pictureFile);
+				pictureFile.delete();
 			}
 			isJpegCallbackBusy = false;
-			// Log.w(VIVIDCAMERA_TAG, "PictureCallback finished");
+			if (mBitmap1 == null) {
+				// mPictureFileName1 = pictureFile.getAbsolutePath();
+				mBitmap1 = getBitmapFromJpegData(data);
+			} else if (mBitmap1 != null && mBitmap2 == null) {
+				// mPictureFileName2 = pictureFile.getAbsolutePath();
+				mBitmap2 = getBitmapFromJpegData(data);
+			} else { // serious error
+				Log.e(VividCamera.TAG, "Picture callback error");
+				finish();
+			}
+			// Log.w(VividCamera.TAG, "PictureCallback finished");
 		}
 	};
-	public static final int MEDIA_TYPE_IMAGE = 1;
-	public static final int MEDIA_TYPE_VIDEO = 2;
+
+	private Bitmap getBitmapFromJpegData(byte[] data) {
+		return ImageProcessor.rotateBitmap(BitmapFactory.decodeByteArray(data, 0, data.length), exifImageRotation);
+	}
+
+	private int calculateExifImageRotation(File pictureFile) {
+		String fileName = pictureFile.getAbsolutePath();
+		int exifOrientation = 0;
+		try {
+			exifOrientation = new ExifInterface(fileName).getAttributeInt(ExifInterface.TAG_ORIENTATION,
+					ExifInterface.ORIENTATION_NORMAL);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Log.e(VividCamera.TAG, "calculated exif rotation = " + exifToDegrees(exifOrientation));
+		return exifToDegrees(exifOrientation);
+	}
+
+	private static int exifToDegrees(int exifOrientation) {
+		if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
+			return 90;
+		} else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
+			return 180;
+		} else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
+			return 270;
+		}
+		return 0;
+	}
 
 	/** Create a file Uri for saving an image or video */
 	private static Uri getOutputMediaFileUri(int type) {
@@ -329,7 +492,7 @@ public class PreviewScreen extends Activity {
 	private static File getOutputMediaFile(int type) {
 		// To be safe, you should check that the SDCard is mounted
 		// using Environment.getExternalStorageState() before doing this.
-		// Log.e(VIVIDCAMERA_TAG, "External storage: " +
+		// Log.e(VividCamera.TAG, "External storage: " +
 		// Environment.getExternalStorageState());
 		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
 				"MyCameraApp");
@@ -338,7 +501,7 @@ public class PreviewScreen extends Activity {
 		// Create the storage directory if it does not exist
 		if (!mediaStorageDir.exists()) {
 			if (!mediaStorageDir.mkdirs()) {
-				Log.d(VIVIDCAMERA_TAG, "failed to create directory");
+				Log.d(VividCamera.TAG, "failed to create directory");
 				return null;
 			}
 		}
@@ -352,7 +515,7 @@ public class PreviewScreen extends Activity {
 		} else {
 			return null;
 		}
-		// Log.w(VIVIDCAMERA_TAG, "get outputfile " + mediaStorageDir.getPath() +
+		// Log.w(VividCamera.TAG, "get outputfile " + mediaStorageDir.getPath() +
 		// File.separator + "IMG_" + timeStamp + ".jpg");
 		return mediaFile;
 	}
@@ -416,16 +579,16 @@ public class PreviewScreen extends Activity {
 		// pick largest resolution (except square type)
 		for (Size size : sortSizeList(params.getSupportedPictureSizes())) {
 			if (size.width > 1000) {
-				// Log.v(VIVIDCAMERA_TAG, "Available picture: " + size.width + " " +
+				// Log.v(VividCamera.TAG, "Available picture: " + size.width + " " +
 				// size.height + " ratio: " + getRatio(size));
 			}
 		}
 		// for (int[] fps : params.getSupportedPreviewFpsRange()) {
-		// Log.v(VIVIDCAMERA_TAG, "Supported FPS: " + fps[0] + " " + fps[1]);
+		// Log.v(VividCamera.TAG, "Supported FPS: " + fps[0] + " " + fps[1]);
 		// }
 		for (Size size : sortSizeList(params.getSupportedPreviewSizes())) {
 			if (size.width > 1000) {
-				// Log.v(VIVIDCAMERA_TAG, "Available preview: " + size.width + " " +
+				// Log.v(VividCamera.TAG, "Available preview: " + size.width + " " +
 				// size.height + " ratio: " + getRatio(size));
 			}
 		}
@@ -436,9 +599,9 @@ public class PreviewScreen extends Activity {
 			params.setPreviewSize(pictureAndPreviewSize[1].width, pictureAndPreviewSize[1].height);
 		}
 		mCamera.setParameters(params);
-		Log.v(VIVIDCAMERA_TAG, "Set picture size to: " + params.getPictureSize().width + " "
+		Log.v(VividCamera.TAG, "Set picture size to: " + params.getPictureSize().width + " "
 				+ params.getPictureSize().height);
-		Log.v(VIVIDCAMERA_TAG, "Set preview size to: " + params.getPreviewSize().width + " "
+		Log.v(VividCamera.TAG, "Set preview size to: " + params.getPreviewSize().width + " "
 				+ params.getPreviewSize().height);
 	}
 
@@ -489,13 +652,13 @@ public class PreviewScreen extends Activity {
 	private void adjustFrameSize() {
 		Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
 		Camera.Size pictureSize = mCamera.getParameters().getPictureSize();
-		// Log.v(VIVIDCAMERA_TAG, "screen size is " + realWidth + ", " +
+		// Log.v(VividCamera.TAG, "screen size is " + realWidth + ", " +
 		// realHeight);
-		// Log.v(VIVIDCAMERA_TAG, "framelayout size is " + preview.getWidth() + ", "
+		// Log.v(VividCamera.TAG, "framelayout size is " + preview.getWidth() + ", "
 		// + preview.getHeight());
-		// Log.v(VIVIDCAMERA_TAG, "picture size was " + pictureSize.width + ", " +
+		// Log.v(VividCamera.TAG, "picture size was " + pictureSize.width + ", " +
 		// pictureSize.height);
-		// Log.v(VIVIDCAMERA_TAG, "preview size was " + previewSize.width + ", " +
+		// Log.v(VividCamera.TAG, "preview size was " + previewSize.width + ", " +
 		// previewSize.height);
 		// landscape
 		float ratio = getRatio(previewSize);
@@ -513,7 +676,7 @@ public class PreviewScreen extends Activity {
 			new_width = realWidth;
 			new_height = Math.round(realWidth / ratio);
 		}
-		Log.v(VIVIDCAMERA_TAG, "result mPreview size is " + new_width + ", " + new_height + " ratio is " + ratio);
+		Log.v(VividCamera.TAG, "result mPreview size is " + new_width + ", " + new_height + " ratio is " + ratio);
 		mFrame.setLayoutParams(new LinearLayout.LayoutParams(new_width, new_height));
 	}
 
@@ -521,7 +684,7 @@ public class PreviewScreen extends Activity {
 		ViewGroup.LayoutParams params = mDarkScreen.getLayoutParams();
 		params.width = mFrame.getLayoutParams().width;
 		params.height = mFrame.getLayoutParams().height;
-		// Log.v(VIVIDCAMERA_TAG, "adjust dark screen " + params.width + ", " +
+		// Log.v(VividCamera.TAG, "adjust dark screen " + params.width + ", " +
 		// params.height);
 		mDarkScreen.setLayoutParams(params);
 	}
@@ -576,7 +739,7 @@ public class PreviewScreen extends Activity {
 
 	private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
 		public void onPreviewFrame(byte[] data, Camera camera) {
-			// Log.v(VIVIDCAMERA_TAG, "Preview callback!");
+			// Log.v(VividCamera.TAG, "Preview callback!");
 			if (shouldCapturePreview == false) {
 				return;
 			}
@@ -599,13 +762,13 @@ public class PreviewScreen extends Activity {
 					e.printStackTrace();
 				}
 			}
-			Log.e(VIVIDCAMERA_TAG, "Preview captured!");
+			Log.e(VividCamera.TAG, "Preview captured!");
 			shouldCapturePreview = false;
 		}
 	};
 
 	public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-		Log.v(VIVIDCAMERA_TAG, "TextureView ready");
+		Log.v(VividCamera.TAG, "TextureView ready");
 		try {
 			mCamera.setPreviewTexture(surface);
 			// mCamera.startPreview();

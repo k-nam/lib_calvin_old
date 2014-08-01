@@ -12,13 +12,12 @@ import android.view.SurfaceView;
 public class SimpleSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 	private SurfaceHolder mHolder;
 	private Camera mCamera;
-	public String VIVIDCAMERA_TAG = "Preview";
 	private PreviewScreen preview = null;
 
 	public SimpleSurfaceView(Context context, Camera camera) {
 		super(context);
 		if (context == null) {
-			Log.e(VIVIDCAMERA_TAG, "context was null");
+			Log.e(VividCamera.TAG, "context was null");
 		}
 		mCamera = camera;
 		// Install a SurfaceHolder.Callback so we get notified when the
@@ -36,7 +35,7 @@ public class SimpleSurfaceView extends SurfaceView implements SurfaceHolder.Call
 			mCamera.setPreviewDisplay(holder);
 			mCamera.startPreview();
 		} catch (IOException e) {
-			Log.e(VIVIDCAMERA_TAG, "Error setting camera preview: " + e.getMessage());
+			Log.e(VividCamera.TAG, "Error setting camera preview: " + e.getMessage());
 		}
 	}
 
@@ -65,7 +64,7 @@ public class SimpleSurfaceView extends SurfaceView implements SurfaceHolder.Call
 			mCamera.setPreviewDisplay(mHolder);
 			mCamera.startPreview();
 		} catch (Exception e) {
-			Log.e(VIVIDCAMERA_TAG, "Error starting camera preview: " + e.getMessage());
+			Log.e(VividCamera.TAG, "Error starting camera preview: " + e.getMessage());
 		}
 	}
 }

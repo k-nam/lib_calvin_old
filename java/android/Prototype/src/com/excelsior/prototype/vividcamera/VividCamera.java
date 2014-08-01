@@ -19,6 +19,7 @@ public class VividCamera extends Fragment {
 	TextView cameraInfo;
 	private int cameraIdToUse = 1;
 	private int requestCodeForPreview = 0;
+	public static String TAG = "Preview";
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.vividcamera, container, false);
