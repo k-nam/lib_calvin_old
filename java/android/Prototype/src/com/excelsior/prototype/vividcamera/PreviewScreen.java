@@ -306,6 +306,7 @@ public class PreviewScreen extends Activity {
 		mCurrentStage = Stage.SecondShot;
 	}
 
+	// wait for PictureCallbacks to finish
 	private void enterCompletedStage() {
 		Log.v(VividCamera.TAG, "enterCompletedStage");
 		hideRedCircle();
@@ -314,7 +315,7 @@ public class PreviewScreen extends Activity {
 	}
 
 	private void enterShowResultStage() {
-		Bitmap combined = ImageProcessor.combineBitmap(mBitmap1, mBitmap2);
+		Bitmap combined = ImageProcessor.cropAndCombineBitmap(mBitmap1, mBitmap2);
 		ImageProcessor.saveBitmapToFile(combined, getOutputMediaFile(MEDIA_TYPE_IMAGE));
 	}
 
@@ -345,18 +346,6 @@ public class PreviewScreen extends Activity {
 
 	private void onClickTakeScreenshotButton(View v) {
 		// takeScreenshot();
-	}
-
-	private void restartPreview() {
-		// mCamera.stopPreview();
-		makeDark();
-		try {
-			Thread.sleep(10);
-		} catch (Exception e) {} finally {
-			// removeDark();
-		}
-		// setPreviewCallback();
-		// mCamera.startPreview();
 	}
 
 	private boolean isCameraBusy() {
