@@ -20,6 +20,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
@@ -43,6 +44,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.TextureView.SurfaceTextureListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -54,10 +56,10 @@ import android.widget.TextView;
 
 import com.excelsior.prototype.R;
 
-public class PreviewScreen extends Activity {
+public class PreviewScreen extends Activity implements SurfaceTextureListener {
 	private FrameLayout mFrame;
 	private TextureView mTextureView;
-	private SimpleSurfaceView mSurfaceView;
+	// private SimpleSurfaceView mSurfaceView;
 	private ImageView mRedCircle;
 	private Button mTakePictureButton;
 	private Button mTakeScreenshotButton;
@@ -103,14 +105,14 @@ public class PreviewScreen extends Activity {
 			tryEnterStage(Stage.SecondShot);
 		}
 	};
-	private final Runnable mTryEnterShowResult = new Runnable() {
+	private final Runnable mTryEnterCompleted2 = new Runnable() {
 		public void run() {
 			// Log.v(VividCamera.TAG, "runnable: mCheckBitmaps");
 			if (mBitmap1 != null && mBitmap2 != null) { // OK
-				enterShowResultStage();
+				enterCompletedStage2();
 			} else {
 				Log.i(VividCamera.TAG, "mTryEnterShowResult loop");
-				tryEnterShowResult();
+				tryEnterCompleted2();
 			}
 		}
 	};
@@ -129,10 +131,10 @@ public class PreviewScreen extends Activity {
 		}, millisec);
 	}
 
-	private void tryEnterShowResult() {
+	private void tryEnterCompleted2() {
 		new Timer().schedule(new TimerTask() {
 			public void run() {
-				mHandler.post(mTryEnterShowResult);
+				mHandler.post(mTryEnterCompleted2);
 			}
 		}, 300);
 	}
@@ -143,26 +145,19 @@ public class PreviewScreen extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.i(VividCamera.TAG, "onCreate");
-		// requestWindowFeature(Window.FEATURE_NO_TITLE);
-		// getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-		// WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.vividcamera__preview_screen);
+		mTextureView = new TextureView(this);
+		mTextureView.setSurfaceTextureListener(this);
 		getScreenDimension();
 		Log.w(VividCamera.TAG, "Screen width = " + realWidth + " height is: " + realHeight);
 		mFrame = (FrameLayout) findViewById(R.id.vividcamera__preview);
+		mFrame.addView(mTextureView);
 		mRedCircle = (ImageView) findViewById(R.id.vividcamera__redcircle);
 		mButtonContainer = (LinearLayout) findViewById(R.id.vividcamera__buttons);
 		mDarkScreen = (FrameLayout) findViewById(R.id.vividcamera__dark);
 		mDarkScreen.setBackgroundColor(0xFFFFFFFF);
 		mInstructionTextView = (TextView) findViewById(R.id.vividcamera__instruction_text);
-		// mTextureView = new TextureView(this);
-		// mTextureView.setSurfaceTextureListener(this);
-		// setContentView(mTextureView);
 		setClickListener();
-	}
-
-	public void setPreviewCallback() {
-		mCamera.setPreviewCallback(mPreviewCallback);
 	}
 
 	@Override
@@ -188,27 +183,14 @@ public class PreviewScreen extends Activity {
 	public void onPause() {
 		Log.i(VividCamera.TAG, "onPause");
 		super.onPause();
-		mFrame.removeView(mSurfaceView);
-		mCamera.stopPreview();
-		mCamera.setPreviewCallback(null);
-		mSurfaceView.getHolder().removeCallback(mSurfaceView);
-		mCamera.release();
 	}
 
 	@Override
 	public void onResume() {
 		Log.i(VividCamera.TAG, "onResume");
 		super.onResume();
-		mCamera = VividCamera.getCameraInstance(cameraIdToUse);
-		setPictureOrientation();
-		setCameraDisplayOrientation(this, cameraIdToUse, mCamera);
-		adjustPictureAndPreviewSize();
-		adjustFrameSize();
-		// mCamera.startPreview() is called here
-		mSurfaceView = new SimpleSurfaceView(this, mCamera);
 		// adjust subviews order. I don't change their order anywhere else;
 		// use alpha value to mimic the change of the order of child views
-		mFrame.addView(mSurfaceView);
 		mRedCircle.bringToFront();
 		mButtonContainer.bringToFront();
 		mButtonContainer.setAlpha(0.0f);
@@ -217,6 +199,18 @@ public class PreviewScreen extends Activity {
 		enterInstructionStage();
 		mBitmap1 = null;
 		mBitmap2 = null;
+	}
+
+	private void prepareCamera() {
+		mCamera = getCameraInstance(cameraIdToUse);
+		adjustCameraSetting();
+	}
+
+	private void adjustCameraSetting() {
+		setPictureOrientation();
+		setCameraDisplayOrientation(this, cameraIdToUse, mCamera);
+		adjustPictureAndPreviewSize();
+		adjustFrameSize();
 	}
 
 	@Override
@@ -311,12 +305,18 @@ public class PreviewScreen extends Activity {
 		Log.v(VividCamera.TAG, "enterCompletedStage");
 		hideRedCircle();
 		mCurrentStage = Stage.Completed;
-		tryEnterShowResult();
+		tryEnterCompleted2();
 	}
 
-	private void enterShowResultStage() {
+	private void enterCompletedStage2() {
+		Log.v(VividCamera.TAG, "enterCompletedStage2");
 		Bitmap combined = ImageProcessor.cropAndCombineBitmap(mBitmap1, mBitmap2);
-		ImageProcessor.saveBitmapToFile(combined, getOutputMediaFile(MEDIA_TYPE_IMAGE));
+		File file = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+		ImageProcessor.saveBitmapToFile(combined, file);
+		Intent intent = new Intent();
+		intent.putExtra(VividCamera.RESULT_FILE_PATH, file.getAbsolutePath());
+		setResult(RESULT_OK, intent);
+		finish();
 	}
 
 	private void showInstruction(String text) {
@@ -394,7 +394,7 @@ public class PreviewScreen extends Activity {
 			e.printStackTrace();
 		} finally {}
 		isDataProcessingBusy = false;
-		Log.w(VividCamera.TAG, "Picture taken");
+		// Log.w(VividCamera.TAG, "Picture taken");
 	}
 
 	private void takeScreenshot() {
@@ -411,7 +411,7 @@ public class PreviewScreen extends Activity {
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
 			if (exifImageRotation < 0) {
-				Log.e(VividCamera.TAG, "exifImageRotation : " + exifImageRotation);
+				// Log.e(VividCamera.TAG, "exifImageRotation : " + exifImageRotation);
 				File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 				if (pictureFile == null) {
 					Log.d(VividCamera.TAG, "Error creating media file, check storage permission");
@@ -429,7 +429,6 @@ public class PreviewScreen extends Activity {
 				exifImageRotation = calculateExifImageRotation(pictureFile);
 				pictureFile.delete();
 			}
-			isJpegCallbackBusy = false;
 			if (mBitmap1 == null) {
 				// mPictureFileName1 = pictureFile.getAbsolutePath();
 				mBitmap1 = getBitmapFromJpegData(data);
@@ -440,6 +439,7 @@ public class PreviewScreen extends Activity {
 				Log.e(VividCamera.TAG, "Picture callback error");
 				finish();
 			}
+			isJpegCallbackBusy = false;
 			// Log.w(VividCamera.TAG, "PictureCallback finished");
 		}
 	};
@@ -457,7 +457,8 @@ public class PreviewScreen extends Activity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Log.e(VividCamera.TAG, "calculated exif rotation = " + exifToDegrees(exifOrientation));
+		// Log.e(VividCamera.TAG, "calculated exif rotation = " +
+		// exifToDegrees(exifOrientation));
 		return exifToDegrees(exifOrientation);
 	}
 
@@ -588,10 +589,12 @@ public class PreviewScreen extends Activity {
 			params.setPreviewSize(pictureAndPreviewSize[1].width, pictureAndPreviewSize[1].height);
 		}
 		mCamera.setParameters(params);
-		Log.v(VividCamera.TAG, "Set picture size to: " + params.getPictureSize().width + " "
-				+ params.getPictureSize().height);
-		Log.v(VividCamera.TAG, "Set preview size to: " + params.getPreviewSize().width + " "
-				+ params.getPreviewSize().height);
+		// Log.v(VividCamera.TAG, "Set picture size to: " +
+		// params.getPictureSize().width + " "
+		// + params.getPictureSize().height);
+		// Log.v(VividCamera.TAG, "Set preview size to: " +
+		// params.getPreviewSize().width + " "
+		// + params.getPreviewSize().height);
 	}
 
 	public void setPictureOrientation() {
@@ -665,7 +668,8 @@ public class PreviewScreen extends Activity {
 			new_width = realWidth;
 			new_height = Math.round(realWidth / ratio);
 		}
-		Log.v(VividCamera.TAG, "result mPreview size is " + new_width + ", " + new_height + " ratio is " + ratio);
+		// Log.v(VividCamera.TAG, "result mPreview size is " + new_width + ", " +
+		// new_height + " ratio is " + ratio);
 		mFrame.setLayoutParams(new LinearLayout.LayoutParams(new_width, new_height));
 	}
 
@@ -726,6 +730,17 @@ public class PreviewScreen extends Activity {
 		new InstructionDialog().show(getFragmentManager(), "aa");
 	}
 
+	/** A safe way to get an instance of the Camera object. */
+	private Camera getCameraInstance(int cameraId) {
+		Camera c = null;
+		try {
+			c = Camera.open(cameraId); // attempt to get a Camera instance
+		} catch (Exception e) {
+			// Camera is not available (in use or does not exist)
+		}
+		return c; // returns null if camera is unavailable
+	}
+
 	private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
 		public void onPreviewFrame(byte[] data, Camera camera) {
 			// Log.v(VividCamera.TAG, "Preview callback!");
@@ -757,10 +772,10 @@ public class PreviewScreen extends Activity {
 	};
 
 	public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-		Log.v(VividCamera.TAG, "TextureView ready");
+		prepareCamera();
 		try {
 			mCamera.setPreviewTexture(surface);
-			// mCamera.startPreview();
+			mCamera.startPreview();
 		} catch (IOException ioe) {
 			// Something bad happened
 		}
@@ -771,6 +786,8 @@ public class PreviewScreen extends Activity {
 	}
 
 	public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+		mCamera.stopPreview();
+		mCamera.release();
 		return true;
 	}
 

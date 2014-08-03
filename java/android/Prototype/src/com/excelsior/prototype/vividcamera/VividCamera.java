@@ -5,6 +5,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +19,9 @@ public class VividCamera extends Fragment {
 	Button openCameraButton;
 	TextView cameraInfo;
 	private int cameraIdToUse = 1;
-	private int requestCodeForPreview = 0;
+	private int requestCodeForPreviewScreen = 0;
 	public static String TAG = "Preview";
+	public static String RESULT_FILE_PATH = "Result file path";
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.vividcamera, container, false);
@@ -61,17 +63,16 @@ public class VividCamera extends Fragment {
 
 	private void openCamera(int cameraId) {
 		Intent intent = new Intent("com.excelsior.prototype.VividCameraPreview");
-		startActivityForResult(intent, requestCodeForPreview);
+		startActivityForResult(intent, requestCodeForPreviewScreen);
 	}
 
-	/** A safe way to get an instance of the Camera object. */
-	public static Camera getCameraInstance(int cameraId) {
-		Camera c = null;
-		try {
-			c = Camera.open(cameraId); // attempt to get a Camera instance
-		} catch (Exception e) {
-			// Camera is not available (in use or does not exist)
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Log.v(VividCamera.TAG, "onActivityResult");
+		if (requestCode == requestCodeForPreviewScreen) {
+			if (resultCode == android.app.Activity.RESULT_OK) {
+				String resultFilePath = data.getStringExtra(RESULT_FILE_PATH);
+			}
 		}
-		return c; // returns null if camera is unavailable
 	}
 }

@@ -79,7 +79,8 @@
 		</activity>
 		<activity
 			android:name="com.excelsior.prototype.vividcamera.PreviewScreen"
-			android:theme="@style/Theme.Fullscreen">
+			android:theme="@style/Theme.Fullscreen"
+			android:screenOrientation="portrait">
 			<intent-filter>
 				<action android:name="com.excelsior.prototype.VividCameraPreview" />
 				<category android:name="android.intent.category.DEFAULT" />
