@@ -78,11 +78,20 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name="com.excelsior.prototype.vividcamera.PreviewScreen"
+			android:name="com.excelsior.prototype.vividcamera.Shooting"
 			android:theme="@style/Theme.Fullscreen"
 			android:screenOrientation="portrait">
 			<intent-filter>
-				<action android:name="com.excelsior.prototype.VividCameraPreview" />
+				<action android:name="com.excelsior.prototype.Shooting" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+		<activity
+			android:name="com.excelsior.prototype.vividcamera.Review"
+			android:theme="@style/Theme.Fullscreen"
+			android:screenOrientation="landscape">
+			<intent-filter>
+				<action android:name="com.excelsior.prototype.Review" />
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>

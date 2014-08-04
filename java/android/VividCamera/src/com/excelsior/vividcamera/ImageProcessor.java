@@ -1,4 +1,4 @@
-package com.excelsior.prototype.vividcamera;
+package com.excelsior.vividcamera;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,7 +30,7 @@ public class ImageProcessor {
 		int width = 0;
 		int height = 0;
 		if (leftHalf == null || rightHalf == null) {
-			Log.e(VividCamera.TAG, "combineImage null");
+			Log.e(Main.TAG, "combineImage null");
 		}
 		if (leftHalf.getWidth() > rightHalf.getWidth()) {
 			width = leftHalf.getWidth() + rightHalf.getWidth();
@@ -41,7 +41,7 @@ public class ImageProcessor {
 		}
 		if (leftHalf.getHeight() != rightHalf.getHeight()) {
 			// input error
-			Log.e(VividCamera.TAG, "combineImage error");
+			Log.e(Main.TAG, "combineImage error");
 			return null;
 		}
 		result = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -64,7 +64,7 @@ public class ImageProcessor {
 			FileOutputStream fos = new FileOutputStream(file);
 			bitmap.compress(CompressFormat.JPEG, 100, fos);
 		} catch (IOException e) {
-			Log.e(VividCamera.TAG, "save bitmap error");
+			Log.e(Main.TAG, "save bitmap error");
 		}
 	}
 }

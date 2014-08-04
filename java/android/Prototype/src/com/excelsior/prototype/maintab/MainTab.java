@@ -31,7 +31,6 @@ import com.excelsior.prototype.R;
 import com.excelsior.prototype.basicinfo.BasicInfo;
 import com.excelsior.prototype.photoselector.PhotoSelector;
 import com.excelsior.prototype.testset.TestSet;
-import com.excelsior.prototype.vividcamera.VividCamera;
 import com.excelsior.prototype.wholikesme.WhoLikesMe;
 
 public class MainTab extends FragmentActivity {
@@ -45,12 +44,11 @@ public class MainTab extends FragmentActivity {
 	TestSet testSet;
 	PhotoSelector photoSelector;
 	WhoLikesMe whoLikesMe;
-	VividCamera vividCamera;
 	PagerAdapter fragmentPagerAdapter;
 	ViewPager viewPager;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		setContentView(R.layout.main_tab);
@@ -58,8 +56,7 @@ public class MainTab extends FragmentActivity {
 		testSet = new TestSet();
 		photoSelector = new PhotoSelector();
 		whoLikesMe = new WhoLikesMe();
-		vividCamera = new VividCamera();
-		fragmentPagerAdapter = new PagerAdapter(getSupportFragmentManager(), Arrays.asList(vividCamera, basicInfo, testSet,
+		fragmentPagerAdapter = new PagerAdapter(getSupportFragmentManager(), Arrays.asList(basicInfo, testSet,
 				photoSelector, whoLikesMe));
 		viewPager = (ViewPager) findViewById(R.id.main_tab_view_pager);
 		viewPager.setAdapter(fragmentPagerAdapter);
@@ -85,20 +82,16 @@ public class MainTab extends FragmentActivity {
 		Tab testSetTab = actionBar.newTab();
 		Tab photoSelectorTab = actionBar.newTab();
 		Tab whoLikesMeTab = actionBar.newTab();
-		Tab vividCameraTab = actionBar.newTab();
 		basicInfoTab.setText("Basic info");
 		testSetTab.setText("Test");
 		photoSelectorTab.setText("Photo");
 		whoLikesMeTab.setText("WhoLikesMe");
-		vividCameraTab.setText("VividCamera");
 		// basicInfoTab.setIcon(R.drawable.icon_basic_info_tab);
 		// testSetTab.setIcon(R.drawable.icon_test_set_tab);
 		basicInfoTab.setTabListener(listener);
 		testSetTab.setTabListener(listener);
 		photoSelectorTab.setTabListener(listener);
 		whoLikesMeTab.setTabListener(listener);
-		vividCameraTab.setTabListener(listener);
-		actionBar.addTab(vividCameraTab);
 		actionBar.addTab(basicInfoTab);
 		actionBar.addTab(testSetTab);
 		actionBar.addTab(photoSelectorTab);

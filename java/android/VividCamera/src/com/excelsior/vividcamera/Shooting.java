@@ -1,4 +1,4 @@
-package com.excelsior.prototype.vividcamera;
+package com.excelsior.vividcamera;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,9 +54,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.excelsior.prototype.R;
+import com.excelsior.vividcamera.R;
 
-public class PreviewScreen extends Activity implements SurfaceTextureListener {
+public class Shooting extends Activity implements SurfaceTextureListener {
 	private FrameLayout mFrame;
 	private TextureView mTextureView;
 	// private SimpleSurfaceView mSurfaceView;
@@ -111,7 +111,7 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 			if (mBitmap1 != null && mBitmap2 != null) { // OK
 				enterCompletedStage2();
 			} else {
-				Log.i(VividCamera.TAG, "mTryEnterShowResult loop");
+				Log.i(Main.TAG, "mTryEnterShowResult loop");
 				tryEnterCompleted2();
 			}
 		}
@@ -144,12 +144,12 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.i(VividCamera.TAG, "onCreate");
-		setContentView(R.layout.vividcamera__preview_screen);
+		Log.i(Main.TAG, "onCreate");
+		setContentView(R.layout.vividcamera__shooting);
 		mTextureView = new TextureView(this);
 		mTextureView.setSurfaceTextureListener(this);
 		getScreenDimension();
-		Log.w(VividCamera.TAG, "Screen width = " + realWidth + " height is: " + realHeight);
+		Log.w(Main.TAG, "Screen width = " + realWidth + " height is: " + realHeight);
 		mFrame = (FrameLayout) findViewById(R.id.vividcamera__preview);
 		mFrame.addView(mTextureView);
 		mRedCircle = (ImageView) findViewById(R.id.vividcamera__redcircle);
@@ -163,31 +163,31 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 	@Override
 	public void onStart() {
 		super.onStart();
-		Log.i(VividCamera.TAG, "onStart");
+		Log.i(Main.TAG, "onStart");
 		// showInstructionDialog();
 	}
 
 	@Override
 	public void onRestart() {
-		Log.i(VividCamera.TAG, "onRestart");
+		Log.i(Main.TAG, "onRestart");
 		super.onRestart();
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		Log.i(VividCamera.TAG, "onStop");
+		Log.i(Main.TAG, "onStop");
 	}
 
 	@Override
 	public void onPause() {
-		Log.i(VividCamera.TAG, "onPause");
+		Log.i(Main.TAG, "onPause");
 		super.onPause();
 	}
 
 	@Override
 	public void onResume() {
-		Log.i(VividCamera.TAG, "onResume");
+		Log.i(Main.TAG, "onResume");
 		super.onResume();
 		// adjust subviews order. I don't change their order anywhere else;
 		// use alpha value to mimic the change of the order of child views
@@ -215,7 +215,7 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 
 	@Override
 	public void onDestroy() {
-		Log.i(VividCamera.TAG, "onDestroy");
+		Log.i(Main.TAG, "onDestroy");
 		super.onDestroy();
 	}
 
@@ -259,7 +259,7 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 					enterSecondShotStage();
 					// possible case due to delayed timer call
 				} else { // serious error
-					Log.e(VividCamera.TAG, "Stage order error.");
+					Log.e(Main.TAG, "Stage order error.");
 					finish();
 				}
 				break;
@@ -269,7 +269,7 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 	}
 
 	private void enterInstructionStage() {
-		Log.v(VividCamera.TAG, "enterInstructionStage");
+		Log.v(Main.TAG, "enterInstructionStage");
 		mCurrentStage = Stage.Instruction;
 		hideRedCircle();
 		showInstruction("Direct your head exactly toward red dot, and Touch anywhere");
@@ -277,15 +277,15 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 	}
 
 	private void enterFirstShotStage() {
-		Log.v(VividCamera.TAG, "enterFirstShotStage");
-		removeDark();
+		Log.v(Main.TAG, "enterFirstShotStage");
+		restorePreview();
 		hideInstruction();
 		placeRedCircle(Position.Right);
 		mCurrentStage = Stage.FirstShot;
 	}
 
 	private void enterInstructionStage2() {
-		Log.v(VividCamera.TAG, "enterInstructionStage2");
+		Log.v(Main.TAG, "enterInstructionStage2");
 		mCurrentStage = Stage.Instruction2;
 		hideRedCircle();
 		showInstruction("One more time");
@@ -293,8 +293,8 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 	}
 
 	private void enterSecondShotStage() {
-		Log.v(VividCamera.TAG, "enterSecondShotStage");
-		removeDark();
+		Log.v(Main.TAG, "enterSecondShotStage");
+		restorePreview();
 		hideInstruction();
 		placeRedCircle(Position.Left);
 		mCurrentStage = Stage.SecondShot;
@@ -302,25 +302,26 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 
 	// wait for PictureCallbacks to finish
 	private void enterCompletedStage() {
-		Log.v(VividCamera.TAG, "enterCompletedStage");
+		Log.v(Main.TAG, "enterCompletedStage");
 		hideRedCircle();
+		makePreviewInvisible();
 		mCurrentStage = Stage.Completed;
 		tryEnterCompleted2();
 	}
 
 	private void enterCompletedStage2() {
-		Log.v(VividCamera.TAG, "enterCompletedStage2");
+		Log.v(Main.TAG, "enterCompletedStage2");
 		Bitmap combined = ImageProcessor.cropAndCombineBitmap(mBitmap1, mBitmap2);
 		File file = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 		ImageProcessor.saveBitmapToFile(combined, file);
 		Intent intent = new Intent();
-		intent.putExtra(VividCamera.RESULT_FILE_PATH, file.getAbsolutePath());
+		intent.putExtra(Main.RESULT_FILE_PATH, file.getAbsolutePath());
 		setResult(RESULT_OK, intent);
 		finish();
 	}
 
 	private void showInstruction(String text) {
-		makeDark();
+		makePreviewMuddy();
 		mInstructionTextView.setAlpha(1.0f);
 		mInstructionTextView.setText(text);
 	}
@@ -358,20 +359,25 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 		isDataProcessingBusy = true;
 	}
 
-	private void makeDark() {
+	private void makePreviewMuddy() {
 		// don't understand why this function call is needed, but it needs to be
 		// added in Galaxy S3
 		adjustDarkScreenSize();
 		mDarkScreen.setAlpha(0.8f);
 	}
 
-	private void removeDark() {
+	private void makePreviewInvisible() {
+		adjustDarkScreenSize();
+		mDarkScreen.setAlpha(1.0f);
+	}
+
+	private void restorePreview() {
 		mDarkScreen.setAlpha(0.0f);
 	}
 
 	private void takePicture() {
 		if (isCameraBusy()) {
-			Log.e(VividCamera.TAG, "Camera busy");
+			Log.e(Main.TAG, "Camera busy");
 			return;
 		} else {
 			setCameraBusy();
@@ -414,7 +420,7 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 				// Log.e(VividCamera.TAG, "exifImageRotation : " + exifImageRotation);
 				File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 				if (pictureFile == null) {
-					Log.d(VividCamera.TAG, "Error creating media file, check storage permission");
+					Log.d(Main.TAG, "Error creating media file, check storage permission");
 					return;
 				}
 				try {
@@ -422,9 +428,9 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 					fos.write(data);
 					fos.close();
 				} catch (FileNotFoundException e) {
-					Log.d(VividCamera.TAG, "File not found: " + e.getMessage());
+					Log.d(Main.TAG, "File not found: " + e.getMessage());
 				} catch (IOException e) {
-					Log.d(VividCamera.TAG, "Error accessing file: " + e.getMessage());
+					Log.d(Main.TAG, "Error accessing file: " + e.getMessage());
 				}
 				exifImageRotation = calculateExifImageRotation(pictureFile);
 				pictureFile.delete();
@@ -436,7 +442,7 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 				// mPictureFileName2 = pictureFile.getAbsolutePath();
 				mBitmap2 = getBitmapFromJpegData(data);
 			} else { // serious error
-				Log.e(VividCamera.TAG, "Picture callback error");
+				Log.e(Main.TAG, "Picture callback error");
 				finish();
 			}
 			isJpegCallbackBusy = false;
@@ -491,7 +497,7 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 		// Create the storage directory if it does not exist
 		if (!mediaStorageDir.exists()) {
 			if (!mediaStorageDir.mkdirs()) {
-				Log.d(VividCamera.TAG, "failed to create directory");
+				Log.d(Main.TAG, "failed to create directory");
 				return null;
 			}
 		}
@@ -766,7 +772,7 @@ public class PreviewScreen extends Activity implements SurfaceTextureListener {
 					e.printStackTrace();
 				}
 			}
-			Log.e(VividCamera.TAG, "Preview captured!");
+			Log.e(Main.TAG, "Preview captured!");
 			shouldCapturePreview = false;
 		}
 	};
