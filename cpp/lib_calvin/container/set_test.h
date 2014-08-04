@@ -28,29 +28,31 @@ namespace lib_calvin_container
 
 	// Check the correctness of set implementation
 	template <typename Impl>
-	void setFunctionTest(Impl &&impl, size_t testSize, std::string title);
+	void setFunctionTest(size_t testSize, std::string title);
 
 	// Test this ADT impl with N = n 
 	// Assuming that element type T can be constructed with a key value
 	template <typename Impl>
-	void setPerformanceTest(Impl &&impl, int n, std::string title);
+	void setPerformanceTest(int n, std::string title);
 
 	template <typename Impl, typename Key>
-	void setPerformanceTest_(Impl &impl, std::vector<Key> &data, size_t n, std::string title);
+	void setPerformanceTest_(std::vector<Key> &data, size_t n, std::string title);
 
 	template <typename Impl>
-	void setIntegratedSpeedTest(Impl &&impl, int n, std::string title);
+	void setIntegratedSpeedTest(int n, std::string title);
 
 	// Check the correctness of BinTree iterator
 	template <typename Impl>
-	void setIteratorTest(Impl &&impl, std::string title);
+	void setIteratorTest(std::string title);
 
 	// Check resource leak
 	template <typename Impl>
-	void setMemoryTest(Impl &&impl, std::string);
+	void setMemoryTest(std::string);
+	template <typename Impl>
+	void setMemoryTest(std::string title);
 
 	template <typename Impl>
-	void setRvalueTest(Impl &&impl, std::string);
+	void setRvalueTest(std::string);
 
 	void randomAccessSpeedTest(int size);
 }

@@ -8,7 +8,6 @@
 namespace lib_calvin_container
 {
 void bTreeTest();
-void bTreeMemoryTest(); 
 
 template <typename T>
 class BTreeTest

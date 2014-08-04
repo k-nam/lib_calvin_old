@@ -24,27 +24,27 @@ using std::endl;
 using std::vector;
 
 void lib_calvin_container::setTest() {	
-	//setRvalueTest(RbTree<HeavyObjectWithMessage>(), "RbTree / HeavyObject");
-	//setRvalueTest(BTree<HeavyObjectWithMessage>(), "BTree / HeavyObject");
-	//setRvalueTest(BPlusTree<HeavyObjectWithMessage>(), "BPlusTree / HeavyObject");
+	setRvalueTest<RbTree<HeavyObjectWithMessage>>("RbTree / HeavyObject");
+	setRvalueTest<BTree<HeavyObjectWithMessage>>("BTree / HeavyObject");
+	setRvalueTest<BPlusTree<HeavyObjectWithMessage>>("BPlusTree / HeavyObject");
 
 	int const testSize = 1000;
-	setFunctionTest(lib_calvin::set<int>(), testSize, "lib_calvin::set");
-	setFunctionTest(BinTree<int>(), testSize, "lib_calvin_container::BinTree");
-	setFunctionTest(RbTree<HeavyObject>(), testSize, "lib_calvin_container::RbTree");
-	setFunctionTest(BTree<HeavyObject>(), testSize, "lib_calvin_container::BTree");
-	setFunctionTest(BPlusTree<HeavyObject>(), testSize, "lib_calvin_container::BPlusTree");
-	setFunctionTest(OrderedArray<HeavyObject>(), testSize, "lib_calvin_container::OrderedArray");
+	setFunctionTest<lib_calvin::set<int>>(testSize, "lib_calvin::set");
+	setFunctionTest<BinTree<int>>(testSize, "lib_calvin_container::BinTree");
+	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
+	setFunctionTest<BTree<HeavyObject>>(testSize, "lib_calvin_container::BTree");
+	setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
+	setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
 	/* not completed */
 	//setFunctionTest(PtrSet<int>(), testSize, "lib_calvin_container::PtrSet");
 	/* Hash table cannot iterate in order */
-	setFunctionTest(HashTable<int>(), testSize,	"lib_calvin_container::HashTable");
+	setFunctionTest<HashTable<int>>(testSize,	"lib_calvin_container::HashTable");
 	/* boost hash function does not apply to arbitrary object */
 	//setFunctionTest(HashTable<HeavyObject>(), testSize, "lib_calvin_container::HashTable");
 	
-	//setIteratorTest(RbTree<int>(), "RbTree iterator");
-	//setIteratorTest(BTree<int>(), "BTree iterator");
-	//setIteratorTest(HashTable<int>(), "HashTable iterator");
+	setIteratorTest<RbTree<int>>("RbTree iterator");
+	setIteratorTest<BTree<int>>("BTree iterator");
+	setIteratorTest<HashTable<int>>("HashTable iterator");
 
 	int const smallSize = 1000;
 	int const mediumSize = 10000;
@@ -61,39 +61,38 @@ void lib_calvin_container::setTest() {
   //setPerformanceTest(boost::unordered_set<int>(), largeSize, "boost::unordered_set / int");
 	//setPerformanceTest(HashTable<int>(), largeSize, "HashTable / int");
 
-	setPerformanceTest(std::set<LightObject>(), largeSize, "std::set / LightObject");
-	//setPerformanceTest(boost::container::set<LightObject>(), largeSize, "boost::set / LightObject");
-	//setPerformanceTest(RbTree<LightObject>(), largeSize, "RbTree / LightObject");
-	setPerformanceTest(BTree<LightObject>(), largeSize, "BTree / LightObject");
-	//setPerformanceTest(BPlusTree<LightObject>(), largeSize, "BPlusTree / LightObject");
-	//setPerformanceTest(OrderedArray<LightObject>(), largeSize, "OrderedArray / LightObject");
+	setPerformanceTest<std::set<LightObject>>(largeSize, "std::set / LightObject");
+	//setPerformanceTest<boost::container::set<LightObject>(), largeSize, "boost::set / LightObject");
+	setPerformanceTest<RbTree<LightObject>>(largeSize, "RbTree / LightObject");
+	setPerformanceTest<BTree<LightObject>>(largeSize, "BTree / LightObject");
+	//setPerformanceTest<BPlusTree<LightObject>>(largeSize, "BPlusTree / LightObject");
+	//setPerformanceTest<OrderedArray<LightObject>>(largeSize, "OrderedArray / LightObject");
 
-	setPerformanceTest(std::set<HeavyObject>(), mediumSize, "std::set / HeavyObject");
-	//setPerformanceTest(boost::container::set<HeavyObject>(), mediumSize, "boost::set / HeavyObject");
-	//setPerformanceTest(RbTree<HeavyObject>(), mediumSize, "RbTree / HeavyObject");
-	setPerformanceTest(BTree<HeavyObject>(), mediumSize, "BTree / HeavyObject");
-	//setPerformanceTest(BPlusTree<HeavyObject>(), mediumSize, "BPlusTree / HeavyObject");
-	//setPerformanceTest(OrderedArray<LightObject>(), mediumSize, "OrderedArray / HeavyObject");
-	//setPerformanceTest(HashTable<HeavyObject, GenericHash<HeavyObject>>(), mediumSize, "HashTable / HeavyObject");
-	//setPerformanceTest(boost::unordered_set<HeavyObject, GenericHash<HeavyObject>>(), 
-		//mediumSize, "boost::unordered_set / HeavyObject");
-	//setPerformanceTest(std::unordered_set<HeavyObject>(), mediumSize, "std::unordered_set / HeavyObject");
-	//setPerformanceTest(PtrSet<HeavyObject>(), mediumSize, "PtrSet / HeavyObject");
+	setPerformanceTest<std::set<HeavyObject>>(mediumSize, "std::set / HeavyObject");
+	//setPerformanceTest<boost::container::set<HeavyObject>>(mediumSize, "boost::set / HeavyObject");
+	setPerformanceTest<RbTree<HeavyObject>>(mediumSize, "RbTree / HeavyObject");
+	setPerformanceTest<BTree<HeavyObject>>(mediumSize, "BTree / HeavyObject");
+	//setPerformanceTest<BPlusTree<HeavyObject>>(mediumSize, "BPlusTree / HeavyObject");
+	//setPerformanceTest<OrderedArray<LightObject>>(mediumSize, "OrderedArray / HeavyObject");
+	//setPerformanceTest<HashTable<HeavyObject, GenericHash<HeavyObject>>>(mediumSize, "HashTable / HeavyObject");
+	//setPerformanceTest<boost::unordered_set<HeavyObject, GenericHash<HeavyObject>>>(
+	//mediumSize, "boost::unordered_set / HeavyObject");
+	//setPerformanceTest<std::unordered_set<HeavyObject>>(mediumSize, "std::unordered_set / HeavyObject");
+	//setPerformanceTest<PtrSet<HeavyObject>>(mediumSize, "PtrSet / HeavyObject");
 	
-	//setIntegratedSpeedTest(std::set<LightObject>(), smallSize, "std::set");
-	//setIntegratedSpeedTest(boost::container::set<LightObject>(), smallSize, "boost:set");
-	//setIntegratedSpeedTest(RbTree<LightObject>(), smallSize, "RbTree");
+	setIntegratedSpeedTest<std::set<LightObject>>(smallSize, "std::set");
+	setIntegratedSpeedTest<boost::container::set<LightObject>>(smallSize, "boost:set");
+	setIntegratedSpeedTest<RbTree<LightObject>>(smallSize, "RbTree");
+	//setIntegratedSpeedTest<BTree<LightObject>>(smallSize, "BTree");
+	setIntegratedSpeedTest<BPlusTree<LightObject>>(smallSize, "BPlusTree");
+	//setIntegratedSpeedTest<OrderedArray<LightObject>>(smallSize, "OrderedArray");
+
+	setMemoryTest<std::set<std::set<HeavyObject>>>("std::set");
+	setMemoryTest<BinTree<BinTree<HeavyObject>>>("BinTree");
+	setMemoryTest<RbTree<RbTree<HeavyObject>>>("RbTree");
+	setMemoryTest<BTree<BTree<HeavyObject>>>("BTree");
+	setMemoryTest<BPlusTree<BPlusTree<HeavyObject>>>("BPlusTree");
 	
-	//setIntegratedSpeedTest(BTree<LightObject>(), smallSize, "BTree");
-	//setIntegratedSpeedTest(BPlusTree<LightObject>(), smallSize, "BPlusTree");
-	//setIntegratedSpeedTest(OrderedArray<LightObject>(), smallSize, "OrderedArray");
-
-	//setMemoryTest(lib_calvin_container::RbTree<HeavyObject>(), "RbTree");
-	//setMemoryTest<lib_calvin_container::BTree<HeavyObject>>("BTree");
-	//setMemoryTest<lib_calvin_container::PtrSet<HeavyObject>>("PtrSet");
-	//setMemoryTest<lib_calvin_container::link_hash_set<HeavyObject>>("link_hash_set");
-	//setMemoryTest<lib_calvin_container::HashTable<HeavyObject>>("HashTable");
-
 	randomAccessSpeedTest(largeSize);
 
 	HeavyObject::countThisObject();
@@ -102,14 +101,15 @@ void lib_calvin_container::setTest() {
 }
 
 template <typename Impl>
-void lib_calvin_container::setFunctionTest(Impl &&impl, size_t testSize, std::string title) {
+void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 	typedef Impl::value_type T;
 	cout << "Starting set function test for " << title << "\n";
+	Impl impl;
 	vector<T> testVector(testSize);
 	std::set<T> stdSet;
 	bool correct = true;
 	cout << "inserting!\n"; 
-	for (unsigned i = 0; i < testSize; ++i) {
+	for (unsigned i = 0; i < testSize; ++i) {	
 		T temp = rand();
 		testVector[i] = temp;
 		std::pair<Impl::iterator, bool> a = impl.insert(temp);
@@ -251,16 +251,16 @@ void lib_calvin_container::setFunctionTest(Impl &&impl, size_t testSize, std::st
 
 // performance test routine for given data array
 template <typename Impl, typename Key>
-void lib_calvin_container::setPerformanceTest_(Impl &impl, std::vector<Key> &data,
+void lib_calvin_container::setPerformanceTest_(std::vector<Key> &data,
 			size_t n, std::string title) {
 				
 	std::cout << title << "\n";
 	using lib_calvin::stopwatch;
 	stopwatch watch;
-	Impl impl2 = impl;
+	Impl impl;
 	watch.start();
 	for (size_t i = 0; i < n*0.5; ++i) {
-		//impl2.insert(data[i]);
+		impl.insert(data[i]);
 	}
 	watch.stop();
 	cout << "Building: " << n*0.5 / watch.read() << " ops per sec\n";
@@ -355,39 +355,36 @@ void lib_calvin_container::setPerformanceTest_(Impl &impl, std::vector<Key> &dat
 }
 
 template <typename Impl>
-void lib_calvin_container::setPerformanceTest(Impl &&impl, int n, std::string title) {
+void lib_calvin_container::setPerformanceTest(int n, std::string title) {
 	cout << "Starting set performance test for " << title << "\n";
 	typedef Impl::value_type T;
 	std::vector<T> testVector(n), testVector2(n);
-	
 	// Test case 1: random
 	for (int i = 0; i < n; ++i) {
 		testVector[i] = T(i);
 	}	
 	std::random_shuffle(testVector.begin(), testVector.end());
-	setPerformanceTest_(impl, testVector, n, "<Random data test>");
+	setPerformanceTest_<Impl, T>(testVector, n, "<Random data test>");
 	
 	// Test case 2: sorted sequence. Not a good standard for performance test because of temporal locality. 
 	/*
-	Impl impl2;
 	for (int i = 0; i < n; ++i) {
 		testVector2[i] = T(i);
 	}	
-	setPerformanceTest_(impl2, testVector2, n, "<Sorted data test>");
+	setPerformanceTest_(testVector2, n, "<Sorted data test>");
 	*/
 	/*
 	// Test case 2: sorted sequence. Not a good standard for performance test because of temporal locality. 
-	Impl impl2;
 	for (int i = 0; i < n; ++i) {
 		testVector2[i] = T(-i);
 	}	
-	setPerformanceTest_(impl2, testVector2, n, "<Reverse sorted data test>");
+	setPerformanceTest_(testVector2, n, "<Reverse sorted data test>");
 	*/
 	std::cout << "\n";
 }
 
 template <typename Impl>
-void lib_calvin_container::setIntegratedSpeedTest(Impl &&impl, int n, std::string title) {
+void lib_calvin_container::setIntegratedSpeedTest(int n, std::string title) {
 	cout << "Starting set integrated test for " << title << "\n";
 	lib_calvin::stopwatch watch;
 	std::set<Impl> hostSet;
@@ -429,9 +426,9 @@ void lib_calvin_container::setIntegratedSpeedTest(Impl &&impl, int n, std::strin
 }
 
 template <typename Impl>
-void lib_calvin_container::setIteratorTest(Impl &&impl, std::string title) {
+void lib_calvin_container::setIteratorTest(std::string title) {
 	cout << "Starting set iterator test for: " << title << "\n";
-
+	Impl impl;
 	impl.insert(2);
 	impl.insert(1);
 	impl.insert(3);
@@ -482,27 +479,41 @@ void lib_calvin_container::setIteratorTest(Impl &&impl, std::string title) {
 }
 
 template <typename Impl>
-void lib_calvin_container::setMemoryTest(Impl &&impl, std::string title) {
-	typedef Impl::value_type T;
-	std::cout << "Starting memory test for: " << title << "\n";
-	for (int i = 1000000; i > 0; --i) {
-		for (int i = 0; i < 300; ++i) {
-			impl.insert(T(i));
+void lib_calvin_container::setMemoryTest(std::string title) {	
+	typedef typename Impl::value_type Impl2;
+	std::cout << "Starting memory test2 for " << title << "\n";
+	lib_calvin::stopwatch watch;
+	watch.start();
+	for (int k = 0; k < 100; k++) {
+		Impl tree;
+		for (int i = 0; i < 100; ++i) {
+			Impl2 tree2;
+			for (int j = 0; j < 100; j++) {
+				tree2.insert(i + j);
+			}
+			tree.insert(tree2);
 		}
-		Impl impl2(impl);
-		for (int i = 0; i < 300; ++i) {
-	 		impl.erase(T(i));
+		for (int i = 0; i < 100; ++i) {
+			Impl2 tree2;
+			for (int j = 0; j < 100; j++) {
+				tree2.insert(i + j + 1);
+			}
+			tree.erase(tree2);
 		}
-		impl2 = impl;	
-		std::cout << "memory test routine\n";
+		Impl tree3(tree);
+		Impl tree4 = tree;
 	}
+	watch.stop();
+	std::cout << "time taken: " << watch.read() << "\n";
+	std::cout << "setMemoryTest complete\n\n";
 }
 
 template <typename Impl>
-void lib_calvin_container::setRvalueTest(Impl &&impl, std::string title) {
+void lib_calvin_container::setRvalueTest(std::string title) {
 	std::cout << "Starting set rvalue test for: " << title << "\n";
 	typedef Impl::value_type V;
 	std::cout << "Test copy & assignment of container itself:\n";
+	Impl impl;
 	Impl impl2;
 	impl2 = Impl();
 	Impl impl3(impl2);
