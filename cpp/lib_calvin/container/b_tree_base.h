@@ -1551,7 +1551,7 @@ std::pair<int, bool>
 B_TREE_BASE<T, Comp, K, ExtractKey>::getIndexToInsert2(Node *node, K const &key) const {
 	T *begin = node->getElementArray();
 	T *end = node->getElementArray() + node->getSize();
-	auto result = lib_calvin_container::getIndexToInsert<T, Comp, K, ExtractKey>(begin, end, key, false);
+	auto result = lib_calvin_container::getIndexToInsert<T, Comp, K, ExtractKey>(begin, end, key, true);
 	return std::pair<int, bool>(static_cast<int>(result.first), result.second);
 }
 

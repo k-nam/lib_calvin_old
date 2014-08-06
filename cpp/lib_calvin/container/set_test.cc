@@ -48,7 +48,7 @@ void lib_calvin_container::setTest() {
 
 	int const smallSize = 1000;
 	int const mediumSize = 10000;
-	int const largeSize = 100000;	
+	int const largeSize = 1000000;	
 	//setPerformanceTest(std::set<int>(), largeSize, "std::set / int");
 	//setPerformanceTest(boost::container::set<int>(), largeSize, "boost::set / int");
 	//setPerformanceTest(BinTree<int>(), largeSize, "RbTree / int");
@@ -80,12 +80,12 @@ void lib_calvin_container::setTest() {
 	//setPerformanceTest<std::unordered_set<HeavyObject>>(mediumSize, "std::unordered_set / HeavyObject");
 	//setPerformanceTest<PtrSet<HeavyObject>>(mediumSize, "PtrSet / HeavyObject");
 	
-	setIntegratedSpeedTest<std::set<LightObject>>(smallSize, "std::set");
-	setIntegratedSpeedTest<boost::container::set<LightObject>>(smallSize, "boost:set");
-	setIntegratedSpeedTest<RbTree<LightObject>>(smallSize, "RbTree");
-	//setIntegratedSpeedTest<BTree<LightObject>>(smallSize, "BTree");
-	setIntegratedSpeedTest<BPlusTree<LightObject>>(smallSize, "BPlusTree");
-	//setIntegratedSpeedTest<OrderedArray<LightObject>>(smallSize, "OrderedArray");
+	setIntegratedSpeedTest<std::set<HeavyObject>>(smallSize, "std::set");
+	setIntegratedSpeedTest<boost::container::set<HeavyObject>>(smallSize, "boost:set");
+	setIntegratedSpeedTest<RbTree<HeavyObject>>(smallSize, "RbTree");
+	//setIntegratedSpeedTest<BTree<HeavyObject>>(smallSize, "BTree");
+	setIntegratedSpeedTest<BPlusTree<HeavyObject>>(smallSize, "BPlusTree");
+	//setIntegratedSpeedTest<OrderedArray<HeavyObject>>(smallSize, "OrderedArray");
 
 	setMemoryTest<std::set<std::set<HeavyObject>>>("std::set");
 	setMemoryTest<BinTree<BinTree<HeavyObject>>>("BinTree");
@@ -394,7 +394,7 @@ void lib_calvin_container::setIntegratedSpeedTest(int n, std::string title) {
 		int begin = rand() % 100;
 		int length = rand() % 1000;
 		for (int j = begin; j < begin + length; j++) {
-			elem.insert(static_cast<Impl::value_type>(j));
+			elem.insert(Impl::value_type(j));
 		}
 		hostSet.insert(elem);
 	}

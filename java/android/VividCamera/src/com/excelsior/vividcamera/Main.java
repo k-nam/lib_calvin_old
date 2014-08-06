@@ -21,19 +21,12 @@ public class Main extends Activity {
 	public static String RESULT_FILE_PATH = "Result file path";
 
 	public void onCreate(Bundle savedInstanceState) {
-		Log.i(Main.TAG, "create 1");
 		super.onCreate(savedInstanceState);
-		Log.i(Main.TAG, "create 2");
 		setContentView(R.layout.vividcamera__main);
-		Log.i(Main.TAG, "create 3");
 		testCameraButton = (Button) findViewById(R.id.vivid_camera__test_camera_button);
-		Log.i(Main.TAG, "create 4");
 		openCameraButton = (Button) findViewById(R.id.vivid_camera__open_camera_button);
-		Log.i(Main.TAG, "create 5");
 		cameraInfo = (TextView) findViewById(R.id.vivid_camera__camera_info);
-		Log.i(Main.TAG, "create 6");
 		setButtonListener();
-		Log.i(Main.TAG, "create 7");
 	}
 
 	private void setButtonListener() {
@@ -75,14 +68,14 @@ public class Main extends Activity {
 		if (requestCode == requestCodeForPreviewScreen) {
 			if (resultCode == android.app.Activity.RESULT_OK) {
 				String resultFilePath = data.getStringExtra(RESULT_FILE_PATH);
-				launchReviewActivity(resultFilePath);
+				launchShootingActivity(resultFilePath);
 			}
 		} else if (requestCode == requestCodeForReview) {} else {
 			// error
 		}
 	}
 
-	private void launchReviewActivity(String resultFilePath) {
+	private void launchShootingActivity(String resultFilePath) {
 		Intent intent = new Intent("com.excelsior.vividcamera.Review");
 		intent.putExtra(RESULT_FILE_PATH, resultFilePath);
 		startActivityForResult(intent, requestCodeForReview);

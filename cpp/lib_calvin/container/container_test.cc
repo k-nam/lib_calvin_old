@@ -14,8 +14,8 @@ void lib_calvin_container::containerTest()
 
 lib_calvin_container::HeavyObject::HeavyObject(int size) {
 	init(); 
-	int start = size % 1000;
-	for (int i = start; i < start + size % 10000; ++i) {
+	int start = size % 300;
+	for (int i = start; i < start + size % 100; ++i) {
 		value_.push_back(i); 
 	}
 }
