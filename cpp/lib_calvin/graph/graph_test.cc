@@ -5,9 +5,9 @@ using namespace lib_calvin_graph;
 
 void lib_calvin_graph::graphTest() {
 	std::cout << "\n---------- Beginning graph test -----------\n";
-  algorithmTest(500, 80000, 0);
+  algorithmTest(100, 1000, 0);
 	insertionTest();
-	getClosestPathTest();
+	get_closest_pathTest();
 }
 
 void lib_calvin_graph::algorithmTest(int numV, int numE, int numNegativeE) {
@@ -48,7 +48,7 @@ void lib_calvin_graph::algorithmTest(int numV, int numE, int numNegativeE) {
 
 void lib_calvin_graph::insertionTest() {
 	using namespace lib_calvin;
-	graph<int, int> *pGraph1, *pGraph2;
+	graph_base<int, int> *pGraph1, *pGraph2;
 	pGraph1 = new graph<int, int>();
 	pGraph2 = new undirected_graph<int, int>();
 	pGraph1->insert(2, 4, 2);
@@ -58,16 +58,23 @@ void lib_calvin_graph::insertionTest() {
 	std::cout << "\n";
 }
 
-void lib_calvin_graph::getClosestPathTest() {
+void lib_calvin_graph::get_closest_pathTest() {
 	using namespace lib_calvin;
-	graph<int, struct empty> testGraph;
-	testGraph.insert(1, 2);
-	testGraph.insert(3, 4);
-	testGraph.insert(2, 4);
-	testGraph.insert(2, 3);
-	graph<int, struct empty>::path path1 = testGraph.getClosestPath(1, 4);
-	for (size_t i = 0; i < path1.size(); ++i) {
-		std::cout << path1[i].first << "\n";
+	graph<int, SampleEdge, int, SampleEdgeWeight> testGraph;
+	testGraph.insert(1, 2, SampleEdge(2));
+	testGraph.insert(1, 4, SampleEdge(5));
+	testGraph.insert(2, 4, SampleEdge(2));
+	testGraph.insert(2, 3, SampleEdge(2));
+	testGraph.insert(4, 5, SampleEdge(2));
+	auto path1 = testGraph.get_closest_path(1, 5);
+	auto path2 = testGraph.get_shortest_path(1, 5);
+	std::cout << "Closest path result\n";
+	for (size_t i = 0; i <= path1.size(); ++i) {
+		std::cout << path1.get_vertex(i) << "\n";
+	}
+	std::cout << "Shortest path result\n";
+	for (size_t i = 0; i <= path2.size(); ++i) {
+		std::cout << path2.get_vertex(i) << "\n";
 	}
 	std::cout << "\n";
 }

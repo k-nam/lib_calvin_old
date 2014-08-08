@@ -15,11 +15,18 @@ namespace lib_calvin_graph {
 
 	void graphTest();
 	void algorithmTest(int numV, int numE, int numNegativeE);
-	void getClosestPathTest();
+	void get_closest_pathTest();
 	void insertionTest();
 
-	struct empty {   
-		empty() { }
+	struct SampleEdge {
+		SampleEdge(int weight = 0): weight_(weight) { }
+		int getWeight() const {
+			return weight_; }
+		int weight_;
+	};
+	struct SampleEdgeWeight {
+		int operator()(SampleEdge sampleEdge) {
+			return sampleEdge.getWeight();}
 	};
 
 	struct my {
