@@ -1,11 +1,11 @@
 /**  SubccLexer.cc **/
 #include "subcc_lexer.h" 
 
-#define CAT CAT<alphabet<char, 128, '\0'>>
-#define OR OR<alphabet<char, 128, '\0'>>
-#define STAR STAR<alphabet<char, 128, '\0'>>
-#define PLUS PLUS<alphabet<char, 128, '\0'>>
-#define ONEORZERO ONEORZERO<alphabet<char, 128, '\0'>>
+#define CAT CAT<char>
+#define OR OR<char>
+#define STAR STAR<char>
+#define PLUS PLUS<char>
+#define ONEORZERO ONEORZERO<char>
 
 namespace subcc
 {

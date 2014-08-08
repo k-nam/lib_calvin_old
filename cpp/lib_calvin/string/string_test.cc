@@ -20,7 +20,7 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
   vector<int> answer;
 	lib_calvin::stopwatch watch;
 
-  int textLen   = 100000;
+  int textLen   = 1000000;
   int patternLen  = 16;
   char *pText   = new char[textLen];
   char *pPattern  = new char[patternLen];
