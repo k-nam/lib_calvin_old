@@ -39,12 +39,6 @@ public class LogIn extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		try {
-			Class.forName("oracle.jdbc.OracleDriver");
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		String userId = request.getParameter("userid");
 		String userPassword = request.getParameter("userpassword");
 		System.out.println("In servlet: " + userId + " " + userPassword);

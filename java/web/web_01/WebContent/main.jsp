@@ -31,7 +31,7 @@
 <body>
 <h1 align="center">Programming Study Menu</h1>
 <h2>Subject selection</h2>
-<h3>h3</h3>
+<h3>h333</h3>
 <h4>h4</h4>
 <h5>h5</h5>
 <h6>h6</h6>
@@ -56,7 +56,7 @@
 </form>
 
 <hr/>
-<p><img src="files/lee.bmp" alt="이요원" />
+<p><img src="files/aoi_yuu.jpg" width="50%" height="50%" alt="아오이 유우" />
 <c:choose>
 	<c:when test="${ sessionScope.isLoggedIn eq 'true' }">
 		<jsp:include page="logOutBox.jsp" />

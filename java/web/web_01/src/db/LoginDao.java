@@ -6,17 +6,18 @@ import java.sql.*;
 public class LoginDao {
 
 	public static boolean logIn(String userId, String userPassword) {
-		Connection connection = OracleDbConnector.getConnection();
+		Connection connection = SqlServerDbConnector.getConnection();
+		
 		if (connection == null) {
-			System.out.println("Oracle db connection error");
+			System.out.println("DB connection error");
 			return false;
 		}
 		int numFound;
 		try {
 			PreparedStatement pstmt = 
 				connection.prepareStatement(
-						"SELECT COUNT(1) FROM useraccounts " +
-						"WHERE id = ? AND password = ?");
+						"SELECT COUNT(1) FROM USERACCOUNT " +
+						"WHERE ID = ? AND PASSWORD = ?");
 			pstmt.setString(1, userId);
 			pstmt.setString(2, userPassword);
 			ResultSet rs = pstmt.executeQuery();
