@@ -275,6 +275,7 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\util\random.cc" />
     <ClCompile Include="adt.cc" />
     <ClCompile Include="b_tree_test.cc" />
     <ClCompile Include="container_main.cc" />

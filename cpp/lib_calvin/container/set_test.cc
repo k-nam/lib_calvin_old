@@ -17,6 +17,7 @@
 #include "hash_table.h"
 #include "blocked_array.h"
 #include "ordered_array.h"
+#include "random.h"
 
 using lib_calvin::stopwatch;
 using std::cout;
@@ -363,6 +364,8 @@ void lib_calvin_container::setPerformanceTest(int n, std::string title) {
 	for (int i = 0; i < n; ++i) {
 		testVector[i] = T(i);
 	}	
+	lib_calvin::random_number_generator gen;
+
 	std::random_shuffle(testVector.begin(), testVector.end());
 	setPerformanceTest_<Impl, T>(testVector, n, "<Random data test>");
 	

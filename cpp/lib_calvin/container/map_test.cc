@@ -2,13 +2,12 @@
 #include "map_test.h"
 #include "utility.h"
 #include "stopwatch.h"
-#include <cstdlib>
-
+#include "random.h"
 #include "map.h"
+#include <cstdlib>
 #include <map>
 #include <unordered_map>
 #include "boost/unordered_map.hpp"
-
 
 using lib_calvin::stopwatch;
 using std::cout;
@@ -186,7 +185,7 @@ void lib_calvin_container::mapPerformanceTest(unsigned n, std::string title)
 	}	
 
 	// Test case 1: random
-	std::random_shuffle(testVector.begin(), testVector.end());
+	std::random_shuffle(testVector.begin(), testVector.end(), lib_calvin::random_number_generator());
 	mapPerformanceTest_<Impl>(testVector, n, "<Random data test>");
 	/*
 	// Test case 2: sorted sequence

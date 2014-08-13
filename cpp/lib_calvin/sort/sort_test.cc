@@ -1,6 +1,7 @@
 
 #include "sort_test.h"
 #include "utility.h"
+#include "random.h"
 #include <iostream>
 
 void lib_calvin_sort::sortTest() {
@@ -34,12 +35,12 @@ void lib_calvin_sort::sortTest() {
 template <typename T>
 void lib_calvin_sort::sortTest (void (*sortingAlg) (T *first, T *last), 
     std::string title) {  
-	size_t const numTestCases = 4;
   stopwatch watch;
   bool correct  = true;
   bool stable   = true;
-	int arraySize[] = { 1000, 10000, 100000, 1000000 };
-	int numIteration[] = { 100, 100, 10, 3 };
+	size_t const numTestCases = 5;
+	int arraySize[numTestCases] = { 1000, 10000, 100000, 1000000, 10000000 };
+	int numIteration[numTestCases] = { 100, 100, 10, 3, 1 };
 	std::srand(1232); // reset seed to give identical input to algorithms
   for (int i = 0; i < numTestCases; ++i) { 
 		if (arraySize[i] == 0) {
@@ -54,7 +55,7 @@ void lib_calvin_sort::sortTest (void (*sortingAlg) (T *first, T *last),
 				testSet[j].first = j / 2;
 				//testSet[j].first = -j / 3; // reverse ordered input array
 			}			
-			std::random_shuffle(testSet, testSet + arraySize[i]);
+			std::random_shuffle(testSet, testSet + arraySize[i], lib_calvin::random_number_generator());
 			for (int j = 0; j < arraySize[i]; j++) {
 				testSet[j].second = j; // for testing stability
 			}	

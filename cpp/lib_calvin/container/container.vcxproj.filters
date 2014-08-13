@@ -39,6 +39,9 @@
     <ClCompile Include="container_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\util\random.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="adt.h">

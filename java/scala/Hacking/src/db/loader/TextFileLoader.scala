@@ -26,7 +26,7 @@ class TextFileLoader(val sourceFileName: String, val connection: Connection) {
 			queries.add(createStmt(password))
 			i += 1
 			if (i % batchSize == 0) {
-				//println("Executing batch, current line is " + password)
+				println("Executing batch, current line is " + password)
 				executeBatch(batchStmt, queries)
 			}
 			password = reader.readLine
