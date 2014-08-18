@@ -17,12 +17,12 @@ int64_t doGambleAndGetResult(std::mt19937_64 &engine) {
 	return earnedMoney;
 }
 
-int64_t getAverageResultOfGames(int numberOfTries) {
+int64_t getAverageResultOfGames(int64_t numberOfTries) {
 	std::random_device randomSeed;
 	std::mt19937_64 engine(randomSeed());
 	int64_t totalEarnedMoney = 0;
 	int64_t jackpot = 0;
-	for (int i = 0; i < numberOfTries; i++) {
+	for (int64_t i = 0; i < numberOfTries; i++) {
 		int64_t earnedMoney = doGambleAndGetResult(engine);
 		totalEarnedMoney += earnedMoney;
 		if (earnedMoney > jackpot) {

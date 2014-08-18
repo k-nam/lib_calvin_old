@@ -8,6 +8,7 @@ struct DerivedClass: public BaseClass {
 };
 
 struct DerivedClass2: public DerivedClass {
+	void hey() { std::cout << "hey in derived2\n"; }
 	using DerivedClass::func;
 	int a;
 };
