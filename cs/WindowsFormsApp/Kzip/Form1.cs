@@ -42,7 +42,7 @@ namespace Kzip
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            saveFileDialog1.ShowDialog();
         }
 
         private void tabPage1_Click(object sender, EventArgs e)
@@ -50,14 +50,19 @@ namespace Kzip
 
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
-        {
-
-        }
 
         private void checkedListBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }
+
+        private void saveFileDialog_Dismissed(object sender, EventArgs e)
+        {
+            String name = saveFileDialog1.FileName;
+      
+            comboBox1.Text = name;
+        }
+
+  
     }
 }
