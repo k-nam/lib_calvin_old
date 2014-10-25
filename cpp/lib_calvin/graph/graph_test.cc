@@ -14,7 +14,8 @@ void lib_calvin_graph::algorithmTest(int numV, int numE, int numNegativeE) {
 	using namespace lib_calvin;
   graph<int, int> graph1;
   graph<int, struct my> graph2;
-  undirected_graph<int, int> graph3;  
+  undirected_graph<int, int> graph3; 
+
   stopwatch watch;
   watch.start();
   for (int i = 0; i < numE; ++i) {
