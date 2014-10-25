@@ -108,7 +108,7 @@ namespace GostopTest
 		}
 
 		[TestMethod]
-		public void GetNextTurnActionsTest2()
+		public void GetNextTurnActionsTest2()   
 		{
 			HashSet<int> playerA_HandCards = Card.GetCardSet(
 				"1광 1홍단 1피 1피_ 2고도리 2홍단 2피");
@@ -125,6 +125,7 @@ namespace GostopTest
 
 		[TestMethod]
 		// hit + miss
+            // ddd
 		public void ManageFloorCardsTest()
 		{
 			HashSet<int> floorCards = Card.GetCardSet(
