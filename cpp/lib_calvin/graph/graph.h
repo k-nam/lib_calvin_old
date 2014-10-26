@@ -75,11 +75,10 @@ class null_edge { };
 // At least two subclasses will be derived from this: undirected graph and
 // ..network flow.
 template <typename V, typename E = null_edge, typename W = E, typename ExtractWeight = std::identity<E>>
-class graph_base { // weighted_graph will derive from this class, so make this abstract
+class graph_base { 
 public: // basic data access
   graph_base();
   graph_base & operator= (graph_base<V, E, W, ExtractWeight> const &);
-	virtual ~graph_base() = 0;
   int size() const { return numV_; }
   int number_of_vertex() const { return numV_; }
   int number_of_edge() const { return numE_; }
@@ -88,14 +87,14 @@ public: // basic data access
   E const & get_edge_of(V src, V dest) const;
   /// modifying methods force enter into dynamic mode automatically
   // returns true when inserted, false when already existed
-  virtual bool insert(V src, V dest, E edge = E());
+  virtual bool insert(V src, V dest, E edge = E()) = 0;
   // insert or modify automatically
-  virtual void modify(V src, V dest, E edge = E());
+  virtual void modify(V src, V dest, E edge = E()) = 0;
   // returns true when deleted, false when there was not the edge
-  virtual bool remove(V src, V dest);
+  virtual bool remove(V src, V dest) = 0;
   //virtual void print() const;
 	void goStatic() const; // make data structures ready for algorithms.
-  void check() const;
+  virtual void check() const;
 
 	// Return values of algorithms
   struct edge {
@@ -153,10 +152,11 @@ public: // Algorithms
 	path get_closest_path(V const &src, V const &target) const;	
 	// Shortest path in terms of weight
 	path get_shortest_path(V const &src, V const &target) const;
+	// for test
+	vector<vector<std::pair<int, W>>> getArrayData() const;
 private:
 	template <typename T>
 		path getPathAfterAlgorithm(vector<Arc<T>> result, int src, int target) const;
-
 protected: // member variables
   int numV_; 
   int numE_;
@@ -197,11 +197,12 @@ protected: // member variables
 
 namespace lib_calvin {
 
-namespace conainer_library = std;
 template <typename V, typename E, typename W = E, typename ExtractWeight = std::identity<E>>
 class graph: public lib_calvin_graph::graph_base<V, E, W, ExtractWeight> {
 public:
-	~graph() { }
+  bool insert(V src, V dest, E edge) override;
+  void modify(V src, V dest, E edge) override;
+  bool remove(V src, V dest) override;
 };
 
 // Undirected graphs override insertiong and modifying methods to ensure
@@ -210,12 +211,10 @@ template <typename V, typename E, typename W = E, typename ExtractWeight = std::
 class undirected_graph: public lib_calvin_graph::graph_base<V, E, W, ExtractWeight> {
 public:
   // override some methods to ensure symmetry
-  virtual ~undirected_graph() {}
-  virtual bool insert(V src, V dest, E edge);
-  virtual void modify(V src, V dest, E edge);
-  virtual bool remove(V src, V dest);
-
-	void check() const;
+  bool insert(V src, V dest, E edge) override;
+  void modify(V src, V dest, E edge) override;
+  bool remove(V src, V dest) override;
+	void check() const override;
 };
    
 } // end namespace lib_calvin
@@ -441,9 +440,6 @@ graph_base<V, E, W, ExtractWeight>::graph_base(): numV_(0), numE_(0), isDynamic_
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-graph_base<V, E, W, ExtractWeight>::~graph_base() { }
-
-template <typename V, typename E, typename W, typename ExtractWeight>
 graph_base<V, E, W, ExtractWeight> &
 graph_base<V, E, W, ExtractWeight>::operator= (graph_base<V, E, W, ExtractWeight> const &rhs) {
 	if (this == &rhs) {
@@ -481,7 +477,7 @@ bool graph_base<V, E, W, ExtractWeight>::has(V src, V dest) const {
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-bool graph_base<V, E, W, ExtractWeight>::insert (V src, V dest, E edge) {
+bool graph_base<V, E, W, ExtractWeight>::insert(V src, V dest, E edge) {
   if (src == dest) { // No self loop !!!
     return false;
   }
@@ -505,7 +501,7 @@ bool graph_base<V, E, W, ExtractWeight>::insert (V src, V dest, E edge) {
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-void graph_base<V, E, W, ExtractWeight>::modify (V src, V dest, E edge) {
+void graph_base<V, E, W, ExtractWeight>::modify(V src, V dest, E edge) {
   if (src == dest) { // No self loop !!!
     return;
   }
@@ -530,15 +526,17 @@ void graph_base<V, E, W, ExtractWeight>::modify (V src, V dest, E edge) {
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-bool graph_base<V, E, W, ExtractWeight>::remove (V src, V dest) {
+bool graph_base<V, E, W, ExtractWeight>::remove(V src, V dest) {
   int source      = mapping_.indexOf(src);
   int destination = mapping_.indexOf(dest);
   // false if either of vertex is not here
-  if (source < 0 || destination < 0)
+  if (source < 0 || destination < 0) {
     return false;
-  size_t erased = dynamicData_[source].erase (destination); // num of erased elements
-  if (erased == 0)
+	}
+  size_t erased = dynamicData_[source].erase(destination); // num of erased elements
+  if (erased == 0) {
     return false;
+	}
   --numE_;
   isDynamic_ = true;
   return true;
@@ -638,12 +636,18 @@ graph_base<V, E, W, ExtractWeight>::getPathAfterAlgorithm(vector<Arc<T>> result,
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
+vector<vector<std::pair<int, W>>> 
+graph_base<V, E, W, ExtractWeight>::getArrayData() const {
+	return arrayData_;
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
 void graph_base<V, E, W, ExtractWeight>::check() const {
 	using namespace lib_calvin;
   goStatic();
   // dfs check
-  vector<vector<int>> temp;
-	ripEdge (arrayData_, temp);
+  vector<vector<int>> arrayDataWithoutEdge;
+	ripEdge(arrayData_, arrayDataWithoutEdge);
   vector<int> visitOrder (numV_);
   for (int i = 0; i < numV_ / 3; ++i) {
     visitOrder[i] = i;
@@ -651,17 +655,16 @@ void graph_base<V, E, W, ExtractWeight>::check() const {
   vector<int> returnOrder;
   vector<int> returnOrder2;
 
-
   // dfs with array data
 	stopwatch watch;
   watch.start();
-	dfs1 (temp, visitOrder, returnOrder);
+	dfs1(arrayDataWithoutEdge, visitOrder, returnOrder);
   watch.stop();
   cout << "dfs1 of vertices: " << numV_ << "\tedges: " << numE_ << 
     "\t" << watch.read() << endl;
 
   watch.start();
-	dfs2 (temp, visitOrder, returnOrder2);
+	dfs2(arrayDataWithoutEdge, visitOrder, returnOrder2);
   watch.stop();
   cout << "dfs2 of vertices: " << numV_ << "\tedges: " << numE_ << 
     "\t" << watch.read() << endl;
@@ -680,15 +683,15 @@ void graph_base<V, E, W, ExtractWeight>::check() const {
   }
   testGraph.goStatic();
   vector<Arc<int>> result1, result2;
-  vector<vector<int>> arrayData;
-  ripEdge(testGraph.arrayData_, arrayData);
+  vector<vector<int>> arrayDataWithoutEdge2;
+  ripEdge(testGraph.getArrayData(), arrayDataWithoutEdge2);
   watch.start();
-  bfs(arrayData, 0, result1);
+  bfs(arrayDataWithoutEdge2, 0, result1);
   watch.stop();
   cout << "bfs of vertices: " << numV_ << "\tedges: " << numE_ << "\t" <<
     watch.read() << endl;
 	
-  dijkstra(testGraph.arrayData_, 0, result2);
+  dijkstra(testGraph.getArrayData(), 0, result2);
   if (result1.size() != result2.size()) {
     cout << "bfs error\n";
     exit(0);
@@ -704,9 +707,9 @@ void graph_base<V, E, W, ExtractWeight>::check() const {
 	
 	// Additional tests for weighted graph: shortetst paths problems
 	// dijkstra with array data
-	vector<Arc<E>> solution;
+	vector<Arc<W>> solution;
   watch.start();
-  dijkstra (arrayData_, 0, solution);
+  dijkstra(arrayData_, 0, solution);
   watch.stop();
 	if (shortestPathCheck (arrayData_, 0, solution) == false) {
     cout << "dijkstra error.\n";
@@ -716,7 +719,7 @@ void graph_base<V, E, W, ExtractWeight>::check() const {
     "\t" << watch.read() << endl;
 
   // Vellman-Ford
-  vector<Arc<E>> solution_v;
+  vector<Arc<W>> solution_v;
   for (int i = numV_ - 1; i < numV_; ++i) {
     watch.start();
     vellmanFord (arrayData_, i, solution_v);
@@ -730,9 +733,9 @@ void graph_base<V, E, W, ExtractWeight>::check() const {
     "\t" << watch.read() << endl;
   
 	
-  vector<Arc<E>> row;
+  vector<Arc<W>> row;
   // matrixApsp
-  matrix<Arc<E>> apspResult(1);
+  matrix<Arc<W>> apspResult(1);
   watch.start();
   matrixApsp (matrixData_, apspResult);
   watch.stop();
@@ -740,7 +743,7 @@ void graph_base<V, E, W, ExtractWeight>::check() const {
     "\t" << watch.read() << endl;
 
   // Floyd-Earshall
-  matrix<Arc<E>> floydResult(1);
+  matrix<Arc<W>> floydResult(1);
   watch.start();
   floydWarshall (matrixData_, floydResult);
   watch.stop();
@@ -748,7 +751,7 @@ void graph_base<V, E, W, ExtractWeight>::check() const {
     "\t" << watch.read() << endl;
 
   // johnson's
-  matrix<Arc<E>> johnsonResult(1);
+  matrix<Arc<W>> johnsonResult(1);
   watch.start();
   johnson (arrayData_, johnsonResult);
   watch.stop();
@@ -825,11 +828,26 @@ graph_base<V, E, W, ExtractWeight>::path::get_edge(size_t index) const {
 
 } // end namespace lib_calvin_graph
 
-//------------------------- undirected_graph definition -------------------------
+//------------------------- additional methods -------------------------
 namespace lib_calvin {
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-bool undirected_graph<V, E, W, ExtractWeight>::insert (V src, V dest, E edge) {
+bool graph<V, E, W, ExtractWeight>::insert(V src, V dest, E edge) {
+	return graph_base<V, E, W, ExtractWeight>::insert(src, dest, edge);
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+void graph<V, E, W, ExtractWeight>::modify(V src, V dest, E edge) {
+	graph_base<V, E, W, ExtractWeight>::modify(src, dest, edge);
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+bool graph<V, E, W, ExtractWeight>::remove(V src, V dest) {
+	return graph_base<V, E, W, ExtractWeight>::remove(src, dest);
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+bool undirected_graph<V, E, W, ExtractWeight>::insert(V src, V dest, E edge) {
   bool result1 = graph_base<V, E, W, ExtractWeight>::insert(src, dest, edge);
   bool result2 = graph_base<V, E, W, ExtractWeight>::insert(dest, src, edge);
   if (result1 != result2) {
@@ -840,13 +858,13 @@ bool undirected_graph<V, E, W, ExtractWeight>::insert (V src, V dest, E edge) {
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-void undirected_graph<V, E, W, ExtractWeight>::modify (V src, V dest, E edge) {
+void undirected_graph<V, E, W, ExtractWeight>::modify(V src, V dest, E edge) {
   graph_base<V, E, W, ExtractWeight>::modify(src, dest, edge);
   graph_base<V, E, W, ExtractWeight>::modify(dest, src, edge);
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-bool undirected_graph<V, E, W, ExtractWeight>::remove (V src, V dest) {
+bool undirected_graph<V, E, W, ExtractWeight>::remove(V src, V dest) {
   bool result1 = graph_base<V, E, W, ExtractWeight>::remove(src, dest);
   bool result2 = graph_base<V, E, W, ExtractWeight>::remove(dest, src);
   if (result1 != result2) {
@@ -861,6 +879,7 @@ void undirected_graph<V, E, W, ExtractWeight>::check() const {
 	// Additional test only for symmetric graph
   // MST algorithms
 	graph_base::check();
+	using namespace std;
 	set<std::pair<int, int>> result1, result2;  
   stopwatch watch;
   watch.start();

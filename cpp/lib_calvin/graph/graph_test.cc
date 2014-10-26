@@ -48,13 +48,19 @@ void lib_calvin_graph::algorithmTest(int numV, int numE, int numNegativeE) {
 
 void lib_calvin_graph::insertionTest() {
 	using namespace lib_calvin;
-	graph_base<int, int> *pGraph1, *pGraph2;
-	pGraph1 = new graph<int, int>();
-	pGraph2 = new undirected_graph<int, int>();
-	pGraph1->insert(2, 4, 2);
-	pGraph2->insert(2, 4, 2);
-	std::cout << "one edge in graph e-size: " << pGraph1->number_of_edge() << "\n";
-	std::cout << "one edge in u-graph e-size: " << pGraph2->number_of_edge() << "\n";
+	graph_base<int, int> *graph1, *graph2;
+	graph1 = new graph<int, int>();
+	graph2 = new undirected_graph<int, int>();
+	graph1->insert(2, 4);
+	graph1->insert(2, 3);
+	graph1->modify(4, 2);
+	graph1->remove(3, 2);
+	graph2->insert(2, 4);
+	graph2->insert(2, 3);
+	graph2->modify(4, 2);
+	graph2->remove(3, 2);
+	std::cout << "# edges in graph e-size: " << graph1->number_of_edge() << "\n";
+	std::cout << "# edges in undirected graph e-size: " << graph2->number_of_edge() << "\n";
 	std::cout << "\n";
 }
 

@@ -459,7 +459,7 @@ matrix<T>::operator+ (matrix<T> const &rhs) const {
   int num = height_ * width_;
   matrix<T> result(height_, width_);
   if(height_ != rhs.height_ || width_ != rhs.width_) {
-    cout << "raise error here.\n";
+    std::cout << "raise error here.\n";
     return result;
   }
   for(int i = 0; i < num; ++i) {
