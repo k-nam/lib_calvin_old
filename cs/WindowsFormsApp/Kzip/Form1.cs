@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Kzip
 {
@@ -44,7 +45,10 @@ namespace Kzip
         {
             saveFileDialog1.ShowDialog();
         }
-
+        private void button4_Click(object sender, EventArgs e)
+        {
+            startCompression();
+        }
         private void tabPage1_Click(object sender, EventArgs e)
         {
 
@@ -56,13 +60,36 @@ namespace Kzip
 
         }
 
-        private void saveFileDialog_Dismissed(object sender, EventArgs e)
+        private void saveFileDialog_FileOk(object sender, EventArgs e)
         {
             String name = saveFileDialog1.FileName;
-      
             comboBox1.Text = name;
         }
 
-  
+        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+            String name = openFileDialog1.FileName;
+            comboBox5.Text = name;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();
+        }
+
+        private void startCompression()
+        {
+            //String inputFileName = @"C:\Users\Calvin\Pictures\emma stone.PNG";
+            //String outputFileName = @"C:\Users\Calvin\Pictures\Untitled.png.zip";
+            String inputFilePath = openFileDialog1.FileName;
+            SharpCompress.Common.CompressionInfo info = new SharpCompress.Common.CompressionInfo();
+            FileStream outStream = new FileStream(
+                saveFileDialog1.FileName, FileMode.Truncate, FileAccess.Write);
+            //SharpCompress.Writer.Zip.ZipWriter a =
+            //    new SharpCompress.Writer.Zip.ZipWriter(outStream, info, "");
+            var archive = SharpCompress.Archive.Zip.ZipArchive.Create();
+            archive.AddEntry(Path.GetFileName(inputFilePath), new System.IO.FileInfo(inputFilePath));
+            archive.SaveTo(outStream, info);
+        }
     }
 }
