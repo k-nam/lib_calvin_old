@@ -16,8 +16,7 @@ using std::endl;
 using namespace lib_calvin_adt;
 
 void lib_calvin_graph::dfs (vector<vector<int>> const &graph, 
-    vector<int> const &visitOrder, vector<int> &returnOrder) 
-{
+    vector<int> const &visitOrder, vector<int> &returnOrder) {
    dfs2(graph, visitOrder, returnOrder);
 }
 
@@ -105,9 +104,7 @@ void lib_calvin_graph::dfs2 (vector<vector<int>> const &graph,
   }
 }
 
-void lib_calvin_graph::bfs (vector<vector<int>> const &graph, 
-    int source, vector<Arc<int>> &result) {
-  
+void lib_calvin_graph::bfs (vector<vector<int>> const &graph, int source, vector<Arc<int>> &result) {
   result.clear();
   result.resize(graph.size());
 	for (size_t i = 0; i < graph.size(); ++i) {

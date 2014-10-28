@@ -69,6 +69,9 @@ struct WeightedEdge {
 };
 class null_edge { };
 
+template <typename V, typename E, typename W, typename ExtractWeight>
+class GraphTest;
+
 // Generic directed graph.
 // Does not permit self-loop or multiple edges (will be extended later)
 // V must support '<'and '==' operator (key).
@@ -94,7 +97,6 @@ public: // basic data access
   virtual bool remove(V src, V dest) = 0;
   //virtual void print() const;
 	void goStatic() const; // make data structures ready for algorithms.
-  virtual void check() const;
 
 	// Return values of algorithms
   struct edge {
@@ -152,8 +154,6 @@ public: // Algorithms
 	path get_closest_path(V const &src, V const &target) const;	
 	// Shortest path in terms of weight
 	path get_shortest_path(V const &src, V const &target) const;
-	// for test
-	vector<vector<std::pair<int, W>>> getArrayData() const;
 private:
 	template <typename T>
 		path getPathAfterAlgorithm(vector<Arc<T>> result, int src, int target) const;
@@ -203,6 +203,7 @@ public:
   bool insert(V src, V dest, E edge) override;
   void modify(V src, V dest, E edge) override;
   bool remove(V src, V dest) override;
+	friend class lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>;
 };
 
 // Undirected graphs override insertiong and modifying methods to ensure
@@ -214,7 +215,7 @@ public:
   bool insert(V src, V dest, E edge) override;
   void modify(V src, V dest, E edge) override;
   bool remove(V src, V dest) override;
-	void check() const override;
+	friend class lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>;
 };
    
 } // end namespace lib_calvin
@@ -636,165 +637,6 @@ graph_base<V, E, W, ExtractWeight>::getPathAfterAlgorithm(vector<Arc<T>> result,
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-vector<vector<std::pair<int, W>>> 
-graph_base<V, E, W, ExtractWeight>::getArrayData() const {
-	return arrayData_;
-}
-
-template <typename V, typename E, typename W, typename ExtractWeight>
-void graph_base<V, E, W, ExtractWeight>::check() const {
-	using namespace lib_calvin;
-  goStatic();
-  // dfs check
-  vector<vector<int>> arrayDataWithoutEdge;
-	ripEdge(arrayData_, arrayDataWithoutEdge);
-  vector<int> visitOrder (numV_);
-  for (int i = 0; i < numV_ / 3; ++i) {
-    visitOrder[i] = i;
-  }
-  vector<int> returnOrder;
-  vector<int> returnOrder2;
-
-  // dfs with array data
-	stopwatch watch;
-  watch.start();
-	dfs1(arrayDataWithoutEdge, visitOrder, returnOrder);
-  watch.stop();
-  cout << "dfs1 of vertices: " << numV_ << "\tedges: " << numE_ << 
-    "\t" << watch.read() << endl;
-
-  watch.start();
-	dfs2(arrayDataWithoutEdge, visitOrder, returnOrder2);
-  watch.stop();
-  cout << "dfs2 of vertices: " << numV_ << "\tedges: " << numE_ << 
-    "\t" << watch.read() << endl;
-
-	if (returnOrder != returnOrder2) {
-		cout << "dfs algorithms does not match\n";
-		exit(0);
-	}
-
-  // Test bfs 
-  graph<int, int> testGraph;
-  for (int i = 0 ; i < numE_ ; ++i) {
-    int source = rand() % numV_;
-    int dest = rand() % numV_;
-    testGraph.modify(source, dest, 1);
-  }
-  testGraph.goStatic();
-  vector<Arc<int>> result1, result2;
-  vector<vector<int>> arrayDataWithoutEdge2;
-  ripEdge(testGraph.getArrayData(), arrayDataWithoutEdge2);
-  watch.start();
-  bfs(arrayDataWithoutEdge2, 0, result1);
-  watch.stop();
-  cout << "bfs of vertices: " << numV_ << "\tedges: " << numE_ << "\t" <<
-    watch.read() << endl;
-	
-  dijkstra(testGraph.getArrayData(), 0, result2);
-  if (result1.size() != result2.size()) {
-    cout << "bfs error\n";
-    exit(0);
-  }
-  for (unsigned i = 0; i < result1.size(); ++i) {
-    if (result1[i].weight_ != result2[i].weight_) {
-      cout << "bfs error\n";
-      exit(0);
-    }
-  }
-  cout << "bfs correct\n";
-
-	
-	// Additional tests for weighted graph: shortetst paths problems
-	// dijkstra with array data
-	vector<Arc<W>> solution;
-  watch.start();
-  dijkstra(arrayData_, 0, solution);
-  watch.stop();
-	if (shortestPathCheck (arrayData_, 0, solution) == false) {
-    cout << "dijkstra error.\n";
-		exit(0);
-	}
-  cout << "dijkstra of vertices: " << numV_ << "\tedges: " << numE_ << 
-    "\t" << watch.read() << endl;
-
-  // Vellman-Ford
-  vector<Arc<W>> solution_v;
-  for (int i = numV_ - 1; i < numV_; ++i) {
-    watch.start();
-    vellmanFord (arrayData_, i, solution_v);
-    watch.stop();
-		if (shortestPathCheck (arrayData_, i, solution_v) == false) {
-      cout << "vellmanFord error.\n";
-			exit(0);
-		}
-  }
-  cout << "Vellman-Ford of vertices: " << numV_ << "\tedges: " << numE_ << 
-    "\t" << watch.read() << endl;
-  
-	
-  vector<Arc<W>> row;
-  // matrixApsp
-  matrix<Arc<W>> apspResult(1);
-  watch.start();
-  matrixApsp (matrixData_, apspResult);
-  watch.stop();
-  cout << "matrixApsp of vertices: " << numV_ << "\tedges: " << numE_ << 
-    "\t" << watch.read() << endl;
-
-  // Floyd-Earshall
-  matrix<Arc<W>> floydResult(1);
-  watch.start();
-  floydWarshall (matrixData_, floydResult);
-  watch.stop();
-  cout << "floydWarshall of vertices: " << numV_ << "\tedges: " << numE_ << 
-    "\t" << watch.read() << endl;
-
-  // johnson's
-  matrix<Arc<W>> johnsonResult(1);
-  watch.start();
-  johnson (arrayData_, johnsonResult);
-  watch.stop();
-  cout << "johnson of vertices: " << numV_ << "\tedges: " << numE_ << 
-    "\t" << watch.read() << endl;
-
-  bool isApspCorrect = true;
-	bool isFloydCorrect = true;
-	bool isJohnsonCorrect = true;
-  for (int i = 0; i < numV_; ++i) {
-    vellmanFord (arrayData_, i, row); 
-    for (int j = 0; j < numV_; j++) {
-      if (apspResult.getval(i, j).weight_ != row[j].weight_ && 
-          row[j].predecessor_!= -1) {
-        isApspCorrect = false;
-      }
-      if (floydResult.getval(i, j).weight_ != row[j].weight_ && 
-          row[j].predecessor_!= -1) {
-        isFloydCorrect = false;
-      }
-      if (johnsonResult.getval(i, j).weight_ != row[j].weight_ && 
-          row[j].predecessor_!= -1) {
-        isJohnsonCorrect = false;
-      }
-    }
-  }
-	if (isApspCorrect == false) {
-    cout << "Apsp error (to vellmanFord)\n";
-		exit(0);
-	}
-	if (isFloydCorrect == false) {
-    cout << "FLOYD error (to vellmanFord)\n";
-		exit(0);
-	}
-	if (isJohnsonCorrect == false) {
-    cout << "JOHNSON error (to vellmanFord)\n";
-		exit(0);
-	}
-	std::cout << "\n";
-}
-
-
-template <typename V, typename E, typename W, typename ExtractWeight>
 graph_base<V, E, W, ExtractWeight>::path::path(V const &source, vector<std::pair<V, E>> const &path): 
 			source_(source), path_(path) { }
 
@@ -874,41 +716,6 @@ bool undirected_graph<V, E, W, ExtractWeight>::remove(V src, V dest) {
   return result1;
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-void undirected_graph<V, E, W, ExtractWeight>::check() const {
-	// Additional test only for symmetric graph
-  // MST algorithms
-	graph_base::check();
-	using namespace std;
-	set<std::pair<int, int>> result1, result2;  
-  stopwatch watch;
-  watch.start();
-	lib_calvin_graph::kruskal(arrayData_, result1);
-  watch.stop();
-  cout << "kruskal of vertices: " << numV_ << "\tedges: " << numE_ << 
-    "\t" << watch.read() << endl;
-
-  watch.start();
-	lib_calvin_graph::prim(arrayData_, result2);
-  watch.stop();
-  cout << "prim of vertices: " << numV_ << "\tedges: " << numE_ << 
-    "\t" << watch.read() << endl;
-
-  if (result1 != result2) {
-		set<std::pair<int, int>>::iterator iter;
-    cout << "MST algorithms does not match each other: size of kruskal: " << result1.size() << 
-			" size of prim " << result2.size();
-    /*
-    cout << "kruskal result\n";
-    for (iter = result1.begin(); iter != result1.end(); ++iter) {
-      cout << iter->first << "  " << iter->second << endl;
-    }
-    cout << "\nPrim result\n";
-    for (iter = result2.begin(); iter != result2.end(); ++iter) {
-      cout << iter->first << "  " << iter->second << endl;
-    }*/
-  }
-}
 } // end namespace lib_calvin
 
 
@@ -1022,7 +829,7 @@ using lib_calvin_adt::IntPq;
 
 // arcs in result: stores total weight of paths
 template <typename W>
-void dijkstra (vector<vector<pair<int, W>>> const &graph, int source, 
+void dijkstra(vector<vector<pair<int, W>>> const &graph, int source, 
     vector<Arc<W>> &result) {  
   int numV = static_cast<int>(graph.size()); 
   IntPq<W> pq(numV);
@@ -1053,7 +860,7 @@ void dijkstra (vector<vector<pair<int, W>>> const &graph, int source,
 }
     
 template <typename W>
-void vellmanFord (vector<vector<pair<int, W>>> const &graph, 
+void vellmanFord(vector<vector<pair<int, W>>> const &graph, 
     int source, vector<Arc<W>> &result) {
   int numV = static_cast<int>(graph.size());
   result.clear();
@@ -1205,6 +1012,7 @@ bool shortestPathCheck (vector<vector<pair<int, W>>> const &graph,
     int source, vector<Arc<W>> &solution) {  
   int numV = static_cast<int>(graph.size());
   if (solution[source].predecessor_ < 0 || solution[source].weight_ != W()) {
+		cout << "input error\n";
     return false;
   }
   typename vector<pair<int, W>>::const_iterator iter;
@@ -1218,7 +1026,7 @@ bool shortestPathCheck (vector<vector<pair<int, W>>> const &graph,
            || solution[dest].predecessor_ == -1)) {
         cout << "source weight: " << solution[src].weight_ << " ";
         cout << "edge weight: " << weight << " ";
-        cout << "dest weight: " << solution[dest].weight_ << " ";
+        cout << "dest weight: " << solution[dest].weight_ << "\n";
         return false;
       }
     }
