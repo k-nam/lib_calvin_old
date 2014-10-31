@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{6141683F-8A12-4E36-9623-2EB02B2C2303}") = "InstallShield", "InstallShield\InstallShield.isproj", "{58AA1C59-FFFD-4C9C-9482-E7164095F958}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		CD_ROM|Default = CD_ROM|Default
+		DVD-5|Default = DVD-5|Default
+		SingleImage|Default = SingleImage|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{58AA1C59-FFFD-4C9C-9482-E7164095F958}.CD_ROM|Default.ActiveCfg = CD_ROM
+		{58AA1C59-FFFD-4C9C-9482-E7164095F958}.CD_ROM|Default.Build.0 = CD_ROM
+		{58AA1C59-FFFD-4C9C-9482-E7164095F958}.DVD-5|Default.ActiveCfg = DVD-5
+		{58AA1C59-FFFD-4C9C-9482-E7164095F958}.DVD-5|Default.Build.0 = DVD-5
+		{58AA1C59-FFFD-4C9C-9482-E7164095F958}.SingleImage|Default.ActiveCfg = SingleImage
+		{58AA1C59-FFFD-4C9C-9482-E7164095F958}.SingleImage|Default.Build.0 = SingleImage
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
