@@ -79,17 +79,21 @@ namespace Kzip
 
         private void startCompression()
         {
-            //String inputFileName = @"C:\Users\Calvin\Pictures\emma stone.PNG";
-            //String outputFileName = @"C:\Users\Calvin\Pictures\Untitled.png.zip";
-            String inputFilePath = openFileDialog1.FileName;
-            SharpCompress.Common.CompressionInfo info = new SharpCompress.Common.CompressionInfo();
-            FileStream outStream = new FileStream(
-                saveFileDialog1.FileName, FileMode.Truncate, FileAccess.Write);
-            //SharpCompress.Writer.Zip.ZipWriter a =
-            //    new SharpCompress.Writer.Zip.ZipWriter(outStream, info, "");
-            var archive = SharpCompress.Archive.Zip.ZipArchive.Create();
-            archive.AddEntry(Path.GetFileName(inputFilePath), new System.IO.FileInfo(inputFilePath));
-            archive.SaveTo(outStream, info);
+            String inputFilePath = @"C:\Users\Calvin\Pictures\emma stone.PNG";
+            // String inputFilePath = openFileDialog1.FileName;
+            String outputFilePath = @"C:\Users\Calvin\Pictures\Untitled.png.zip";
+            var zipFile = new Ionic.Zip.ZipFile(outputFilePath);
+            System.Diagnostics.Debug.WriteLine("@fuck");
+            zipFile.AddFile(inputFilePath, @"\a");
+            zipFile.AddDirectory(@"D:\dev\src\cs\AP_positioning", @"\a");
+
+            foreach (var entry in zipFile.Entries)
+            {
+                System.Diagnostics.Debug.WriteLine("@entry");
+                System.Diagnostics.Debug.WriteLine(entry.FileName);
+            }
+            zipFile.Save();
+            zipFile.Dispose();
         }
     }
 }
