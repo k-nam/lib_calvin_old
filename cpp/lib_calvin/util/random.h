@@ -11,7 +11,11 @@ namespace lib_calvin
 		size_t operator()();
 		size_t operator()(size_t mod);
   private:
+#ifdef _WIN64
 		std::mt19937_64 engine;
+#else
+		std::mt19937 engine;
+#endif
   };
 }
 

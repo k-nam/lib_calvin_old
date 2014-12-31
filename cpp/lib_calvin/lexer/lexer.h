@@ -143,7 +143,7 @@ class NfaLexerGenerator  {
 				std::shared_ptr<ParseTree const> pParseTree_; // points the root node
     };
 
-    size_t const charSize_;
+    int const charSize_;
     int size_; // num of total states
     State initialState_; // ultimate start state for string matching
     // Maps each Nfa to its final state
@@ -168,7 +168,7 @@ class DfaLexerGenerator {
     typedef int DfaState; // set of Nfa states
     typedef typename NfaLexerGenerator<Char>::Token Token;
   
-    DfaLexerGenerator(): charSize_(lib_calvin_string::getSizeOfCharSet<Char>()) { }
+    DfaLexerGenerator(): charSize_(static_cast<int>(lib_calvin_string::getSizeOfCharSet<Char>())) { }
     void clear();
     void convertFrom(NfaLexerGenerator<Char> const &);
     // Same function as its Nfa, but (hopefully) much faster!
@@ -179,7 +179,7 @@ class DfaLexerGenerator {
         DfaState &nextState) const;
     DfaState makeNewState();
 
-    size_t const charSize_;
+    int const charSize_;
     DfaState initialState_;
     vector<vector<int>> transitionTable_; // indexed by Dfa states
     map<set<NfaState>, DfaState> nfaStatesToDFAState_; // mapping
@@ -302,7 +302,7 @@ lib_calvin_lexer::NfaLexerGenerator<Char>::Sentence::Sentence(
 
 template <typename Char>
 lib_calvin_lexer::NfaLexerGenerator<Char>::NfaLexerGenerator(): 
-  charSize_(lib_calvin_string::getSizeOfCharSet<Char>()), size_(0) {
+  charSize_(static_cast<int>(lib_calvin_string::getSizeOfCharSet<Char>())), size_(0) {
 }
 
 template <typename Char>

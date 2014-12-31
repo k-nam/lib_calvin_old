@@ -6,9 +6,6 @@
 
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Start page</title>
-
 <style type="text/css">
 	body {
 		background-color: #C2A7F2;

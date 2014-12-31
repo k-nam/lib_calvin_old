@@ -45,13 +45,14 @@ public class SelectSubject extends HttpServlet {
 		out.println("select servlet OK!");
 		int age = Integer.parseInt(request.getParameter("age"));
 		String recommendedSubject = new Planner().recommendSubject(age);
-		//out.println("we recommend you study: " + recommendedSubject + " now");
-		
+		// out.println("we recommend you study: " + recommendedSubject + " now");
+
 		request.setAttribute("recommendedSubject", recommendedSubject);
 		request.setAttribute("hobbies", request.getParameterValues("hobby"));
-		request.setAttribute("paramName", getServletConfig().getInitParameter("paramName"));
+		request.setAttribute("paramName",
+				getServletConfig().getInitParameter("paramName"));
 		request.setAttribute("dao", getServletContext().getAttribute("dao"));
-		
+
 		RequestDispatcher view = request.getRequestDispatcher("select.jsp");
 		view.forward(request, response);
 	}

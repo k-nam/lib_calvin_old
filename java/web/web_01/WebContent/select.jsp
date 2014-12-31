@@ -15,7 +15,7 @@
 	String[] hobbies = (String[]) request.getAttribute("hobbies");
 
 	out.print("So you are " + age + " years old...");
-	out.print("We recommend you to study " + recommendedSubject + " now!");
+	out.print("<br/>We recommend you to study " + recommendedSubject + " now!");
 	if (hobbies != null) {
 		for (String hobby : hobbies) {
 			out.print("<br/>so you like: " + hobby);
