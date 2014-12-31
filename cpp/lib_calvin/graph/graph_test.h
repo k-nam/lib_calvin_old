@@ -4,10 +4,6 @@
  * 2008-02-04
  */
 
-// Include additional test to see difference of array and dynamic(set)
-// graph data in bfs
-//#define BFS_GRAPH_DATA_STRUCTURE
-
 #include "graph.h"
 #include "stopwatch.h"
 
@@ -17,18 +13,23 @@ namespace lib_calvin_graph {
 	template <typename V, typename E, typename W = E, typename ExtractWeight = std::identity<E>>
 	class GraphTest {
 	public:
-		void insertionTest(int numV, int numE, int numNegativeE);
+		GraphTest(int numV, int numE, int numNegativeE);
+		void insertionTest();
 		void insertionTest2();
-		void algorithmTest(int numV, int numE);
-		void undirectedAlgorithmTest(int numV, int numE);
-		void dfsTest(int numV, int numE);
-		void bfsTest(int numV, int numE);
+		void algorithmTest();
+		void undirectedAlgorithmTest();
+		void dfsTest();
+		void bfsTest();
 		void getClosestPathTest();	
 		
 	private:
 		void populateGraph(graph_base<V, E, W, ExtractWeight> &graph, int numV, int numE, int numNegativeE);
 		void populateGraph(graph_base<V, E, W, ExtractWeight> &graph, int numV, int numE, int numNegativeE,
 											 E const &defaultEdge);
+	private:
+		int numV_;
+		int numE_;
+		int numNegativeE_;
 	};
 
 	struct SampleEdge {
@@ -89,14 +90,18 @@ namespace lib_calvin_graph {
 } // end namespace lib_calvin_graph
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::insertionTest(int numV, int numE, int numNegativeE) {
+lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::GraphTest(int numV, int numE, int numNegativeE):
+	numV_(numV), numE_(numE), numNegativeE_(numNegativeE_) { }
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::insertionTest() {
 	using namespace lib_calvin;
   graph<V, E> graph1;
   undirected_graph<V, E> graph2; 
   stopwatch watch;
   watch.start();
-	populateGraph(graph1, numV, numE, numNegativeE);
-	populateGraph(graph2, numV, numE, numNegativeE);
+	populateGraph(graph1, numV_, numE_, numNegativeE_);
+	populateGraph(graph2, numV_, numE_, numNegativeE_);
   watch.stop();
   cout << "Insertion into graph took: " << watch.read() << endl;
   /*
@@ -129,15 +134,15 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::insertionTest2() {
 
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::dfsTest(int numV, int numE) {
+void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::dfsTest() {
 	using namespace lib_calvin;
 	graph<V, E> graph;
-	populateGraph(graph, numV, numE, 0);
+	populateGraph(graph, numV_, numE_, 0);
 	graph.goStatic();
   vector<vector<V>> arrayDataWithoutEdge;
 	ripEdge(graph.arrayData_, arrayDataWithoutEdge);
-  vector<int> visitOrder(numV);
-  for (int i = 0; i < numV / 3; ++i) {
+  vector<int> visitOrder(numV_);
+  for (int i = 0; i < numV_ / 3; ++i) {
     visitOrder[i] = i;
   }
   vector<int> returnOrder;
@@ -148,13 +153,13 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::dfsTest(int numV, int 
   watch.start();
 	dfs1(arrayDataWithoutEdge, visitOrder, returnOrder);
   watch.stop();
-  cout << "dfs1 of vertices: " << numV << "\tedges: " << numE << 
+  cout << "dfs1 of vertices: " << numV_ << "\tedges: " << numE_ << 
     "\t" << watch.read() << endl;
 
   watch.start();
 	dfs2(arrayDataWithoutEdge, visitOrder, returnOrder2);
   watch.stop();
-  cout << "dfs2 of vertices: " << numV << "\tedges: " << numE << 
+  cout << "dfs2 of vertices: " << numV_ << "\tedges: " << numE_ << 
     "\t" << watch.read() << endl;
 
 	if (returnOrder != returnOrder2) {
@@ -164,10 +169,10 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::dfsTest(int numV, int 
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::bfsTest(int numV, int numE) {
+void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::bfsTest() {
 	using namespace lib_calvin;
 	graph<V, int> graph;
-	populateGraph(graph, numV, numE, 0, 1);
+	populateGraph(graph, numV_, numE_, 0, 1);
   graph.goStatic();
   vector<Arc<int>> result1, result2;
   vector<vector<int>> arrayDataWithoutEdge;
@@ -176,7 +181,7 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::bfsTest(int numV, int 
   watch.start();
   bfs(arrayDataWithoutEdge, 0, result1);
   watch.stop();
-  cout << "bfs of vertices: " << numV << "\tedges: " << numE << "\t" <<
+  cout << "bfs of vertices: " << numV_ << "\tedges: " << numE_ << "\t" <<
     watch.read() << endl;
 	
   dijkstra(graph.arrayData_, 0, result2);
@@ -194,10 +199,10 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::bfsTest(int numV, int 
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest(int numV, int numE) {
+void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest() {
 	using namespace lib_calvin;
 	graph<V, E, W, ExtractWeight> graph;
-	populateGraph(graph, numV, numE, 0);
+	populateGraph(graph, numV_, numE_, 0);
 	graph.goStatic();
 	// Additional tests for weighted graph: shortetst paths problems
 	// dijkstra with array data
@@ -210,12 +215,12 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest(int numV
     cout << "dijkstra error.\n";
 		exit(0);
 	}
-  cout << "dijkstra of vertices: " << numV << "\tedges: " << numE << 
+  cout << "dijkstra of vertices: " << numV_ << "\tedges: " << numE_ << 
     "\t" << watch.read() << endl;
 
   // Vellman-Ford
   vector<Arc<W>> solution_v;
-  for (int i = numV - 1; i < numV; ++i) {
+  for (int i = numV_ - 1; i < numV_; ++i) {
     watch.start();
     vellmanFord (graph.arrayData_, i, solution_v);
     watch.stop();
@@ -224,7 +229,7 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest(int numV
 			exit(0);
 		}
   }
-  cout << "Vellman-Ford of vertices: " << numV << "\tedges: " << numE << 
+  cout << "Vellman-Ford of vertices: " << numV_ << "\tedges: " << numE_ << 
     "\t" << watch.read() << endl;
 	
   vector<Arc<W>> row;
@@ -233,7 +238,7 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest(int numV
   watch.start();
   matrixApsp(graph.matrixData_, apspResult);
   watch.stop();
-  cout << "matrixApsp of vertices: " << numV << "\tedges: " << numE << 
+  cout << "matrixApsp of vertices: " << numV_ << "\tedges: " << numE_ << 
     "\t" << watch.read() << endl;
 
   // Floyd-Earshall
@@ -241,7 +246,7 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest(int numV
   watch.start();
   floydWarshall (graph.matrixData_, floydResult);
   watch.stop();
-  cout << "floydWarshall of vertices: " << numV << "\tedges: " << numE << 
+  cout << "floydWarshall of vertices: " << numV_ << "\tedges: " << numE_ << 
     "\t" << watch.read() << endl;
 
   // johnson's
@@ -249,15 +254,15 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest(int numV
   watch.start();
   johnson(graph.arrayData_, johnsonResult);
   watch.stop();
-  cout << "johnson of vertices: " << numV << "\tedges: " << numE << 
+  cout << "johnson of vertices: " << numV_ << "\tedges: " << numE_ << 
     "\t" << watch.read() << endl;
 
   bool isApspCorrect = true;
 	bool isFloydCorrect = true;
 	bool isJohnsonCorrect = true;
-  for (int i = 0; i < numV; ++i) {
+  for (int i = 0; i < numV_; ++i) {
     vellmanFord(graph.arrayData_, i, row); 
-    for (int j = 0; j < numV; j++) {
+    for (int j = 0; j < numV_; j++) {
       if (apspResult.getval(i, j).weight_ != row[j].weight_ && 
           row[j].predecessor_!= -1) {
         isApspCorrect = false;
@@ -288,25 +293,25 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest(int numV
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::undirectedAlgorithmTest(int numV, int numE) {
+void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::undirectedAlgorithmTest() {
 	// Additional test only for symmetric graph
   // MST algorithms
 	using namespace lib_calvin;
 	undirected_graph<V, E, W, ExtractWeight> graph;
-	populateGraph(graph, numV, numE, 0);
+	populateGraph(graph, numV_, numE_, 0);
 	graph.goStatic();
 	set<std::pair<int, int>> result1, result2;  
 	stopwatch watch;
   watch.start();
 	lib_calvin_graph::kruskal(graph.arrayData_, result1);
   watch.stop();
-  cout << "kruskal of vertices: " << numV << "\tedges: " << numE << 
+  cout << "kruskal of vertices: " << numV_ << "\tedges: " << numE_ << 
     "\t" << watch.read() << endl;
 
   watch.start();
 	lib_calvin_graph::prim(graph.arrayData_, result2);
   watch.stop();
-  cout << "prim of vertices: " << numV << "\tedges: " << numE << 
+  cout << "prim of vertices: " << numV_ << "\tedges: " << numE_ << 
     "\t" << watch.read() << endl;
 
   if (result1 != result2) {
@@ -353,7 +358,7 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::populateGraph(
 	using namespace lib_calvin;
   for (int i = 0; i < numE; ++i) {
     int edge = rand() % 100000 + 1000;
-		if (i < numNegativeE ) {
+		if (i < numNegativeE) {
       edge = -edge / 500 + 5; // negative edge
 		}
 		int srcV = (rand() * 32768 + rand()) % numV;
