@@ -30,16 +30,16 @@ void lib_calvin_container::setTest() {
 	setRvalueTest<BPlusTree<HeavyObjectWithMessage>>("BPlusTree / HeavyObject");
 
 	int const testSize = 1000;
-	setFunctionTest<lib_calvin::set<int>>(testSize, "lib_calvin::set");
-	setFunctionTest<BinTree<int>>(testSize, "lib_calvin_container::BinTree");
-	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
+	//setFunctionTest<lib_calvin::set<int>>(testSize, "lib_calvin::set");
+	//setFunctionTest<BinTree<int>>(testSize, "lib_calvin_container::BinTree");
+	//setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
 	setFunctionTest<BTree<HeavyObject>>(testSize, "lib_calvin_container::BTree");
-	setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
-	setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
+	//setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
+	//setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
 	/* not completed */
 	//setFunctionTest(PtrSet<int>(), testSize, "lib_calvin_container::PtrSet");
 	/* Hash table cannot iterate in order */
-	setFunctionTest<HashTable<int>>(testSize,	"lib_calvin_container::HashTable");
+	//setFunctionTest<HashTable<int>>(testSize,	"lib_calvin_container::HashTable");
 	/* boost hash function does not apply to arbitrary object */
 	//setFunctionTest(HashTable<HeavyObject>(), testSize, "lib_calvin_container::HashTable");
 	
@@ -159,6 +159,7 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 	}
 	
 	if (title != "lib_calvin_container::HashTable") {
+		size_t index = 0;
 		cout << "iterating!\n";
 		auto stdIter = stdSet.begin();
 		for (auto implIter = impl.begin(); implIter != impl.end(); ++implIter) {
@@ -166,7 +167,12 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 				cout << "iterating error\n";
 				exit(0);
 			}
+			if (*implIter != *impl.at(index)) {
+				cout << "iterating at(index) method error\n";
+				exit(0);
+			}
 			++stdIter;
+			index++;
 		}
 	}
 	/*
