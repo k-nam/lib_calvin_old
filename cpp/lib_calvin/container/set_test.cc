@@ -85,16 +85,16 @@ void lib_calvin_container::setTest() {
 	setIntegratedSpeedTest<boost::container::set<HeavyObject>>(smallSize, "boost:set");
 	setIntegratedSpeedTest<RbTree<HeavyObject>>(smallSize, "RbTree");
 	//setIntegratedSpeedTest<BTree<HeavyObject>>(smallSize, "BTree");
-	setIntegratedSpeedTest<BPlusTree<HeavyObject>>(smallSize, "BPlusTree");
+	//setIntegratedSpeedTest<BPlusTree<HeavyObject>>(smallSize, "BPlusTree");
 	//setIntegratedSpeedTest<OrderedArray<HeavyObject>>(smallSize, "OrderedArray");
 
-	setMemoryTest<std::set<std::set<HeavyObject>>>("std::set");
-	setMemoryTest<BinTree<BinTree<HeavyObject>>>("BinTree");
-	setMemoryTest<RbTree<RbTree<HeavyObject>>>("RbTree");
-	setMemoryTest<BTree<BTree<HeavyObject>>>("BTree");
-	setMemoryTest<BPlusTree<BPlusTree<HeavyObject>>>("BPlusTree");
+	//setMemoryTest<std::set<std::set<HeavyObject>>>("std::set");
+	//setMemoryTest<BinTree<BinTree<HeavyObject>>>("BinTree");
+	//setMemoryTest<RbTree<RbTree<HeavyObject>>>("RbTree");
+	//setMemoryTest<BTree<BTree<HeavyObject>>>("BTree");
+	//setMemoryTest<BPlusTree<BPlusTree<HeavyObject>>>("BPlusTree");
 	
-	randomAccessSpeedTest(largeSize);
+	//randomAccessSpeedTest(largeSize);
 
 	HeavyObject::countThisObject();
 
