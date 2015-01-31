@@ -167,10 +167,11 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 				cout << "iterating error\n";
 				exit(0);
 			}
+			/*
 			if (*implIter != *impl.at(index)) {
 				cout << "iterating at(index) method error\n";
 				exit(0);
-			}
+			}*/
 			++stdIter;
 			index++;
 		}

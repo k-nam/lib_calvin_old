@@ -912,13 +912,6 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::~B_TREE_BASE() {
 
 template <typename T, typename Comp, typename K, typename ExtractKey>
 size_t B_TREE_BASE<T, Comp, K, ExtractKey>::size() const { 
-	if(size_ != 0) {
-		//std::cout << "size_ is : " << size_ << "\n";
-		//std::cout << "TreeSize is : " << root_->getTreeSize() << "\n";
-		if (size_ != root_->getTreeSize()) {
-			exit(0);
-		}
-	}
 	return size_; 
 }
 
