@@ -12,7 +12,7 @@
 namespace lib_calvin
 {
 template <typename T, typename Comp = std::less<T>, 
-	typename Impl = lib_calvin_container::BPlusTree<T, Comp>>
+	typename Impl = lib_calvin_container::BTree<T, Comp>>
 class set 
 {
 public:

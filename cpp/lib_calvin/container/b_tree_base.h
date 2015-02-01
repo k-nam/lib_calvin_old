@@ -587,16 +587,14 @@ template <typename T, typename Comp, typename K, typename ExtractKey>
 void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::refreshTreeSize() { 
 	//std::cout << "refreshTreeSize called\n";
 	size_t treeSize = 0;
-#ifdef BPLUS
-
-#else
+#ifndef BPLUS
 	treeSize += size_; // num elements in the node itself
+#endif
 	for (int i = 0; i <= size_; i++) {
 		Node *child = getChild(i);
 		treeSize += child->getTreeSize();
 		//std::cout << "child tree size at: " << i << " was: " << child->getTreeSize();
 	}
-#endif
 	treeSize_ = treeSize;
 }
 
@@ -1141,11 +1139,13 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::findIteratorAt(size_t index) const {
 					break;
 				} else {
 					index -= currentInternalNode->getChild(i)->getTreeSize(); // pass through i'th subtreee
+#ifndef BPLUS
 					if (index == 0) {
 						return makeIterator(currentNode, i);
 					} else {
 						index--; // pass through i'th element
 					}
+#endif
 				}
 			}
 		}
