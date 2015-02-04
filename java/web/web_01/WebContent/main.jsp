@@ -1,12 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <html>
 <head>
 <style type="text/css">
+
 body {
 	background-color: #C2A7F2;
 	font-family: sans-serif;
@@ -35,7 +36,7 @@ ul, ol, dl {
 
 <body>
 	<h1 align="center">Programming Study Menu</h1>
-	<a href="blog.html"><b>Open blog page</b></a>
+	<a href="blog.html" target="_parent"><b>Open blog page</b></a>
 	<h2>Subject selection</h2>
 	<h3>h333</h3>
 	<h4>h4</h4>
