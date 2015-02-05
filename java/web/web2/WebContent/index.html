@@ -6,68 +6,22 @@
 
 <script src="lib/jquery-1.11.2.js"></script>
 <script>
-$(document).ready(function(){
-	var isShowed = true;
-	var url = "Blog";
-	$(document).ready(function() {
-		$("button").text("Hide");
-		$("button").click(function() {
-			if (isShowed == true) {
-				$("#test2").hide();
-				$("button").text("Show");
-				isShowed = false;
-			} else {
-				$("#test2").show();
-				$("button").text("Hide");
-				isShowed = true;
-			}
-			$.ajax({url:"Blogajax?keyword=" + $("#test3").val(), 
-				success:function(result) { alert("Sucess, result was: " + result); $("#test1").text(result);},
-				error:function(xhr) { alert("Error")},
-				async:true,
-				timeout:1000 });
-		
-		});
-		$("#button").mouseenter(function() {
-			$(this).hide();
-		});
+
+var url = "Blog";
+$(document).ready(function() {
+
+	$("button").click(function() {
+		alert("Beginning AJAX")
+		$.ajax({url:"data.txt", 
+			success:function() { alert("Sucess");},
+			error:function(xhr) { alert("Error");},
+			async:true,
+			timeout:1000 });
+	
 	});
-	
-	function getSuggestion(keyword) {
-		alert("Started suggestion");
-		var httpRequest;
-    	if (window.XMLHttpRequest) { // Mozilla, Safari, ...
-	        httpRequest = new XMLHttpRequest();
-      	} else if (window.ActiveXObject) { // IE
-		  	try {
-			    httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
-			} catch (e) {
-		   		 try {
-			      httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-			    } catch (e) {}
-			}
-		}
-		if (!httpRequest) {
-		    alert("Giving up :( Cannot create an XMLHTTP instance");
-		    return false;
-		}
-		httpRequest.onreadystatechange = refreshSuggestion;
-		httpRequest.open('GET', url + "?keyword=" + keyword);
-		httpRequest.send();
-	}
-	
-	function refreshSuggestion() {
-		alert("state was:" + httpRequest.readyState);
-		if (httpRequest.readyState === 4) {
-			if (httpRequest.status === 200) {
-				$("#test3").text(httpRequest.responseText);
-				alert("Response was " + httpRequest.responseText);
-			} else {
-		  		alert("There was a problem with the request.");
-			}
-		}
-	}
+
 });
+
 </script>
 
 <style type="text/css">
