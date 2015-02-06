@@ -1,27 +1,76 @@
 package dictionary;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Dictionary {
 	private List<DictionaryEntry> entries;
+	private String fileName = "/files/eng_words_frequency.txt";
+	private static Dictionary theDictionary = null;
 
-	public Dictionary(List<DictionaryEntry> entries) {
-		entries.sort(null); // lexicographically sort
-		this.entries = entries;
+	private Dictionary() {
+		// singleton
+	}
+
+	private void loadDictionary() {
+		// load from file
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(fileName));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String line = null;
+		String word = null;
+		Integer frequency = null;
+		Map<String, Integer> entryMap = new HashMap<String, Integer>();
+		while(true) {
+			try {
+				line = reader.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (line == null) {
+				break;
+			} else {
+				 frequency = Integer.valueOf(line.split("\t")[0]);
+				 word = line.split("\t")[1];
+				 entryMap.put(word, frequency);
+			}
+		}
+		for (Map.Entry<String, Integer> entry : entryMap.entrySet()) {
+			entries.add(new DictionaryEntry(entry.getKey(), entry.getValue()));
+		}
+		entries.sort(null); // lexicographically
+	}
+
+	public static Dictionary getDictionary() {
+		if (theDictionary == null) {
+			theDictionary = new Dictionary();
+		}		
+		return theDictionary;
 	}
 	
 	// return N most frequent words with given prefix
-	public List<String> getWordsWithPrefix(String prefix, int num) {
+	public static List<String> getWordsWithPrefix(String prefix, int num) {
 		List<DictionaryEntry> prefixMatches = new ArrayList<DictionaryEntry>();
-		for (DictionaryEntry entry : this.entries) {
-			if (entry.word.startsWith(prefix)){
+		for (DictionaryEntry entry : getDictionary().entries) {
+			if (entry.word.startsWith(prefix)) {
 				prefixMatches.add(entry);
 			}
 		}
 		// This time, sort by frequency
-		prefixMatches.sort(new Comparator<DictionaryEntry> () {
+		prefixMatches.sort(new Comparator<DictionaryEntry>() {
 			@Override
 			public int compare(DictionaryEntry entry1, DictionaryEntry entry2) {
 				return entry1.frequency - entry2.frequency;
