@@ -344,6 +344,7 @@ void destruct(T *elements, size_t size) {
 	}
 }
 
+// This leads to lower_bound position
 template <typename T, typename Comp, typename K, typename ExtractKey>
 size_t binarySearch(T const *begin, T const *end, K const &key) {
 	if (begin == end) {

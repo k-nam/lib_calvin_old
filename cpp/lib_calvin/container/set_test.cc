@@ -158,6 +158,24 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 		}
 	}
 	
+	cout << "finding!\n"; 
+	for (unsigned i = 0; i < testSize; ++i) {
+		T temp = testVector[i];
+		if (impl.find(temp) == impl.end()) {
+			if (stdSet.find(temp) != stdSet.end()) {
+				correct = false;
+				cout << "count error1\n";
+				exit(0);
+			}
+		} else {
+			if (*impl.find(temp) != *stdSet.find(temp)) {
+				correct = false;
+				cout << "count error2\n";
+				exit(0);
+			}
+		}
+	}
+
 	if (title != "lib_calvin_container::HashTable") {
 		size_t index = 0;
 		cout << "iterating!\n";

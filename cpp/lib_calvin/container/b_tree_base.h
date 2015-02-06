@@ -232,6 +232,7 @@ private:
 	Node *getLastNode() const;
 	Node *getFirstOrLastNode(bool isFirst) const;
 	IteratorImpl findIterator(K const &key) const;
+	std::pair<IteratorImpl, bool> lowerBoundIterator(K const &key) const;
 	IteratorImpl findIteratorAt(size_t index) const;
 	IteratorImpl makeIterator(Node *node, int index = 0) const;
 	// insert certain elem into the right position in the node, 
@@ -1087,8 +1088,19 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::insert_(T1 &&elem) {
 template <typename T, typename Comp, typename K, typename ExtractKey>
 typename B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl
 B_TREE_BASE<T, Comp, K, ExtractKey>::findIterator(K const &key) const {
+	std::pair<IteratorImpl, bool> result = lowerBoundIterator(key);
+	if (result.second == false) { // element was not present
+		return makeIterator(nullptr);
+	} else {
+		return result.first;
+	}
+}
+
+template <typename T, typename Comp, typename K, typename ExtractKey>
+std::pair<typename B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl, bool> 
+B_TREE_BASE<T, Comp, K, ExtractKey>::lowerBoundIterator(K const &key) const {
 	if (empty()) { 
-		return makeIterator(NULL); 
+		return std::make_pair(makeIterator(nullptr), false); 
 	} 
 	Node *thisNode = root_; 
 	while (true) { 
@@ -1096,19 +1108,19 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::findIterator(K const &key) const {
 #ifdef BPLUS
 		if (thisNode->isLeafNode()) {
 			if (result.second == false) { // found
-				return makeIterator(thisNode, result.first); 
+				return std::make_pair(makeIterator(thisNode, result.first), true); 
 			} else {
-				return makeIterator(NULL);
+				return std::make_pair(makeIterator(thisNode, result.first), false);
 			}
 		} else { // internal nodes are not data elements
 			thisNode = static_cast<InternalNode *>(thisNode)->getChild(result.first); 
 		}
 #else
 		if (result.second == false) { /* we found the element */
-			return makeIterator(thisNode, result.first); 
+			return std::make_pair(makeIterator(thisNode, result.first), true);
 		} else { /* elements doesn't exist in this node */ 
 			if (thisNode->isLeafNode() == true) { 
-				return makeIterator(NULL); 
+				return std::make_pair(makeIterator(thisNode, result.first), false);
 			} else { 
 				thisNode = static_cast<InternalNode *>(thisNode)->getChild(result.first); 
 			} 
