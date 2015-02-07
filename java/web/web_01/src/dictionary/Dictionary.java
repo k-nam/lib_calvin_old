@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -12,22 +14,17 @@ import java.util.Map;
 
 public class Dictionary {
 	private List<DictionaryEntry> entries;
-	private String fileName = "/files/eng_words_frequency.txt";
+	private String fileName = "ansi.txt";
 	private static Dictionary theDictionary = null;
 
 	private Dictionary() {
-		// singleton
+		loadDictionary();
 	}
 
 	private void loadDictionary() {
 		// load from file
 		BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(fileName));
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		reader = new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream(fileName)));
 		
 		String line = null;
 		String word = null;
@@ -42,12 +39,14 @@ public class Dictionary {
 			}
 			if (line == null) {
 				break;
-			} else {
-				 frequency = Integer.valueOf(line.split("\t")[0]);
-				 word = line.split("\t")[1];
-				 entryMap.put(word, frequency);
+			} else {		
+				frequency = Integer.valueOf(line.split(" ")[0]);
+				word = line.split(" ")[1];
+				//System.out.println("freq: " + frequency + " word:" + word);				 
+				entryMap.put(word, frequency);
 			}
 		}
+		entries = new ArrayList<DictionaryEntry>();
 		for (Map.Entry<String, Integer> entry : entryMap.entrySet()) {
 			entries.add(new DictionaryEntry(entry.getKey(), entry.getValue()));
 		}

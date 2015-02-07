@@ -2,6 +2,8 @@ package copier
 import java.io._
 import scala.io.Source
 
+// For detecting Encoding. 
+// Encoding is delicate matter. It showed different results for different substring of the same document.
 class BinaryFileCopier(val sourceFileName: String, val targetFileName: String, val numBytes: Int) {
 	val writer = new BufferedOutputStream(new FileOutputStream(targetFileName))
 	var remainingNumBytes = numBytes
@@ -9,10 +11,10 @@ class BinaryFileCopier(val sourceFileName: String, val targetFileName: String, v
 		val bis = new BufferedInputStream(new FileInputStream(sourceFileName))
 		var buffer: Array[Byte] = new Array[Byte](numBytes)
 		bis.read(buffer, 0, numBytes)
-		print(guessEncoding(buffer))
+		println("Encoding was: " + guessEncoding(buffer))
 		writer.write(buffer, 0, numBytes)
 	} catch {
-		case e: Exception => print("error")
+		case e: Exception => println("error")
 	} finally {
 		print("well done")
 	}

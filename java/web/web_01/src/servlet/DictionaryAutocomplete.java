@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import dictionary.*;
 
-public class Autocomplete extends HttpServlet {
+public class DictionaryAutocomplete extends HttpServlet {
 	private static final long serialVersionUID = 1962439015362375974L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -19,6 +19,7 @@ public class Autocomplete extends HttpServlet {
 		int num = Integer.valueOf(request.getParameter("num"));
 		response.setContentType("text");
 		List<String> list = Dictionary.getWordsWithPrefix(input, num);
+		Dictionary.getDictionary();
 		for (String word: list) {
 			System.out.println("Adding word: " + word);
 			response.getWriter().append(word);

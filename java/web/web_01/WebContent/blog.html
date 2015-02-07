@@ -10,15 +10,15 @@ $(document).ready(function(){
 	var isShowed = true;
 	var url = "Blog";
 	$(document).ready(function() {
-		$("button").text("Hide");
-		$("button").click(function() {
+		$("#button1").text("Hide");
+		$("#button1").click(function() {
 			if (isShowed == true) {
 				$("#test2").hide();
-				$("button").text("Show");
+				$("#button1").text("Show");
 				isShowed = false;
 			} else {
 				$("#test2").show();
-				$("button").text("Hide");
+				$("#button1").text("Hide");
 				isShowed = true;
 			}
 			$.ajax({url:"Blogajax?keyword=" + $("#test3").val(), 
@@ -27,6 +27,13 @@ $(document).ready(function(){
 				async:true,
 				timeout:1000 });
 		
+		});
+		$("#dictionary").click(function() {
+			$.ajax({url:"DictionaryAutocomplete?input=" + "ab&" + "num=5",
+				async:true,
+				success:function(result) { alert("DictionaryAutocomplete AJAX success");},
+				error:function(xhr) { alert("Error")},
+				timeout:1000 });
 		});
 		$("#button").mouseenter(function() {
 			$(this).hide();
@@ -259,7 +266,8 @@ ul.nav a:hover {
 			<p id="test2">This is paragraph.</p>
 			<textarea id="test3">This is where the user can enter text...</textarea>
 
-			<button>This is button</button>
+			<button id="button1">This is button</button>
+			<button id="dictionary">Dictionary autocomplete</button>
 			<!-- end .content -->
 		</div>
 		<div class="footer">

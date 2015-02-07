@@ -16,7 +16,7 @@ class SqlServerDbManager extends DbManager {
 		}
 		try {
 			val conn = DriverManager.getConnection(
-				"jdbc:sqlserver://192.168.0.15\\CALVIN_MSSQL:1433;databaseName=aaa",
+				"jdbc:sqlserver://localhost\\CALVIN_MSSQL:1433;databaseName=aaa",
 				"sa", "calvin1729")
 			conn.setAutoCommit(false)
 			println("SQL server connection successful")

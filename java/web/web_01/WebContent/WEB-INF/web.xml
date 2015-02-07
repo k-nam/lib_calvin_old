@@ -39,8 +39,8 @@
 		<servlet-class>servlet.Blog</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>Autocomplete</servlet-name>
-		<servlet-class>servlet.Autocomplete</servlet-class>
+		<servlet-name>DictionaryAutocomplete</servlet-name>
+		<servlet-class>servlet.DictionaryAutocomplete</servlet-class>
 	</servlet>
 
 	<servlet-mapping>
@@ -68,8 +68,8 @@
 		<url-pattern>/Blogajax</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>Autocomplete</servlet-name>
-		<url-pattern>/Autocomplete</url-pattern>
+		<servlet-name>DictionaryAutocomplete</servlet-name>
+		<url-pattern>/DictionaryAutocomplete</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>

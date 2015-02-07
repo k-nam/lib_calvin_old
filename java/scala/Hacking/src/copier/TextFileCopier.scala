@@ -7,8 +7,10 @@ object TextFileCopier {
 	// see if given UTF8 string is ASCII
 	def isAsciiString(string: String): Boolean = {
 		for (letter <- string) {
-			if (letter < ' ' || letter > '~') {
-				return false
+			if ((letter >=' ' && letter <= '~') || letter == '\t') {
+			} else {
+				//println(Integer.valueOf(letter))
+				return false				
 			}
 		}
 		return true
@@ -44,9 +46,9 @@ class TextFileCopier(val sourceFileName: String, val targetFileName: String, val
 			}
 		}
 	} catch {
-		case Break => print("well done")
-		case NullLine => print("well done, but whole file processed")
-		case e: Exception => print("error: unknown")
+		case Break => println("well done")
+		case NullLine => println("well done, but whole file processed")
+		case e: Exception => println("error: unknown")
 	}
 	writer.close()
 
