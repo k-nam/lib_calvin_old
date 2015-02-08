@@ -11,10 +11,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.lang.Math;
 
 public class Dictionary {
 	private List<DictionaryEntry> entries;
-	private String fileName = "ansi.txt";
+	private String fileName1 = "5000_ansi.txt";
+	private String fileName2 = "100k_ansi.txt";
 	private static Dictionary theDictionary = null;
 
 	private Dictionary() {
@@ -23,27 +25,50 @@ public class Dictionary {
 
 	private void loadDictionary() {
 		// load from file
-		BufferedReader reader = null;
-		reader = new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream(fileName)));
-		
+		BufferedReader reader1 = null;
+		BufferedReader reader2 = null;
+		final int noFrequency = 10000000;
+		reader1 = new BufferedReader(new InputStreamReader(this.getClass()
+				.getClassLoader().getResourceAsStream(fileName1)));
+		reader2 = new BufferedReader(new InputStreamReader(this.getClass()
+				.getClassLoader().getResourceAsStream(fileName2)));
+
 		String line = null;
 		String word = null;
 		Integer frequency = null;
 		Map<String, Integer> entryMap = new HashMap<String, Integer>();
-		while(true) {
+		while (true) {
 			try {
-				line = reader.readLine();
+				line = reader1.readLine();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if (line == null) {
 				break;
-			} else {		
-				frequency = Integer.valueOf(line.split(" ")[0]);
-				word = line.split(" ")[1];
-				//System.out.println("freq: " + frequency + " word:" + word);				 
-				entryMap.put(word, frequency);
+			} else {
+				frequency = Integer.valueOf(line.split("\t")[0]);
+				word = line.split("\t")[1];
+				// System.out.println("freq: " + frequency + " word:" + word);
+				if (entryMap.containsKey(word) == false) {
+					entryMap.put(word, frequency);
+				}
+			}
+		}
+		
+		while (true) {
+			try {
+				line = reader2.readLine();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if (line == null) {
+				break;
+			} else {
+				word = line; 
+				if (entryMap.containsKey(word) == false) {
+					// big dictionary's words has lower frequency.
+					entryMap.put(word, noFrequency);
+				}
 			}
 		}
 		entries = new ArrayList<DictionaryEntry>();
@@ -56,10 +81,10 @@ public class Dictionary {
 	public static Dictionary getDictionary() {
 		if (theDictionary == null) {
 			theDictionary = new Dictionary();
-		}		
+		}
 		return theDictionary;
 	}
-	
+
 	// return N most frequent words with given prefix
 	public static List<String> getWordsWithPrefix(String prefix, int num) {
 		List<DictionaryEntry> prefixMatches = new ArrayList<DictionaryEntry>();
@@ -75,9 +100,10 @@ public class Dictionary {
 				return entry1.frequency - entry2.frequency;
 			}
 		});
-		List<DictionaryEntry> mostFrequent = prefixMatches.subList(0, num);
-		// Sort again to make result readable
-		mostFrequent.sort(null);
+		List<DictionaryEntry> mostFrequent = prefixMatches.subList(0,
+				Math.min(num, prefixMatches.size()));
+		
+
 		List<String> result = new ArrayList<String>();
 		for (DictionaryEntry entry : mostFrequent) {
 			result.add(entry.word);

@@ -1,4 +1,5 @@
 package servlet;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -14,16 +15,22 @@ public class DictionaryAutocomplete extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		System.out.println("In Autocomplete servlet. Input was: " + request.getParameter("input"));
+		System.out.println("In Autocomplete servlet. Input was: "
+				+ request.getParameter("input"));
 		String input = request.getParameter("input");
 		int num = Integer.valueOf(request.getParameter("num"));
 		response.setContentType("text");
 		List<String> list = Dictionary.getWordsWithPrefix(input, num);
 		Dictionary.getDictionary();
-		for (String word: list) {
+		boolean first = true;
+		for (String word : list) {
+			if (first) {
+				first = false;
+			} else {
+				response.getWriter().append(" ");
+			}
 			System.out.println("Adding word: " + word);
 			response.getWriter().append(word);
-			response.getWriter().append(" ");
 		}
 	}
 }
