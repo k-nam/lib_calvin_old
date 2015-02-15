@@ -9,7 +9,7 @@ class MysqlDbManage(override val databaseName: String) extends DbConnection(data
 		try {
 			Class.forName("com.mysql.jdbc.Driver")
 		} catch {
-			case _ => {
+			case _: Throwable => {
 				println("mysql driver not found")
 				None
 			}
@@ -23,7 +23,7 @@ class MysqlDbManage(override val databaseName: String) extends DbConnection(data
 			return conn
 
 		} catch {
-			case _ => { println("Connection error"); throw new Exception }
+			case _: Throwable => { println("Connection error"); throw new Exception }
 		}
 	}
 }

@@ -1,4 +1,4 @@
-package TextViewer
+package text.viewer
 import java.io._
 
 /**

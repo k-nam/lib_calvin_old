@@ -1,5 +1,5 @@
 package db.loader
-import copier._
+import text.copier._
 import java.io._
 import java.sql.{ DriverManager, Connection, PreparedStatement };
 import scala.collection.mutable._;

@@ -1,10 +1,9 @@
 package main
-import copier.TextFileCopier
-import copier.BinaryFileCopier
+import text.viewer._
+import text.copier._
 import db.connection.SqlServerDbManager
 import db.loader._
 import db.lookup._
-import TextViewer._
 
 object Main {
 	// first argument is the name of source file, 

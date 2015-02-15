@@ -1,4 +1,4 @@
-package copier
+package text.copier
 import java.io._
 import scala.io.Source
 import java.nio.charset.Charset;
