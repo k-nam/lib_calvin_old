@@ -4,22 +4,37 @@ import copier.BinaryFileCopier
 import db.connection.SqlServerDbManager
 import db.loader._
 import db.lookup._
+import TextViewer._
 
 object Main {
 	// first argument is the name of source file, 
 	// second is the name of target file, 
 	// third is number of lines to copy 
 	def main(args: Array[String]): Unit = {
-		//new TextFileCopier("D:\\hacking/data/utf8.txt", "D:\\hacking/data/ascii.txt", 300000000, 20)
-		new BinaryFileCopier("D:\\hacking/data/realhuman_phill.txt", "D:\\hacking/data/output.txt", 100000)
+		hackingTest()
+	}
 
-		//new SqlServerDbManager("aaa").start
-		//		new TextFileLoader("D:\\hacking/data/password_under_20digit.txt",
-		//			new SqlServerDbManager("Hacking").connection).loadPassword("Password.CommonPasswordUnder20Digit")
-		//		new TextFileLoader("D:\\hacking/data/password_under_20digit_first_last.txt",
-		//			new SqlServerDbManager("Hacking").connection).loadFirstLast("RainbowTable.FirstLast_Md5_20Digit_SimpleReverse_10Iter")
+	def manageFile(): Unit = {
+		//new TextFileCopier("D:\\dev_data/hacking/data/utf8.txt", 
+		//		"D:\\dev_data/hacking/data/password_under_20digit.txt", 100000000, 20)		
+	}
+	
+	def dataTest(): Unit = {
+		//new Viewer().showLastLines("D:\\dev_data/hacking/data/password_under_20digit_first_last.txt", 100)
+		//new Viewer().getNumLines("D:\\dev_data/hacking/data/password_under_20digit.txt")
+		//new Viewer().getNumLines("D:\\dev_data/hacking/data/password_under_20digit_first_last.txt")
+		new Viewer().showLines("D:\\dev_data/hacking/data/password_under_20digit.txt", 10000, 100)
+	}
 
-		//		new ChainLookup("D:\\hacking/test/chain.txt", "D:\\hacking/test/first.txt",
-		//			new SqlServerDbManager("Hacking").connection).lookUpChain("RainbowTable.FirstLast_Md5_20Digit_SimpleReverse_10Iter")
+	def hackingTest(): Unit = {
+		//new TextFileLoader("D:\\dev_data/hacking/data/password_under_20digit.txt",
+		//	new SqlServerDbManager("Hacking").connection).loadPassword("Password.CommonPasswordUnder20Digit")
+
+		//new TextFileLoader("D:\\dev_data/hacking/data/password_under_20digit_first_last.txt",
+			//new SqlServerDbManager("Hacking").connection).loadFirstLast("RainbowTable.FirstLast_Md5_20Digit_SimpleReverse_10Iter")
+
+		new ChainLookup("D:\\dev_data/hacking/test/chain.txt", "D:\\dev_data/hacking/test/first.txt",
+			new SqlServerDbManager("Hacking").connection).lookUpChain("RainbowTable.FirstLast_Md5_20Digit_SimpleReverse_10Iter")
+
 	}
 }

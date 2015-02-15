@@ -16,10 +16,9 @@ public class FindUser {
 			return null;
 		}
 		try {
-			PreparedStatement pstmt = 
-				connection.prepareStatement(
-						"SELECT id, description FROM me2day.me2person " +
-						"WHERE nickname = ?");
+			PreparedStatement pstmt = connection
+					.prepareStatement("SELECT id, description FROM me2day.me2person "
+							+ "WHERE nickname = ?");
 			pstmt.setString(1, nickname);
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
@@ -29,8 +28,8 @@ public class FindUser {
 			connection.close();
 			return info;
 		} catch (SQLException e) {
-			e.printStackTrace();	
+			e.printStackTrace();
 			return null;
-		} 
+		}
 	}
 }

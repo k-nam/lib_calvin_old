@@ -7,7 +7,6 @@
 <html>
 <head>
 <style type="text/css">
-
 body {
 	background-color: #C2A7F2;
 	font-family: sans-serif;

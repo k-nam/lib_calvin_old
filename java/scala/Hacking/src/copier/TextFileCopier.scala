@@ -26,6 +26,8 @@ class TextFileCopier(val sourceFileName: String, val targetFileName: String, val
 
 	try {
 		val reader = new BufferedReader(new InputStreamReader(new FileInputStream(sourceFileName), "UTF8"))
+		var previousLine = "null"
+		var index = 0
 		while (true) {
 			if (remainingNumLines > 0) {
 				val line = reader.readLine()
@@ -35,12 +37,15 @@ class TextFileCopier(val sourceFileName: String, val targetFileName: String, val
 							writer.write('\n')
 						}
 						writer.write(line)
+						
 						remainingNumLines -= 1
 					} else {
 					}
 				} else {
+					println("Last line was: " + previousLine)
 					throw NullLine
 				}
+				previousLine = line
 			} else {
 				throw Break
 			}
