@@ -8,6 +8,7 @@ abstract class DbManager extends Thread {
 
 	override def run(): Unit = {
 		pushData()
+		connection.close()
 	}
 
 	def getPersonList(): Set[String] = {
@@ -205,11 +206,11 @@ abstract class DbManager extends Thread {
 		val shortString = "남기웅남기웅남기웅남기웅남기웅남기웅"
 		val wordString = "남기웅"
 		val startTime: Double = System.currentTimeMillis()
-		val testSize = 30000
+		val testSize = 100000
 		val rowSize = 200
 		for (i <- 1 to testSize) {
 			stmt.setInt(1, i)
-			stmt.setString(2, wordString)
+			stmt.setString(2, wordString + i)
 			stmt.addBatch()
 			if (i % 10000 == 0) {
 				stmt.executeBatch()

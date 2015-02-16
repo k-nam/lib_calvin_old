@@ -16,7 +16,7 @@ class MysqlDbManager extends DbManager {
 		}
 		try {
 			val conn = DriverManager.getConnection(
-				"jdbc:mysql://localhost:3306/me2day?" +
+				"jdbc:mysql://localhost:3306/test?" +
 					"user=root&password=calvin1729&characterEncoding=UTF-8")
 			println("mysql connection successful")
 			conn.setAutoCommit(false);

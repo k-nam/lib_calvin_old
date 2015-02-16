@@ -1,9 +1,6 @@
 package text.viewer
 import java.io._
 
-/**
- * @author Calvin
- */
 class Viewer {
 	def getNumLines(fileName: String): Unit = {
 		val reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF8"))
@@ -38,7 +35,7 @@ class Viewer {
 				index += 1
 			}
 		} catch {
-			case End => println("------------ showLastLines End of result -------------------")
+			case End => println("------------ showLines End of result -------------------")
 		}
 
 	}

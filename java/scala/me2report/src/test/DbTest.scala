@@ -18,7 +18,7 @@ object DbTest {
 		//val dbManager = new MysqlDbManager()
 		var dbManagers = List[DbManager]()
 		for (i <- 1 to 4) {
-			dbManagers = new SqlServerDbManager() :: dbManagers
+			dbManagers = new MysqlDbManager() :: dbManagers
 		}
 		dbManagers(0).truncate
 		for (dbManager <- dbManagers) {
