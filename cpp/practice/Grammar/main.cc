@@ -1,11 +1,9 @@
-
 #include "Shape.h"
 #include "predicate.h"
+#include "Constructor.h"
 
-using namespace calvin;
-
-int main()
-{
+void predicateTest() {
+	using namespace calvin;
 	Shape *shapes = new Shape[5];
 	Shape const *shapes2 = shapes;
 	foreach(shapes, shapes + 5, memfun(&Shape::draw)); 
@@ -16,7 +14,20 @@ int main()
 	foreach(shapes, shapes + 5, bind2nd(memfun(&Shape::draw2_arg), 6)); // const function
 	// const object + const function
 	foreach(shapes2, shapes2 + 5, bind2nd(memfun(&Shape::draw2_arg), 6)); 
-
-	return 0;
 }
 
+void ctorTest() {
+	Test a(1, 2);
+	Test b { 1, 2 };
+	Test c = { 1, 2 };
+	Test d(a);
+	Test e = a;
+	Test f { b };
+	Test g = { c };
+}
+
+int main()
+{
+	ctorTest();
+	return 0;
+}

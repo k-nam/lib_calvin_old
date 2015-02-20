@@ -23,9 +23,9 @@ void f(T &&a) {
 }
 int const && g() {
 	int j = 5;
-	return j + 1; // dangling ref
+	return j + 1; // dangling ref?
 } 
 int & h() {
 	static int value = 0;
-	return value; // dangling ref
+	return value; // dangling ref?
 }

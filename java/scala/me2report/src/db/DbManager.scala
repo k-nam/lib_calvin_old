@@ -210,7 +210,7 @@ abstract class DbManager extends Thread {
 		val rowSize = 200
 		for (i <- 1 to testSize) {
 			stmt.setInt(1, i)
-			stmt.setString(2, wordString + i)
+			stmt.setString(2, shortString + i)
 			stmt.addBatch()
 			if (i % 10000 == 0) {
 				stmt.executeBatch()

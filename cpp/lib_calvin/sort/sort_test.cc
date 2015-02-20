@@ -1,4 +1,3 @@
-
 #include "sort_test.h"
 #include "utility.h"
 #include "random.h"
@@ -6,6 +5,7 @@
 
 void lib_calvin_sort::sortTest() {
 	std::cout << "\n---------- Beginning sort test -----------\n";
+	using namespace lib_calvin_sort;
 	typedef SimpleStruct ElemType;
 	//binSearchTest();
 	//binSearchTest2();
@@ -15,6 +15,9 @@ void lib_calvin_sort::sortTest() {
 	//sortTest<ElemType>(cacheTest2, "cacheTest2");
 	//sortTest<ElemType>(cacheTest3, "cacheTest3");
 	
+
+	//sortTest<ElemType>(mergeSort, "mergeSort");
+	/*
   sortTest<ElemType>(introSortPointerSorting, "introSort pointer");
 	sortTest<ElemType>(introSort, "introSort");
 	sortTest<ElemType>(introSortParallel, "Parallel introSort");	
@@ -23,96 +26,32 @@ void lib_calvin_sort::sortTest() {
 	sortTest<ElemType>(mergeSort, "mergeSort");
 	sortTest<ElemType>(mergeSortParallel, "Parallel mergeSort");
 	sortTest<ElemType>(bucketSort, "bucketSort");
-	sortTest<ElemType>(heapSort,  "heapSort");
+	sortTest<ElemType>(heapSort, "heapSort");
 	sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");
 	sortTest<ElemType>(mergeSort2, "mergeSort2");
 	sortTest<ElemType>(std::sort, "std::sort");
 	sortTest<ElemType>(std::stable_sort, "std::stable_sort");
 	sortTest<ElemType>(countingSort, "countingSort");
 	sortTest<ElemType>(introSort2, "introSort+");
+	*/
+
+	sortTest2();
+
 }
 
-template <typename T>
-void lib_calvin_sort::sortTest (void (*sortingAlg) (T *first, T *last), 
-    std::string title) {  
-  stopwatch watch;
-  bool correct  = true;
-  bool stable   = true;
-	size_t const numTestCases = 5;
-	int arraySize[numTestCases] = { 1000, 10000, 100000, 1000000, 10000000 };
-	int numIteration[numTestCases] = { 100, 100, 10, 3, 1 };
-	std::srand(1232); // reset seed to give identical input to algorithms
-  for (int i = 0; i < numTestCases; ++i) { 
-		if (arraySize[i] == 0) {
-			continue;
-		}
-    T *testSet = new T[arraySize[i]];		
-		double min = 1000000;
-		bool isTotallyCorrect = true;
-		bool isTotallyStable = true;
-		for (int j = 0; j < numIteration[i]; j++) {
-			for (int j = 0; j < arraySize[i]; j++) {
-				testSet[j].first = j / 2;
-				//testSet[j].first = -j / 3; // reverse ordered input array
-			}			
-			std::random_shuffle(testSet, testSet + arraySize[i], lib_calvin::random_number_generator());
-			for (int j = 0; j < arraySize[i]; j++) {
-				testSet[j].second = j; // for testing stability
-			}	
-			double time = 0;
-			bool isCorrect = true;
-			bool isStable = true;
-			sortTest(sortingAlg, testSet, testSet + arraySize[i], title,
-				time, isCorrect, isStable);
-			if (time < min) {
-				min = time;
-			}
-			if (isCorrect == false) {
-				isTotallyCorrect = false;
-			}
-			if (isStable == false) {
-				isTotallyStable = false;
-			}
-		}
-		delete[] testSet;
-		cout << title << ": ";
-		if (isTotallyCorrect == true){
-		} else {
-			cout << "Sorting: failure!!! ";
-			exit(0);
-		}
-		if (isTotallyStable) {
-			cout << "Stable OK\n";
-		} else {
-			cout << "Not stable\n";
-		}
-		cout << sizeof(T) << "Bytes ";
-		cout << arraySize[i] << " " << min << "sec " <<
-			"speed: " << arraySize[i] / min << endl;
-	}
-	std::cout << endl;
-}
+void lib_calvin_sort::sortTest2() {
+	using namespace std;
+	cout << "mergeSort\n";
+	std::vector<std::string> strings { "bb", "a", "ddd", "ee", "cccc" };
+	auto comp = std::less<std::string>();
+	cout << "lexicographic order:";
 
-template <typename Iterator>
-void lib_calvin_sort::sortTest (void (*sortingAlgorithm)(Iterator, Iterator), 
-		Iterator first, Iterator last, std::string title,
-		double &time, bool &isCorrect, bool &isStable) {
-	stopwatch watch;
-	ptrdiff_t size = last - first; 
-  watch.start();
-  sortingAlgorithm(first, last);
-  watch.stop();
-  time = watch.read();
-  // check correctness
-  for (ptrdiff_t j = 0; j < size - 1; j++) {
-    if (*(first + (j + 1)) < *(first + j)) {
-      isCorrect = false;
-		}
-    if (*(first + j) == *(first + j + 1) && 
-				(*(first + j)).second > (*(first + (j + 1))).second) {
-      isStable = false;
-		}
-  }
+	sortTest2Sub(lib_calvin_sort::mergeSort, strings.begin(), strings.end(), comp);
+	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
+	cout << "\nlength order: ";
+	auto lengthComp = [](string x, string y) { return x.length() < y.length(); };
+	sortTest2Sub(lib_calvin_sort::mergeSort, strings.begin(), strings.end(), lengthComp);
+	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
 }
 
 std::string lib_calvin_sort::getRandomString(int length) {

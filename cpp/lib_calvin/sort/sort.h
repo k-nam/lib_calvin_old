@@ -224,8 +224,8 @@ void exchange(Iterator first, Iterator middle, Iterator last);
 template <typename Iterator>
 void reverse(Iterator first, Iterator last);
 
-template <typename SrcIterator, typename TargetIterator>
-void mergeSort(SrcIterator first, SrcIterator last, TargetIterator target);
+template <typename SrcIterator, typename TargetIterator, typename Comparator>
+void mergeSortSub(SrcIterator first, SrcIterator last, TargetIterator target, Comparator comp);
 
 template <typename SrcIterator, typename TargetIterator>
 void mergeSortParallelSub0(SrcIterator first, SrcIterator last,
@@ -250,6 +250,9 @@ void mergeSort2Descending(Iterator first, Iterator last, Iterator target);
 
 template <typename Iterator> 
 void insertionSort(Iterator first, Iterator last);
+
+template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>> 
+void insertionSort2(Iterator first, Iterator last, Comparator const comp = Comparator());
 
 template <typename Iterator>
 void heapSort(Iterator first, Iterator last);
@@ -294,8 +297,8 @@ void introSortParallelAdvanced(Iterator first, Iterator last);
 template <typename Iterator>
 void introSortParallelAdvanced2(Iterator first, Iterator last);
 
-template <typename Iterator>
-void mergeSort(Iterator first, Iterator last);
+template <typename Iterator, typename Comparator = std::less<typename std::iterator::traits<Iterator>::value_type>>
+void mergeSort(Iterator first, Iterator last, Comparator comp = Comparator());
 
 template <typename Iterator>
 void inPlaceMergeSort(Iterator first, Iterator last);
@@ -856,19 +859,19 @@ void lib_calvin_sort::reverse(Iterator first, Iterator last) {
 	}
 }
 
-template <typename SrcIterator, typename TargetIterator>
-void lib_calvin_sort::mergeSort(SrcIterator first, SrcIterator last, 
-																	TargetIterator target) {
+template <typename SrcIterator, typename TargetIterator, typename Comparator>
+void lib_calvin_sort::mergeSortSub(SrcIterator first, SrcIterator last, 
+																	TargetIterator target, Comparator comp) {
   size_t num = last - first;
   TargetIterator targetLast = target + num;
   if (last - first < mergeSort_thre) {
-    insertionSort(target, targetLast);
+    insertionSort2(target, targetLast, comp);
     return;
   }
   SrcIterator middle = first + num / 2;
   TargetIterator targetMiddle = target + num / 2;
-  mergeSort(target, targetMiddle, first);
-  mergeSort(targetMiddle, targetLast, middle);
+  mergeSortSub(target, targetMiddle, first, comp);
+  mergeSortSub(targetMiddle, targetLast, middle, comp);
   merge(first, middle, last, target);
 }
 
@@ -877,7 +880,7 @@ void lib_calvin_sort::mergeSortParallelSub0(SrcIterator first, SrcIterator last,
 	TargetIterator target, int thread_limit)
 {
 	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE / 2 || thread_limit <= 0) {
-		mergeSort(first, last, target);
+		mermergeSortSubgeSort(first, last, target);
 		return;
 	}
 	size_t num = last - first;
@@ -1039,6 +1042,29 @@ void lib_calvin_sort::insertionSort(Iterator first, Iterator last) {
   }
 }
 
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::insertionSort2(Iterator first, Iterator last, Comparator comp) {
+  Iterator right; // the element to insert
+  Iterator p; // moving iterator
+  typedef typename iterator_traits<Iterator>::value_type elemType;
+	if (first == last) {
+		return;
+	}
+  for (right = first + 1; right < last; ++right) {
+    elemType store = *right;
+    p = right;
+		while (true) {
+			if (first < p && comp(store, *(p - 1))) { // cannot insert into *p
+				*p = (elemType)*(p - 1);
+				--p;
+			} else { // p == first || *(p - 1) <= store
+				*p = store;
+				break;
+			}
+    }    
+  }
+}
+
 template <typename Iterator>
 void lib_calvin_sort::heapSort(Iterator first, Iterator last) {
   int size = static_cast<int>(last - first); // size of heap
@@ -1140,8 +1166,8 @@ void lib_calvin_sort::introSortParallelAdvanced2(Iterator first, Iterator last)
 	delete[] handleArray;
 }
 
-template <typename Iterator>
-void lib_calvin_sort::mergeSort(Iterator first, Iterator last) {
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::mergeSort(Iterator first, Iterator last, Comparator comp) {
   ptrdiff_t num = last - first;
   // additional array for operation
   typedef typename iterator_traits<Iterator>::pointer pointerType;
@@ -1154,7 +1180,7 @@ void lib_calvin_sort::mergeSort(Iterator first, Iterator last) {
     new (copy) valueType(*original);
   }
 	// mergesort without redundant copying
-  mergeSort(tempArray, tempArray + num, first);
+  mergeSortSub(tempArray, tempArray + num, first, comp);
 	// delete supplementary array
 	for (ptrdiff_t i = 0; i < num; ++i) {
     tempArray[i].~valueType();

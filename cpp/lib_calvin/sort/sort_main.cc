@@ -1,7 +1,6 @@
 // algorithm.cpp : Defines the entry point for the console application.
 //
 
-
 #include "sort_test.h"
 #include "sort.h"
 #include "file_test.h"
