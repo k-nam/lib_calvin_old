@@ -15,9 +15,6 @@ void lib_calvin_sort::sortTest() {
 	//sortTest<ElemType>(cacheTest2, "cacheTest2");
 	//sortTest<ElemType>(cacheTest3, "cacheTest3");
 	
-
-	//sortTest<ElemType>(mergeSort, "mergeSort");
-	/*
   sortTest<ElemType>(introSortPointerSorting, "introSort pointer");
 	sortTest<ElemType>(introSort, "introSort");
 	sortTest<ElemType>(introSortParallel, "Parallel introSort");	
@@ -25,15 +22,14 @@ void lib_calvin_sort::sortTest() {
 	sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
 	sortTest<ElemType>(mergeSort, "mergeSort");
 	sortTest<ElemType>(mergeSortParallel, "Parallel mergeSort");
-	sortTest<ElemType>(bucketSort, "bucketSort");
+	//sortTest<ElemType>(bucketSort, "bucketSort");
 	sortTest<ElemType>(heapSort, "heapSort");
 	sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");
-	sortTest<ElemType>(mergeSort2, "mergeSort2");
 	sortTest<ElemType>(std::sort, "std::sort");
 	sortTest<ElemType>(std::stable_sort, "std::stable_sort");
-	sortTest<ElemType>(countingSort, "countingSort");
-	sortTest<ElemType>(introSort2, "introSort+");
-	*/
+
+	//sortTest<ElemType>(countingSort, "countingSort");
+	//sortTest<ElemType>(introSort2, "introSort+");
 
 	sortTest2();
 
@@ -41,16 +37,24 @@ void lib_calvin_sort::sortTest() {
 
 void lib_calvin_sort::sortTest2() {
 	using namespace std;
-	cout << "mergeSort\n";
 	std::vector<std::string> strings { "bb", "a", "ddd", "ee", "cccc" };
 	auto comp = std::less<std::string>();
-	cout << "lexicographic order:";
+	auto lengthComp = [](string x, string y) { return x.length() < y.length(); };
 
+	cout << "mergeSort\n";
+	cout << "lexicographic order:";
 	sortTest2Sub(lib_calvin_sort::mergeSort, strings.begin(), strings.end(), comp);
 	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
 	cout << "\nlength order: ";
-	auto lengthComp = [](string x, string y) { return x.length() < y.length(); };
 	sortTest2Sub(lib_calvin_sort::mergeSort, strings.begin(), strings.end(), lengthComp);
+	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
+
+	cout << "\n\nintroSort\n";
+	cout << "lexicographic order:";
+	sortTest2Sub(lib_calvin_sort::introSort, strings.begin(), strings.end(), comp);
+	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
+	cout << "\nlength order: ";
+	sortTest2Sub(lib_calvin_sort::introSort, strings.begin(), strings.end(), lengthComp);
 	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
 }
 

@@ -47,12 +47,14 @@ bool operator< (StringStruct const &lhs, StringStruct const &rhs);
 bool operator== (StringStruct const &lhs, StringStruct const &rhs);
 
 
-template <typename T>
-void sortTest(void(*sortingAlg) (T *first, T *last), std::string title);
+template <typename T, typename Comparator = std::less<T>>
+void sortTest(void (*sortingAlg)( T *first, T *last, Comparator comp), 
+							std::string title, Comparator comp = Comparator());
 
-template <typename Iterator>
-void sortTest(void (*sortingAlgorithm)(Iterator, Iterator), Iterator first, Iterator last, std::string title,
-							double &time, bool &isCorrect, bool &isStable);
+template <typename Iterator, typename Comparator>
+void sortTest(void (*sortingAlgorithm)(Iterator, Iterator, Comparator), 
+							Iterator first, Iterator last, std::string title,
+							double &time, bool &isCorrect, bool &isStable, Comparator comp);
 
 
 void sortTest2();
@@ -64,9 +66,9 @@ void sortTest2Sub(void(*sortingAlgorithm)(Iterator, Iterator, Comparator),
 } // end namespace lib_calvin_sort
 
 
-template <typename T>
-void lib_calvin_sort::sortTest(void (*sortingAlg) (T *first, T *last), 
-    std::string title) {  
+template <typename T, typename Comparator>
+void lib_calvin_sort::sortTest(void (*sortingAlg) (T *first, T *last, Comparator comp), std::string title, 
+															 Comparator comp) {  
   stopwatch watch;
   bool correct  = true;
   bool stable   = true;
@@ -94,8 +96,7 @@ void lib_calvin_sort::sortTest(void (*sortingAlg) (T *first, T *last),
 			double time = 0;
 			bool isCorrect = true;
 			bool isStable = true;
-			sortTest(sortingAlg, testSet, testSet + arraySize[i], title,
-				time, isCorrect, isStable);
+			sortTest(sortingAlg, testSet, testSet + arraySize[i], title, time, isCorrect, isStable, comp);
 			if (time < min) {
 				min = time;
 			}
@@ -125,19 +126,19 @@ void lib_calvin_sort::sortTest(void (*sortingAlg) (T *first, T *last),
 	std::cout << endl;
 }
 
-template <typename Iterator>
-void lib_calvin_sort::sortTest(void (*sortingAlgorithm)(Iterator, Iterator), 
-		Iterator first, Iterator last, std::string title,
-		double &time, bool &isCorrect, bool &isStable) {
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::sortTest(void (*sortingAlgorithm)(Iterator, Iterator, Comparator), 
+							Iterator first, Iterator last, std::string title,
+							double &time, bool &isCorrect, bool &isStable, Comparator comp) {
 	stopwatch watch;
 	ptrdiff_t size = last - first; 
   watch.start();
-  sortingAlgorithm(first, last);
+  sortingAlgorithm(first, last, comp);
   watch.stop();
   time = watch.read();
   // check correctness
   for (ptrdiff_t j = 0; j < size - 1; j++) {
-    if (*(first + (j + 1)) < *(first + j)) {
+    if (comp(*(first + (j + 1)), *(first + j))) {
       isCorrect = false;
 		}
     if (*(first + j) == *(first + j + 1) && 

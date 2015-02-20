@@ -32,24 +32,25 @@ int const L2_CACHE_SIZE = 256000;
 int const CACHE_LINE_SIZE = 64;
 
 // Used for pointer sorting method
-template <typename T>
+template <typename T, typename Comparator = std::less<T>>
 struct SortingPointer {
 public:
-	SortingPointer(T const & value): pointer_(&value) { }
+	SortingPointer(T const & value, Comparator comp = Comparator()): pointer_(&value), comp_(comp) { }
+	SortingPointer & operator=(SortingPointer const &rhs) { pointer_ = rhs.pointer_; return *this; }
 	bool operator< (SortingPointer<T> const &rhs) const 
-		{ return *pointer_ < *rhs.pointer_; }
+		{ return Comparator()(*pointer_ , *rhs.pointer_); }
 	T const & operator*() const { return *pointer_; }
 private:
 	T const *pointer_;
+	Comparator const comp_;
 };
 
-
-template <typename Iterator, template <typename T> class sorter>
+template <typename Iterator, template <typename I, typename C> class Sorter>
 void pointerSorting(Iterator first, Iterator last);
 
-template <typename Iterator>
-void introSortPointerSorting(Iterator first, Iterator last) {
-	pointerSorting<Iterator, IntroSort> (first, last);
+template <typename Iterator, typename Comparator = std::less<std::iterator_traits<Iterator>::value_type>>
+void introSortPointerSorting(Iterator first, Iterator last, Comparator comp = Comparator()) {
+	pointerSorting<Iterator, IntroSort>(first, last);
 }
 
 // Test sorting algorithms with given object type T
@@ -104,40 +105,42 @@ private:
 };
 
 // Argument type of quicksort for multithreaded quicksort
-template <typename Iterator>
+template <typename Iterator, typename Comparator>
 struct QuickSortThreadArg 
 {
-	QuickSortThreadArg(Iterator const &first, Iterator const &last, int thread_limit,
+	QuickSortThreadArg(Iterator const &first, Iterator const &last, Comparator comp, int thread_limit,
 		FactoryLoader<pair<Iterator, Iterator>> *factoryLoader):
-	first_(first), last_(last), thread_limit_(thread_limit),
+	first_(first), last_(last), comp_(comp), thread_limit_(thread_limit),
 	factoryLoader_(factoryLoader) { }
 	Iterator const first_;
 	Iterator const last_;
+	Comparator comp_;
 	int const thread_limit_;
 	FactoryLoader<pair<Iterator, Iterator>> *factoryLoader_;
 };
 
-template <typename SrcIterator, typename TargetIterator>
+template <typename SrcIterator, typename TargetIterator, typename Comparator>
 struct MergeSortRThreadArg
 {
 	MergeSortRThreadArg(SrcIterator const &first, SrcIterator const &last, 
-		TargetIterator const &target, int thread_limit):
-	first_(first), last_(last), target_(target), thread_limit_(thread_limit) { }
+		TargetIterator const &target, Comparator comp, int thread_limit):
+	first_(first), last_(last), target_(target), comp_(comp), thread_limit_(thread_limit) { }
 	SrcIterator const first_;
 	SrcIterator const last_;
 	TargetIterator const target_;
+	Comparator comp_;
 	int const thread_limit_;
 };
 
 // Thread function for multithreaded quicksort
 // Argument is supposed to be a pointer to QuickSortThreadArg
-template <typename Iterator>
+template <typename Iterator, typename Comparator>
 void *introSortParallelSub0ThreadFunction(void *lpParam);
 
-template <typename Iterator>
+template <typename Iterator, typename Comparator>
 void *introSortParallelSub1ThreadFunction(void *lpParam);
 
-template <typename SrcIterator, typename TargetIterator>
+template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void *mergeSortParallelSub0ThreadFunction(void *lpParam);
 
 // Thread function for factory pattern
@@ -162,30 +165,27 @@ void getSamples(Iterator first, Iterator last, size_t sampleSize,
 template <typename T>
 void removeDuplicateElements(vector<T> const &original, vector<T> &copy);
 
-template <typename Iterator> 
-void insertionSort_reversed(Iterator first, Iterator last);
-
 // This subroutine assumes that the element right before 'first' exists and
 // ..it is not greater than any element in the input array (it acts as a
 // ..sentinal)
-template <typename Iterator> 
-void unguardedInsertionSort (Iterator first, Iterator last);
+template <typename Iterator, typename Comparator> 
+void unguardedInsertionSort(Iterator first, Iterator last, Comparator comp);
 
 // a maxheap for sorting
-template <typename Iterator>
-void percolateDown (Iterator base, int index, int size);
+template <typename Iterator, typename Comparator> 
+void percolateDown(Iterator base, Comparator comp, int index, int size);
 
 // Returns the iterator for the first element of the right subarray
 // Caution: this assumes that input array has at least 3 elements
-template <typename Iterator>
-Iterator hoarePartition (Iterator first, Iterator last);
+template <typename Iterator, typename Comparator> 
+Iterator hoarePartition(Iterator first, Iterator last, Comparator comp);
 
-template <typename Iterator>
-void introSortSub (Iterator first, Iterator last, int remainingDepth);
+template <typename Iterator, typename Comparator> 
+void introSortSub(Iterator first, Iterator last, Comparator comp, int remainingDepth);
 
 // using counting sort for subroutine
-template <typename Iterator>
-void introSort2Sub (Iterator first, Iterator last, int remainingDepth);
+template <typename Iterator, typename Comparator> 
+void introSort2Sub(Iterator first, Iterator last, Comparator comp, int remainingDepth);
 
 // Subroutines for introSortParallel. Proceeds partitioning and creating new
 // threads for each sub-arrays until we reach the threshold (typically L2 size)
@@ -196,27 +196,26 @@ void introSort2Sub (Iterator first, Iterator last, int remainingDepth);
 
 // Continue creating new threads until reaching limit, and sort the remaining
 // arrays completely.
-template <typename Iterator>
-void introSortParallelSub0 (Iterator first, Iterator last, int thread_limit);
+template <typename Iterator, typename Comparator>
+void introSortParallelSub0(Iterator first, Iterator last, Comparator comp, int thread_limit);
 
 // Continue creating new threads until reaching limit OR array size threshold,
 // and pend remaining arrays to the queue
-template <typename Iterator>
-void introSortParallelSub1 (
-	Iterator first, Iterator last, int thread_limit, 
+template <typename Iterator, typename Comparator>
+void introSortParallelSub1(Iterator first, Iterator last, Comparator comp, int thread_limit, 
 	FactoryLoader<pair<Iterator, Iterator>> &factoryLoader);
 
 // Singled threaded version of sub1
-template <typename Iterator>
-void introSortParallelSub2 (Iterator first, Iterator last,
-															FactoryLoader<pair<Iterator, Iterator>> &factoryLoader);
+template <typename Iterator, typename Comparator>
+void introSortParallelSub2(Iterator first, Iterator last, Comparator comp, 
+													FactoryLoader<pair<Iterator, Iterator>> &factoryLoader);
 
-template <typename SrcIterator, typename TargetIterator>
+template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void merge(SrcIterator first, SrcIterator middle, SrcIterator last, 
-						TargetIterator target);
+						TargetIterator target, Comparator comp);
 
-template <typename Iterator>
-void inPlaceMerge(Iterator first, Iterator middle, Iterator last);
+template <typename Iterator, typename Comparator>
+void inPlaceMerge(Iterator first, Iterator middle, Iterator last, Comparator comp);
 
 template <typename Iterator>
 void exchange(Iterator first, Iterator middle, Iterator last);
@@ -227,90 +226,45 @@ void reverse(Iterator first, Iterator last);
 template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void mergeSortSub(SrcIterator first, SrcIterator last, TargetIterator target, Comparator comp);
 
-template <typename SrcIterator, typename TargetIterator>
+template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void mergeSortParallelSub0(SrcIterator first, SrcIterator last,
-	TargetIterator target, int thread_limit);
-
-template <typename Iterator>
-void merge2(Iterator first, Iterator middle, Iterator last, 
-    Iterator target);
-
-template <typename Iterator>
-void merge2Reversed(Iterator first, Iterator middle, Iterator last, 
-    Iterator target);
-
-template <typename Iterator>
-void mergeSort2Ascending(Iterator first, Iterator last, Iterator target);
-
-template <typename Iterator>
-void mergeSort2Descending(Iterator first, Iterator last, Iterator target);
-
+	TargetIterator target, Comparator comp, int thread_limit);
 
 /*** comparison sorting algorithms [first, last) with operator<  ***/
 
-template <typename Iterator> 
-void insertionSort(Iterator first, Iterator last);
-
 template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>> 
-void insertionSort2(Iterator first, Iterator last, Comparator const comp = Comparator());
+void insertionSort(Iterator first, Iterator last, Comparator const comp = Comparator());
 
-template <typename Iterator>
-void heapSort(Iterator first, Iterator last);
+template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+void heapSort(Iterator first, Iterator last, Comparator const comp = Comparator());
 
 // quicksort with pivot selection with median, hoare partitioning,
 // ...and using heapsort to make worst performance n*log(n)
-template <typename Iterator> 
-void introSort(Iterator first, Iterator last);
-
-template <typename T>
-void introSort(vector<T> &elements);
-
-// Function object version of introsort (for multi-threading)
-template <typename Iterator>
-class IntroSort 
-{
-public:
-	void operator()(pair<Iterator, Iterator> const &inArray) {
-		introSort(inArray.first, inArray.second);
-	}
-};
-
-// Function object version of countingSort (for multi-threading)
-template <typename Iterator>
-class CountingSort 
-{
-public:
-	void operator()(pair<Iterator, Iterator> const &inArray) {
-		countingSort(inArray.first, inArray.second);
-	}
-};
+template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+void introSort(Iterator first, Iterator last, Comparator const comp = Comparator());
 
 // Basic multithreaded quicksort
-template <typename Iterator>
-void introSortParallel(Iterator first, Iterator last);
+template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+void introSortParallel(Iterator first, Iterator last, Comparator const comp = Comparator());
 
 // Using blocking
-template <typename Iterator>
-void introSortParallelAdvanced(Iterator first, Iterator last);
+template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+void introSortParallelAdvanced(Iterator first, Iterator last, Comparator const comp = Comparator());
 
 // Mixing memory intensive and CPU intensive part
-template <typename Iterator>
-void introSortParallelAdvanced2(Iterator first, Iterator last);
+template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+void introSortParallelAdvanced2(Iterator first, Iterator last, Comparator const comp = Comparator());
 
-template <typename Iterator, typename Comparator = std::less<typename std::iterator::traits<Iterator>::value_type>>
+template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
 void mergeSort(Iterator first, Iterator last, Comparator comp = Comparator());
 
-template <typename Iterator>
-void inPlaceMergeSort(Iterator first, Iterator last);
+template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+void inPlaceMergeSort(Iterator first, Iterator last, Comparator const comp = Comparator());
 
-template <typename Iterator>
-void mergeSortParallel(Iterator first, Iterator last);
-
-template <typename Iterator>
-void mergeSort2(Iterator first, Iterator last);
+template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+void mergeSortParallel(Iterator first, Iterator last, Comparator const comp = Comparator());
 
 /*** Linear time sorting algorithms ***/
-
 // Assumes that int Iterator->get_value() is defined
 template <typename Iterator>
 void countingSort(Iterator first, Iterator last);
@@ -323,6 +277,24 @@ void introSort2(Iterator first, Iterator last);
 // Not in-place, stable. Cache optimal. 
 template <typename Iterator>
 void bucketSort(Iterator first, Iterator last);
+
+// Function object version of introsort (for multi-threading)
+template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+class IntroSort {
+public:
+	void operator()(pair<Iterator, Iterator> const &inArray) {
+		introSort(inArray.first, inArray.second, Comparator());
+	}
+};
+
+// Function object version of countingSort (for multi-threading)
+template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+class CountingSort {
+public:
+	void operator()(pair<Iterator, Iterator> const &inArray, Comparator comp) {
+		countingSort(inArray.first, inArray.second, Comparator());
+	}
+};
 
 // For performance testing
 template <typename Iterator>
@@ -384,37 +356,35 @@ void Factory<Argument, Operation>::work()
 
 /****************** Thread functions *****************/
 
-template <typename Iterator>
+template <typename Iterator, typename Comparator>
 void *
 introSortParallelSub0ThreadFunction(void *lpParam) {
-	QuickSortThreadArg<Iterator> *pArg = (QuickSortThreadArg<Iterator> *)lpParam;
-	introSortParallelSub0(pArg->first_, pArg->last_, pArg->thread_limit_);      
+	QuickSortThreadArg<Iterator, Comparator> *pArg = (QuickSortThreadArg<Iterator, Comparator> *)lpParam;
+	introSortParallelSub0(pArg->first_, pArg->last_, pArg->comp_, pArg->thread_limit_);      
 	return NULL;
 }
 
-template <typename Iterator>
+template <typename Iterator, typename Comparator>
 void *
 introSortParallelSub1ThreadFunction(void *lpParam) {
-	QuickSortThreadArg<Iterator> *pArg = (QuickSortThreadArg<Iterator> *)lpParam;
-	introSortParallelSub1(pArg->first_, pArg->last_, pArg->thread_limit_,
+	QuickSortThreadArg<Iterator, Comparator> *pArg = (QuickSortThreadArg<Iterator, Comparator> *)lpParam;
+	introSortParallelSub1(pArg->first_, pArg->last_, pArg->comp_, pArg->thread_limit_,
 		*pArg->factoryLoader_);      
 	return NULL;
 }
 
-template <typename SrcIterator, typename TargetIterator>
+template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void *
 mergeSortParallelSub0ThreadFunction(void *lpParam) {
-	MergeSortRThreadArg<SrcIterator, TargetIterator> *pArg = 
-		(MergeSortRThreadArg<SrcIterator, TargetIterator> *)lpParam;
-	mergeSortParallelSub0(pArg->first_, pArg->last_, 
-		pArg->target_, pArg->thread_limit_);      
+	MergeSortRThreadArg<SrcIterator, TargetIterator, Comparator> *pArg = 
+		(MergeSortRThreadArg<SrcIterator, TargetIterator, Comparator> *)lpParam;
+	mergeSortParallelSub0(pArg->first_, pArg->last_, pArg->target_, pArg->comp_, pArg->thread_limit_);      
 	return NULL;
 }
 
 template <typename Argument, typename Operation>
 void * 
-factoryThreadFunction(void *param)
-{
+factoryThreadFunction(void *param) {
 	Factory<Argument, Operation> *factory = (Factory<Argument, Operation> *)param;
 	factory->work();
 	return NULL;
@@ -429,18 +399,18 @@ factoryThreadFunction(void *param)
 // ..is called only once (as opposed to the case of comparison function)
 // But to avoid needless codes for specifying the type of pointer sorting algorithm,
 ///..I came to use template template parameter. 
-template <typename Iterator, template <typename T> class sorter>
+template <typename Iterator, template <typename I, typename C> class Sorter>
 void lib_calvin_sort::pointerSorting(Iterator first, Iterator last) 
 {
 	typedef typename iterator_traits<Iterator>::value_type valueType;
-	typedef SortingPointer<valueType> pointerType;
+	typedef SortingPointer<valueType> SortingPointer;
 	size_t numElem = last - first;
-	pointerType *pointerArray = 
-		(pointerType *) operator new (sizeof(pointerType) * numElem);
+	SortingPointer *pointerArray = 
+		(SortingPointer *) operator new (sizeof(SortingPointer) * numElem);
 	for (size_t i = 0; i < numElem; ++i) {
-		new (pointerArray + i) pointerType(*(first + i));
+		new (pointerArray + i) SortingPointer(*(first + i));
 	}
-	sorter<pointerType *>()(std::make_pair(pointerArray, pointerArray + numElem));
+	Sorter<SortingPointer *, std::less<SortingPointer>>()(std::make_pair(pointerArray, pointerArray + numElem));
 	
 	valueType *copyArray = (valueType *) operator new (sizeof(valueType) * numElem);
 	for (size_t i = 0; i < numElem; ++i) {
@@ -526,27 +496,8 @@ void lib_calvin_sort::removeDuplicateElements(vector<T> const &original,
 	}
 }
 
-template <typename Iterator>
-void lib_calvin_sort::insertionSort_reversed(Iterator first, Iterator last) {
-  Iterator right; // the element to insert
-  Iterator p; // moving iterator
-  typename iterator_traits<Iterator>::value_type store;
-
-  for (right = first + 1; right < last; ++right) {
-    store = *right;
-    for (p = right - 1; p >= first; --p) {
-      if (*p < store) {
-        *(p + 1) = *p;
-      } else {
-        break;
-      }
-    }
-    *(p + 1) = store;
-  }
-}
-
-template <typename Iterator>
-void lib_calvin_sort::unguardedInsertionSort(Iterator first, Iterator last) {
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::unguardedInsertionSort(Iterator first, Iterator last, Comparator comp) {
 	typedef iterator_traits<Iterator>::value_type valueType;
   Iterator right; // the element to insert
   Iterator p; // moving iterator
@@ -554,7 +505,7 @@ void lib_calvin_sort::unguardedInsertionSort(Iterator first, Iterator last) {
   for (right = first; right < last; ++right) {
     typename iterator_traits<Iterator>::value_type store = *right;
     for (p = right - 1; /* p >= first */; --p) {
-      if (store < *p) {
+      if (comp(store, *p)) {
         *(p + 1) = (valueType)*p;
       } else {
         break;
@@ -565,8 +516,8 @@ void lib_calvin_sort::unguardedInsertionSort(Iterator first, Iterator last) {
 }
 
 // maxheap, size: heap size, heapD > 1
-template <typename Iterator>
-void lib_calvin_sort::percolateDown(Iterator const base, int index, int const size) {
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::percolateDown(Iterator const base, Comparator comp, int index, int const size) {
   // save original element and insert it back later
   typename iterator_traits<Iterator>::value_type store = *(base + index);
   while (true) {
@@ -576,11 +527,11 @@ void lib_calvin_sort::percolateDown(Iterator const base, int index, int const si
       Iterator child  = max + 1;
       Iterator last   = base + index * heapD + heapD + 1;
       for ( ; child < last; ++child ) { 
-        if (*max < *child)
+        if (comp(*max, *child))
           max = child;
       }
       // compare and swap if necessary
-      if (store < *max) {
+      if (comp(store, *max)) {
         *parent = *max; // not actually swapping now..
         index = static_cast<int>(max - base);
         continue;
@@ -596,7 +547,7 @@ void lib_calvin_sort::percolateDown(Iterator const base, int index, int const si
       Iterator child  = max;
       Iterator last   = base + size;
       for ( ; child != last; ++child) { // iterate heapD-1 times
-        if (*max < *child)
+        if (comp(*max, *child))
           max = child;
       }
       if (store < *max) {
@@ -611,8 +562,8 @@ void lib_calvin_sort::percolateDown(Iterator const base, int index, int const si
   }
 }
 
-template <typename Iterator>
-Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last) {
+template <typename Iterator, typename Comparator>
+Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last, Comparator comp) {
 	// for analysis
 	// int size = last - first;
 	// int swapCount = 0; 
@@ -622,17 +573,17 @@ Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last) {
 	left = first;
   right = (last - 1);
   middle = first + (last - first) / 2;
-	if (*middle < *left) {		
+	if (comp(*middle, *left)) {		
 		valueType temp = *middle;
 		*middle = (valueType)*left;
 		*left = temp;
 	}
-  if (*right < *middle) {
+  if (comp(*right, *middle)) {
     valueType temp = *middle;
 		*middle = (valueType)*right;
 		*right = temp;
 	}
-  if (*middle < *left) {
+  if (comp(*middle, *left)) {
     valueType temp = *middle;
 		*middle = (valueType)*left;
 		*left = temp;
@@ -641,10 +592,10 @@ Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last) {
   ++left;
   --right;
   while (true) {
-		while (*left < pivot) {
+		while (comp(*left, pivot)) {
       ++left;
 		}
-    while (pivot < *right) {
+    while (comp(pivot, *right)) {
       --right;
 		}
     if (!(left < right)) {
@@ -665,26 +616,24 @@ Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last) {
 	return left;
 }
 
-template <typename Iterator>
-void lib_calvin_sort::introSortSub(Iterator first, Iterator last,
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::introSortSub(Iterator first, Iterator last, Comparator comp,
     int remainingDepth) {
   if (last - first < introSort_thre) {
     return;
   }
   if (remainingDepth == 0) {
-    heapSort(first, last);
+    heapSort(first, last, comp);
     return;
   }
-	Iterator left = hoarePartition(first, last);
-  introSortSub(first, left, remainingDepth - 1);
-  introSortSub(left, last, remainingDepth - 1);
+	Iterator left = hoarePartition(first, last, comp);
+  introSortSub(first, left, comp, remainingDepth - 1);
+  introSortSub(left, last, comp, remainingDepth - 1);
 }
 
-// Subroutine for introSort2
-template <typename Iterator>
-void lib_calvin_sort::introSort2Sub(Iterator first, Iterator last,
-																	 int remainingDepth) 
-{
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::introSort2Sub(Iterator first, Iterator last, Comparator comp,
+																	 int remainingDepth) {
 	Iterator left = hoarePartition(first, last);	
 	// If the current array fits into the cache, following operations on this array
 	// will have high cache-hit ratio.
@@ -712,27 +661,27 @@ void lib_calvin_sort::introSort2Sub(Iterator first, Iterator last,
 // sequentially, without any cache miss for L2. Of course we will use multiple
 // threads in that last stage, too.
 
-template <typename Iterator>
+template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSortParallelSub0(
-	Iterator first, Iterator last, int thread_limit)
+	Iterator first, Iterator last, Comparator comp, int thread_limit)
 {
 	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE / 4 || thread_limit <= 0) {
-		introSort(first, last);
-		//introSort2(first, last);
+		introSort(first, last, comp);
+		//introSort2(first, last, comp);
 		return;
 	}
-	Iterator left = hoarePartition(first, last);
-	QuickSortThreadArg<Iterator> argLeft(first, left, thread_limit - 1, NULL);
-	QuickSortThreadArg<Iterator> argRight(left, last, thread_limit - 1, NULL);
+	Iterator left = hoarePartition(first, last, comp);
+	QuickSortThreadArg<Iterator, Comparator> argLeft(first, left, comp, thread_limit - 1, NULL);
+	QuickSortThreadArg<Iterator, Comparator> argRight(left, last, comp, thread_limit - 1, NULL);
 	lib_calvin_thread::thread_type leftThread, rightThread;
 	leftThread = 
-		create_thread(introSortParallelSub0ThreadFunction<Iterator>, &argLeft);
+		create_thread(introSortParallelSub0ThreadFunction<Iterator, Comparator>, &argLeft);
 	//SetThreadAffinityMask(leftThread, 1 << 0);
 	// For unbalancing left and right sub-threads, thereby letting left sub-thread
 	// reach bottom, and start CPU-intensive-thread quickly. 
 	//Sleep(10); 
 	rightThread = 
-		create_thread(introSortParallelSub0ThreadFunction<Iterator>, &argRight);
+		create_thread(introSortParallelSub0ThreadFunction<Iterator, Comparator>, &argRight);
 	//SetThreadAffinityMask(rightThread, 1 << 1);
 	lib_calvin_thread::wait_for_thread(leftThread);
 	//CloseHandle(leftThread);
@@ -741,25 +690,25 @@ void lib_calvin_sort::introSortParallelSub0(
 }
 
 // multi threaded partitioning 
-template <typename Iterator>
+template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSortParallelSub1(
-	Iterator first, Iterator last, int thread_limit,
+	Iterator first, Iterator last, Comparator comp, int thread_limit,
 	FactoryLoader<pair<Iterator, Iterator>> &factoryLoader)
 {
 	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE || thread_limit <= 0) {
-    introSortParallelSub2(first, last, factoryLoader);
+    introSortParallelSub2(first, last, comp, factoryLoader);
     return;
   }	
-	Iterator left = hoarePartition(first, last);
-	QuickSortThreadArg<Iterator> argLeft(first, left, thread_limit - 1, &factoryLoader);
-	QuickSortThreadArg<Iterator> argRight(left, last, thread_limit - 1, &factoryLoader);
+	Iterator left = hoarePartition(first, last, comp);
+	QuickSortThreadArg<Iterator, Comparator> argLeft(first, left, comp, thread_limit - 1, &factoryLoader);
+	QuickSortThreadArg<Iterator, Comparator> argRight(left, last, comp, thread_limit - 1, &factoryLoader);
 	thread_type leftThread, rightThread;
 	leftThread = 
-		create_thread(introSortParallelSub1ThreadFunction<Iterator>, &argLeft);
+		create_thread(introSortParallelSub1ThreadFunction<Iterator, Comparator>, &argLeft);
 	//SetThreadAffinityMask(leftThread, 1 << 2);
 	//Sleep(10);
 	rightThread = 
-		create_thread(introSortParallelSub1ThreadFunction<Iterator>, &argRight);
+		create_thread(introSortParallelSub1ThreadFunction<Iterator, Comparator>, &argRight);
 	//SetThreadAffinityMask(leftThread, 1 << 3);
 	wait_for_thread(leftThread);
 	CloseHandle(leftThread);
@@ -768,30 +717,30 @@ void lib_calvin_sort::introSortParallelSub1(
 }
 
 // This subroutine supplements sub1 (single-threaded)
-template <typename Iterator>
+template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSortParallelSub2(
-	Iterator first, Iterator last, 
+	Iterator first, Iterator last, Comparator comp, 
 	FactoryLoader<pair<Iterator, Iterator>> &factoryLoader)
 {	
 	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE) {
 		//std::cout << "adding to factory loader: sub2\n";
 		factoryLoader.add(pair<Iterator, Iterator>(first, last));
 	} else { 
-		Iterator left = hoarePartition(first, last);
-		introSortParallelSub2(first, left, factoryLoader);
-		introSortParallelSub2(left, last, factoryLoader);
+		Iterator left = hoarePartition(first, last, comp);
+		introSortParallelSub2(first, left, comp, factoryLoader);
+		introSortParallelSub2(left, last, comp, factoryLoader);
 	}
 }
 
 // normal two-way merge; input size is not zero (both arrays are not empty)
-template <typename SrcIterator, typename TargetIterator>
+template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void lib_calvin_sort::merge(SrcIterator first, SrcIterator middle, SrcIterator last, 
-														 TargetIterator target) {
+														 TargetIterator target, Comparator comp) {
   SrcIterator left = first, right = middle;
 	TargetIterator dest = target;
 	// improved merge routine than the below ordinary one: reducing one index comparison
   while (true) {
-    if(*right < *left) { // insert right
+    if(comp(*right, *left)) { // insert right
 			*dest++ = *right++;
       if (right == last) { // last element
         break;
@@ -822,17 +771,17 @@ void lib_calvin_sort::merge(SrcIterator first, SrcIterator middle, SrcIterator l
   }
 }
 
-template <typename Iterator>
-void lib_calvin_sort::inPlaceMerge(Iterator first, Iterator middle, Iterator last) {
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::inPlaceMerge(Iterator first, Iterator middle, Iterator last, Comparator comp) {
 	if (middle - first < mergeSort_thre || last - middle < mergeSort_thre) {
-		insertionSort(first, last);
+		insertionSort(first, last, comp);
 		return;
 	}
 	Iterator leftMiddle = first + (middle - first)/2;
 	Iterator rightMiddle = middle + binSearch(*leftMiddle, middle, last);
 	exchange(leftMiddle, middle, rightMiddle);
-	inPlaceMerge(first, leftMiddle, leftMiddle + (rightMiddle - middle));
-  inPlaceMerge(leftMiddle + (rightMiddle - middle), rightMiddle, last);
+	inPlaceMerge(first, leftMiddle, leftMiddle + (rightMiddle - middle), comp);
+  inPlaceMerge(leftMiddle + (rightMiddle - middle), rightMiddle, last, comp);
 	for (Iterator iter = first; iter < last - 1; iter++) {
 		if (*(iter + 1) < *iter) {
 			std::cout << "inPlaceMerge error: " << middle - first << " " << last - middle << "\n";
@@ -865,185 +814,46 @@ void lib_calvin_sort::mergeSortSub(SrcIterator first, SrcIterator last,
   size_t num = last - first;
   TargetIterator targetLast = target + num;
   if (last - first < mergeSort_thre) {
-    insertionSort2(target, targetLast, comp);
+    insertionSort(target, targetLast, comp);
     return;
   }
   SrcIterator middle = first + num / 2;
   TargetIterator targetMiddle = target + num / 2;
   mergeSortSub(target, targetMiddle, first, comp);
   mergeSortSub(targetMiddle, targetLast, middle, comp);
-  merge(first, middle, last, target);
+  lib_calvin_sort::merge(first, middle, last, target, comp);
 }
 
-template <typename SrcIterator, typename TargetIterator>
+template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void lib_calvin_sort::mergeSortParallelSub0(SrcIterator first, SrcIterator last, 
-	TargetIterator target, int thread_limit)
-{
+	TargetIterator target, Comparator comp, int thread_limit) {
 	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE / 2 || thread_limit <= 0) {
-		mermergeSortSubgeSort(first, last, target);
+		mergeSortSub(first, last, target, comp);
 		return;
 	}
 	size_t num = last - first;
 	TargetIterator targetLast = target + num;
 	SrcIterator middle = first + num / 2;
   TargetIterator targetMiddle = target + num / 2;
-	MergeSortRThreadArg<SrcIterator, TargetIterator> argLeft(
-		target, targetMiddle, first, thread_limit - 1);
-	MergeSortRThreadArg<SrcIterator, TargetIterator> argRight(
-		targetMiddle, targetLast, middle, thread_limit - 1);
+	MergeSortRThreadArg<SrcIterator, TargetIterator, Comparator> argLeft(
+		target, targetMiddle, first, comp, thread_limit - 1);
+	MergeSortRThreadArg<SrcIterator, TargetIterator, Comparator> argRight(
+		targetMiddle, targetLast, middle, comp, thread_limit - 1);
 	lib_calvin_thread::thread_type leftThread, rightThread;
 	leftThread = create_thread(
-		mergeSortParallelSub0ThreadFunction<SrcIterator, TargetIterator>, &argLeft);
+		mergeSortParallelSub0ThreadFunction<SrcIterator, TargetIterator, Comparator>, &argLeft);
 	rightThread = create_thread(
-		mergeSortParallelSub0ThreadFunction<SrcIterator, TargetIterator>, &argRight);
+		mergeSortParallelSub0ThreadFunction<SrcIterator, TargetIterator, Comparator>, &argRight);
 	lib_calvin_thread::wait_for_thread(leftThread);
 	lib_calvin_thread::wait_for_thread(rightThread);		
-	merge(first, middle, last, target);
-}
-
-// input is a bitonic array, and merge in increasing order (normal order)
-template <typename Iterator>
-void lib_calvin_sort::merge2(Iterator first, Iterator middle, Iterator last, 
-    Iterator target) {
-  
-  Iterator left = first, right = last - 1;
-  while (true) {
-    while (*right < *left) {
-      *target = *right;
-      ++target;
-      --right;
-    }
-    if (right < middle) 
-      break;
-    // now, the left element is less than or equal to right element
-    *target = *left;
-    ++target;
-    ++left;
-    while (*left < *right) {
-      *target = *left;
-      ++target;
-      ++left;
-    }
-    if (left >= middle)
-      break;
-  }
-  if (right < middle) { // right subarray empty
-    while (left < middle) {
-      *target = *left;
-      ++target;
-      ++left;
-    }
-  } else { // left subarray empty
-    while (right >= middle) {
-      *target = *right;
-      ++target;
-      --right;
-    }
-  }
-}
-
-// input is a bitonic array, and merge in decreasing order (reverse order)
-template <typename Iterator>
-void lib_calvin_sort::merge2Reversed(Iterator first, Iterator middle, 
-																			 Iterator last, Iterator target) {
-
-  Iterator left = first, right = last - 1;
-  target = target + (last - first - 1); // last element of target array
-  while (true) {
-    while (*right < *left) {
-      *target = *right;
-      --target;
-      --right;
-    }
-    if (right < middle) 
-      break;
-    // now, the left element is less than or equal to right element
-    *target = *left;
-    --target;
-    ++left;
-    while (*left < *right) {
-      *target = *left;
-      --target;
-      ++left;
-    }
-    if (left >= middle)
-      break;
-  }
-  if (right < middle) { // right subarray empty
-    while (left < middle) {
-      *target = *left;
-      --target;
-      ++left;
-    }
-  } else { // left subarray empty
-    while (right >= middle) {
-      *target = *right;
-      --target;
-      --right;
-    }
-  }
-}
-
-template <typename Iterator>
-void lib_calvin_sort::mergeSort2Ascending(Iterator first, Iterator last, 
-																				Iterator target) {
-  size_t num = last - first;
-  Iterator targetLast = target + num;
-  if (last - first < 10) {
-    insertionSort (target, targetLast);
-    return;
-  }
-  Iterator middle = first + num / 2;
-  Iterator targetMiddle = target + num / 2;
-  mergeSort2Ascending(target, targetMiddle, first);
-  mergeSort2Descending(targetMiddle, targetLast, middle);
-  merge2(first, middle, last, target);
-}
-
-template <typename Iterator>
-void lib_calvin_sort::mergeSort2Descending(Iterator first, Iterator last, 
-																				Iterator target) {
-  size_t num = last - first;
-  Iterator targetLast = target + num;
-  if (last - first < 10) {
-    insertionSort_reversed(target, targetLast);
-    return;
-  }
-  Iterator middle = first + num / 2;
-  Iterator targetMiddle = target + num / 2;
-  mergeSort2Ascending(target, targetMiddle, first);
-  mergeSort2Descending(targetMiddle, targetLast, middle);
-  merge2Reversed(first, middle, last, target);
+	lib_calvin_sort::merge(first, middle, last, target, comp);
 }
 
 /******************************* Sorting methods ****************************/
 
 // 2009-6-27: Modified loop logic to avoid making (first - 1) iterator. 
-template <typename Iterator>
-void lib_calvin_sort::insertionSort(Iterator first, Iterator last) {
-  Iterator right; // the element to insert
-  Iterator p; // moving iterator
-  typedef typename iterator_traits<Iterator>::value_type elemType;
-	if (first == last) {
-		return;
-	}
-  for (right = first + 1; right < last; ++right) {
-    elemType store = *right;
-    p = right;
-		while (true) {
-			if (first < p && store < *(p - 1)) { // cannot insert into *p
-				*p = (elemType)*(p - 1);
-				--p;
-			} else { // p == first || *(p - 1) <= store
-				*p = store;
-				break;
-			}
-    }    
-  }
-}
-
-template <typename Iterator, typename Comparator>
-void lib_calvin_sort::insertionSort2(Iterator first, Iterator last, Comparator comp) {
+template <typename Iterator, typename Comparator> 
+void lib_calvin_sort::insertionSort(Iterator first, Iterator last, Comparator comp) {
   Iterator right; // the element to insert
   Iterator p; // moving iterator
   typedef typename iterator_traits<Iterator>::value_type elemType;
@@ -1055,7 +865,7 @@ void lib_calvin_sort::insertionSort2(Iterator first, Iterator last, Comparator c
     p = right;
 		while (true) {
 			if (first < p && comp(store, *(p - 1))) { // cannot insert into *p
-				*p = (elemType)*(p - 1);
+				*p = *(p - 1);
 				--p;
 			} else { // p == first || *(p - 1) <= store
 				*p = store;
@@ -1065,44 +875,34 @@ void lib_calvin_sort::insertionSort2(Iterator first, Iterator last, Comparator c
   }
 }
 
-template <typename Iterator>
-void lib_calvin_sort::heapSort(Iterator first, Iterator last) {
+template <typename Iterator, typename Comparator> 
+void lib_calvin_sort::heapSort(Iterator first, Iterator last, Comparator comp) {
   int size = static_cast<int>(last - first); // size of heap
   // max-heapify
   for (int i = (size - 2) / heapD; i >= 0; i--) {
-    percolateDown (first, i, size);
+    percolateDown(first, comp, i, size);
   }
   // sorting
   while (size > 1) {
     // swap first and last
     using lib_calvin_util::swap;
-    swap (*first, *(first + size - 1));
+    lib_calvin_util::swap(*first, *(first + size - 1));
     size--;
-    percolateDown (first, 0, size);
+    percolateDown(first, comp, 0, size);
   }
 }
 
-template <typename Iterator>
-void lib_calvin_sort::introSort(Iterator first, Iterator last) {
-  introSortSub(first, last, lib_calvin_util::log(last - first) * 3);
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::introSort(Iterator first, Iterator last, Comparator comp) {
+  introSortSub(first, last, comp, lib_calvin_util::log(last - first) * 3);
   if (last - first < introSort_thre) {
-    insertionSort(first, last);
+    insertionSort(first, last, comp);
     return;
   } else {
-    insertionSort(first, first + introSort_thre);
-    unguardedInsertionSort (first + introSort_thre, last);
+    insertionSort(first, first + introSort_thre, comp);
+    unguardedInsertionSort (first + introSort_thre, last, comp);
     return;
   }	
-}
-
-template <typename T>
-void lib_calvin_sort::introSort(vector<T> &elements) {
-	if (elements.empty()) {
-		return;
-	}
-	introSort(elements.begin(), elements.end());
-	// if iterator of vector container is not simple pointer, there might be room for optimization (not verified)
-	//introSort(&*elements.begin(), &*(elements.end() - 1) + 1);
 }
 
 // 2009-01-26: I discovered that if the problem size is bigger than L2, multi-
@@ -1111,25 +911,25 @@ void lib_calvin_sort::introSort(vector<T> &elements) {
 // within L2, we get almost maximum speedup. Therefore, The key is to mix memory 
 // intensive part and CPU intensive part of the operation, to utilize both resources 
 // efficiently (in the same sense as that of multi-programming in OS).
-template <typename Iterator>
-void lib_calvin_sort::introSortParallel(Iterator first, Iterator last) {
-	introSortParallelSub0(first, last, 4);
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::introSortParallel(Iterator first, Iterator last, Comparator comp) {
+	introSortParallelSub0(first, last, comp, 4);
 }
 
 // Blocking method
-template <typename Iterator>
-void lib_calvin_sort::introSortParallelAdvanced(Iterator first, Iterator last) 
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::introSortParallelAdvanced(Iterator first, Iterator last, Comparator comp) 
 {
-	IntroSort<Iterator> sorter;
-	Factory<pair<Iterator, Iterator>, IntroSort<Iterator>> factory(sorter);
+	IntroSort<Iterator, Comparator> sorter;
+	Factory<pair<Iterator, Iterator>, IntroSort<Iterator, Comparator>> factory(sorter);
 	// Create many threads for partitioning large arrays
-	introSortParallelSub1<Iterator>(first, last, 4, factory);
+	introSortParallelSub1(first, last, comp, 4, factory);
 	// Create 4 threads for sorting small arrays in L2 cache
 	unsigned numCores = 4;
 	thread_type *handleArray = new thread_type[numCores];
 	for (unsigned i = 0; i < numCores; ++i) {
 		handleArray[i] = create_thread(factoryThreadFunction<pair<Iterator, Iterator>, 
-				IntroSort<Iterator>>, &factory);
+				IntroSort<Iterator, Comparator>>, &factory);
 	}
 	factory.close();
 	for (unsigned i = 0; i < numCores; ++i) {
@@ -1140,11 +940,11 @@ void lib_calvin_sort::introSortParallelAdvanced(Iterator first, Iterator last)
 }
 
 // Mixing memory bandwith and CPU intensive parts of algorithm
-template <typename Iterator>
-void lib_calvin_sort::introSortParallelAdvanced2(Iterator first, Iterator last) 
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::introSortParallelAdvanced2(Iterator first, Iterator last, Comparator comp) 
 {
-	IntroSort<Iterator> sorter;
-	Factory<pair<Iterator, Iterator>, IntroSort<Iterator>> factory(sorter);
+	IntroSort<Iterator, Comparator> sorter;
+	Factory<pair<Iterator, Iterator>, IntroSort<Iterator, Comparator>> factory(sorter);
 	// Create n threads for sorting small arrays in L2 cache
 	unsigned numCores = 4;
 	thread_type *handleArray = new thread_type[numCores];
@@ -1152,11 +952,11 @@ void lib_calvin_sort::introSortParallelAdvanced2(Iterator first, Iterator last)
 		// We can change how to sort small sub-array simply by choosing IntroSort or
 		// CountingSort below
 		handleArray[i] = create_thread(factoryThreadFunction<pair<Iterator, Iterator>, 
-			IntroSort<Iterator>>, &factory); 
+			IntroSort<Iterator, Comparator>>, &factory); 
 		//SetThreadAffinityMask(handleArray[i], 1 << (i % 2));
 	}
 	// Create n threads for partitioning large arrays
-	introSortParallelSub1(first, last, 3, factory);
+	introSortParallelSub1(first, last, comp, 3, factory);
 	
 	factory.close();
 	for (unsigned i = 0; i < numCores; ++i) {
@@ -1188,20 +988,20 @@ void lib_calvin_sort::mergeSort(Iterator first, Iterator last, Comparator comp) 
   operator delete(tempArray);
 }
 
-template <typename Iterator>
-void lib_calvin_sort::inPlaceMergeSort(Iterator first, Iterator last) {
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::inPlaceMergeSort(Iterator first, Iterator last, Comparator comp) {
 	if (last - first < mergeSort_thre) {
-		insertionSort(first, last);
+		insertionSort(first, last, comp);
 		return;
 	}
 	Iterator middle = first + (last - first)/2;
-	inPlaceMergeSort(first, middle);
-	inPlaceMergeSort(middle, last);
-	inPlaceMerge(first, middle, last);
+	inPlaceMergeSort(first, middle, comp);
+	inPlaceMergeSort(middle, last, comp);
+	inPlaceMerge(first, middle, last, comp);
 }
 
-template <typename Iterator>
-void lib_calvin_sort::mergeSortParallel(Iterator first, Iterator last) {
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::mergeSortParallel(Iterator first, Iterator last, Comparator comp) {
   size_t num = last - first;
   // additional array for operation
   typedef typename iterator_traits<Iterator>::pointer pointerType;
@@ -1213,28 +1013,9 @@ void lib_calvin_sort::mergeSortParallel(Iterator first, Iterator last) {
   for ( ; original != last; ++original, ++copy) {
     new (copy) valueType(*original);
   }
-  mergeSortParallelSub0(tempArray, tempArray + num, first, 4);
+  mergeSortParallelSub0(tempArray, tempArray + num, first, comp, 4);
   operator delete(tempArray);
 }
-
-// This one is rather messy, and turns out not to be faster than normal
-// ..mergesort
-template <typename Iterator>
-void lib_calvin_sort::mergeSort2(Iterator first, Iterator last) {
-  size_t num = last - first;
-  // additional array for operation
-  typedef typename iterator_traits<Iterator>::pointer Pointer;
-  Pointer tempArray;
-  tempArray = (Pointer) operator new 
-      (sizeof(typename iterator_traits<Iterator>::value_type) * num);
-  Iterator original = first, copy = tempArray;
-  for ( ; original != last; ++original, ++copy) {
-    *copy = *original;
-  }
-  mergeSort2Ascending (tempArray, tempArray + num, first);
-  operator delete(tempArray);
-}
-
 
 template <typename Iterator>
 void lib_calvin_sort::countingSort(Iterator first, Iterator last) {
