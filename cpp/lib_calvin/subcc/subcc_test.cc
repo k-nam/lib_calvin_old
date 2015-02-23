@@ -3,7 +3,9 @@
 #include <streambuf>
 #include "subcc_test.h"
 #include "compiler.h"
-   
+#include "type.h"
+#include "syntax_tree.h"
+
 void subcc::subccTest(int argc, char *argv[]) {
 	using namespace subcc;
 	using std::string;
@@ -30,4 +32,7 @@ void subcc::subccTest(int argc, char *argv[]) {
 	//while(true) {
 		compile(inputToCompiler);
 	//}
+
+	Type::countObjects();
+	SyntaxTreeNode::countObjects();
 }

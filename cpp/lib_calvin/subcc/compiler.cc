@@ -38,4 +38,5 @@ void subcc::compile(string sourceCode) {
   
   // Write C source code into a file
   //dup2(writeFd, STDOUT_FILENO);	
+
 }

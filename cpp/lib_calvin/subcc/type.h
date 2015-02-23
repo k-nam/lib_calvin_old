@@ -46,7 +46,7 @@ extern int count;
 
 class Type {
   public:
-		virtual ~Type() { /*count--; std::cout << "Type destroyed: " << count << "\n";*/ }
+		virtual ~Type() { count--; /*std::cout << "Type destroyed: " << count << "\n";*/ }
     virtual bool operator== (Type const &) const = 0;
     virtual bool operator!= (Type const &) const = 0;
     enum Types getType() const { return typeType_; }
@@ -58,14 +58,19 @@ class Type {
     virtual bool isError() const { return false; }
 		bool isBaseType() const { return typeType_ == TYPE_BASE; }
 		bool isRecordType() const { return typeType_ == TYPE_RECORD; }
-
+	public:
+		static void countObjects();
   protected:
-    Type(enum Types typeType): typeType_(typeType) { /*count++;
-			std::cout << "Type created: " << count << "\n";*/ } // should not be public
+    Type(enum Types typeType): typeType_(typeType) { count++;
+			/*std::cout << "Type created: " << count << "\n";*/ } // should not be public
     Type(enum Types typeType, int width): typeType_(typeType), width_(width) { 
-			/*count++; std::cout << "Type created: " << count << "\n";*/ }
+			count++; /*std::cout << "Type created: " << count << "\n";*/ }
     enum Types const typeType_; // type of type
     int width_; // memory space in bytes
+	private:
+		Type(): typeType_(TYPE_ERROR) { }
+	private:
+		static size_t objectCount_;
 };
 
 class BaseType: public Type {

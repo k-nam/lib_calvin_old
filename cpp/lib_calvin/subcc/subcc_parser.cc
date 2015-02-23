@@ -113,6 +113,11 @@ void Parser::parse() {
         exit(0);
       case Action::Accept:
         //cout << "ACCEPTED by parser\n";
+				// stack must be empty now
+				if (!stack_.empty()) {
+					cout << "Parser accept error: stack size was: " << stack_.size() << "\n";
+					exit(0);
+				}
         finished = true;
         break;
       default:
@@ -216,6 +221,7 @@ void Parser::reduceWith(int productionKey) {
         if (stack_.size() != 1) 
           cout << "Parser::parse() internal error in case 1\n";
         root_ = stack_.back();
+				stack_.pop_back();
         break;
       }
     case 10: // DeclarationList -> empty : using key 11

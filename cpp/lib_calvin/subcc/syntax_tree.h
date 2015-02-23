@@ -23,12 +23,14 @@ extern int syntaxTreeNodeCount;
 // Intermediate representation: output of parser
 class SyntaxTree {
   public: 
-    SyntaxTree(SyntaxTreeNode const *root, shared_ptr<GlobalSymbolTable const> symtab):
-      root_(root), symbolTable_(symtab) {  }
+    SyntaxTree(SyntaxTreeNode const *root, shared_ptr<GlobalSymbolTable const> symtab);
 		~SyntaxTree(); 
     SyntaxTreeNode const *getRoot() const { return root_; }
     shared_ptr<GlobalSymbolTable const> getSymbolTable() const { return symbolTable_; }		
-  protected:
+  private:
+		void findAllNodes(std::set<SyntaxTreeNode const*> &resultSet, SyntaxTreeNode const *currentRoot);
+		void deleteAllNodes();
+		void deleteAllNodes2();
     SyntaxTreeNode const *root_;
     shared_ptr<GlobalSymbolTable const> symbolTable_;
 };
@@ -36,11 +38,15 @@ class SyntaxTree {
 class SyntaxTreeNode {
   public:
     SyntaxTreeNode();
-    void setParent(SyntaxTreeNode const *parent) { parent_ = parent; }
 		virtual ~SyntaxTreeNode();
+    void setParent(SyntaxTreeNode const *parent) { parent_ = parent; }
 		virtual bool isNonTerminal() const { return false; }
+	public:
+		static void countObjects();
   protected:
     SyntaxTreeNode const *parent_;
+	private:
+		static size_t objectCount_;
 };
 
 // Special nodes for storing dimension of an array declaration
