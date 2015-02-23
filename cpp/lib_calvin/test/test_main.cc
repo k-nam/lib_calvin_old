@@ -16,6 +16,8 @@ int main(int argc, char* argv[]) {
 	lib_calvin_lexer::lexerTest();
 	lib_calvin_parser::parserTest();
 	subcc::subccTest(1, NULL);
-	std::cout << "\n\nlib_calvin test completed!\n";
+	std::cout << "\n\n\n\n";
+	std::cout << "----------------------------------------------------------------";
+	std::cout << "lib_calvin test completed!\n\n\n\n\n";
 	return 0;
 }
