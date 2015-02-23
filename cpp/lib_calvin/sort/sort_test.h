@@ -17,6 +17,10 @@ void binSearchTest2();
 void getSamplesTest();
 
 struct SimpleStruct {
+	SimpleStruct() { count_++; }
+	SimpleStruct(SimpleStruct const &rhs): first(rhs.first), second(rhs.second) { count_++; }
+	~SimpleStruct() { count_--; }
+	static void checkMemoryLeak();
   char operator() (int b) { return '5'; }
   int first;
   int second;
@@ -26,6 +30,7 @@ struct SimpleStruct {
   //double x2;
 	//int array[10];
   int get_value() { return first; }
+	static int64_t count_; // for checking memory leak
 };
 
 std::string getRandomString(int length);
@@ -45,7 +50,6 @@ bool operator== (SimpleStruct const &lhs, SimpleStruct const &rhs);
 
 bool operator< (StringStruct const &lhs, StringStruct const &rhs);
 bool operator== (StringStruct const &lhs, StringStruct const &rhs);
-
 
 template <typename T, typename Comparator = std::less<T>>
 void sortTest(void (*sortingAlg)( T *first, T *last, Comparator comp), 
@@ -73,8 +77,8 @@ void lib_calvin_sort::sortTest(void (*sortingAlg) (T *first, T *last, Comparator
   bool correct  = true;
   bool stable   = true;
 	size_t const numTestCases = 5;
-	int arraySize[numTestCases] = { 1000, 10000, 100000, 1000000, 10000000 };
-	int numIteration[numTestCases] = { 100, 100, 10, 3, 1 };
+	int arraySize[numTestCases] = { 1000, 10000, 100000, 1000000 };
+	int numIteration[numTestCases] = { 100, 100, 10, 3 };
 	std::srand(1232); // reset seed to give identical input to algorithms
   for (int i = 0; i < numTestCases; ++i) { 
 		if (arraySize[i] == 0) {

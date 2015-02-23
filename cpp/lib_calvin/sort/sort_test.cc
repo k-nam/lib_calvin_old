@@ -15,6 +15,8 @@ void lib_calvin_sort::sortTest() {
 	//sortTest<ElemType>(cacheTest2, "cacheTest2");
 	//sortTest<ElemType>(cacheTest3, "cacheTest3");
 	
+	auto comparator = [](ElemType const &a, ElemType const & b) { return b < a; };
+	/*
   sortTest<ElemType>(introSortPointerSorting, "introSort pointer");
 	sortTest<ElemType>(introSort, "introSort");
 	sortTest<ElemType>(introSortParallel, "Parallel introSort");	
@@ -22,17 +24,30 @@ void lib_calvin_sort::sortTest() {
 	sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
 	sortTest<ElemType>(mergeSort, "mergeSort");
 	sortTest<ElemType>(mergeSortParallel, "Parallel mergeSort");
-	//sortTest<ElemType>(bucketSort, "bucketSort");
 	sortTest<ElemType>(heapSort, "heapSort");
 	sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");
 	sortTest<ElemType>(std::sort, "std::sort");
 	sortTest<ElemType>(std::stable_sort, "std::stable_sort");
-
+	*/
+	sortTest<ElemType>(introSortPointerSorting, "introSort pointer / reverse", comparator);
+	sortTest<ElemType>(introSort, "introSort / reverse", comparator);
+	sortTest<ElemType>(introSortParallel, "Parallel introSort / reverse", comparator);	
+	sortTest<ElemType>(introSortParallelAdvanced, "Advanced parallel introSort / reverse", comparator);	
+	sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort / reverse", comparator);
+	sortTest<ElemType>(mergeSort, "mergeSort / reverse", comparator);
+	sortTest<ElemType>(mergeSortParallel, "Parallel mergeSort / reverse", comparator);
+	sortTest<ElemType>(heapSort, "heapSort / reverse", comparator);
+	sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort / reverse", comparator);
+	
+	//sortTest<ElemType>(bucketSort, "bucketSort");
 	//sortTest<ElemType>(countingSort, "countingSort");
 	//sortTest<ElemType>(introSort2, "introSort+");
 
 	sortTest2();
 
+	ElemType::checkMemoryLeak();
+
+	std::cout << "\n---------- Sort test finished -----------\n";
 }
 
 void lib_calvin_sort::sortTest2() {
@@ -42,20 +57,30 @@ void lib_calvin_sort::sortTest2() {
 	auto lengthComp = [](string x, string y) { return x.length() < y.length(); };
 
 	cout << "mergeSort\n";
-	cout << "lexicographic order:";
+	cout << "lexicographic order:\n";
 	sortTest2Sub(lib_calvin_sort::mergeSort, strings.begin(), strings.end(), comp);
 	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
-	cout << "\nlength order: ";
+	cout << "\nlength order:\n";
 	sortTest2Sub(lib_calvin_sort::mergeSort, strings.begin(), strings.end(), lengthComp);
 	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
 
 	cout << "\n\nintroSort\n";
-	cout << "lexicographic order:";
+	cout << "lexicographic order:\n";
 	sortTest2Sub(lib_calvin_sort::introSort, strings.begin(), strings.end(), comp);
 	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
-	cout << "\nlength order: ";
+	cout << "\nlength order:\n";
 	sortTest2Sub(lib_calvin_sort::introSort, strings.begin(), strings.end(), lengthComp);
 	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
+
+	cout << "\n\nintroSort pointer\n";
+	cout << "lexicographic order:\n";
+	sortTest2Sub(lib_calvin_sort::introSortPointerSorting, strings.begin(), strings.end(), comp);
+	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
+	cout << "\nlength order:\n";
+	sortTest2Sub(lib_calvin_sort::introSortPointerSorting, strings.begin(), strings.end(), lengthComp);
+	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
+
+	cout << "\n\n";
 }
 
 std::string lib_calvin_sort::getRandomString(int length) {
@@ -144,6 +169,14 @@ void lib_calvin_sort::getSamplesTest() {
 	lib_calvin_util::printContainer(result, "samples");
 }
 
+int64_t lib_calvin_sort::SimpleStruct::count_ = 0;
+
+void lib_calvin_sort::SimpleStruct::checkMemoryLeak() {
+	if (count_ != 0) {
+		std::cout << "simpleCount was: " << count_ << " memory leak!\n";
+		exit(0);
+	}
+}
 
 bool lib_calvin_sort::operator< (SimpleStruct const &lhs, SimpleStruct const &rhs) {
   if (lhs.first < rhs.first)

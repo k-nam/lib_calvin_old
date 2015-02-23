@@ -32,25 +32,25 @@ int const L2_CACHE_SIZE = 256000;
 int const CACHE_LINE_SIZE = 64;
 
 // Used for pointer sorting method
-template <typename T, typename Comparator = std::less<T>>
+template <typename T, typename Comparator>
 struct SortingPointer {
 public:
-	SortingPointer(T const & value, Comparator comp = Comparator()): pointer_(&value), comp_(comp) { }
+	SortingPointer(T const & value, Comparator comp): pointer_(&value), comp_(comp) { }
 	SortingPointer & operator=(SortingPointer const &rhs) { pointer_ = rhs.pointer_; return *this; }
-	bool operator< (SortingPointer<T> const &rhs) const 
-		{ return Comparator()(*pointer_ , *rhs.pointer_); }
+	bool operator< (SortingPointer<T, Comparator> const &rhs) const 
+		{ return comp_(*pointer_ , *rhs.pointer_); }
 	T const & operator*() const { return *pointer_; }
 private:
 	T const *pointer_;
 	Comparator const comp_;
 };
 
-template <typename Iterator, template <typename I, typename C> class Sorter>
-void pointerSorting(Iterator first, Iterator last);
+template <typename Iterator, typename Comparator, template <typename I, typename C> class Sorter>
+void pointerSorting(Iterator first, Iterator last, Comparator comp);
 
 template <typename Iterator, typename Comparator = std::less<std::iterator_traits<Iterator>::value_type>>
 void introSortPointerSorting(Iterator first, Iterator last, Comparator comp = Comparator()) {
-	pointerSorting<Iterator, IntroSort>(first, last);
+	pointerSorting<Iterator, Comparator, IntroSort>(first, last, comp);
 }
 
 // Test sorting algorithms with given object type T
@@ -152,8 +152,9 @@ void *factoryThreadFunction(void *lpParam);
 
 // Binary search with predefined set of elements (gotten from sorting sample set)
 // Returns the index to which the given element is to belong [0, partitioners.size()]
-template <typename elemType, typename Iterator>
-size_t binSearch(elemType elem, Iterator firstPartitioner, Iterator lastPartitioner);
+template <typename Iterator, typename Comparator = std::less<std::iterator_traits<Iterator>::value_type>>
+size_t binSearch(typename std::iterator_traits<Iterator>::value_type elem, 
+								 Iterator firstPartitioner, Iterator lastPartitioner, Comparator comp = Comparator());
 
 // Select samples from given array. 
 // ratio = # samples / # totalElems, but only roughly (accuracy not guaranteed)
@@ -279,12 +280,15 @@ template <typename Iterator>
 void bucketSort(Iterator first, Iterator last);
 
 // Function object version of introsort (for multi-threading)
-template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+template <typename Iterator, typename Comparator>
 class IntroSort {
 public:
+	IntroSort(Comparator comp = Comparator()): comp_(comp) { }
 	void operator()(pair<Iterator, Iterator> const &inArray) {
-		introSort(inArray.first, inArray.second, Comparator());
+		introSort(inArray.first, inArray.second, comp_);
 	}
+private:
+	Comparator comp_;
 };
 
 // Function object version of countingSort (for multi-threading)
@@ -399,18 +403,18 @@ factoryThreadFunction(void *param) {
 // ..is called only once (as opposed to the case of comparison function)
 // But to avoid needless codes for specifying the type of pointer sorting algorithm,
 ///..I came to use template template parameter. 
-template <typename Iterator, template <typename I, typename C> class Sorter>
-void lib_calvin_sort::pointerSorting(Iterator first, Iterator last) 
-{
+template <typename Iterator, typename Comparator, template <typename I, typename C> class Sorter>
+void lib_calvin_sort::pointerSorting(Iterator first, Iterator last, Comparator comp) {
 	typedef typename iterator_traits<Iterator>::value_type valueType;
-	typedef SortingPointer<valueType> SortingPointer;
+	typedef SortingPointer<valueType, Comparator> SortingPointer;
 	size_t numElem = last - first;
 	SortingPointer *pointerArray = 
 		(SortingPointer *) operator new (sizeof(SortingPointer) * numElem);
 	for (size_t i = 0; i < numElem; ++i) {
-		new (pointerArray + i) SortingPointer(*(first + i));
+		new (pointerArray + i) SortingPointer(*(first + i), comp);
 	}
-	Sorter<SortingPointer *, std::less<SortingPointer>>()(std::make_pair(pointerArray, pointerArray + numElem));
+	Sorter<SortingPointer *, std::less<SortingPointer>> sorter;
+	sorter(std::make_pair(pointerArray, pointerArray + numElem));
 	
 	valueType *copyArray = (valueType *) operator new (sizeof(valueType) * numElem);
 	for (size_t i = 0; i < numElem; ++i) {
@@ -420,21 +424,25 @@ void lib_calvin_sort::pointerSorting(Iterator first, Iterator last)
 		*(first + i) = copyArray[i];
 	}
 	operator delete(pointerArray);
+	for (size_t i = 0; i < numElem; ++i) {
+		(copyArray + i)->~valueType();
+	}
 	operator delete(copyArray);
 }
 
-template <typename elemType, typename Iterator>
-size_t lib_calvin_sort::binSearch(elemType elem, Iterator first, Iterator last) {
+template <typename Iterator, typename Comparator>
+size_t lib_calvin_sort::binSearch(typename std::iterator_traits<Iterator>::value_type elem, 
+																	Iterator first, Iterator last, Comparator comp) {
 	//return 1;
 	//static int random = 0;
 	//return random++ % (partitioners.size() + 1);
-	if (*first < elem == false) {
+	if (comp(*first, elem) == false) {
 		return 0;
 	} 	
 	//int left = 0, right = partitioners.size() - 1, middle = (left + right) / 2;
 	Iterator left = first, right = last, middle = left + (right - left) / 2;
 	while (right - left > 1) {
-		if (*middle < elem) {
+		if (comp(*middle, elem)) {
 			left = middle;
 		} else {
 			right = middle;
@@ -550,7 +558,7 @@ void lib_calvin_sort::percolateDown(Iterator const base, Comparator comp, int in
         if (comp(*max, *child))
           max = child;
       }
-      if (store < *max) {
+      if (comp(store, *max)) {
         *parent = *max;
         *max = store;
         return;
@@ -778,12 +786,12 @@ void lib_calvin_sort::inPlaceMerge(Iterator first, Iterator middle, Iterator las
 		return;
 	}
 	Iterator leftMiddle = first + (middle - first)/2;
-	Iterator rightMiddle = middle + binSearch(*leftMiddle, middle, last);
+	Iterator rightMiddle = middle + binSearch(*leftMiddle, middle, last, comp);
 	exchange(leftMiddle, middle, rightMiddle);
 	inPlaceMerge(first, leftMiddle, leftMiddle + (rightMiddle - middle), comp);
   inPlaceMerge(leftMiddle + (rightMiddle - middle), rightMiddle, last, comp);
 	for (Iterator iter = first; iter < last - 1; iter++) {
-		if (*(iter + 1) < *iter) {
+		if (comp(*(iter + 1), *iter)) {
 			std::cout << "inPlaceMerge error: " << middle - first << " " << last - middle << "\n";
 			exit(0);
 		}
@@ -920,7 +928,7 @@ void lib_calvin_sort::introSortParallel(Iterator first, Iterator last, Comparato
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSortParallelAdvanced(Iterator first, Iterator last, Comparator comp) 
 {
-	IntroSort<Iterator, Comparator> sorter;
+	IntroSort<Iterator, Comparator> sorter(comp);
 	Factory<pair<Iterator, Iterator>, IntroSort<Iterator, Comparator>> factory(sorter);
 	// Create many threads for partitioning large arrays
 	introSortParallelSub1(first, last, comp, 4, factory);
@@ -943,7 +951,7 @@ void lib_calvin_sort::introSortParallelAdvanced(Iterator first, Iterator last, C
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSortParallelAdvanced2(Iterator first, Iterator last, Comparator comp) 
 {
-	IntroSort<Iterator, Comparator> sorter;
+	IntroSort<Iterator, Comparator> sorter(comp);
 	Factory<pair<Iterator, Iterator>, IntroSort<Iterator, Comparator>> factory(sorter);
 	// Create n threads for sorting small arrays in L2 cache
 	unsigned numCores = 4;
@@ -1009,11 +1017,13 @@ void lib_calvin_sort::mergeSortParallel(Iterator first, Iterator last, Comparato
   pointerType tempArray;
   tempArray = (pointerType) operator new (sizeof(valueType) * num);
   Iterator original = first;
-	pointerType copy = tempArray;
-  for ( ; original != last; ++original, ++copy) {
+  for (auto copy =  tempArray; original != last; ++original, ++copy) {
     new (copy) valueType(*original);
   }
   mergeSortParallelSub0(tempArray, tempArray + num, first, comp, 4);
+	for (size_t i = 0; i < num; i++) {
+		tempArray[i].~valueType();
+	}
   operator delete(tempArray);
 }
 
