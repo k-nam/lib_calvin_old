@@ -61,8 +61,8 @@ template <typename W>
 struct WeightedEdge {
   WeightedEdge();
   WeightedEdge(int src, int dest, W weight);
-  bool operator> (WeightedEdge<W> const &rhs);
-  bool operator< (WeightedEdge<W> const &rhs);
+  bool operator> (WeightedEdge<W> const &rhs) const;
+  bool operator< (WeightedEdge<W> const &rhs) const;
   int src_;
   int dest_;
   W weight_;
@@ -416,14 +416,14 @@ WeightedEdge<W>::WeightedEdge(int src, int dest, W weight):
 }
 
 template <typename W>
-bool WeightedEdge<W>::operator> (WeightedEdge<W> const &rhs) {
+bool WeightedEdge<W>::operator> (WeightedEdge<W> const &rhs) const {
   if (weight_ > rhs.weight_)
     return true;
   return false;
 }
 
 template <typename W>
-bool WeightedEdge<W>::operator< (WeightedEdge<W> const &rhs) {
+bool WeightedEdge<W>::operator< (WeightedEdge<W> const &rhs) const {
   if (weight_ < rhs.weight_)
     return true;
   return false;
