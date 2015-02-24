@@ -4,13 +4,15 @@
 
 namespace subcc
 {
-int symtabCount = 0;
-int symbolCount = 0;
 
 /************************** Symbol methods ******************************/
 
+Symbol::Symbol(enum SymbolKinds symbolKind, string const &lexeme, 
+		shared_ptr<Type const> type):
+				symbolKind_(symbolKind), lexeme_(lexeme), type_(type) { ++objectCount_; }
+
 Symbol::~Symbol() {
-	--symbolCount; 
+	--objectCount_; 
 	//std::cout << "Symbol destructed: " << symbolCount << "\n"; 
 	if (type_->getType() != TYPE_BASE && type_->getType() != TYPE_RECORD) {
 		//type_.print();
@@ -33,6 +35,17 @@ bool Symbol::isConstant() const {
   return (symbolKind_ > SYMBOL_TEMP_MAX && symbolKind_ < SYMBOL_CONST_MAX);
 }
 
+void Symbol::countObjects() {
+	if (objectCount_ != 0) {
+		std::cout << "Symbol object memory leak! # was: " << objectCount_ << "\n";
+		exit(0);
+	} else {
+		std::cout << "Symbol object memory OK!\n";
+	}
+	std::cout << "\n";
+}
+
+int64_t Symbol::objectCount_ = 0;
 
 /********************* Constant methods **************************/
 
@@ -78,19 +91,19 @@ SymbolTable::SymbolTable(GlobalSymbolTable const &globalTable,
   globalTable_(globalTable), parent_(parent), 
   offset_(isEnvironment ? 0 : parent->getOffset()), 
   isEnvironment_(isEnvironment) { 
-		symtabCount++;
+		objectCount_++;
 		//std::cout << "Symtab created: " << symtabCount << "\n";
   }
 
 SymbolTable::SymbolTable(GlobalSymbolTable const &globalTable):
   globalTable_(globalTable), parent_(NULL), offset_(0),
   isEnvironment_(false) { 
-		symtabCount++;
+		objectCount_++;
 		//std::cout << "Symtab created: " << symtabCount << "\n";
 	}
 
 SymbolTable::~SymbolTable() {
-	symtabCount--; 
+	objectCount_--; 
 	//std::cout << "Symtab destroyed: " << symtabCount << "\n";
 	for (size_t i = 0; i < children_.size(); ++i) {
 		delete children_[i];
@@ -147,16 +160,30 @@ SymbolTable::makeChild(bool isEnvironment) {
   return *children_.back();
 }
 
+void SymbolTable::countObjects() {
+	if (objectCount_ != 0) {
+		std::cout << "SymbolTable object memory leak! # was: " << objectCount_ << "\n";
+		exit(0);
+	} else {
+		std::cout << "SymbolTable object memory OK!\n";
+	}
+	std::cout << "\n";
+}
+
+int64_t SymbolTable::objectCount_ = 0;
+
 /****************** GlobalSymbolTable methods ****************/
 
 GlobalSymbolTable::GlobalSymbolTable() {
   root_ = new SymbolTable(*this);
   curTable_ = root_;
+	objectCount_++;
 }
 
 GlobalSymbolTable::~GlobalSymbolTable() {
 	// Delete symbol tables (they are in tree structure)
 	delete root_; // will be recursive operation
+	objectCount_--;
 	// Delete symbols
 	/* Using shared_ptr makes this unnecessary
 	for (int i = 0; i < array_.size(); ++i) {
@@ -289,6 +316,19 @@ int GlobalSymbolTable::setEntry(shared_ptr<Symbol const> symbol) {
   array_.push_back(symbol);
   return static_cast<int>(array_.size()) - 1;
 }
+
+void GlobalSymbolTable::countObjects() {
+	if (objectCount_ != 0) {
+		std::cout << "GlobalSymbolTable object memory leak! # was: " << objectCount_ << "\n";
+		exit(0);
+	} else {
+		std::cout << "GlobalSymbolTable object memory OK!\n";
+	}
+	std::cout << "\n";
+}
+
+int64_t GlobalSymbolTable::objectCount_ = 0;
+
 } // end namespace subcc
 
 

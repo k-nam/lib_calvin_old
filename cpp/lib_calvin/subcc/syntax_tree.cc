@@ -29,7 +29,7 @@ void SyntaxTree::deleteAllNodes() {
 void SyntaxTree::deleteAllNodes2() {
 	std::set<SyntaxTreeNode const*> result;
 	findAllNodes(result, root_);
-	std::cout << "total nodes # was:" << result.size() << "\n";
+	//std::cout << "total nodes # was:" << result.size() << "\n";
 	for (std::set<SyntaxTreeNode const*>::const_iterator iter = result.begin(); iter != result.end(); ++iter) {
 		delete (*iter);
 	}
@@ -52,7 +52,7 @@ SyntaxTreeNode::~SyntaxTreeNode() {
 	}
 }
 
-size_t SyntaxTreeNode::objectCount_ = 0;
+int64_t SyntaxTreeNode::objectCount_ = 0;
 
 void SyntaxTreeNode::countObjects() {
 	if (objectCount_ != 0) {
@@ -61,6 +61,7 @@ void SyntaxTreeNode::countObjects() {
 	} else {
 		std::cout << "SyntaxTreeNode object memory OK!\n";
 	}
+	std::cout << "\n";
 }
 
 /************ NonTerminalNode methods *************/

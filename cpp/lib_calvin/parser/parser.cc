@@ -263,7 +263,7 @@ void SlrParserGenerator::parse (int input, ...) const {
   for (iter = result.rbegin(); iter != result.rend(); ++iter) {
     cout << *iter << "  ";
   }
-  cout << endl;
+  cout << "\n\n";
 }
 
 void SlrParserGenerator::parse (vector<int> &inText, 
@@ -937,7 +937,6 @@ void LalrParserGenerator::build () {
 // Build directly from LR0 table, using lookahead propagating
 // Note: same kernel item in different LR0 item set are DIFFERENT kernels!
 void LalrParserGenerator::buildFast () {
-
   // Build LR0 without setting reduce Action
   SlrParserGenerator::build(false);
   // Prepare data set: kernel = pair<State, LR0Item>

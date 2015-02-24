@@ -46,7 +46,7 @@ class SyntaxTreeNode {
   protected:
     SyntaxTreeNode const *parent_;
 	private:
-		static size_t objectCount_;
+		static int64_t objectCount_;
 };
 
 // Special nodes for storing dimension of an array declaration

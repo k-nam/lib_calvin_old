@@ -42,11 +42,9 @@ enum BaseTypes {
   BASETYPE_VOID            = 21  // for return value, arg type, and pointers
 };
 
-extern int count;
-
 class Type {
   public:
-		virtual ~Type() { count--; /*std::cout << "Type destroyed: " << count << "\n";*/ }
+		virtual ~Type() { objectCount_--; /*std::cout << "Type destroyed: " << count << "\n";*/ }
     virtual bool operator== (Type const &) const = 0;
     virtual bool operator!= (Type const &) const = 0;
     enum Types getType() const { return typeType_; }
@@ -61,16 +59,14 @@ class Type {
 	public:
 		static void countObjects();
   protected:
-    Type(enum Types typeType): typeType_(typeType) { count++;
+    Type(enum Types typeType): typeType_(typeType) { objectCount_++;
 			/*std::cout << "Type created: " << count << "\n";*/ } // should not be public
     Type(enum Types typeType, int width): typeType_(typeType), width_(width) { 
-			count++; /*std::cout << "Type created: " << count << "\n";*/ }
+			objectCount_++; /*std::cout << "Type created: " << count << "\n";*/ }
     enum Types const typeType_; // type of type
     int width_; // memory space in bytes
 	private:
-		Type(): typeType_(TYPE_ERROR) { }
-	private:
-		static size_t objectCount_;
+		static int64_t objectCount_;
 };
 
 class BaseType: public Type {

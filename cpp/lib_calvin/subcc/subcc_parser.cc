@@ -19,7 +19,7 @@ typedef SlrParserGenerator::Production Production;
 Parser::Parser(string const &inText): 
   lexer_(inText), 
   subcc_(250, 500), subccParser_(subcc_), 
-  symbolTable_(new GlobalSymbolTable), 
+  symbolTable_(shared_ptr<GlobalSymbolTable>(new GlobalSymbolTable)), 
   root_(NULL),
   curTemporaryNumber_(1) {
   

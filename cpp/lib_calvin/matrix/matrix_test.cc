@@ -7,7 +7,7 @@
 #include "mkl/include/mkl_boost_ublas_matrix_prod.hpp"
 
 void lib_calvin_matrix::matrixTest() {
-	std::cout << "\n---------- Beginning matrix test -----------\n";
+	std::cout << "---------- Beginning matrix test -----------\n\n";
 	using boost::numeric::ublas::matrix;
 	lib_calvin::stopwatch watch;
 	int const size = 300;
@@ -49,6 +49,7 @@ void lib_calvin_matrix::matrixTest() {
 	float *p = (float *)&aa; 
 	std::cout << p[0] << " " << p[1] << " " << p[2] << " " << p[3] << "\n";
 	std::cout << "\n";
+	std::cout << "------------- Matrix test finished ---------------\n\n\n";
 }
 
 double lib_calvin_matrix::doGigaOps() {

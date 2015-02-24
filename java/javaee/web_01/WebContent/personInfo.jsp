@@ -18,30 +18,30 @@
 	</form>
 
 	<%
-	List<String> info = (List<String>)request.getAttribute("info");
-	if (info == null) {
-		out.print("how come null??");
-		return;
-	}
-	out.print("<table border='1'");
-	out.print("<tr>");
-	out.print("<th>ID</th>");
-	out.print("<th>Description</th>");
-	out.print("</tr>");
-	for (int i = 0; i <  info.size(); i++) {
-		if (i % 2 == 0) {
-			out.print("<tr>");
-			out.print("<td>");
-			out.print(info.get(i));
-			out.print("</td>");
-		} else {
-			out.print("<td>");
-			out.print(info.get(i));	
-			out.print("</td>");
-			out.print("</tr>");
-		}		
-	}	
-%>
+		List<String> info = (List<String>) request.getAttribute("info");
+		if (info == null) {
+			out.print("how come null??");
+			return;
+		}
+		out.print("<table border='1'");
+		out.print("<tr>");
+		out.print("<th>ID</th>");
+		out.print("<th>Description</th>");
+		out.print("</tr>");
+		for (int i = 0; i < info.size(); i++) {
+			if (i % 2 == 0) {
+				out.print("<tr>");
+				out.print("<td>");
+				out.print(info.get(i));
+				out.print("</td>");
+			} else {
+				out.print("<td>");
+				out.print(info.get(i));
+				out.print("</td>");
+				out.print("</tr>");
+			}
+		}
+	%>
 
 </body>
 </html>

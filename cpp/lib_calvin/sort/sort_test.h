@@ -17,10 +17,10 @@ void binSearchTest2();
 void getSamplesTest();
 
 struct SimpleStruct {
-	SimpleStruct() { count_++; }
-	SimpleStruct(SimpleStruct const &rhs): first(rhs.first), second(rhs.second) { count_++; }
-	~SimpleStruct() { count_--; }
-	static void checkMemoryLeak();
+	SimpleStruct() { objectCount_++; }
+	SimpleStruct(SimpleStruct const &rhs): first(rhs.first), second(rhs.second) { objectCount_++; }
+	~SimpleStruct() { objectCount_--; }
+	static void countObjects();
   char operator() (int b) { return '5'; }
   int first;
   int second;
@@ -30,7 +30,7 @@ struct SimpleStruct {
   //double x2;
 	//int array[10];
   int get_value() { return first; }
-	static int64_t count_; // for checking memory leak
+	static int64_t objectCount_; // for checking memory leak
 };
 
 std::string getRandomString(int length);

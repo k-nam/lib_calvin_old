@@ -4,12 +4,12 @@
 #include <iostream>
 
 void lib_calvin_sort::sortTest() {
-	std::cout << "\n---------- Beginning sort test -----------\n";
+	std::cout << "---------------- Beginning sort test -----------------\n\n";
 	using namespace lib_calvin_sort;
 	typedef SimpleStruct ElemType;
 	//binSearchTest();
 	//binSearchTest2();
-	getSamplesTest();
+	//getSamplesTest();
 
 	//sortTest<ElemType>(cacheTest1, "cacheTest1");
 	//sortTest<ElemType>(cacheTest2, "cacheTest2");
@@ -45,9 +45,9 @@ void lib_calvin_sort::sortTest() {
 
 	sortTest2();
 
-	ElemType::checkMemoryLeak();
+	ElemType::countObjects();
 
-	std::cout << "\n---------- Sort test finished -----------\n";
+	std::cout << "---------------- Sort test finished -----------------\n\n\n";
 }
 
 void lib_calvin_sort::sortTest2() {
@@ -60,26 +60,30 @@ void lib_calvin_sort::sortTest2() {
 	cout << "lexicographic order:\n";
 	sortTest2Sub(lib_calvin_sort::mergeSort, strings.begin(), strings.end(), comp);
 	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
-	cout << "\nlength order:\n";
+	cout << "\n";
+	cout << "length order:\n";
 	sortTest2Sub(lib_calvin_sort::mergeSort, strings.begin(), strings.end(), lengthComp);
 	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
+	cout << "\n\n";
 
-	cout << "\n\nintroSort\n";
+	cout << "introSort\n";
 	cout << "lexicographic order:\n";
 	sortTest2Sub(lib_calvin_sort::introSort, strings.begin(), strings.end(), comp);
 	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
-	cout << "\nlength order:\n";
+	cout << "\n";
+	cout << "length order:\n";
 	sortTest2Sub(lib_calvin_sort::introSort, strings.begin(), strings.end(), lengthComp);
 	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
+	cout << "\n\n";
 
-	cout << "\n\nintroSort pointer\n";
+	cout << "introSort pointer\n";
 	cout << "lexicographic order:\n";
 	sortTest2Sub(lib_calvin_sort::introSortPointerSorting, strings.begin(), strings.end(), comp);
 	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
-	cout << "\nlength order:\n";
+	cout << "\n";
+	cout << "length order:\n";
 	sortTest2Sub(lib_calvin_sort::introSortPointerSorting, strings.begin(), strings.end(), lengthComp);
 	for_each(strings.begin(), strings.end(), [](string x) { cout << x << " "; });
-
 	cout << "\n\n";
 }
 
@@ -169,13 +173,16 @@ void lib_calvin_sort::getSamplesTest() {
 	lib_calvin_util::printContainer(result, "samples");
 }
 
-int64_t lib_calvin_sort::SimpleStruct::count_ = 0;
+int64_t lib_calvin_sort::SimpleStruct::objectCount_ = 0;
 
-void lib_calvin_sort::SimpleStruct::checkMemoryLeak() {
-	if (count_ != 0) {
-		std::cout << "simpleCount was: " << count_ << " memory leak!\n";
+void lib_calvin_sort::SimpleStruct::countObjects() {
+	if (objectCount_ != 0) {
+		std::cout << "SimpleStruct object memory leak! # was: " << objectCount_ << "\n";
 		exit(0);
+	} else {
+		std::cout << "SimpleStruct object memory OK!\n";
 	}
+	std::cout << "\n";
 }
 
 bool lib_calvin_sort::operator< (SimpleStruct const &lhs, SimpleStruct const &rhs) {

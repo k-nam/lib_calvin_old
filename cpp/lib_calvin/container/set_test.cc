@@ -98,7 +98,7 @@ void lib_calvin_container::setTest() {
 
 	HeavyObject::countThisObject();
 
-	std::cout << "set test completed\n";
+	std::cout << "set test completed\n\n";
 }
 
 template <typename Impl>

@@ -4,7 +4,7 @@
 using namespace lib_calvin_graph;
 
 void lib_calvin_graph::graphTest() {
-	std::cout << "\n---------- Beginning graph test -----------\n";
+	std::cout << "--------------- Beginning graph test ----------------\n\n";
 	GraphTest<int, int> test(1000, 10000, 0);
   test.insertionTest();
 	test.insertionTest2();
@@ -13,6 +13,7 @@ void lib_calvin_graph::graphTest() {
 	test.algorithmTest();
 	test.undirectedAlgorithmTest();
 	test.getClosestPathTest();
+	std::cout << "-------------- Graph test finished ---------------\n\n\n";
 }
 
 

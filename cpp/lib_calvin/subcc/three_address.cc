@@ -10,7 +10,6 @@ using std::shared_ptr;
 using std::dynamic_pointer_cast;
 using std::cout;
 using std::endl;
-int instructionCount = 0;
 int const errorLabel = -1;
 
 /********************************* Address ********************************/
@@ -35,21 +34,32 @@ bool Address::isNull() const { return addressType_ == AddressType_Null; }
 
 Instruction::Instruction (
     enum InstructionType instType): instructionType_(instType) { 
-	instructionCount++;
+	objectCount_++;
 }
 
 Instruction::~Instruction() { 
-	instructionCount--;
+	objectCount_--;
 	//std::cout << "instruction count = " << instructionCount << "\n";
 }
 
 enum InstructionType 
 Instruction::getType() const { return instructionType_; }
 
+void Instruction::countObjects() {
+	if (objectCount_ != 0) {
+		std::cout << "Instruction object memory leak! # was: " << objectCount_ << "\n";
+		exit(0);
+	} else {
+		std::cout << "Instruction object memory OK!\n";
+	}
+	std::cout << "\n";
+}
+
+int64_t Instruction::objectCount_ = 0;
+
 /*** FunctionStartInstrucion ***/
 
-FunctionStartInstruction::FunctionStartInstruction(
-    string const &functionName, int stackSize): 
+FunctionStartInstruction::FunctionStartInstruction(string const &functionName, int stackSize): 
   Instruction(Instruction_Function_Start), functionName_(functionName),
   stackSize_(stackSize) { }
 

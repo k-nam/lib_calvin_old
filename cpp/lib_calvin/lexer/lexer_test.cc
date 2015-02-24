@@ -12,8 +12,9 @@ namespace lib_calvin_lexer { // open for definitions
 using lib_calvin::stopwatch;
 
 void lexerTest() {
-	std::cout << "\n---------- Beginning lexer test -----------\n";
+	std::cout << "------------- Beginning lexer test ---------------\n\n";
 	lexerTest("int main(int argc, char *argv[]){\n return 1;} ");
+	std::cout << "------------- Lexer test finished ---------------\n\n\n";
 }
 
 void lexerTest(std::string const &inputText) {
@@ -240,7 +241,7 @@ void lexerTest(std::string const &inputText) {
   close(writeFd);
   delete buffer;
 	*/
-
+	cout << "\n";
 } 
 
 // Trivial function to print Token name

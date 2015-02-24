@@ -38,15 +38,15 @@ enum SymbolKinds {
   
   SYMBOL_TYPENAME           = 61, // typedef name
   SYMBOL_STRUCT             = 71, // struct name
-  SYMBOL_FUNC               = 81 // fuction name
+  SYMBOL_FUNC               = 81, // fuction name
+
+	SYMBOL_ERROR							= 99
 };
 
 
 class Symbol {
   public:
-    Symbol(enum SymbolKinds symbolKind, string const &lexeme, 
-				shared_ptr<Type const> type):
-      symbolKind_(symbolKind), lexeme_(lexeme), type_(type) { ++symbolCount; }
+    Symbol(enum SymbolKinds symbolKind, string const &lexeme, shared_ptr<Type const> type);
 		virtual ~Symbol();
     string const &getLexeme() const { return lexeme_; }
     shared_ptr<Type const> getType() const { return type_; }
@@ -59,12 +59,16 @@ class Symbol {
     void setOffset(int offset) { offset_ = offset; }
     int getOffset() const { return offset_; }
 		//virtual void print() { std::cout << "base symbol\n"; }
+	public:
+		static void countObjects();
   protected:
     enum SymbolKinds symbolKind_;
     string lexeme_; // also becomes constant value for string constants
   private:
     shared_ptr<Type const> type_; // type of the object the symbol refers
     int offset_; // offset in the stack frame 
+	private:
+		static int64_t objectCount_;
 };
 
 class Constant: public Symbol {
@@ -124,6 +128,8 @@ class SymbolTable {
     SymbolTable const &getYoungestChild() { return *children_.back(); }
     SymbolTable const &makeChild(bool isEnvironment); // make another child
     bool isEnvironment() const { return isEnvironment_; }
+	public:
+		static void countObjects();
   private:
     // Integer value is the index to the global table
     map<string, int> mapping_;
@@ -132,6 +138,8 @@ class SymbolTable {
     vector<SymbolTable const *> children_;
     int offset_; // current offset (in the stack frame of current function) 
     bool const isEnvironment_; // true if this is an env of record declaration
+	private:
+		static int64_t objectCount_;
 };
 
 class GlobalSymbolTable {
@@ -163,6 +171,8 @@ class GlobalSymbolTable {
     // Return true if new size is the maximum, false otherwise
     bool updateMaxStackSize(int newSize);
     int getMaxStackSize() const { return maxStackSize_; }
+	public:
+		static void countObjects();
   private:
     int setEntry(shared_ptr<Symbol const>); // make new entry and return its index
     SymbolTable *root_;
@@ -170,9 +180,10 @@ class GlobalSymbolTable {
     // Global symbol table
     vector<shared_ptr<Symbol const>> array_;
     int maxStackSize_; // maximum stack size of the current function definition
+	private:
+		static int64_t objectCount_;
 };
-
-}    // end namespace
+} // end namespace
 
 
 

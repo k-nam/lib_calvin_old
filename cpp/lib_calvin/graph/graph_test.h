@@ -160,12 +160,13 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::dfsTest() {
 	dfs2(arrayDataWithoutEdge, visitOrder, returnOrder2);
   watch.stop();
   cout << "dfs2 of vertices: " << numV_ << "\tedges: " << numE_ << 
-    "\t" << watch.read() << endl;
+    "\t" << watch.read() << "\n";
 
 	if (returnOrder != returnOrder2) {
 		cout << "dfs algorithms does not match\n";
 		exit(0);
 	}
+	cout << "\n";
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
@@ -196,6 +197,7 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::bfsTest() {
     }
   }
   cout << "bfs correct\n";
+	cout << "\n";
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
@@ -328,6 +330,7 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::undirectedAlgorithmTes
       cout << iter->first << "  " << iter->second << endl;
     }*/
   }
+	cout << "\n";
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>

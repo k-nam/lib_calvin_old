@@ -109,9 +109,13 @@ class Instruction {
   public:
     enum InstructionType getType() const;
     virtual ~Instruction();
+	public:
+		static void countObjects();
   protected:
     Instruction(enum InstructionType instType);
     enum InstructionType instructionType_;
+	private:
+		static int64_t objectCount_;
 };
 
 // foo:

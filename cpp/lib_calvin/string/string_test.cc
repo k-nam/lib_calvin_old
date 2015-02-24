@@ -3,12 +3,13 @@
 
 
 void lib_calvin_string::stringTest() { 
-	std::cout << "\n---------- Beginning string test -----------\n";
+	std::cout << "---------- Beginning string test -----------\n\n";
 	using namespace lib_calvin_string;
   matchingTest(naiveMatch, "Naive string matching");
   matchingTest(basicMatch, "Basic string matching(Z-alg)");
   matchingTest(kmp, "KMP");
   matchingTest(boyerMoore, "Boyer-Moore");
+	std::cout << "---------- String test finished -----------\n\n\n";
 }
 
 // string class is generic with alphabet type, but we can not unit-test unless
@@ -56,9 +57,9 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
   cout << "Running time: " << watch.read() << endl;
   cout << "# of match was: " << record.size() << endl;
   if (answer == record)
-    cout << "Matching is correct.\n\n";
+    cout << "Matching is correct.\n";
   else {
-    cout << "Matching error!!\n\n";
+    cout << "Matching error!!\n";
     size_t realsize = answer.size();
     size_t wrongsize = record.size();
     cout << "Real match number : " << realsize << endl;
@@ -67,4 +68,5 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
   }
   delete[] pText;
   delete[] pPattern;
+	cout << "\n";
 }

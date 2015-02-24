@@ -4,12 +4,12 @@
 
 void lib_calvin_container::containerTest()
 {
-	std::cout << "\n---------- Beginning container test -----------\n";
+	std::cout << "--------------- Beginning container test -----------------\n\n";
 	//vectorTest();
 	setTest();
 	//mapTest();
 	//bTreeTest();
-	std::cout << "\n--------- container test finished ---------\n";
+	std::cout << "-------------- container test finished ------------------\n\n\n";
 }
 
 lib_calvin_container::HeavyObject::HeavyObject(int size) {

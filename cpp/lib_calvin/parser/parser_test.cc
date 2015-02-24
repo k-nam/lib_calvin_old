@@ -1,7 +1,7 @@
 #include "parser_test.h"
 
 void lib_calvin_parser::parserTest() {
-	std::cout << "\n---------- Beginning parser test -----------\n";
+	std::cout << "------------- Beginning parser test --------------\n\n";
   ContextFreeLanguage lang(250, 500);
   ContextFreeLanguage lang2(250, 500);
   ContextFreeLanguage lang3(250, 500);
@@ -39,7 +39,7 @@ void lib_calvin_parser::parserTest() {
   lang.finalize();
   lang2.finalize();
   lang3.finalize();   
-	
+	cout << "\n";
 
   SlrParserGenerator slr_parser(lang);
   slr_parser.build();
@@ -49,10 +49,8 @@ void lib_calvin_parser::parserTest() {
   lalr_parser.build();
   LalrParserGenerator lalr_parser2(lang);
   lalr_parser2.buildFast();
+	cout << "\n";
 
-	lr1_parser.initialize();
-
-  
   slr_parser.parse(ExpTokens_ID, ExpTokens_MULTI, ExpTokens_ID, ExpTokens_PLUS, 
 		ExpTokens_OPENPAREN, ExpTokens_ID, ExpTokens_MULTI, ExpTokens_ID, 
 		ExpTokens_PLUS, ExpTokens_ID, expTokens_CLOSEPAREN, ExpTokens_MULTI, 
@@ -80,4 +78,5 @@ void lib_calvin_parser::parserTest() {
 		ValueTokens_ID, ValueTokens_EQUAL, ValueTokens_STAR, ValueTokens_STAR, 
 		ValueTokens_ID, kEndMarker);
 		*/
+	std::cout << "------------- Parser test finished --------------\n\n\n";
 }

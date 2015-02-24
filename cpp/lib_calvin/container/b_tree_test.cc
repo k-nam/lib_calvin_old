@@ -16,9 +16,7 @@ void bTreeTest() {
 	test.mergeNodeTest();
 	test.eraseTest();
 	test.searchAlgoTest();
-
 }
-
 
 #undef CONTAINER_NAME
 } // end namespace lib_calvin_container

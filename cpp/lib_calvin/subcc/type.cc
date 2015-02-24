@@ -6,7 +6,6 @@
 
 namespace subcc
 {
-int count = 0;
 
 // singleton types 
 shared_ptr<Type const> 
@@ -45,16 +44,20 @@ subcc::getBaseType(enum BaseTypes baseType) {
 
 /******** BaseType methods ******/
 
-size_t Type::objectCount_ = 0;
-
 void Type::countObjects() {
 	if (objectCount_ != 0) {
 		std::cout << "Type object memory leak! # was: " << objectCount_ << "\n";
-		exit(0);
+		std::cout << "8 is OK because those are built-in types and declared static\n";
+		if (objectCount_ != 8) {
+			exit(0);
+		}
 	} else {
 		std::cout << "Type object memory OK!\n";
 	}
+	std::cout << "\n";
 }
+
+int64_t Type::objectCount_ = 0;
 
 BaseType::BaseType(enum BaseTypes baseTypeValue): Type(TYPE_BASE),
     baseTypeValue_(baseTypeValue) {
