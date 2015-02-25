@@ -345,7 +345,7 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::getClosestPathTest() {
 	testGraph.insert(4, 5, 2);
 	auto paths1 = testGraph.get_closest_path(1, 5);
 	auto paths2 = testGraph.get_shortest_path(1, 5);
-	auto paths3 = testGraph.get_n_shortest_paths(1, 5, 3);
+	auto paths3 = testGraph.get_n_shortest_paths(1, 5, 4);
 	std::cout << "Closest path result\n";
 	for (size_t i = 0; i < paths1.size(); ++i) {
 		auto path = paths1[i];

@@ -69,10 +69,10 @@ struct GeneralArc: public Arc<W> {
 };
 
 // extension of Arc for n'th closest path algorithm
-template <typename W, size_t NumPathsToFind>
+template <typename W>
 class Node {
 public:
-	Node();
+	Node(size_t numPathsToFind);
 	Node(Node const &);
 	Node(Node &&);
 	Node & operator= (Node const &);
@@ -81,7 +81,7 @@ public:
 	void relax(GeneralArc<W> const &);
 	void foundPath(); // reached the top of heap
 	W const & getWeight() const;
-	int getNumPathFoundUntilNow() const;
+	size_t getNumPathFoundUntilNow() const;
 	GeneralArc<W> const & getGeneralArc() const;
 	bool hasRemainingPaths() const;
 public:
@@ -91,7 +91,8 @@ public:
 private:
 	bool isFull() const;
 private:
-	int numPathFoundUntilNow_;
+	size_t numPathsToFind_;
+	size_t numPathsFoundUntilNow_;
 	vector<GeneralArc<W>> arcs_;
 };
 
@@ -478,41 +479,46 @@ bool GeneralArc<W>::operator< (GeneralArc<W> const &rhs) const {
 
 /******************* Node definition *********************/
 
-template <typename W, size_t NumPathsToFind>
-Node<W, NumPathsToFind>::Node(): numPathFoundUntilNow_(0) { }
+template <typename W>
+Node<W>::Node(size_t numPathsToFind): numPathsToFind_(numPathsToFind),
+		numPathsFoundUntilNow_(0) { }
 
-template <typename W, size_t NumPathsToFind>
-Node<W, NumPathsToFind>::Node(Node const &rhs): 
-	numPathFoundUntilNow_(rhs.numPathFoundUntilNow_), arcs_(rhs.arcs_) { 
+template <typename W>
+Node<W>::Node(Node const &rhs): 
+	numPathsToFind_(rhs.numPathsToFind_), numPathsFoundUntilNow_(rhs.numPathsFoundUntilNow_), 
+	arcs_(rhs.arcs_) { 
 	//std::cout << "Node copy ctor\n";
 }
 
-template <typename W, size_t NumPathsToFind>
-Node<W, NumPathsToFind>::Node(Node &&rhs): 
-	numPathFoundUntilNow_(rhs.numPathFoundUntilNow_), arcs_(std::move(rhs.arcs_)) { 
+template <typename W>
+Node<W>::Node(Node &&rhs): 
+	numPathsToFind_(rhs.numPathsToFind_), numPathsFoundUntilNow_(rhs.numPathsFoundUntilNow_), 
+	arcs_(std::move(rhs.arcs_)) { 
 	//std::cout << "Node move ctor\n";
 }
 
-template <typename W, size_t NumPathsToFind>
-typename Node<W, NumPathsToFind> &
-Node<W, NumPathsToFind>::operator= (Node const &rhs) {
-	numPathFoundUntilNow_ = rhs.numPathFoundUntilNow_;
+template <typename W>
+typename Node<W> &
+Node<W>::operator= (Node const &rhs) {
+	numPathsToFind_ = rhs.numPathsToFind_;
+	numPathsFoundUntilNow_ = rhs.numPathsFoundUntilNow_;
 	arcs_ = rhs.arcs_;
 	//std::cout << "Node copy assignment\n";
 	return *this;
 }
 
-template <typename W, size_t NumPathsToFind>
-typename Node<W, NumPathsToFind> &
-Node<W, NumPathsToFind>::operator= (Node &&rhs) {
-	numPathFoundUntilNow_ = rhs.numPathFoundUntilNow_;
+template <typename W>
+typename Node<W> &
+Node<W>::operator= (Node &&rhs) {
+	numPathsToFind_ = rhs.numPathsToFind_;
+	numPathsFoundUntilNow_ = rhs.numPathsFoundUntilNow_;
 	arcs_ = std::move(rhs.arcs_);
 	//std::cout << "Node move assignment\n";
 	return *this;
 }
 
-template <typename W, size_t NumPathsToFind>
-void Node<W, NumPathsToFind>::relax(GeneralArc<W> const &arc) { // general arcs should be in ascending order always
+template <typename W>
+void Node<W>::relax(GeneralArc<W> const &arc) { // general arcs should be in ascending order always
 	bool isInserted = false;
 	//std::cout << "\nbefore node was:\n\t";
 	print();
@@ -529,8 +535,8 @@ void Node<W, NumPathsToFind>::relax(GeneralArc<W> const &arc) { // general arcs 
 			arcs_.push_back(arc);
 		}
 	}
-	if (arcs_.size() > NumPathsToFind) { 
-		arcs_.resize(NumPathsToFind);
+	if (arcs_.size() > numPathsToFind_) { 
+		arcs_.resize(numPathsToFind_);
 	}
 	//std::cout << "node relaxing input arc was:\n\t";
 	//arc.print();
@@ -539,8 +545,8 @@ void Node<W, NumPathsToFind>::relax(GeneralArc<W> const &arc) { // general arcs 
 	//std::cout << "\n\n\n";
 }
 
-template <typename W, size_t NumPathsToFind>
-void Node<W, NumPathsToFind>::print() const {
+template <typename W>
+void Node<W>::print() const {
 	//std::cout << "This Node is as below size(" << arcs_.size() << ")\n";
 	//for (auto iter = arcs_.begin(); iter != arcs_.end(); iter++) {
 		//std::cout <<"\t";
@@ -548,39 +554,39 @@ void Node<W, NumPathsToFind>::print() const {
 	//}
 }
 
-template <typename W, size_t NumPathsToFind>
-void Node<W, NumPathsToFind>::foundPath() {
-	numPathFoundUntilNow_++;
+template <typename W>
+void Node<W>::foundPath() {
+	numPathsFoundUntilNow_++;
 }
 
-template <typename W, size_t NumPathsToFind>
+template <typename W>
 W const & 
-Node<W, NumPathsToFind>::getWeight() const { return arcs_[numPathFoundUntilNow_].weight_; }
+Node<W>::getWeight() const { return arcs_[numPathsFoundUntilNow_].weight_; }
 
-template <typename W, size_t NumPathsToFind>
-int Node<W, NumPathsToFind>::getNumPathFoundUntilNow() const { return numPathFoundUntilNow_; }
+template <typename W>
+size_t Node<W>::getNumPathFoundUntilNow() const { return numPathsFoundUntilNow_; }
 
-template <typename W, size_t NumPathsToFind>
+template <typename W>
 GeneralArc<W> const & 
-Node<W, NumPathsToFind>::getGeneralArc() const {
-	return arcs_[numPathFoundUntilNow_];
+Node<W>::getGeneralArc() const {
+	return arcs_[numPathsFoundUntilNow_];
 }
 
-template <typename W, size_t NumPathsToFind>
-bool Node<W, NumPathsToFind>::hasRemainingPaths() const {
-	return arcs_.size() > numPathFoundUntilNow_;
+template <typename W>
+bool Node<W>::hasRemainingPaths() const {
+	return arcs_.size() > numPathsFoundUntilNow_;
 }
 
-template <typename W, size_t NumPathsToFind>
-bool Node<W, NumPathsToFind>::operator< (Node const &rhs) const {
-	if (arcs_.size() <= numPathFoundUntilNow_) { // currently not reachable; infinitely far
+template <typename W>
+bool Node<W>::operator< (Node const &rhs) const {
+	if (arcs_.size() <= numPathsFoundUntilNow_) { // currently not reachable; infinitely far
 		return false;
 	}
 	return getGeneralArc() < rhs.getGeneralArc();
 }
 
-template <typename W, size_t NumPathsToFind>
-bool Node<W, NumPathsToFind>::isFull() const { return arcs_.size() == NumPathsToFind; }
+template <typename W>
+bool Node<W>::isFull() const { return arcs_.size() == numPathsToFind_; }
 
 /***************** struct WeightedEdge<W> definitions ************/
 
@@ -799,7 +805,6 @@ template <typename V, typename E, typename W, typename ExtractWeight>
 vector<typename graph_base<V, E, W, ExtractWeight>::path>
 graph_base<V, E, W, ExtractWeight>::get_n_shortest_paths(V const &src, V const &target, size_t num) const {
 	goStatic();
-	bool pathExists = true;
 	if (!has(src) || !has(target) || src == target) { // input is invalid, return empty vector
 		std::cout << "get_n_shortest_paths input error\n";
 		exit(0);
@@ -807,7 +812,7 @@ graph_base<V, E, W, ExtractWeight>::get_n_shortest_paths(V const &src, V const &
 	int srcVertex = mapping_.indexOf(src);
 	int targetVertex = mapping_.indexOf(target);
 	vector<vector<GeneralArc<W>>> result;
-	dijkstra2(arrayData_, srcVertex, result);	
+	dijkstra2(arrayData_, srcVertex, result, num);	
 	//std::cout << "after dijkstra2\n";
 	if (result[targetVertex].empty()) { // not reachable
 		return vector<graph_base<V, E, W, ExtractWeight>::path>();
@@ -1118,15 +1123,17 @@ void dijkstra(vector<vector<pair<int, W>>> const &graph, int source,
 }
 
 template <typename W>
-void dijkstra2(vector<vector<pair<int, W>>> const &graph, int source, vector<vector<GeneralArc<W>>> &result) {  
+void dijkstra2(vector<vector<pair<int, W>>> const &graph, int source, 
+							 vector<vector<GeneralArc<W>>> &result, size_t num) {  
 	size_t const numPathsToFind = 20;
   int numV = static_cast<int>(graph.size()); 
-	typedef Node<W, numPathsToFind> Node;
-  IntPq<Node> pq(numV);
+	typedef Node<W> Node;
+	Node emptyNode(num);
+  IntPq<Node> pq(numV, emptyNode);
   result.clear();
   result.resize(numV);
 	vector<int> numFinishedPath(numV, 0);
-	Node zero;
+	Node zero = emptyNode;
 	zero.relax(GeneralArc<W>(source, 0, 0)); // 0'th closest path for itself
   pq.insert(source, zero); 
   while (pq.size() != 0) {
@@ -1148,11 +1155,11 @@ void dijkstra2(vector<vector<pair<int, W>>> const &graph, int source, vector<vec
 			if (numFinishedPath[targetVertext] == numPathsToFind) { // this vertex is finished
 				continue;
 			}
-			Node targetNode;
+			Node targetNode = emptyNode;
 			if (pq.hasKey(targetVertext)) {
 				targetNode = pq.getPriority(targetVertext);
 			}
-			GeneralArc<W> arc(curVertex, curWeight + targetWeight, curNode.getNumPathFoundUntilNow());
+			GeneralArc<W> arc(curVertex, curWeight + targetWeight, static_cast<int>(curNode.getNumPathFoundUntilNow()));
 			targetNode.relax(arc);
       if (pq.insert(targetVertext, targetNode) == true) {
       } else {

@@ -56,8 +56,9 @@ namespace lib_calvin_adt
   template <typename P>
   class IntPq {
     public:
-      IntPq (int maxsize); // initial capacity
-      void reserve (int maxsize);
+      IntPq(int maxsize); // initial capacity
+			IntPq(int maxsize, P const &); // initialize with given P
+      void reserve(int maxsize);
       int capacity() { return maxsize_; }
       int size() const { return size_; }
       pair<int, P> const & peek() const; // returns the top element 
@@ -182,6 +183,11 @@ IntIndexer<K>::operator[] (int index) const {
 template <typename P>
 IntPq<P>::IntPq(int maxsize): size_(0), maxsize_(maxsize), d_(D), 
   heap_(maxsize), indexArray_(maxsize, -1) { // LibrarySetAdaptor indices to -1 (null) 
+}
+
+template <typename P>
+IntPq<P>::IntPq(int maxsize, P const &initValue): size_(0), maxsize_(maxsize), d_(D), 
+  heap_(maxsize, std::make_pair(0, initValue)), indexArray_(maxsize, -1) { // LibrarySetAdaptor indices to -1 (null) 
 }
 
 template <typename P>
