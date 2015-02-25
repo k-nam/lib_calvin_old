@@ -57,6 +57,44 @@ struct Arc {
   W weight_; // may be single or total weight, depending on context.  
 };
 
+// not necessarily the closest path
+template <typename W>
+struct GeneralArc: public Arc<W> {
+	GeneralArc();
+	GeneralArc(int predecessor, W weight, int nThClosest);
+	void print() const;
+	bool operator< (GeneralArc<W> const &) const;
+	// denotes that the path to predecessor is n'th closest path.
+	int nThClosest_;
+};
+
+// extension of Arc for n'th closest path algorithm
+template <typename W, size_t NumPathsToFind>
+class Node {
+public:
+	Node();
+	Node(Node const &);
+	Node(Node &&);
+	Node & operator= (Node const &);
+	Node & operator= (Node &&);
+public:
+	void relax(GeneralArc<W> const &);
+	void foundPath(); // reached the top of heap
+	W const & getWeight() const;
+	int getNumPathFoundUntilNow() const;
+	GeneralArc<W> const & getGeneralArc() const;
+	bool hasRemainingPaths() const;
+public:
+	bool operator< (Node const &rhs) const;
+public:
+	void print() const;
+private:
+	bool isFull() const;
+private:
+	int numPathFoundUntilNow_;
+	vector<GeneralArc<W>> arcs_;
+};
+
 template <typename W>
 struct WeightedEdge {
   WeightedEdge();
@@ -67,6 +105,7 @@ struct WeightedEdge {
   int dest_;
   W weight_;
 };
+
 class null_edge { };
 
 template <typename V, typename E, typename W, typename ExtractWeight>
@@ -111,10 +150,15 @@ public: // basic data access
 			path(V const &source, vector<std::pair<V, E>> const &path);
       // Size is path length. If it is zero, it means there is no path from
       // ..the source to the target vertex
-			size_t size() const;
+		public:
+			size_t length() const;
+			W const total_weight() const;
 			V const & get_source() const;
 			V const & get_vertex(size_t index) const;
 			E const & get_edge(size_t index) const;
+		public:
+			path & operator= (path const &rhs);
+			path & operator= (path && rhs);
     protected:
       V const source_; // source vertex
 			vector<std::pair<V, E>> const path_; // does not contain source vertex
@@ -149,14 +193,20 @@ public: // basic data access
       vector<int> const setSizes_;
   };
 
-public: // Algorithms
+public: // Algorithms. If empty return vector means there are no solution
 	// Shortest path in terms of the number of edges between vertices
-	path get_closest_path(V const &src, V const &target) const;	
+	vector<path> get_closest_path(V const &src, V const &target) const;	
 	// Shortest path in terms of weight
-	path get_shortest_path(V const &src, V const &target) const;
+	vector<path> get_shortest_path(V const &src, V const &target) const;
+	// returns n shortest paths
+	vector<path> get_n_shortest_paths(V const &src, V const &target, size_t num) const;
 private:
 	template <typename T>
 		path getPathAfterAlgorithm(vector<Arc<T>> result, int src, int target) const;
+	template <typename T>
+		vector<path> getPathsAfterAlgorithm(vector<vector<GeneralArc<T>>> result, 
+																				int src, int target) const;
+		path getPathFromReversedPath(int src, vector<int> const &reversedPath) const;
 protected: // member variables
   int numV_; 
   int numE_;
@@ -292,6 +342,11 @@ template <typename W>
 void dijkstra(vector<vector<std::pair<int, W>>> const &graph, int source, 
     vector<Arc<W>> &result);
 
+// find n closest paths
+template <typename W>
+void dijkstra2(vector<vector<std::pair<int, W>>> const &graph, int source, 
+    vector<Arc<W>> &result);
+
 template <typename W>
 void vellmanFord(vector<vector<std::pair<int, W>>> const &graph, int source,
     vector<Arc<W>> &result);
@@ -335,11 +390,11 @@ void prim(vector<vector<pair<int, W>>>const &graph,
 namespace lib_calvin_graph { // open for definitions
 
 template <typename W>
-Arc<W>::Arc(): predecessor_(-1), weight_() { // must initialize to 0
+Arc<W>::Arc(): predecessor_(-1), weight_(0) { // must initialize to 0
 }
 
 template <typename W>
-Arc<W>::Arc(int prede, W wei): predecessor_(prede), weight_(wei) { 
+Arc<W>::Arc(int predecessor, W weight): predecessor_(predecessor), weight_(weight) { 
 }
 
 template <typename W>
@@ -402,6 +457,130 @@ bool Arc<W>::operator!= (Arc<W> const &rhs) const {
     return false;
   return true;
 }
+
+template <typename W>
+GeneralArc<W>::GeneralArc(): Arc<W>(), nThClosest_(0) { }
+
+template <typename W>
+GeneralArc<W>::GeneralArc(int predecessor, W weight, int nThClosest): 
+	Arc<W>(predecessor, weight), nThClosest_(nThClosest) { }
+
+template <typename W>
+void GeneralArc<W>::print() const {
+	//std::cout << "This arc. predecessor = " << predecessor_ << ", weight: " << weight_ << 
+		//"nThClosest: " << nThClosest_ << "\n";
+}
+
+template <typename W>
+bool GeneralArc<W>::operator< (GeneralArc<W> const &rhs) const {
+  return weight_ < rhs.weight_;
+}
+
+/******************* Node definition *********************/
+
+template <typename W, size_t NumPathsToFind>
+Node<W, NumPathsToFind>::Node(): numPathFoundUntilNow_(0) { }
+
+template <typename W, size_t NumPathsToFind>
+Node<W, NumPathsToFind>::Node(Node const &rhs): 
+	numPathFoundUntilNow_(rhs.numPathFoundUntilNow_), arcs_(rhs.arcs_) { 
+	//std::cout << "Node copy ctor\n";
+}
+
+template <typename W, size_t NumPathsToFind>
+Node<W, NumPathsToFind>::Node(Node &&rhs): 
+	numPathFoundUntilNow_(rhs.numPathFoundUntilNow_), arcs_(std::move(rhs.arcs_)) { 
+	//std::cout << "Node move ctor\n";
+}
+
+template <typename W, size_t NumPathsToFind>
+typename Node<W, NumPathsToFind> &
+Node<W, NumPathsToFind>::operator= (Node const &rhs) {
+	numPathFoundUntilNow_ = rhs.numPathFoundUntilNow_;
+	arcs_ = rhs.arcs_;
+	//std::cout << "Node copy assignment\n";
+	return *this;
+}
+
+template <typename W, size_t NumPathsToFind>
+typename Node<W, NumPathsToFind> &
+Node<W, NumPathsToFind>::operator= (Node &&rhs) {
+	numPathFoundUntilNow_ = rhs.numPathFoundUntilNow_;
+	arcs_ = std::move(rhs.arcs_);
+	//std::cout << "Node move assignment\n";
+	return *this;
+}
+
+template <typename W, size_t NumPathsToFind>
+void Node<W, NumPathsToFind>::relax(GeneralArc<W> const &arc) { // general arcs should be in ascending order always
+	bool isInserted = false;
+	//std::cout << "\nbefore node was:\n\t";
+	print();
+	for (auto iter = arcs_.begin(); iter != arcs_.end(); iter++) {
+		if (arc < *iter) {
+			arcs_.insert(iter, arc);
+			isInserted = true;
+			break;
+		}
+	}
+	if (!isInserted) { // this arc is biggest
+		if (isFull()) { // we have already enough arcs	
+		} else {
+			arcs_.push_back(arc);
+		}
+	}
+	if (arcs_.size() > NumPathsToFind) { 
+		arcs_.resize(NumPathsToFind);
+	}
+	//std::cout << "node relaxing input arc was:\n\t";
+	//arc.print();
+	//std::cout << "result node was:\n\t";
+	//print();
+	//std::cout << "\n\n\n";
+}
+
+template <typename W, size_t NumPathsToFind>
+void Node<W, NumPathsToFind>::print() const {
+	//std::cout << "This Node is as below size(" << arcs_.size() << ")\n";
+	//for (auto iter = arcs_.begin(); iter != arcs_.end(); iter++) {
+		//std::cout <<"\t";
+		//iter->print();
+	//}
+}
+
+template <typename W, size_t NumPathsToFind>
+void Node<W, NumPathsToFind>::foundPath() {
+	numPathFoundUntilNow_++;
+}
+
+template <typename W, size_t NumPathsToFind>
+W const & 
+Node<W, NumPathsToFind>::getWeight() const { return arcs_[numPathFoundUntilNow_].weight_; }
+
+template <typename W, size_t NumPathsToFind>
+int Node<W, NumPathsToFind>::getNumPathFoundUntilNow() const { return numPathFoundUntilNow_; }
+
+template <typename W, size_t NumPathsToFind>
+GeneralArc<W> const & 
+Node<W, NumPathsToFind>::getGeneralArc() const {
+	return arcs_[numPathFoundUntilNow_];
+}
+
+template <typename W, size_t NumPathsToFind>
+bool Node<W, NumPathsToFind>::hasRemainingPaths() const {
+	return arcs_.size() > numPathFoundUntilNow_;
+}
+
+template <typename W, size_t NumPathsToFind>
+bool Node<W, NumPathsToFind>::operator< (Node const &rhs) const {
+	if (arcs_.size() <= numPathFoundUntilNow_) { // currently not reachable; infinitely far
+		return false;
+	}
+	return getGeneralArc() < rhs.getGeneralArc();
+}
+
+template <typename W, size_t NumPathsToFind>
+bool Node<W, NumPathsToFind>::isFull() const { return arcs_.size() == NumPathsToFind; }
 
 /***************** struct WeightedEdge<W> definitions ************/
 
@@ -572,12 +751,13 @@ void graph_base<V, E, W, ExtractWeight>::goStatic() const {
 
 // Shortest path in terms of the number of edges
 template <typename V, typename E, typename W, typename ExtractWeight>
-typename graph_base<V, E, W, ExtractWeight>::path
+vector<typename graph_base<V, E, W, ExtractWeight>::path>
 graph_base<V, E, W, ExtractWeight>::get_closest_path(V const &src, V const &target) const {
 	goStatic();
-	bool pathExists = true;
+	vector<path> paths;
 	if (!has(src) || !has(target)) { // input is invalid
-		return graph_base<V, E, W, ExtractWeight>::path(src, vector<std::pair<V, E>>());
+		std::cout << "get_closest_path input error\n";
+		exit(0);
 	}
 	int srcVertex = mapping_.indexOf(src);
 	int targetVertex = mapping_.indexOf(target);
@@ -587,45 +767,99 @@ graph_base<V, E, W, ExtractWeight>::get_closest_path(V const &src, V const &targ
 	bfs(graph, srcVertex, result);	
 	//std::cout << "after bfs\n";
 	if (result[targetVertex].predecessor_ < 0) { // not reachable
-		return graph_base<V, E, W, ExtractWeight>::path(src, vector<std::pair<V, E>>());
 	} else {
-		return graph_base<V, E, W, ExtractWeight>::getPathAfterAlgorithm<int>(result, srcVertex, targetVertex);
+		paths.push_back(getPathAfterAlgorithm<int>(result, srcVertex, targetVertex));
 	}
+	return paths;
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-typename graph_base<V, E, W, ExtractWeight>::path
+vector<typename graph_base<V, E, W, ExtractWeight>::path>
 graph_base<V, E, W, ExtractWeight>::get_shortest_path(V const &src, V const &target) const {
 	goStatic();
+	vector<path> paths;
 	bool pathExists = true;
-	if (!has(src) || !has(target)) { // input is invalid
-		return graph_base<V, E, W, ExtractWeight>::path(src, vector<std::pair<V, E>>());
+	if (!has(src) || !has(target) || src == target) { // input is invalid
+		std::cout << "get_shortest_path input error\n";
+		exit(0);
 	}
 	int srcVertex = mapping_.indexOf(src);
 	int targetVertex = mapping_.indexOf(target);
-
 	vector<Arc<W>> result;
 	dijkstra(arrayData_, srcVertex, result);	
-	std::cout << "after dijkstra\n";
+	//std::cout << "after dijkstra\n";
 	if (result[targetVertex].predecessor_ < 0) { // not reachable
-		return graph_base<V, E, W, ExtractWeight>::path(src, vector<std::pair<V, E>>());
 	} else {
-		return graph_base<V, E, W, ExtractWeight>::getPathAfterAlgorithm<W>(result, srcVertex, targetVertex);
+		paths.push_back(getPathAfterAlgorithm<W>(result, srcVertex, targetVertex));
+	}
+	return paths;
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+vector<typename graph_base<V, E, W, ExtractWeight>::path>
+graph_base<V, E, W, ExtractWeight>::get_n_shortest_paths(V const &src, V const &target, size_t num) const {
+	goStatic();
+	bool pathExists = true;
+	if (!has(src) || !has(target) || src == target) { // input is invalid, return empty vector
+		std::cout << "get_n_shortest_paths input error\n";
+		exit(0);
+	}
+	int srcVertex = mapping_.indexOf(src);
+	int targetVertex = mapping_.indexOf(target);
+	vector<vector<GeneralArc<W>>> result;
+	dijkstra2(arrayData_, srcVertex, result);	
+	//std::cout << "after dijkstra2\n";
+	if (result[targetVertex].empty()) { // not reachable
+		return vector<graph_base<V, E, W, ExtractWeight>::path>();
+	} else {
+		return graph_base<V, E, W, ExtractWeight>::getPathsAfterAlgorithm<W>(result, srcVertex, targetVertex);
 	}
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
 template <typename T>
 typename graph_base<V, E, W, ExtractWeight>::path
-graph_base<V, E, W, ExtractWeight>::getPathAfterAlgorithm(vector<Arc<T>> result, int srcVertex, int targetVertex) const {
+graph_base<V, E, W, ExtractWeight>::getPathAfterAlgorithm(
+			vector<Arc<T>> result, int srcVertex, int targetVertex) const {
 	vector<int> reversedPath;
 	for (int curVertex = targetVertex; curVertex != srcVertex; ) {
 		//std::cout << "following predeccsor array\n";
 		reversedPath.push_back(curVertex);
 		curVertex = result[curVertex].predecessor_;
 	}
+	return getPathFromReversedPath(srcVertex, reversedPath);
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+template <typename T>
+vector<typename graph_base<V, E, W, ExtractWeight>::path>
+graph_base<V, E, W, ExtractWeight>::getPathsAfterAlgorithm(
+			vector<vector<GeneralArc<T>>> result, int srcVertex, int targetVertex) const {
+	size_t numPaths = result[targetVertex].size();
+	vector<vector<int>> reversedPaths(numPaths);
+	for (int nThCloest = 0; nThCloest < numPaths; nThCloest++){
+		int curNThClosest = nThCloest; // path to curVertex is n'th closest path
+		for (int curVertex = targetVertex; curVertex != srcVertex; ) {
+			//std::cout << "following predeccsor array\n";
+			reversedPaths[nThCloest].push_back(curVertex);
+			GeneralArc<T> arc = result[curVertex][curNThClosest];
+			curVertex = arc.predecessor_;
+			curNThClosest = arc.nThClosest_;
+		}
+	}
+	vector<path> realPaths;
+	for (size_t i = 0; i < numPaths; i++) {
+		realPaths.push_back(getPathFromReversedPath(srcVertex, reversedPaths[i]));
+	}
+	return realPaths;
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+typename graph_base<V, E, W, ExtractWeight>::path
+graph_base<V, E, W, ExtractWeight>::getPathFromReversedPath(int srcVertex, vector<int> const &reversedPath) const {
 	vector<std::pair<V, E>> realPath;
-	int previousVertex = srcVertex, curVertex;
+	int previousVertex = srcVertex;
+	int curVertex;
 	for (size_t i = 0; i < reversedPath.size(); ++i) {
 		//std::cout << "making final result\n";
 		curVertex = reversedPath[reversedPath.size() - 1 - i];
@@ -641,10 +875,20 @@ graph_base<V, E, W, ExtractWeight>::path::path(V const &source, vector<std::pair
 			source_(source), path_(path) { }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-size_t graph_base<V, E, W, ExtractWeight>::path::size() const {
+size_t graph_base<V, E, W, ExtractWeight>::path::length() const {
 	// Size is path length. If it is zero, it means there is no path from
   // ..the source to the target vertex
 	return path_.size();
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+W const
+graph_base<V, E, W, ExtractWeight>::path::total_weight() const {
+	W totalWeight = 0;
+	for (int i = 0; i < path_.size(); i++) {
+		totalWeight += ExtractWeight()(path_[i].second);
+	}
+	return totalWeight;
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
@@ -666,6 +910,22 @@ template <typename V, typename E, typename W, typename ExtractWeight>
 E const &
 graph_base<V, E, W, ExtractWeight>::path::get_edge(size_t index) const {
 	return return path_[index].second; 
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+typename graph_base<V, E, W, ExtractWeight>::path &
+graph_base<V, E, W, ExtractWeight>::path::operator= (path const &rhs) {
+	source_ = rhs.source_;
+	path_ = rhs.path_;
+	return *this;
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+typename graph_base<V, E, W, ExtractWeight>::path &
+graph_base<V, E, W, ExtractWeight>::path::operator= (path &&rhs) {
+	source_ = rhs.source_;
+	path_ = std::forward<vector<std::pair<V, E>>(rhs.path_);
+	return *this;
 }
 
 } // end namespace lib_calvin_graph
@@ -715,9 +975,7 @@ bool undirected_graph<V, E, W, ExtractWeight>::remove(V src, V dest) {
 	}
   return result1;
 }
-
 } // end namespace lib_calvin
-
 
 //--------------------------- Global functions ----------------------------
 
@@ -858,7 +1116,58 @@ void dijkstra(vector<vector<pair<int, W>>> const &graph, int source,
     }
   }
 }
-    
+
+template <typename W>
+void dijkstra2(vector<vector<pair<int, W>>> const &graph, int source, vector<vector<GeneralArc<W>>> &result) {  
+	size_t const numPathsToFind = 20;
+  int numV = static_cast<int>(graph.size()); 
+	typedef Node<W, numPathsToFind> Node;
+  IntPq<Node> pq(numV);
+  result.clear();
+  result.resize(numV);
+	vector<int> numFinishedPath(numV, 0);
+	Node zero;
+	zero.relax(GeneralArc<W>(source, 0, 0)); // 0'th closest path for itself
+  pq.insert(source, zero); 
+  while (pq.size() != 0) {
+    pair<int, Node> const &topElem = pq.pop();
+    int curVertex = topElem.first;  
+    Node curNode = topElem.second;
+		W const & curWeight = curNode.getGeneralArc().weight_;
+		result[curVertex].push_back(curNode.getGeneralArc());
+		std::cout << "Node popped curVertex; " << curVertex << ", nTh: " << curNode.getNumPathFoundUntilNow() << 
+			" weight = " << curNode.getWeight() << "\n";
+		if (result[curVertex].size() > numPathsToFind) {
+			std::cout << "dijkstra2 error1\n";
+			exit(0);
+		}
+		for (size_t i = 0; i < graph[curVertex].size(); ++i) {
+      pair<int, W> const &iter = graph[curVertex][i];
+			int targetVertext = iter.first;
+			W const & targetWeight = iter.second;
+			if (numFinishedPath[targetVertext] == numPathsToFind) { // this vertex is finished
+				continue;
+			}
+			Node targetNode;
+			if (pq.hasKey(targetVertext)) {
+				targetNode = pq.getPriority(targetVertext);
+			}
+			GeneralArc<W> arc(curVertex, curWeight + targetWeight, curNode.getNumPathFoundUntilNow());
+			targetNode.relax(arc);
+      if (pq.insert(targetVertext, targetNode) == true) {
+      } else {
+				std::cout << "dijkstra2 error: relaxing error\n";
+				exit(0);
+			}
+    }
+		numFinishedPath[curVertex]++;
+		curNode.foundPath(); 
+		if (curNode.hasRemainingPaths()) { // send right back to the heap
+			pq.insert(curVertex, curNode);
+		}
+  }
+}
+  
 template <typename W>
 void vellmanFord(vector<vector<pair<int, W>>> const &graph, 
     int source, vector<Arc<W>> &result) {
@@ -1082,8 +1391,7 @@ void kruskal(vector<vector<pair<int, W>>> const &graph,
 }
     
 template <typename W>
-void prim (vector<vector<pair<int, W>>>const &graph,
-    set<pair<int, int>> &result) {  
+void prim(vector<vector<pair<int, W>>>const &graph, set<pair<int, int>> &result) {  
   int numV = static_cast<int>(graph.size()); 
   vector<int> predecessor (numV, -1); // to save predecessor vertices
 	std::cout << "prim size = " << numV << "\n";

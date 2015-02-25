@@ -43,7 +43,7 @@ public:
 	const_reference back() const { return impl_.back(); }
 
 	// return the position of the first new elements
-	iterator insert(const_iterator const &pos, T const &elem) { return impl_.insert(pos. elem); }
+	iterator insert(const_iterator const &pos, T const &elem) { return impl_.insert(pos, elem); }
 	iterator insert(const_iterator const &pos, const_iterator const &begin, const_iterator const &end) 
 		{ return impl_.insert(pos, begin, end); }
 

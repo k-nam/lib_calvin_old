@@ -15,14 +15,14 @@ using std::endl;
 // For graph algorithms (priority queue)
 using namespace lib_calvin_adt;
 
-void lib_calvin_graph::dfs (vector<vector<int>> const &graph, 
+void lib_calvin_graph::dfs(vector<vector<int>> const &graph, 
     vector<int> const &visitOrder, vector<int> &returnOrder) {
    dfs2(graph, visitOrder, returnOrder);
 }
 
 // dfs1 is useless. I implemented IntStack for this algorithm, but it is a waste of time.
 // only left for hindsight
-void lib_calvin_graph::dfs1 (vector<vector<int>> const &graph, 
+void lib_calvin_graph::dfs1(vector<vector<int>> const &graph, 
 															vector<int> const &visitOrder, vector<int> &returnOrder) {
   int numV = static_cast<int>(graph.size()); 
   IntStack stack(numV);
@@ -59,7 +59,7 @@ void lib_calvin_graph::dfs1 (vector<vector<int>> const &graph,
 }
 
 // Using simple stack method; much faster than dfs using priority queue
-void lib_calvin_graph::dfs2 (vector<vector<int>> const &graph, 
+void lib_calvin_graph::dfs2(vector<vector<int>> const &graph, 
 															vector<int> const &visitOrder, vector<int> &returnOrder) {
   int numV = static_cast<int>(graph.size());
   int index   = 0; // indicates a point of visitOrder to visit
@@ -104,7 +104,7 @@ void lib_calvin_graph::dfs2 (vector<vector<int>> const &graph,
   }
 }
 
-void lib_calvin_graph::bfs (vector<vector<int>> const &graph, int source, vector<Arc<int>> &result) {
+void lib_calvin_graph::bfs(vector<vector<int>> const &graph, int source, vector<Arc<int>> &result) {
   result.clear();
   result.resize(graph.size());
 	for (size_t i = 0; i < graph.size(); ++i) {

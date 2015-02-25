@@ -341,17 +341,40 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::getClosestPathTest() {
 	testGraph.insert(1, 4, 5);
 	testGraph.insert(2, 4, 2);
 	testGraph.insert(2, 3, 2);
+	testGraph.insert(3, 5, 1);
 	testGraph.insert(4, 5, 2);
-	auto path1 = testGraph.get_closest_path(1, 5);
-	auto path2 = testGraph.get_shortest_path(1, 5);
+	auto paths1 = testGraph.get_closest_path(1, 5);
+	auto paths2 = testGraph.get_shortest_path(1, 5);
+	auto paths3 = testGraph.get_n_shortest_paths(1, 5, 3);
 	std::cout << "Closest path result\n";
-	for (size_t i = 0; i <= path1.size(); ++i) {
-		std::cout << path1.get_vertex(i) << "\n";
+	for (size_t i = 0; i < paths1.size(); ++i) {
+		auto path = paths1[i];
+		std::cout << i << "closest path. total length is: " << path.length() << "\n";
+		for (size_t i = 0; i <= path.length(); ++i) {
+			std::cout << path.get_vertex(i) << "\t";
+		}
+		std::cout << "\n";
 	}
+	std::cout << "\n";
 	std::cout << "Shortest path result\n";
-	for (size_t i = 0; i <= path2.size(); ++i) {
-		std::cout << path2.get_vertex(i) << "\n";
+	for (size_t i = 0; i < paths2.size(); ++i) {
+		auto path = paths2[i];
+		std::cout << i << "shortest path. total weight is: " << path.total_weight() << "\n";
+		for (size_t i = 0; i <= path.length(); ++i) {
+			std::cout << path.get_vertex(i) << "\t";
+		}
+		std::cout << "\n";
 	}
+	std::cout << "\n";
+	std::cout << "N shortest path result\n";
+	for (size_t i = 0; i < paths3.size(); ++i) {
+		auto path = paths3[i];
+		std::cout << i << " 'th shortest path. total weight is: " << path.total_weight() << "\n";
+		for (size_t i = 0; i <= path.length(); ++i) {
+			std::cout << path.get_vertex(i) << "\t";
+		}
+		std::cout << "\n";
+	}	
 	std::cout << "\n";
 }
 

@@ -64,7 +64,10 @@ namespace lib_calvin_adt
       pair<int, P> pop(); // pop top element (key, priority)
       // returns true if actioned performed (insert or decrease-priority)
       // retuns false if new prioritoy was not lower than before.
-      bool insert (int key, P const &priority);
+			template <typename P1>
+				bool insert(int key, P1 &&priority);
+			P const & getPriority(int key) const;
+			bool hasKey(int key) const;
     private:
       int size_; // current num of elements (size of heap)
       int const maxsize_;
@@ -198,25 +201,29 @@ IntPq<P>::peek() const {
 template <typename P>
 pair<int, P>
 IntPq<P>::pop() {
+	//std::cout << "pq POP\n";
   swap_(0, size_ - 1);
   --size_;
   percolateDown(0);
+	indexArray_[heap_[size_].first] = -1;
   return heap_[size_];
 }
 
 template <typename P>
-bool IntPq<P>::insert(int key, P const &priority) {
+template <typename P1>
+bool IntPq<P>::insert(int key, P1 &&priority) {
   int index = indexArray_[key];
   if (index >= 0) { // key exists; decrease key operation
-    if (heap_[index].second <= priority) { // new priority is not lower
+    if (heap_[index].second < priority) { // new priority is higher: wrong input
       return false;
     } else {
-      heap_[index].second = priority; // decrease priority
+			// decrease priority. no-op for identical priority, but that is OK
+      heap_[index].second = std::forward<P1>(priority); 
       percolateUp(index);
       return true;
     }
   } else { // new key: insert operation
-    heap_[size_] = pair<int, P> (key, priority);
+    heap_[size_] = pair<int, P>(key, std::forward<P1>(priority));
     indexArray_[key] = size_;
     ++size_;
     percolateUp(size_ - 1);
@@ -225,18 +232,34 @@ bool IntPq<P>::insert(int key, P const &priority) {
 }
 
 template <typename P>
+bool IntPq<P>::hasKey(int key) const {
+	return indexArray_[key] >= 0;
+}
+
+template <typename P>
+P const & 
+IntPq<P>::getPriority(int key) const {
+	int index = indexArray_[key];
+	if (index < 0) {
+		std::cout << "IntPq::getPriority error\n";
+		exit(0);
+	}
+	return heap_[index].second;
+}
+
+template <typename P>
 void IntPq<P>::swap_(int index1, int index2) {
-  lib_calvin_util::swap (heap_[index1], heap_[index2]);
+  std::swap(heap_[index1], heap_[index2]);
   int key1 = heap_[index1].first;
   int key2 = heap_[index2].first;
-  lib_calvin_util::swap (indexArray_[key1], indexArray_[key2]);
+  std::swap(indexArray_[key1], indexArray_[key2]);
 }
 
 template <typename P>
 void IntPq<P>::percolateUp(int index) {
   while (index != 0) {
     int parentIndex = (index - 1) / d_;
-    if (heap_[parentIndex].second > heap_[index].second) { // need to swap
+    if (heap_[index].second < heap_[parentIndex].second) { // need to swap
       swap_ (parentIndex, index);
       index = parentIndex;
     } else {
@@ -257,7 +280,7 @@ void IntPq<P>::percolateDown(int index) {
           minIndex = tempIndex;
          }
       }
-      if (heap_[index].second > heap_[minIndex].second) {
+      if (heap_[minIndex].second < heap_[index].second) {
         // swap and recursive call
         swap_ (index, minIndex);
         index = minIndex;
@@ -276,7 +299,7 @@ void IntPq<P>::percolateDown(int index) {
           minIndex = tempIndex;
          }
       }
-      if (heap_[index].second > heap_[minIndex].second) {
+      if (heap_[minIndex].second < heap_[index].second) {
         swap_ (index, minIndex);
         return;
       } else {
