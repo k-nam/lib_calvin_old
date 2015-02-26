@@ -140,33 +140,33 @@ public: // basic data access
 
 	// Return values of algorithms
   struct edge {
-    protected:
-      V src_;
-      V dest_;
-      E edge_;
+  protected:
+    V src_;
+    V dest_;
+    E edge_;
   };
 
   class path {
-    public:
-			path(V const &source, vector<std::pair<V, E>> const &path);
-      // Size is path length. If it is zero, it means there is no path from
-      // ..the source to the target vertex
-		public:
-			size_t length() const;
-			W const total_weight() const;
-			V const & get_source() const;
-			V const & get_vertex(size_t index) const;
-			E const & get_edge(size_t index) const;
-		public:
-			path & operator= (path const &rhs);
-			path & operator= (path && rhs);
-    protected:
-      V const source_; // source vertex
-			vector<std::pair<V, E>> const path_; // does not contain source vertex
+  public:
+		path(V const &source, vector<std::pair<V, E>> const &path);
+    // Size is path length. If it is zero, it means there is no path from
+    // ..the source to the target vertex
+	public:
+		size_t length() const;
+		W const total_weight() const;
+		V const & get_source() const;
+		V const & get_vertex(size_t index) const;
+		E const & get_edge(size_t index) const;
+	public:
+		path & operator= (path const &rhs);
+		path & operator= (path && rhs);
+  protected:
+    V const source_; // source vertex
+		vector<std::pair<V, E>> const path_; // does not contain source vertex
   };		
 	class weighted_path: public path {
-    public:
-      E total_weight();
+  public:
+    E total_weight();
   };
 
 	// solution for a spanning tree (directed graph)
@@ -175,23 +175,23 @@ public: // basic data access
   };
 
   class weighted_predecessor_table: public predecessor_table {
-    public:
-		weighted_path path_to(V &dest); 
+  public:
+	weighted_path path_to(V &dest); 
   };
 
   // solution for Scc or other partition problem
   class components {
-    public:
-      // size is the num of components, not num of vertices
-      int size() const { return components_.size(); }
-      graph_base<V, E, W, ExtractWeight> const & get_graph() const { return srcGraph_; }
-      int where_is(V const &vertex) const;
-      int get_size_of(int set) const { return setSizes_[set]; }
-    protected:
-      graph_base<V, E, W, ExtractWeight> const &srcGraph_;
-      // V maps to a set number it belongs to (0 ~ #sets - 1)
-			map<V, int> const components_;
-      vector<int> const setSizes_;
+  public:
+    // size is the num of components, not num of vertices
+    int size() const { return components_.size(); }
+    graph_base<V, E, W, ExtractWeight> const & get_graph() const { return srcGraph_; }
+    int where_is(V const &vertex) const;
+    int get_size_of(int set) const { return setSizes_[set]; }
+  protected:
+    graph_base<V, E, W, ExtractWeight> const &srcGraph_;
+    // V maps to a set number it belongs to (0 ~ #sets - 1)
+		map<V, int> const components_;
+    vector<int> const setSizes_;
   };
 
 public: // Algorithms. If empty return vector means there are no solution
@@ -1436,10 +1436,8 @@ void prim(vector<vector<pair<int, W>>>const &graph, set<pair<int, int>> &result)
     }
   }
   cout << "prim: total weight is " << total << endl;
-}
-      
+} 
 } // end namespace lib_calvin_graph for definitions
-
 
 #endif
 

@@ -2,7 +2,6 @@
 <body>
 
 <?php
-echo "I am in lib.php now<br>";
 
 // define variables and set to empty values
 $name = $email = $gender = $comment = $website = "";

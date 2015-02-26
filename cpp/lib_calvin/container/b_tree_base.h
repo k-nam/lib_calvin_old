@@ -238,7 +238,7 @@ private:
 	// insert certain elem into the right position in the node, 
 	// and split the node if necessary
 	template <typename T1>
-		std::pair<iterator, bool> insertIntoNode(Node *node, T1 &&elem, int parentIndex);
+	std::pair<iterator, bool> insertIntoNode(Node *node, T1 &&elem, int parentIndex);
 	// delete certain elem from the the recursively
 	int deleteFromNode(Node *node, K const &key, int parentIndex);
 	// insert value into a leaf node
