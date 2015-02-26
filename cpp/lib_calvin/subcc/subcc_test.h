@@ -2,6 +2,6 @@
 #define LIB_CALVIN__SUBCC__SUBCC_TEST_H
 namespace subcc
 {
-	void subccTest(int argc, char *argv[]);
+void subccTest(int argc, char *argv[]);
 }
 #endif

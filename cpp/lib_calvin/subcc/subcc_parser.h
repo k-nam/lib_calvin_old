@@ -35,53 +35,53 @@ using std::shared_ptr;
 
 // Contains the lexer and builds syntax tree and does static checking.
 class Parser {
-  public:
-    Parser(string const &inText); // start parsing 
-    ~Parser();
-    void test();
-    // build syntax tree with type checking     
-		shared_ptr<SyntaxTree const> getSyntaxTree() { return syntaxTree_; }
-  private:
-		void parse();
-    // Do appropriate operation with stack and symbol table to complete
-    // ..syntax tree
-    void shiftWith(int Token);
-    void reduceWith(int productionKey);
-    // routine for statement node checking (break statement)
-    void check();
-    void check(StmtNode *node, int breakLabel);
+public:
+  Parser(string const &inText); // start parsing 
+  ~Parser();
+  void test();
+  // build syntax tree with type checking     
+	shared_ptr<SyntaxTree const> getSyntaxTree() { return syntaxTree_; }
+private:
+	void parse();
+  // Do appropriate operation with stack and symbol table to complete
+  // ..syntax tree
+  void shiftWith(int Token);
+  void reduceWith(int productionKey);
+  // routine for statement node checking (break statement)
+  void check();
+  void check(StmtNode *node, int breakLabel);
     
-    // Pop children and push parent with making links
-    void popAndPush(int childrenNum, NonTerminalNode *parent);
-    // Print error with current line number
-    void printError(std::string const &errorMessage) const; 
-    void printError(int lineNum, std::string const &errorMessage) const; 
-    void printError(IdNode const &identifier, std::string const &) const;
-    void printWarning(std::string const &warningMessage) const;
+  // Pop children and push parent with making links
+  void popAndPush(int childrenNum, NonTerminalNode *parent);
+  // Print error with current line number
+  void printError(std::string const &errorMessage) const; 
+  void printError(int lineNum, std::string const &errorMessage) const; 
+  void printError(IdNode const &identifier, std::string const &) const;
+  void printWarning(std::string const &warningMessage) const;
     
-    string getTempName(); // return "t1", "t2", ...
+  string getTempName(); // return "t1", "t2", ...
 
-    void makeLanguage(lib_calvin_parser::ContextFreeLanguage &);
-    void makeParser(lib_calvin_parser::LalrParserGenerator &);
+  void makeLanguage(lib_calvin_parser::ContextFreeLanguage &);
+  void makeParser(lib_calvin_parser::LalrParserGenerator &);
     
-    Lexer lexer_;
-    lib_calvin_parser::ContextFreeLanguage subcc_;
-    lib_calvin_parser::LalrParserGenerator subccParser_;
+  Lexer lexer_;
+  lib_calvin_parser::ContextFreeLanguage subcc_;
+  lib_calvin_parser::LalrParserGenerator subccParser_;
     
-    shared_ptr<GlobalSymbolTable> symbolTable_; // takes care of range of scopes itself
-    vector<SyntaxTreeNode *> stack_; // stack for building syntax tree
-    SyntaxTreeNode *root_; // root of the syntax tree
+  shared_ptr<GlobalSymbolTable> symbolTable_; // takes care of range of scopes itself
+  vector<SyntaxTreeNode *> stack_; // stack for building syntax tree
+  SyntaxTreeNode *root_; // root of the syntax tree
 
-		// return type of the currently defining function
-    shared_ptr<Type const> returnType_; 
+	// return type of the currently defining function
+  shared_ptr<Type const> returnType_; 
    
-    int curTemporaryNumber_; // t1, t2, ...(used in temporary for three-adderss) 
+  int curTemporaryNumber_; // t1, t2, ...(used in temporary for three-adderss) 
 
-		// resulted syntax tree by 'parse()' method
-		shared_ptr<SyntaxTree const> syntaxTree_; 
+	// resulted syntax tree by 'parse()' method
+	shared_ptr<SyntaxTree const> syntaxTree_; 
 };
 
-}    // end namespace
+} // end namespace
 
 
 

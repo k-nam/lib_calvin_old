@@ -13,37 +13,37 @@ using lib_calvin::string;
 using lib_calvin::stopwatch;
 
 class Lexer {
-  public:
-    typedef lib_calvin_lexer::RegularExpression<>::ParseTreeNode          Node;
-		typedef lib_calvin_lexer::NfaLexerGenerator<>         NFA;
-    typedef lib_calvin_lexer::DfaLexerGenerator<>         DFA;
-    typedef lib_calvin_lexer::NfaLexerGenerator<>::Token  Token; 
-    Lexer(string const &inText): text_(inText), index_(0), lineNum_(1) {
-      stopwatch watch;
-      watch.start();
-      build();
-      watch.stop();
-      std::cout << "Lexer generating took " << watch.read() << " sec\n";
-    }
-    void initialize() { // start from the beginning of text again
-      index_ = 0;
-      lineNum_ = 1;
-    }
-    int getNextToken(); // return Token number
-    int getLineNum() const { // return current line number
-      return lineNum_;
-    }
-    string getLexeme() const { // return matched string
-      return curLexeme_;
-    }
-  private:
-    void build();
-    NFA nfa;
-    DFA dfa;
-    string const &text_; // input source code to lex
-    int index_; // current position of reading
-    int lineNum_; // count current line number from start
-    string curLexeme_; // store currently matched string
+public:
+  typedef lib_calvin_lexer::RegularExpression<>::ParseTreeNode Node;
+	typedef lib_calvin_lexer::NfaLexerGenerator<> NFA;
+  typedef lib_calvin_lexer::DfaLexerGenerator<> DFA;
+  typedef lib_calvin_lexer::NfaLexerGenerator<>::Token Token; 
+  Lexer(string const &inText): text_(inText), index_(0), lineNum_(1) {
+    stopwatch watch;
+    watch.start();
+    build();
+    watch.stop();
+    std::cout << "Lexer generating took " << watch.read() << " sec\n";
+  }
+  void initialize() { // start from the beginning of text again
+    index_ = 0;
+    lineNum_ = 1;
+  }
+  int getNextToken(); // return Token number
+  int getLineNum() const { // return current line number
+    return lineNum_;
+  }
+  string getLexeme() const { // return matched string
+    return curLexeme_;
+  }
+private:
+  void build();
+  NFA nfa;
+  DFA dfa;
+  string const &text_; // input source code to lex
+  int index_; // current position of reading
+  int lineNum_; // count current line number from start
+  string curLexeme_; // store currently matched string
 };
 
 enum Tokens {

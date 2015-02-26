@@ -21,8 +21,9 @@
  * 2008-06-10: Starting to implement actual translation methods.
  */
 
-namespace subcc {
-  class ThreeAdressCodeGenerator;
+namespace subcc 
+{
+class ThreeAdressCodeGenerator;
 }
 
 namespace subcc {
@@ -91,213 +92,213 @@ enum InstructionType {
 // ..temporary symbol (of bar's type), whose l-value has been calculated
 // ..just before with the dot selector. 
 class Address {
-  public:
-    Address(); // null addrsss
-    Address(enum AddressType addressType, int symtabIndex);
-    enum AddressType getType() const;
-    int getSymbolTableIndex() const;
-    bool isNull() const;
-  protected:
-    enum AddressType addressType_;
-    int symbolTableIndex_; // key to the symbol
+public:
+  Address(); // null addrsss
+  Address(enum AddressType addressType, int symtabIndex);
+  enum AddressType getType() const;
+  int getSymbolTableIndex() const;
+  bool isNull() const;
+protected:
+  enum AddressType addressType_;
+  int symbolTableIndex_; // key to the symbol
 };
 
 
 /******************************** Instruction *******************************/
 
 class Instruction {
-  public:
-    enum InstructionType getType() const;
-    virtual ~Instruction();
-	public:
-		static void countObjects();
-  protected:
-    Instruction(enum InstructionType instType);
-    enum InstructionType instructionType_;
-	private:
-		static int64_t objectCount_;
+public:
+  enum InstructionType getType() const;
+  virtual ~Instruction();
+public:
+	static void countObjects();
+protected:
+  Instruction(enum InstructionType instType);
+  enum InstructionType instructionType_;
+private:
+	static int64_t objectCount_;
 };
 
 // foo:
 class FunctionStartInstruction: public Instruction {
-  public:
-    FunctionStartInstruction(string const &functionName, int stackSize);
-    string const &getFunctionName() const;
-    int getStackSize() const;
-  protected:
-    string functionName_;
-    int stackSize_;
+public:
+  FunctionStartInstruction(string const &functionName, int stackSize);
+  string const &getFunctionName() const;
+  int getStackSize() const;
+protected:
+  string functionName_;
+  int stackSize_;
 };
 
 // Just for convenience; mark the end of a function
 class FunctionEndInstruction: public Instruction {
-  public:
-    FunctionEndInstruction(string const &functionName, int stackSize);
-    string const &getFunctionName() const;
-    int getStackSize() const;
-  protected:
-    string functionName_;
-    int stackSize_;
+public:
+  FunctionEndInstruction(string const &functionName, int stackSize);
+  string const &getFunctionName() const;
+  int getStackSize() const;
+protected:
+  string functionName_;
+  int stackSize_;
 };
 
 // L34:
 class LabelInstruction: public Instruction {
-  public:
-    LabelInstruction(int labelNumber);
-    int getLabel() const;
-  protected:
-    int label_;
+public:
+  LabelInstruction(int labelNumber);
+  int getLabel() const;
+protected:
+  int label_;
 };
 
 // Various assignment instructions: abstract class
 class AssignInstruction: public Instruction {
-  public:
-    Address const &getTarget() const;
-    Address const &getSource() const;
-  protected:
-    AssignInstruction(enum InstructionType, Address const &target,
-        Address const &source);
-		virtual ~AssignInstruction() { }
-    Address source_;
-    Address target_;
+public:
+  Address const &getTarget() const;
+  Address const &getSource() const;
+protected:
+  AssignInstruction(enum InstructionType, Address const &target,
+      Address const &source);
+	virtual ~AssignInstruction() { }
+  Address source_;
+  Address target_;
 };
 
 // x = y;
 class CopyInstruction: public AssignInstruction {
-  public:
-    CopyInstruction(Address const &target, Address const &src);
+public:
+  CopyInstruction(Address const &target, Address const &src);
 };
 
 // x = op y;
 class UnaryAssignInstruction: public AssignInstruction {
-  public:
-    UnaryAssignInstruction(Address const &target, enum UniOp, 
-        Address const &src);
-    enum UniOp getOperator() const;
-  protected:
-    enum UniOp operator_;
+public:
+  UnaryAssignInstruction(Address const &target, enum UniOp, 
+      Address const &src);
+  enum UniOp getOperator() const;
+protected:
+  enum UniOp operator_;
 };
 
 // x = y op z;
 class BinaryAssignInstruction: public AssignInstruction {
-  public:
-    BinaryAssignInstruction(Address const &target,
-        Address const &srcA, BinOps, Address const &srcB);
-    Address const &getSrcA() const;
-    Address const &getSrcB() const;
-    BinOps getOperator() const;
-  protected:
-    Address srcB_;
-    BinOps operator_;
-  private: 
-    Address const &getSource() const; // shadow 
+public:
+  BinaryAssignInstruction(Address const &target,
+      Address const &srcA, BinOps, Address const &srcB);
+  Address const &getSrcA() const;
+  Address const &getSrcB() const;
+  BinOps getOperator() const;
+protected:
+  Address srcB_;
+  BinOps operator_;
+private: 
+  Address const &getSource() const; // shadow 
 };
 
 // x = call (y)
 class FunctionCallInstruction: public Instruction {
-  public:
-    FunctionCallInstruction(Address const &returnValue, 
-        Address const &function);
-    Address const &getFunction() const;
-    Address const &getReturnValue() const;
-  protected:
-    Address returnValue_;
-    Address function_;
+public:
+  FunctionCallInstruction(Address const &returnValue, 
+      Address const &function);
+  Address const &getFunction() const;
+  Address const &getReturnValue() const;
+protected:
+  Address returnValue_;
+  Address function_;
 };
 
 // return (x) ; if returning void, set address as null
 class ReturnInstruction: public Instruction {
-  public:
-    ReturnInstruction(); // returning void
-    ReturnInstruction(Address const &returnValue);
-    Address const &getReturnValue() const;
-  protected:
-    Address returnValue_;
+public:
+  ReturnInstruction(); // returning void
+  ReturnInstruction(Address const &returnValue);
+  Address const &getReturnValue() const;
+protected:
+  Address returnValue_;
 };
 
 // param (x) 
 class ParameterInstruction: public Instruction {
-  public:
-    ParameterInstruction(Address const &parameter);
-    Address const &getParameter() const;
-  protected:
-    Address parameter_;
+public:
+  ParameterInstruction(Address const &parameter);
+  Address const &getParameter() const;
+protected:
+  Address parameter_;
 };
 
 class PopInstruction: public Instruction {
-  public:
-    PopInstruction(int popSize);
-    int getPopSize() const;
-  protected:
-    int popSize_;
+public:
+  PopInstruction(int popSize);
+  int getPopSize() const;
+protected:
+  int popSize_;
 };
 
 // Unconditional and conditional branches: abstract class
 class BranchInstruction: public Instruction {
-  public:
-    int getTargetLabel() const;
-  protected:
-    BranchInstruction(enum InstructionType, int targetLabel);
-		virtual ~BranchInstruction() { }
-    int targetLabel_;
+public:
+  int getTargetLabel() const;
+protected:
+  BranchInstruction(enum InstructionType, int targetLabel);
+	virtual ~BranchInstruction() { }
+  int targetLabel_;
 };
 
 // goto L
 class JumpInstruction: public BranchInstruction {
-  public:
-    JumpInstruction(int targetLabel);
+public:
+  JumpInstruction(int targetLabel);
 };
 
 // if (x) goto L
 class UnaryBranchInstruction: public BranchInstruction {
-  public:
-    UnaryBranchInstruction(Address const &cond, int targetLabel);
-    Address const &getCondition() const;
-  protected:
-    Address condition_;
+public:
+  UnaryBranchInstruction(Address const &cond, int targetLabel);
+  Address const &getCondition() const;
+protected:
+  Address condition_;
 };
 
 // if (!x) goto L
 class UnaryNotBranchInstruction: public BranchInstruction {
-  public:
-    UnaryNotBranchInstruction(Address const &cond, int targetLabel);
-    Address const &getCondition() const;
-  protected:
-    Address condition_;
+public:
+  UnaryNotBranchInstruction(Address const &cond, int targetLabel);
+  Address const &getCondition() const;
+protected:
+  Address condition_;
 };
 
 // if (x op y) goto L
 class BinaryBranchInstruction: public BranchInstruction {
-  public: 
-    BinaryBranchInstruction(Address const &condA, BinOps, 
-        Address const &condB, int targetLabel);
-    Address const &getConditionA() const;
-    Address const &getConditionB() const;
-    BinOps getOperator() const;
-  protected:
-    Address conditionA_;
-    Address conditionB_;
-    BinOps operator_;
+public: 
+  BinaryBranchInstruction(Address const &condA, BinOps, 
+      Address const &condB, int targetLabel);
+  Address const &getConditionA() const;
+  Address const &getConditionB() const;
+  BinOps getOperator() const;
+protected:
+  Address conditionA_;
+  Address conditionB_;
+  BinOps operator_;
 };
 
 // x = y[i]
 class IndexedSrcCopyInstruction: public AssignInstruction {
-  public:
-    IndexedSrcCopyInstruction(Address const &target, Address const &src, 
-        Address const &index);
-    Address const &getIndex() const;
-  protected:
-    Address index_;
+public:
+  IndexedSrcCopyInstruction(Address const &target, Address const &src, 
+      Address const &index);
+  Address const &getIndex() const;
+protected:
+  Address index_;
 };
 
 // x[i] = y
 class IndexedTargetCopyInstruction: public AssignInstruction {
-  public:
-    IndexedTargetCopyInstruction(Address const &target, Address const &index, 
-        Address const &src);
-    Address const &getIndex() const;
-  protected:
-    Address index_;
+public:
+  IndexedTargetCopyInstruction(Address const &target, Address const &index, 
+      Address const &src);
+  Address const &getIndex() const;
+protected:
+  Address index_;
 };
 
 /************************** Code and Code Generator **************************/
@@ -306,51 +307,51 @@ class IndexedTargetCopyInstruction: public AssignInstruction {
 // Sequence of three-address instructions with predefined addressing modes
 // ..and operators
 class ThreeAdressCode {
-  public:
-    ThreeAdressCode(shared_ptr<GlobalSymbolTable const> symbolTable);
-		~ThreeAdressCode();
-    void pushInstruction(Instruction const *instruction);
-    void print() const;
-		void print(Instruction const &) const;
-    void print(Address const &) const;
-    void print(enum UniOp) const;
-    void print(BinOps) const;
-		shared_ptr<GlobalSymbolTable const> getSymbolTable() const { return symbolTable_; }	
-		vector<Instruction const *> const *getInstructions() const { return &instructions_; }
-  private:
-    shared_ptr<GlobalSymbolTable const> symbolTable_;
-    vector<Instruction const *> instructions_;
+public:
+  ThreeAdressCode(shared_ptr<GlobalSymbolTable const> symbolTable);
+	~ThreeAdressCode();
+  void pushInstruction(Instruction const *instruction);
+  void print() const;
+	void print(Instruction const &) const;
+  void print(Address const &) const;
+  void print(enum UniOp) const;
+  void print(BinOps) const;
+	shared_ptr<GlobalSymbolTable const> getSymbolTable() const { return symbolTable_; }	
+	vector<Instruction const *> const *getInstructions() const { return &instructions_; }
+private:
+  shared_ptr<GlobalSymbolTable const> symbolTable_;
+  vector<Instruction const *> instructions_;
 };
 
 // syntax tree (including symbol table)  ---> IR
 class ThreeAdressCodeGenerator {
-  public:
-    ThreeAdressCodeGenerator(shared_ptr<SyntaxTree const> syntaxTree);
-		~ThreeAdressCodeGenerator() { }
-		shared_ptr<ThreeAdressCode const> getCode() const { return code_; }
+public:
+  ThreeAdressCodeGenerator(shared_ptr<SyntaxTree const> syntaxTree);
+	~ThreeAdressCodeGenerator() { }
+	shared_ptr<ThreeAdressCode const> getCode() const { return code_; }
     
-  private:
-    void generateCode();
-    void translateFunction(FunctionNode const *);
-    // Call without break and continue label sets those labels to error
-    void translateStatement(StmtNode const *, int nextLabel); 
-    void translateStatement(StmtNode const *, int nextLabel, 
-        int breakLabel, int continueLabel);
-    // Two kinds of translation is possible for expressions: control and value
-    // Translate for control: two branches (true & false)
-    void translateExpression(ExprNode const *, int trueLabel, int falseLabel);
-    // Translate for value: we may need its r-value or not
-    void translateExpression(ExprNode const *, bool saveRvalue);
-    void pushInstruction(Instruction const *instruction);
+private:
+  void generateCode();
+  void translateFunction(FunctionNode const *);
+  // Call without break and continue label sets those labels to error
+  void translateStatement(StmtNode const *, int nextLabel); 
+  void translateStatement(StmtNode const *, int nextLabel, 
+      int breakLabel, int continueLabel);
+  // Two kinds of translation is possible for expressions: control and value
+  // Translate for control: two branches (true & false)
+  void translateExpression(ExprNode const *, int trueLabel, int falseLabel);
+  // Translate for value: we may need its r-value or not
+  void translateExpression(ExprNode const *, bool saveRvalue);
+  void pushInstruction(Instruction const *instruction);
     
-    int getNewLabel();
-    Address getAddress(int symtabIndex) const; // finds out address type
+  int getNewLabel();
+  Address getAddress(int symtabIndex) const; // finds out address type
 
-		shared_ptr<SyntaxTree const> syntaxTree_; // should hold shared_ptr itself as well
-    SyntaxTreeNode const *root_;
-    shared_ptr<GlobalSymbolTable const> symbolTable_;
-    shared_ptr<ThreeAdressCode> code_;
-    int curLabel_;
+	shared_ptr<SyntaxTree const> syntaxTree_; // should hold shared_ptr itself as well
+  SyntaxTreeNode const *root_;
+  shared_ptr<GlobalSymbolTable const> symbolTable_;
+  shared_ptr<ThreeAdressCode> code_;
+  int curLabel_;
 };
 
 } // End namespace subcc
