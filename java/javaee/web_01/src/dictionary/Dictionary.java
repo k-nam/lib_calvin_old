@@ -54,7 +54,7 @@ public class Dictionary {
 				}
 			}
 		}
-		
+
 		while (true) {
 			try {
 				line = reader2.readLine();
@@ -64,7 +64,7 @@ public class Dictionary {
 			if (line == null) {
 				break;
 			} else {
-				word = line; 
+				word = line;
 				if (entryMap.containsKey(word) == false) {
 					// big dictionary's words has lower frequency.
 					entryMap.put(word, noFrequency);
@@ -102,7 +102,6 @@ public class Dictionary {
 		});
 		List<DictionaryEntry> mostFrequent = prefixMatches.subList(0,
 				Math.min(num, prefixMatches.size()));
-		
 
 		List<String> result = new ArrayList<String>();
 		for (DictionaryEntry entry : mostFrequent) {
