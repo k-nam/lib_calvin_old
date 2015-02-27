@@ -9,16 +9,17 @@
 <script>
 $(document).ready(function() {
 	alert("ready");
+
 	function getSuggestion(keyword) {	
+	
 		if (keyword == "") {
 			return ["abc"];
 		}
-		var resultArray = [];
+		$resultArray = [];
 		$.ajax({
-			url: "autocomplete.php?input=" + keyword + "&num=20",
+			url: "DictionaryAutocomplete?input=" + keyword + "&num=20",
 			async: false,
 			success: function(result) {
-				//alert(result);
 				resultArray = result.split(" ");
 			},
 			error: function(xhr) {
@@ -27,12 +28,14 @@ $(document).ready(function() {
 			timeout : 1000
 		});	
 		return resultArray;
+		
 	}
+	
 	
 	$("#dictionary_input").autocomplete({
 		search: function(event, ui) {
-			$("#dictionary_input").autocomplete("option", "source", getSuggestion($("#dictionary_input").val()));	
-			//$("#dictionary_input").autocomplete("option", "source", ["aaa", "bbb", "ccc"]);	
+			//$("#dictionary_input").autocomplete("option", "source", getSuggestion($("#dictionary_input").val()));	
+			$("#dictionary_input").autocomplete("option", "source", ["aaa", "bbb", "ccc"]);	
 		},
 		focus: function(event, ui) {
 			// prevent autocomplete from updating the textbox
@@ -48,14 +51,16 @@ $(document).ready(function() {
 			$("#dictionary_input").val(ui.item.value + " go!");
 		},
 		dealy: 10
-	});	
+	});
+	
+	
 });
 </script>
 </head>
 
 <body>
 
-<form action="result.php" method="post">
+<form action="/result.php" method="post">
 Name: <input type="text" name="name"><br>
 E-mail: <input type="text" name="email"><br>
 Website: <input type="text" name="website"><br>
