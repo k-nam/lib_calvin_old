@@ -1,4 +1,3 @@
-
 <?php
 require 'mylib.php';
 
@@ -14,12 +13,22 @@ class Dictionary {
 		return $this->entries;
 	}
 	private function loadDictionary($fileName) {
+		$infinity = 10000000; // words without frequency data 
 		$handle = fopen($fileName, "r");
 		while ($line = fgets($handle, $this->maxLineLength)) {
+			$rank = $infinity;
+			$word = "";
 			$rankAndWord = explode("\t", $line);
-			$rank = intval($rankAndWord[0]);
-			$word = $rankAndWord[1];
+			if (count($rankAndWord) === 1) {
+				$word = removeNewline($rankAndWord[0]);
+			} else if (count($rankAndWord) === 2) {
+				$rank = intval($rankAndWord[0]);
+				$word = removeNewline($rankAndWord[1]);
+			} else { // error
+				continue;
+			}
 			$this->entries[$rank] = $word;
+			//debugLog("".$rank."=>".$word);
 		}
 		$handle.fclose($handle);
 	}
@@ -45,16 +54,22 @@ function getSuggestion($input, $numSuggestion) {
 	$matches = array_slice($matches, 0, min($numSuggestion, sizeof($matches)));
 	$suggestions = array();
 	foreach ($matches as $rank => $word) {
+		//debugLog("Adding word: ".$word);
+		if ($word === "" || $word === " ") {
+			return "error fuck";
+		}
 		$suggestions[] = $word;
 	}
+	//debugLog("Result: ".$suggestions);
 	return implode(" ", $suggestions);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 	$input = test_input($_GET["input"]);
 	$numSuggestion = intval(test_input($_GET["num"]));
-	//$response = "absolute"." "."beautiful"." "."commander";
+	//$response = "absolute"." "."beautiful"." "."commander"."cc"."\n"."ddd";
 	$response = getSuggestion($input, $numSuggestion);
+	debugLog("Response: <".$response.">");
 	echo $response;
 } else {
 	echo "error";

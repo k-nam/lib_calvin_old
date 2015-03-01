@@ -13,12 +13,11 @@ $(document).ready(function() {
 		if (keyword == "") {
 			return ["abc"];
 		}
-		var resultArray = [];
+		var resultArray;
 		$.ajax({
 			url: "autocomplete.php?input=" + keyword + "&num=20",
 			async: false,
 			success: function(result) {
-				//alert(result);
 				resultArray = result.split(" ");
 			},
 			error: function(xhr) {
@@ -31,8 +30,10 @@ $(document).ready(function() {
 	
 	$("#dictionary_input").autocomplete({
 		search: function(event, ui) {
-			$("#dictionary_input").autocomplete("option", "source", getSuggestion($("#dictionary_input").val()));	
-			//$("#dictionary_input").autocomplete("option", "source", ["aaa", "bbb", "ccc"]);	
+			var suggestion = getSuggestion($("#dictionary_input").val());
+			//alert("Suggestions: <" + suggestion + ">");
+			$("#dictionary_input").autocomplete("option", "source", suggestion);	
+			//$("#dictionary_input").autocomplete("option", "source", ["aaa", "abb", "abc", "bbb", "ccc"]);	
 		},
 		focus: function(event, ui) {
 			// prevent autocomplete from updating the textbox
