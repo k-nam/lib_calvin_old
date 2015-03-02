@@ -53,41 +53,26 @@ class TextFileLoader(val sourceFileName: String, val connection: Connection) {
 		val batchSize = 10000
 		val queries = new HashSet[PreparedStatement]()
 		var thisLine: String = reader.readLine
-		var lineIndex = 0
 		var i = 0
-		var turn = 0; // 0: time to read start password, 1: time to read second, 2: time to read empty line
 		while (thisLine != null) {
-			if (turn != 2 && thisLine.equals("")) {
-				println("error1 empty line in #line: " + lineIndex)
-				return
-			}
-			if (turn == 0) {
-				batchStmt.setString(1, thisLine)
-				first = thisLine
-			} else if (turn == 1) {
-				batchStmt.setString(2, thisLine)
+			if (thisLine.equals("")) { // fine, next in line please.
+			} else {
+				val pair = thisLine.split('\t')
+				val first = pair(0)
+				val last = pair(1)
+				batchStmt.setString(1, first)
+				batchStmt.setString(2, last)
 				batchStmt.addBatch
-				queries.add(createStmt(first, thisLine))
+				queries.add(createStmt(first, last))
 				i += 1
 				if (i % batchSize == 0) {
-					println("Executing batch, current line is " + thisLine + " turn was " + turn)
+					println("Executing batch, current line is " + thisLine)
 					executeBatch(batchStmt, queries)
 				}
-			} else {
-				if (!thisLine.equals("")) {
-					println("error2 empty line in #line: " + lineIndex)
-					return
-				}
 			}
-			turn += 1
-			turn %= 3
 			thisLine = reader.readLine
-			lineIndex += 1
 		}
-		if (turn != 2) {
-			println("error3 turn error in #line: " + lineIndex)
-			return
-		}
+
 		if (i % batchSize != 0) {
 			executeBatch(batchStmt, queries)
 		}

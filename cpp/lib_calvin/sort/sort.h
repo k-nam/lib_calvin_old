@@ -320,8 +320,7 @@ void FactoryLoader<Argument>::add(Argument const &newWork)
 }
 
 template <typename Argument, typename Operation>
-void Factory<Argument, Operation>::work() 
-{
+void Factory<Argument, Operation>::work() {
 	// data mambers should be accessed only in the critical section
 	while (true) {
 		acquire_lock(lock_);

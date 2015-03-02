@@ -1,5 +1,6 @@
 #include "rainbow_table.h"
 #include "md5.h"
+#include "lib.h"
 #include <random>
 #include <iostream>
 #include <fstream>
@@ -198,15 +199,10 @@ hacking__rainbow_table::hash(std::string passwordFileName, std::string outFileNa
 	std::ifstream inStream(passwordFileName);
 	std::ofstream outStream(outFileName);
 	std::string line;
-	bool isFirstLine = true;
 	while (std::getline(inStream, line)) {
-		if (isFirstLine) {
-			isFirstLine = false;
-		} else {
-			outStream << "\n";
-		}
 		Md5Hash hash = Md5Func()(line);
 		outStream << hash.toHexString();
+		outStream << "\n";
 	}
 	inStream.close();
 	outStream.close();
@@ -218,15 +214,9 @@ hacking__rainbow_table::getFirstAndLast(
 	std::ifstream inStream(passwordFileName);
 	std::ofstream outStream(outFileName);
 	std::string password;
-	bool isFirstLine = true;
 	while (std::getline(inStream, password)) {
 		auto chain = getFirstAndLast2(password, chainLength);
-		if (isFirstLine) {
-			isFirstLine = false;
-		} else {
-			outStream << "\n\n";
-		}
-		outStream << chain.first << "\n" << chain.second;
+		outStream << chain.first << "\t" << chain.second << '\n';
 	}
 	inStream.close();
 	outStream.close();
@@ -238,21 +228,13 @@ hacking__rainbow_table::getChain(
 	std::ifstream inStream(hashFileName);
 	std::ofstream outStream(outFileName);
 	std::string line;
-	bool isFirstLine = true;
-	bool isFirstPassword = true;
 	while (std::getline(inStream, line)) {
 		auto chain = getChain(Md5Hash(line), chainLength);
-		if (isFirstLine) {
-			isFirstLine = false;
-		} else {
-			outStream << "\n\n";
-		}
-		outStream << line;
-		isFirstPassword = true;
+		outStream << line << '\t';
 		for (auto password: chain) {
-			outStream << "\n";
-			outStream << password;
+			outStream << password << '\t';
 		}
+		outStream << '\n';
 	}
 	inStream.close();
 	outStream.close();
@@ -262,34 +244,30 @@ hacking__rainbow_table::getChain(
 void 
 hacking__rainbow_table::getCrackedPassword(
 				std::string firstFileName, std::string outFileName, int chainLength) {
-	std::ifstream inStream(firstFileName);
-	std::ofstream outStream(outFileName);
-	std::string line;
+	using namespace std;
+	ifstream inStream(firstFileName);
+	ofstream outStream(outFileName);
+	string line;
 	unsigned char dummy[MD5_HASH_LENGTH]; // Md5Hash doesn't have default ctor
 	Md5Hash hash(dummy);
-	bool isFirstParagraph = true;
-	bool isFirstLine = true;
-	while (std::getline(inStream, line)) {
-		if (isFirstLine) {
-			if (isFirstParagraph) {
-				isFirstParagraph = false;
-			} else {
-				outStream << "\n\n";
-			}
-			hash = Md5Hash(line); // read hex string
-			outStream << line;
-			isFirstLine = false;
-		} else {
-			if (line == "") {
-				isFirstLine = true;
-			} else {
-				auto passwords = getCrackedPassword(hash, line, chainLength);
-				for (auto password: passwords) {
-					outStream << "\n";
-					outStream << password;
-				}
+	while (getline(inStream, line)) {
+		if (line == "") {
+			continue;
+		}
+		auto words = hacking__lib::split(line, '\t');
+		auto iterator = words.begin();
+		auto stringHex = *iterator; // first word is hex string
+		hash = Md5Hash(stringHex); // read hex string
+		outStream << stringHex;
+		outStream << "\t";
+		for (iterator++; iterator != words.end(); iterator++) {
+			auto passwords = getCrackedPassword(hash, *iterator, chainLength);
+			for (auto password: passwords) {
+				outStream << password;
+				outStream << "\t";
 			}
 		}
+		outStream << "\n";
 	}
 	inStream.close();
 	outStream.close();

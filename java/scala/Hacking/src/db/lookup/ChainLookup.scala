@@ -17,29 +17,22 @@ class ChainLookup(val chainFileName: String, val outputFileName: String, val con
 		var isFirstLine = true
 		line = reader.readLine
 		while (line != null) {
-			if (turn == 0) {
-				if (isFirstLine) {
-					isFirstLine = false
-				} else {
-					writer.write("\n\n")
-				}
-				//println("hash is: " + line)
-				writer.write(line) // copy hash
-				turn = 1;
+			if (line == "") { // fine just jump
 			} else {
-				if (line.equals("")) { // end of this chain
-					turn = 0;
-				} else {
-					val query = getSelectQuery(line)
+				val words = line.split('\t');
+				val hash = words(0)
+				writer.write(hash + "\t") // copy hash
+				val passwords = words.slice(1, words.length)
+				for (password <- passwords) {
+					val query = getSelectQuery(password)
 					//println(query)
 					val rs = stmt.executeQuery(query)
-
 					while (rs.next) {
-						writer.write("\n")
 						writer.write(rs.getString("First"))
-
+						writer.write("\t")
 					}
 				}
+				writer.write("\n")
 			}
 			line = reader.readLine
 		}
