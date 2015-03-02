@@ -29,7 +29,6 @@ int main(int argc, char* argv[])
 	b->constMethod();
 	c->constMethod();
 
-
 	return 0;
 }
 

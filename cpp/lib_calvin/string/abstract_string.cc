@@ -1,31 +1,7 @@
-
 #include "abstract_string.h"
 
-
 using namespace lib_calvin;
-using namespace lib_calvin_string;
 using lib_calvin::stopwatch;
-
-
-/************************ Matcher definition ************************/
-
-Matcher::Matcher() { 
-  /* 
-  char *p = "cabceab";
-  abstract_string<Alphabet> pattern (p, 7);
-  cout << "Pattern is  ";
-  pattern.print();
-  vector<int> record;
-  int size = pattern.size();  
-  strongGoodSuffix (pattern, record);
-  for (int i = 0; i <= size; ++i) {
-    cout << "strongGoodSuffix [" << i << "] = " << record[i] << endl;
-  }
-  badChar (pattern, record);
-  for (char i = 'a'; i <= 'e'; ++i) {
-    cout << "badChar [" << i << "] = " << record[i] << endl;
-  }*/ 
-}
 
 /************************* Global functions definition ***********************/
 string 
@@ -52,6 +28,7 @@ lib_calvin::itoa(int number) {
 }
 
 char lib_calvin::charOf(string const &string) {
+	using std::cout;
   if(string.size() == 3) { // normal character
     return string[1];
   } else if (string.size() == 4) { // escape character
@@ -100,6 +77,7 @@ int lib_calvin::intOfDec(string const &string) {
 }
 
 int lib_calvin::intOfHex(string const &string) {
+	using std::cout;
   if (string[0] != '0' || (string[1] != 'x' && string[1] != 'X')) {
     cout << "intOfHex: error, input is not hex constant\n";
     exit(0);
@@ -123,7 +101,6 @@ int lib_calvin::intOfHex(string const &string) {
 float lib_calvin::floatOf(string const &string) {
   return static_cast<float>(1.1);
 }
-
 
 
 

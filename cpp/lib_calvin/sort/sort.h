@@ -53,21 +53,6 @@ void introSortPointerSorting(Iterator first, Iterator last, Comparator comp = Co
 	pointerSorting<Iterator, Comparator, IntroSort>(first, last, comp);
 }
 
-// Test sorting algorithms with given object type T
-// T should have int first and int second
-// T should have operator< defined by order of first
-/*
-template <typename T>
-class Sorter {
-  public:
-    Sorter();
-
-    // num: # of elements to sort
-    void sortTest (void (*sortingAlg) (T *first, T *last), std::string);
-    
-  private:
-};*/
-
 // Class for storing sub-arrays to sort
 // Abandone, because we use Factory class now
 template <typename Iterator>
@@ -310,13 +295,15 @@ void cacheTest3(Iterator first, Iterator last);
 template <typename Iterator>
 void cacheTest4(Iterator first, Iterator last);
 
-
 } // end namespace lib_calvin_sort
+
+namespace lib_calvin {
+	using lib_calvin_sort::introSort;
+	using lib_calvin_sort::mergeSort;
+}
 
 
 namespace lib_calvin_sort { // open for definitions
-
-
 using lib_calvin::stopwatch;
 
 template <typename Argument>
@@ -577,7 +564,7 @@ Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last, Comparat
 	// int swapCount = 0; 
 	typedef iterator_traits<Iterator>::value_type valueType;
   Iterator left, right, middle;
-  using lib_calvin_util::swap;
+  using std::swap;
 	left = first;
   right = (last - 1);
   middle = first + (last - first) / 2;
@@ -891,8 +878,7 @@ void lib_calvin_sort::heapSort(Iterator first, Iterator last, Comparator comp) {
   // sorting
   while (size > 1) {
     // swap first and last
-    using lib_calvin_util::swap;
-    lib_calvin_util::swap(*first, *(first + size - 1));
+    std::swap(*first, *(first + size - 1));
     size--;
     percolateDown(first, comp, 0, size);
   }

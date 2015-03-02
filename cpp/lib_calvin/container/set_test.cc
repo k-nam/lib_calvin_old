@@ -257,11 +257,7 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 	table1.insert(1);
 	table1.erase(6);
 	table2 = table1;
-	lib_calvin_util::printContainer(table1, "table1");
-	lib_calvin_util::printContainerReverse(table1, "table1");
 	cout << "table1 size: " << table1.size() << "\n";
-	lib_calvin_util::printContainer(table2, "table2");
-	lib_calvin_util::printContainerReverse(table2, "table2");
 	cout << "table2 size: " << table2.size() << "\n";	
 	if (table1 != table2) {
 		correct = false;

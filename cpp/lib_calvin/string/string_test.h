@@ -3,16 +3,18 @@
 
 #include <iostream>
 #include "abstract_string.h"
+#include "vector.h"
 
 using std::cout;
 using std::endl;
 
 namespace lib_calvin_string
 {
+using lib_calvin::abstract_string;
 void stringTest();
 void matchingTest (void (*matchingCharAlg) 
     (abstract_string<> const &text, abstract_string<> const &pattern, 
-     vector<int> &record), std::string title);
+     lib_calvin::vector<int> &record), std::string title);
 }
 
 #endif

@@ -170,7 +170,7 @@ void lib_calvin_sort::getSamplesTest() {
 	int elems[] = { 12, 12, 1, 19, 3, 6, 4, 3, 10, 8, 2,5,9 };
 	vector<int> result;
 	getSamples(elems, elems + 12, 1, result);
-	lib_calvin_util::printContainer(result, "samples");
+	//lib_calvin_util::printContainer(result, "samples");
 }
 
 int64_t lib_calvin_sort::SimpleStruct::objectCount_ = 0;

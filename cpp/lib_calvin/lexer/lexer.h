@@ -168,7 +168,7 @@ class DfaLexerGenerator {
     typedef int DfaState; // set of Nfa states
     typedef typename NfaLexerGenerator<Char>::Token Token;
   
-    DfaLexerGenerator(): charSize_(static_cast<int>(lib_calvin_string::getSizeOfCharSet<Char>())) { }
+    DfaLexerGenerator(): charSize_(static_cast<int>(lib_calvin::getSizeOfCharSet<Char>())) { }
     void clear();
     void convertFrom(NfaLexerGenerator<Char> const &);
     // Same function as its Nfa, but (hopefully) much faster!
@@ -302,7 +302,7 @@ lib_calvin_lexer::NfaLexerGenerator<Char>::Sentence::Sentence(
 
 template <typename Char>
 lib_calvin_lexer::NfaLexerGenerator<Char>::NfaLexerGenerator(): 
-  charSize_(static_cast<int>(lib_calvin_string::getSizeOfCharSet<Char>())), size_(0) {
+  charSize_(static_cast<int>(lib_calvin::getSizeOfCharSet<Char>())), size_(0) {
 }
 
 template <typename Char>
@@ -352,7 +352,7 @@ template <typename Char>
 void lib_calvin_lexer::NfaLexerGenerator<Char>::getEpsilonClosure(set<State> const &curStates, 
     set<State> &nextStates) const {
   // epsilon edge is represented by null_char (hidden character)
-  int null = static_cast<int>(lib_calvin_string::getNullChar<Char>());
+  int null = static_cast<int>(lib_calvin::getNullChar<Char>());
   vector<bool> isMarked(size_, false); // marked: grey OR black vertex
   vector<State> stack;
   typename set<State>::const_iterator iter, iter2;
@@ -433,7 +433,7 @@ lib_calvin_lexer::NfaLexerGenerator<Char>::makeNewState() {
 template <typename Char>
 void lib_calvin_lexer::NfaLexerGenerator<Char>::setEpsilonTrans (
     State curState, State nextState) {
-  int null = static_cast<int>(lib_calvin_string::getNullChar<Char>());
+  int null = static_cast<int>(lib_calvin::getNullChar<Char>());
   transitionTable_[curState][null].insert(nextState);
 }
 
@@ -576,7 +576,7 @@ lib_calvin_lexer::NfaLexerGenerator<Char>::convert(std::shared_ptr<ParseTreeNode
       }
     case RegularExpression<Char>::RegExpProduction::NotOf:
       {
-        int null = static_cast<int>(lib_calvin_string::getNullChar<Char>());
+        int null = static_cast<int>(lib_calvin::getNullChar<Char>());
         //cout << "Converting NOTOF. charsize is: " << charSize_ << endl;
         newStart = makeNewState();
         newFinal = makeNewState();

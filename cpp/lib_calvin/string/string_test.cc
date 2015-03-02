@@ -1,6 +1,6 @@
 #include "stopwatch.h"
 #include "string_test.h"
-
+#include "string_match.h"
 
 void lib_calvin_string::stringTest() { 
 	std::cout << "---------- Beginning string test -----------\n\n";

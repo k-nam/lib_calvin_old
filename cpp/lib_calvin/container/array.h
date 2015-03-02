@@ -6,7 +6,6 @@
 
 namespace lib_calvin_container
 {
-
 // Array starts with space for vector_INIT_SIZE number of elements
 size_t const VECTOR_INIT_CAPACITY = 2;
 // When Array has to reallocate, 

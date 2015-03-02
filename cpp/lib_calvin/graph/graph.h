@@ -1375,7 +1375,7 @@ void kruskal(vector<vector<pair<int, W>>> const &graph,
   numE = static_cast<int>(edges.size());
   curE = 0;
   // Sorting
-	lib_calvin_sort::introSort(edges.begin(), edges.end());
+	lib_calvin::introSort(edges.begin(), edges.end());
   // Growing MST
   for (int i = 0; i < numE; ++i) {
     // Insert edge if it connects two sets

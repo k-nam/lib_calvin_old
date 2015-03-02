@@ -1,6 +1,8 @@
 #ifndef LIB_CALVIN__MATRIX__MATRIX_H
 #define LIB_CALVIN__MATRIX__MATRIX_H 
 
+#define NOMINMAX
+
 #include <iostream>
 #include "utility.h" 
 #include "stopwatch.h"
@@ -736,23 +738,23 @@ void matrix<T>::randomize() {
 
 template <typename T>
 int const matrix<T>::trans_thre_ =  
-	lib_calvin_util::maximum((int)(sqrt((float)lib_calvin_misc::L1_SIZE/2.0/sizeof(T))), 3); 
+	std::max((int)(sqrt((float)lib_calvin_misc::L1_SIZE/2.0/sizeof(T))), 3); 
     
 template <typename T>
 int const matrix<T>::mul_thre_ = 32;
-			//lib_calvin_util::maximum((int)(sqrt((float)L1_SIZE/3.0/sizeof(T))/2), 3);
+	//std::max((int)(sqrt((float)L1_SIZE/3.0/sizeof(T))/2), 3);
 			
 
 template <typename T>
 int const matrix<T>::blockWidth_ = 64;
-	//lib_calvin_util::maximum((int)((float)L1_SIZE/sizeof(T)/3.0), 300);
+	//std::max((int)((float)L1_SIZE/sizeof(T)/3.0), 300);
 
 // Note that we cannot use blockWidth_ value here
 // (order of computation not guaranteed)
 template <typename T>
 int const matrix<T>::blockHeight_ = 48;
 	//(int)(((float)L2_SIZE)/sizeof(T)/
-	//lib_calvin_util::maximum ((int)((float)L1_SIZE/sizeof(T)/3.0), 300))/ 1.5);
+	//std::max ((int)((float)L1_SIZE/sizeof(T)/3.0), 300))/ 1.5);
 
 } // end namesapce lib_calvin for definitions
 
