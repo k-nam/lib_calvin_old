@@ -1,4 +1,4 @@
-package db.connection
+package lib.db.connection
 
 import java.sql.{ DriverManager, Connection };
 import scala.collection.mutable.ArrayBuffer

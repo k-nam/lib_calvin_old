@@ -1,4 +1,4 @@
-package text.copier
+package lib.text.copier
 import java.io._
 import scala.io.Source
 

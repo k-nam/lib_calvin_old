@@ -1,7 +1,7 @@
-package text.viewer
+package lib.text.viewer
 import java.io._
 
-class Viewer {
+class TextViewer {
 	def getNumLines(fileName: String): Unit = {
 		val reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF8"))
 		var numLines = 0

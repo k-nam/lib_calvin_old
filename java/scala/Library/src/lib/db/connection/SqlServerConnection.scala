@@ -1,8 +1,8 @@
-package db.connection
+package lib.db.connection
 
-import java.sql.{ DriverManager, Connection }; ;
+import java.sql.{ DriverManager, Connection }
 
-class SqlServerDbManager(override val databaseName: String) extends DbConnection(databaseName) {
+class SqlServerConnection(override val databaseName: String) extends DbConnection(databaseName) {
 	override val connection: Connection = {
 		try {
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver")

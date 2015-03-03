@@ -1,8 +1,8 @@
-package db.connection
+package lib.db.connection
 
 import java.sql.{ DriverManager, Connection };
 
-class MysqlDbManage(override val databaseName: String) extends DbConnection(databaseName) {
+class MysqlConnection(override val databaseName: String) extends DbConnection(databaseName) {
 	override val connection: Connection = getConnection()
 
 	def getConnection(): Connection = {
