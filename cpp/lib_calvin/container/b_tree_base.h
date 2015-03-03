@@ -6,6 +6,8 @@
 
 #include "container.h"
 
+namespace lib_calvin_container
+{
 template <typename T, typename Comp = std::less<T>, typename K = T, typename ExtractKey = std::identity<T>>
 class B_TREE_BASE 
 {
@@ -1841,6 +1843,7 @@ template <typename T, typename Comp, typename K, typename ExtractKey>
 bool operator>= (B_TREE_BASE<T, Comp, K, ExtractKey> const &lhs, 
 		B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs) {
 	return !(lhs < rhs);
+}
 }
 
 #undef B_TREE_BASE
