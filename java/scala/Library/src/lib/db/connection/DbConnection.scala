@@ -15,9 +15,9 @@ abstract class DbConnection(val databaseName: String) extends Thread {
 		val insertStmt = connection.createStatement()
 		try {
 			insertStmt.executeUpdate("Truncate table " + tableName)
-			print("Trucate OK\n");
+			println("Trucate OK");
 		} catch {
-			case _: Throwable => print("trunc fail");
+			case _: Throwable => println("trunc fail");
 		}
 		Thread.sleep(1000)
 		val stmt = connection.prepareStatement(

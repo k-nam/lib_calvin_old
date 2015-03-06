@@ -16,7 +16,7 @@ class BinaryFileCopier(val sourceFileName: String, val targetFileName: String, v
 	} catch {
 		case e: Exception => println("error")
 	} finally {
-		print("well done")
+		println("well done")
 	}
 
 	writer.close()

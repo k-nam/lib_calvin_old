@@ -1,14 +1,14 @@
 package main
+import db._
 import lib.text.viewer._
 import lib.text.copier._
 import lib.db.connection.SqlServerConnection
-import lib.db.loader._
-import db.lookup._
 
 object Main {
 	def main(args: Array[String]): Unit = {
 		//manageFile()
-		hackingTest()
+			hackingTest()
+		//hackingReal()
 	}
 
 	def manageFile(): Unit = {
@@ -25,14 +25,25 @@ object Main {
 	}
 
 	def hackingTest(): Unit = {
-		//new TextFileLoader("D:\\dev/data/hacking/data/password_under_20digit.txt",
-		//	new SqlServerConnection("Hacking").connection).loadPassword("Password.CommonPasswordUnder20Digit")
+		//new Loader("D:\\dev/data/hacking/data/10K.txt",
+		//	new SqlServerConnection("Hacking").connection, "Password.[10K]").loadPassword()
 
-		//new TextFileLoader("D:\\dev/data/hacking/data/password_under_20digit_first_last.txt",
-		//	new SqlServerConnection("Hacking").connection).loadFirstLast("RainbowTable.FirstLast_Md5_20Digit_SimpleReverse_10Iter")
+		new Loader("D:\\dev/data/hacking/data/FirstLast_10K.txt",
+			new SqlServerConnection("Hacking").connection, "RainbowTable.[FirstLast_10K]").loadFirstLast
 
-		new ChainLookup("D:\\dev/data/hacking/test/chain.txt", "D:\\dev/data/hacking/test/first.txt",
-			new SqlServerConnection("Hacking").connection, "RainbowTable.FirstLast_Md5_20Digit_SimpleReverse_10Iter")
+		//	new ChainLookup("D:\\dev/data/hacking/test/chain.txt", "D:\\dev/data/hacking/test/first.txt",
+		//new SqlServerConnection("Hacking").connection, "RainbowTable.FirstLast_Md5_20Digit_SimpleReverse_10Iter")
 
+	}
+
+	def hackingReal() {
+		//new Loader("D:\\dev/data/hacking/data/61M.txt",
+		//	new SqlServerConnection("Hacking").connection, "Password.[61M]").loadPassword()
+
+		new Loader("D:\\dev/data/hacking/data/FirstLast_61M.txt",
+			new SqlServerConnection("Hacking").connection, "RainbowTable.[FirstLast_61M]").loadFirstLast
+
+		//	new ChainLookup("D:\\dev/data/hacking/test/chain.txt", "D:\\dev/data/hacking/test/first.txt",
+		//new SqlServerConnection("Hacking").connection, "RainbowTable.FirstLast_Md5_20Digit_SimpleReverse_10Iter")
 	}
 }

@@ -1,4 +1,4 @@
-package db.lookup
+package db
 import java.sql._
 import java.io._
 import scala.collection.mutable._;

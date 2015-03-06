@@ -1,11 +1,15 @@
 package lib.text.copier
 import java.io._
+import scala.util._
+import scala.util.control.Breaks._
 import scala.io.Source
 import java.nio.charset.Charset;
+import scala.collection.mutable._;
 
 class TextFileCopier(val sourceFileName: String, val targetFileName: String) {
 	object Break extends Exception
 	object NullLine extends Exception
+	object Impossible extends Exception
 
 	// see if given UTF8 string is ASCII
 	def isAsciiString(string: String): Boolean = {
@@ -57,17 +61,16 @@ class TextFileCopier(val sourceFileName: String, val targetFileName: String) {
 		}
 	}
 
-	def copyWithOperation(operation: Array[String] => Array[String]) {
+	// process each line
+
+	def copyWithLineOperation(operation: String => String) {
 		val reader = new BufferedReader(new InputStreamReader(new FileInputStream(sourceFileName), "UTF8"))
 		val writer = new PrintWriter(new File(targetFileName))
 		try {
-
 			while (true) {
 				val line = reader.readLine()
 				if (line != null) {
-					val words = line.split('\t')
-					val wordsAfterOp = operation(words)
-					val lineAfterOp = wordsAfterOp.mkString("\t") 
+					val lineAfterOp = operation(line)
 					writer.write(lineAfterOp)
 					writer.write("\n")
 				} else {
@@ -82,11 +85,45 @@ class TextFileCopier(val sourceFileName: String, val targetFileName: String) {
 			writer.close()
 		}
 	}
-	
+
+	// process whole file as a chunk 
+	def copyWithOperation(operation: Array[String] => Array[String]) {
+			def readTextFileToStrings(sourceFileName: String): Array[String] = {
+				val reader = new BufferedReader(new InputStreamReader(new FileInputStream(sourceFileName), "UTF8"))
+				val lines = ArrayBuffer[String]()
+				try {
+					while (true) {
+						val line = reader.readLine()
+						if (line != null) {
+							lines.append(line)
+						} else {
+							throw NullLine
+						}
+					}
+				} catch {
+					case NullLine => println("readTextFileToStrings well done")
+				}
+				reader.close()
+				lines.toArray
+			}
+
+			def writeStringsToTextFile(lines: Array[String], targetFileName: String) {
+				val writer = new PrintWriter(new File(targetFileName))
+				for (line <- lines) {
+					writer.write(line)
+					writer.write("\n")
+				}
+				writer.close()
+			}
+		val lines = readTextFileToStrings(sourceFileName)
+		writeStringsToTextFile(operation(lines), targetFileName)
+	}
+
 	def swapTwoColumns() {
-		def swap(words: Array[String]): Array[String] = {
-			Array[String](words(1), words(0))
-		}
-		copyWithOperation(swap)
+			def swap(line: String): String = {
+				val words = line.split("\t")
+				Array[String](words(1), words(0)).mkString("\t")
+			}
+		copyWithLineOperation(swap)
 	}
 }
