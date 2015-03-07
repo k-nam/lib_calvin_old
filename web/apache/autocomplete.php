@@ -28,7 +28,6 @@ class Dictionary {
 				continue;
 			}
 			$this->entries[$rank] = $word;
-			//debugLog("".$rank."=>".$word);
 		}
 		$handle.fclose($handle);
 	}
@@ -54,13 +53,11 @@ function getSuggestion($input, $numSuggestion) {
 	$matches = array_slice($matches, 0, min($numSuggestion, sizeof($matches)));
 	$suggestions = array();
 	foreach ($matches as $rank => $word) {
-		//debugLog("Adding word: ".$word);
 		if ($word === "" || $word === " ") {
 			return "error fuck";
 		}
 		$suggestions[] = $word;
 	}
-	//debugLog("Result: ".$suggestions);
 	return implode(" ", $suggestions);
 }
 

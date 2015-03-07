@@ -7,7 +7,6 @@ function test_input($data) {
 }
 function removeNewline($string) {
 	return preg_replace('~[\r\n]+~', '', $string);;
-	//return $string;
 }
 function debugLog($string) {
 	$debugFileName = "debug.log";

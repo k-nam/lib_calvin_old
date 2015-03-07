@@ -55,6 +55,7 @@ $(document).ready(function() {
 		if (keyword == "") {
 			return ["abc"];
 		}
+		
 		var resultArray = [];
 		$.ajax({
 			url: "DictionaryAutocomplete?input=" + keyword + "&num=20",
@@ -67,7 +68,9 @@ $(document).ready(function() {
 			},
 			timeout : 1000
 		});	
+		
 		return resultArray;
+		//return ["aaa", "bbb"];
 	}
 	$("#dictionary_input").autocomplete({
 		search: function(event, ui) {
@@ -86,7 +89,7 @@ $(document).ready(function() {
 			$(this).val(ui.item.label);
 			$("#dictionary_input").val(ui.item.value + " go!");
 		},
-		dealy: 10
+		delay: 50
 	});
 	$("#dictionary_input").keyup(function() {
 		/*

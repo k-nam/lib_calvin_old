@@ -53,7 +53,7 @@ class TextFileLoader(val sourceFileName: String, val connection: Connection, val
 				operation(words, batchStmt)
 				batchStmt.addBatch
 				val stmtForThisLine = getPreparedStmt
-				operation(words, getPreparedStmt)
+				operation(words, stmtForThisLine)
 				queries.add(stmtForThisLine)
 				i += 1
 				if (i % batchSize == 0) {

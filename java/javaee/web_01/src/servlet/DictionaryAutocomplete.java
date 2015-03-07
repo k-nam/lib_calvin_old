@@ -29,8 +29,9 @@ public class DictionaryAutocomplete extends HttpServlet {
 			} else {
 				response.getWriter().append(" ");
 			}
-			System.out.println("Adding word: " + word);
+			//System.out.println("Adding word: " + word);
 			response.getWriter().append(word);
 		}
+		//System.out.println("Exit servlet");
 	}
 }

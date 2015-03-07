@@ -48,7 +48,7 @@ $(document).ready(function() {
 			$(this).val(ui.item.label);
 			$("#dictionary_input").val(ui.item.value + " go!");
 		},
-		dealy: 10
+		delay: 50
 	});	
 });
 </script>
