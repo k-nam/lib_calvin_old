@@ -1,11 +1,12 @@
 #ifndef HACKING__RAINBOW_TABLE__RAINBOW_TABLE_H
 #define HACKING__RAINBOW_TABLE__RAINBOW_TABLE_H
 
-#include <vector>
+#include "container/vector.h"
 #include <string>
 
 namespace hacking__rainbow_table
 {
+	using lib_calvin::vector;
 	int const MD5_HASH_LENGTH = 16;
 	int const MIN_PASSWORD_LENGTH = 6;
 	int const MAX_PASSWORD_LENGTH = 20;
@@ -42,8 +43,8 @@ namespace hacking__rainbow_table
 
 	std::pair<std::string, std::string> getFirstAndLast(std::string password, int chainLength);
 	std::pair<std::string, std::string> getFirstAndLast2(std::string password, int chainLength);
-	std::vector<std::string> getChain(Md5Hash hash, int chainLength);
-	std::vector<std::string> getCrackedPassword(Md5Hash hash, std::string first, int chainLength);
+	vector<std::string> getChain(Md5Hash hash, int chainLength);
+	vector<std::string> getCrackedPassword(Md5Hash hash, std::string first, int chainLength);
 	
 	
 	void hash(std::string passwordFileName, std::string outFileName);

@@ -161,7 +161,7 @@ hacking__rainbow_table::getFirstAndLast2(std::string password, int chainLength) 
 	return std::make_pair(password, last);
 }
 
-std::vector<std::string> 
+lib_calvin::vector<std::string> 
 hacking__rainbow_table::getChain(Md5Hash hash, int chainLength) {
 	using namespace std;
 	vector<string> chain;
@@ -176,10 +176,10 @@ hacking__rainbow_table::getChain(Md5Hash hash, int chainLength) {
 	return chain;
 }
 
-std::vector<std::string>
+lib_calvin::vector<std::string>
 hacking__rainbow_table::getCrackedPassword(Md5Hash hash, std::string first, int chainLength) {
 	//std::cout << "get cracked hash: " << hash.toHexString() << " first: " << first << "\n";
-	std::vector<std::string> crackedPassword;
+	lib_calvin::vector<std::string> crackedPassword;
 	std::string password = first;
 	for (int i = 0; i < chainLength - 1; i++) {
 		//std::cout << "current password:___" << password << "___\n";

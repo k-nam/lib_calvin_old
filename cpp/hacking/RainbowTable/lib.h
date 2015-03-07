@@ -6,11 +6,12 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include "container/vector.h"
 
 namespace hacking__lib
 {
 // read until newline, and split by tab
-std::vector<std::string>
+lib_calvin::vector<std::string>
 split(std::string const &line, char delim);
 
 }

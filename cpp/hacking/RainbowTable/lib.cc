@@ -1,11 +1,10 @@
 #include "lib.h"
 
-std::vector<std::string>
+lib_calvin::vector<std::string>
 hacking__lib::split(std::string const &line, char delim) {
-	using namespace std;
-	stringstream stringStream(line);
-	string word;
-	vector<string> words;
+	std::stringstream stringStream(line);
+	std::string word;
+	lib_calvin::vector<std::string> words;
 	while (getline(stringStream, word, delim)) {
 		words.push_back(word);
 	}
