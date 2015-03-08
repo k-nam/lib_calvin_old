@@ -11,10 +11,6 @@ public class FindUser {
 	public static List<String> findUserInfo(String nickname) {
 		List<String> info = new ArrayList<String>();
 		Connection connection = OracleDbConnector.getConnection();
-		if (connection == null) {
-			System.out.println("Oracle db connection error");
-			return null;
-		}
 		try {
 			PreparedStatement pstmt = connection
 					.prepareStatement("SELECT id, description FROM me2day.me2person "

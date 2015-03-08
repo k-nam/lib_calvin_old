@@ -20,7 +20,7 @@ public class DictionaryAutocomplete extends HttpServlet {
 		String input = request.getParameter("input");
 		int num = Integer.valueOf(request.getParameter("num"));
 		response.setContentType("text");
-		List<String> list = Dictionary.getWordsWithPrefix(input, num);
+		List<String> list = Dictionary.getAutocompleteSuggestions(input, num);
 		Dictionary.getDictionary();
 		boolean first = true;
 		for (String word : list) {

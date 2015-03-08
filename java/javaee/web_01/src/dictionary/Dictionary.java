@@ -85,8 +85,18 @@ public class Dictionary {
 		return theDictionary;
 	}
 
+	public static List<String> getAutocompleteSuggestions(String prefix, int num) {
+		List<String> result = getAutocompleteSuggestionsFromDb(prefix, num);
+		for (String a : result) {
+			System.out.println(a);
+		}
+		return result;
+		// return getAutocompleteSuggestionsFromFile(prefix, num);
+	}
+
 	// return N most frequent words with given prefix
-	public static List<String> getWordsWithPrefix(String prefix, int num) {
+	public static List<String> getAutocompleteSuggestionsFromFile(String prefix,
+			int num) {
 		List<DictionaryEntry> prefixMatches = new ArrayList<DictionaryEntry>();
 		for (DictionaryEntry entry : getDictionary().entries) {
 			if (entry.word.startsWith(prefix)) {
@@ -109,4 +119,10 @@ public class Dictionary {
 		}
 		return result;
 	}
+
+	public static List<String> getAutocompleteSuggestionsFromDb(String prefix,
+			int num) {
+		return db.DictionaryDao.getAutocompleteSuggestions(prefix, num);
+	}
+
 }
