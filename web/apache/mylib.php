@@ -14,4 +14,17 @@ function debugLog($string) {
 	file_put_contents($debugFileName, $string, FILE_APPEND);
 	file_put_contents($debugFileName, ">\n", FILE_APPEND);
 }
+
+function getMysqlConnection() {
+	$servername = "localhost:3306";
+	$username = "sa";
+	$password = "calvin1729";
+	$conn = new mysqli($servername, $username, $password);
+	if ($conn->connect_error) {
+		die("Connection failed: " . $conn->connect_error);
+	} 
+	//echo "Connected successfully";
+	return $conn;
+}
+
 ?>

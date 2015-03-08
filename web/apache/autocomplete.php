@@ -42,6 +42,11 @@ class Dictionary {
 }
 
 function getSuggestion($input, $numSuggestion) {
+	return getSuggestionFromDb($input, $numSuggestion);
+	//return getSuggestionFromFile($input, $numSuggestion);
+}
+
+function getSuggestionFromFile($input, $num) {
 	$dictionary = Dictionary::getInstance();
 	$matches = array();
 	foreach ($dictionary->getEntries() as $rank => $word) {
@@ -50,7 +55,7 @@ function getSuggestion($input, $numSuggestion) {
 		}
 	}
 	ksort($matches);
-	$matches = array_slice($matches, 0, min($numSuggestion, sizeof($matches)));
+	$matches = array_slice($matches, 0, min($num, sizeof($matches)));
 	$suggestions = array();
 	foreach ($matches as $rank => $word) {
 		if ($word === "" || $word === " ") {
@@ -59,6 +64,31 @@ function getSuggestion($input, $numSuggestion) {
 		$suggestions[] = $word;
 	}
 	return implode(" ", $suggestions);
+}
+
+function getSuggestionFromDb($input, $num) {
+	//debugLog("start");
+	$conn = getMysqlConnection();
+	$dropQuery = "DROP TABLE IF EXISTS web.temp;";
+	$createQuery = "CREATE TEMPORARY TABLE web.temp AS (
+				SELECT word, rank FROM web.eng_100k
+				WHERE word LIKE '".$input."%' ORDER BY  (CASE WHEN rank IS NULL THEN 1 ELSE 0 END), rank ASC LIMIT ".$num.");";
+	$selectQuery = "SELECT word, rank FROM web.temp ORDER BY word;";
+			
+	$sqlQuery2 = "SELECT word, rank FROM web.eng_100k
+				WHERE word LIKE '".$input."%' ORDER BY  (CASE WHEN rank IS NULL THEN 1 ELSE 0 END), rank ASC LIMIT ".$num;
+
+	//debugLog("query:<".$sqlQuery.">");
+	$conn->query($dropQuery);
+	$conn->query($createQuery);
+	$result = $conn->query($selectQuery);
+	$suggestions = array();
+
+	while($row = $result->fetch_assoc()) {
+		$suggestions[] = $row["word"];
+	}
+	return implode(" ", $suggestions);
+	
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {

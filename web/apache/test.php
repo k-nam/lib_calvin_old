@@ -48,7 +48,7 @@ $(document).ready(function() {
 			$(this).val(ui.item.label);
 			$("#dictionary_input").val(ui.item.value + " go!");
 		},
-		delay: 50
+		delay: 10
 	});	
 });
 </script>
@@ -71,20 +71,10 @@ Gender:
 <br>
 
 <?php
+require 'mylib.php';
+
 echo "Echoing".$_SERVER["PHP_SELF"]."<br>";
-$servername = "localhost:3306";
-$username = "root";
-$password = "calvin1729";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-} 
-echo "Connected successfully";
-$conn->close();
+$conn = getMysqlConnection();
 ?>
 
 </body>
