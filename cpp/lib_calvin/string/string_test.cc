@@ -1,6 +1,6 @@
 #include "stopwatch.h"
 #include "string_test.h"
-#include "string_match.h"
+#include "string_matching.h"
 
 void lib_calvin_string::stringTest() { 
 	std::cout << "---------- Beginning string test -----------\n\n";
@@ -13,7 +13,7 @@ void lib_calvin_string::stringTest() {
 }
 
 // string class is generic with alphabet type, but we can not unit-test unless
-// ... Char is of numerical type. So just test with characters.
+// ... Alphabet is of numerical type. So just test with characters.
 void lib_calvin_string::matchingTest (void (*matchingCharAlg) 
     (abstract_string<> const &text, abstract_string<> const &pattern, 
      vector<int> &record), std::string title) {

@@ -163,7 +163,7 @@ void Parser::shiftWith(int curToken) {
     // All constants should be immediately inserted into symbol table
     case CHAR_LITERAL:
       {
-        //cout << "Making Char constant Node with ";
+        //cout << "Making Alphabet constant Node with ";
         //lexeme.print();
         //cout << endl;
         // We need a function to get numeric value from a char constant

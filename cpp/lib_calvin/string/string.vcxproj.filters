@@ -35,7 +35,7 @@
     <ClInclude Include="string_test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="string_match.h">
+    <ClInclude Include="string_matching.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

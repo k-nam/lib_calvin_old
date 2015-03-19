@@ -13,44 +13,44 @@ using std::endl;
 
 // Z(i) = the length of the string that starts at index i and matches
 // ...the prefix of pattern
-template <typename Char>
-void calculateZ(abstract_string<Char> const &pattern, vector<int> &record);
+template <typename Alphabet>
+void calculateZ(abstract_string<Alphabet> const &pattern, vector<int> &record);
 
 // f(i) = the maximum length of a prefix of pattern which is also a 
 // ...proper suffix of substring pattern[0 i-1]
-template <typename Char>
-void calculateF(abstract_string<Char> const &pattern, vector<int> &record);
+template <typename Alphabet>
+void calculateF(abstract_string<Alphabet> const &pattern, vector<int> &record);
 
-// maps each Char to the index in which the Char first appears in the 
+// maps each Alphabet to the index in which the Alphabet first appears in the 
 // ...pattern (looking from the right-end of patttern)
-// assumes that Char can be converted to unsigned int type (which is the
+// assumes that Alphabet can be converted to unsigned int type (which is the
 // ...index in record)
-template <typename Char>
-void badChar(abstract_string<Char> const &pattern, vector<int> &record);
+template <typename Alphabet>
+void badChar(abstract_string<Alphabet> const &pattern, vector<int> &record);
 
-template <typename Char>
-void strongGoodSuffix(abstract_string<Char> const &pattern, 
+template <typename Alphabet>
+void strongGoodSuffix(abstract_string<Alphabet> const &pattern, 
 											 vector<int> &record);
 
 // save the matching indices in the third argument
-template <typename Char>
-void naiveMatch(abstract_string<Char> const &text, 
-    abstract_string<Char> const &pattern, 
+template <typename Alphabet>
+void naiveMatch(abstract_string<Alphabet> const &text, 
+    abstract_string<Alphabet> const &pattern, 
     vector<int> &record);
 
-template <typename Char>
-void basicMatch(abstract_string<Char> const &text, 
-    abstract_string<Char> const &pattern,
+template <typename Alphabet>
+void basicMatch(abstract_string<Alphabet> const &text, 
+    abstract_string<Alphabet> const &pattern,
     vector<int> &record);
 
-template <typename Char>
-void kmp(abstract_string<Char> const &text, 
-    abstract_string<Char> const &pattern, 
+template <typename Alphabet>
+void kmp(abstract_string<Alphabet> const &text, 
+    abstract_string<Alphabet> const &pattern, 
     vector<int> &record);
 
-template <typename Char>
-void boyerMoore(abstract_string<Char> const &text, 
-    abstract_string<Char> const &pattern, 
+template <typename Alphabet>
+void boyerMoore(abstract_string<Alphabet> const &text, 
+    abstract_string<Alphabet> const &pattern, 
     vector<int> &record);
 
 } // end namespace lib_calvin_string
@@ -59,9 +59,9 @@ void boyerMoore(abstract_string<Char> const &text,
 
 // Z(k) is the length of longest substring that starts at index k, which is
 // ...also prefix of the entire string. 
-template <typename Char>
+template <typename Alphabet>
 void lib_calvin_string::calculateZ (
-    abstract_string<Char> const &pattern, vector<int> &record) {
+    abstract_string<Alphabet> const &pattern, vector<int> &record) {
 
   int len = pattern.size();  
   vector<int> &Z = record;
@@ -114,9 +114,9 @@ void lib_calvin_string::calculateZ (
 //  P[0...k-1]   so, f(len) should be determined.
 // f(k) value determines the jump length when pattern does not match at index k
 //  in KMP algorithm. f(len) denotes the jump length when a match has been found.
-template <typename Char>
+template <typename Alphabet>
 void lib_calvin_string::calculateF (
-    abstract_string<Char> const &pattern, vector<int> &record) {
+    abstract_string<Alphabet> const &pattern, vector<int> &record) {
 
   int len = pattern.size();
   int k, m; // for indices
@@ -140,21 +140,21 @@ void lib_calvin_string::calculateF (
 // Be careful!!! Output is indexed in REVERSE ORDER!!!
 // record[i] denotes the index (from the right) of the first occurrence of
 // character i.
-template <typename Char>
+template <typename Alphabet>
 void lib_calvin_string::badChar (
-    abstract_string<Char> const &pattern, vector<int> &record) {
+    abstract_string<Alphabet> const &pattern, vector<int> &record) {
   
   record.clear();
   int len = pattern.size();
   int index;
-  // we need to know the size of character set (Char::size)
+  // we need to know the size of character set (Alphabet::size)
   // Characters not present in the pattern is marked as len; this will
   // ...make the shift amount appropriate
-	if (sizeof(Char) > 1) { // inappropriate foro this algorithm
+	if (sizeof(Alphabet) > 1) { // inappropriate foro this algorithm
 		std::cout << "badChar error\n";
 		exit(0);
 	}
-  record.resize(lib_calvin::getSizeOfCharSet<Char>(), len); 
+  record.resize(lib_calvin::getSizeOfCharSet<Alphabet>(), len); 
   for (int i = len - 1; i >= 0; i--) {
     index = static_cast<int>(pattern[i]);
     if (record[index] == len) {
@@ -168,9 +168,9 @@ void lib_calvin_string::badChar (
 // array. Record[i] is the amount to shift (to right) if wrong character was
 // detected on index i (from right).
 // record[0] is meaningless.
-template <typename Char>
+template <typename Alphabet>
 void lib_calvin_string::strongGoodSuffix (
-    abstract_string<Char> const &pattern, vector<int> &record) {
+    abstract_string<Alphabet> const &pattern, vector<int> &record) {
   int len = pattern.size();
   record.clear();
   record.resize(len + 1, -1); // initialize as -1
@@ -204,10 +204,10 @@ void lib_calvin_string::strongGoodSuffix (
   record[0] = -1; // not to be used (actually, this caused me trouble ^^)
 }
 
-template <typename Char>
+template <typename Alphabet>
 void lib_calvin_string::naiveMatch (
-    abstract_string<Char> const &text, 
-		abstract_string<Char> const &pattern, vector<int> &record) 
+    abstract_string<Alphabet> const &text, 
+		abstract_string<Alphabet> const &pattern, vector<int> &record) 
 {
   record.clear();
   int textLen   = text.size();
@@ -228,18 +228,18 @@ void lib_calvin_string::naiveMatch (
 // just find Z value for this transformed text: P$T 
 // need a special character($) that is not present either in text or pattern
 // using null character for this case
-template <typename Char>
+template <typename Alphabet>
 void lib_calvin_string::basicMatch (
-    abstract_string<Char> const &text, 
-    abstract_string<Char> const &pattern,
+    abstract_string<Alphabet> const &text, 
+    abstract_string<Alphabet> const &pattern,
     vector<int> &record) {
   
   record.clear();
   int patternLen     = pattern.size();
   int textLen      = text.size();
-  Char *pSpecialChar  = new Char(0);
-  abstract_string<Char> newstring  = 
-    pattern + abstract_string<Char> (pSpecialChar, 1) + text;
+  Alphabet *pSpecialChar  = new Alphabet(0);
+  abstract_string<Alphabet> newstring  = 
+    pattern + abstract_string<Alphabet> (pSpecialChar, 1) + text;
   vector<int> Z;
   calculateZ (newstring, Z);
   for (int i = patternLen + 1; i < textLen + patternLen + 1; ++i) {
@@ -256,10 +256,10 @@ void lib_calvin_string::basicMatch (
 
 // This was hardest to micro-optimize of all codes I wrote until now.
 // It seems that using goto statement is unavoidable here.
-template <typename Char>
+template <typename Alphabet>
 void lib_calvin_string::kmp(
-    abstract_string<Char> const &text, 
-		abstract_string<Char> const &pattern, vector<int> &record) {
+    abstract_string<Alphabet> const &text, 
+		abstract_string<Alphabet> const &pattern, vector<int> &record) {
   record.clear();
   int patternLen  = pattern.size();
   int textLen   = text.size();
@@ -318,12 +318,12 @@ FirstWrong:
   }
 }
 
-template <typename Char>
+template <typename Alphabet>
 void lib_calvin_string::boyerMoore (
-    abstract_string<Char> const &text, 
-		abstract_string<Char> const &pattern, vector<int> &record) {		
+    abstract_string<Alphabet> const &text, 
+		abstract_string<Alphabet> const &pattern, vector<int> &record) {		
   record.clear();
-  abstract_string<Char> reverse = pattern.reverse();
+  abstract_string<Alphabet> reverse = pattern.reverse();
   int textLen   = text.size();
   int patternLen  = pattern.size();
   // h: head in text, k: index in text, s: index in pattern (reversed)

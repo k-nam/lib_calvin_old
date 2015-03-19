@@ -16,63 +16,63 @@ namespace lib_calvin
 {
 using std::deque;
 
-template <typename Char>
+template <typename Alphabet>
 class abstract_string;
 
-template <typename Char>
-abstract_string<Char> const
-operator+ (abstract_string<Char> const &, 
-    abstract_string<Char> const &);
+template <typename Alphabet>
+abstract_string<Alphabet> const
+operator+ (abstract_string<Alphabet> const &, 
+    abstract_string<Alphabet> const &);
 
 // Maintains its own data (value semantic) and immutable
 // Do not use 'string' for its name to avoid collision with std::string 
-template <typename Char = char>
+template <typename Alphabet = char>
 class abstract_string { 
 public:
-	typedef Char CharType;
+	typedef Alphabet CharType;
   abstract_string();
-  abstract_string(Char); // one letter string
-  abstract_string(Char *instring, int len);
-  abstract_string(abstract_string<Char> const &);
-  abstract_string(std::basic_string<Char> const &); 
+  abstract_string(Alphabet); // one letter string
+  abstract_string(Alphabet *instring, int len);
+  abstract_string(abstract_string<Alphabet> const &);
+  abstract_string(std::basic_string<Alphabet> const &); 
   ~abstract_string();
   int size() const { return len_; }
-  Char const & operator[] (int index) const { return string_[index]; } 
-  Char & operator[] (int index) { return string_[index]; }
-  abstract_string<Char> & operator= (
-      abstract_string<Char> const &);
-  abstract_string<Char> & operator+= (
-      abstract_string<Char> const &); // concat
-  // Lexicographical order by Char
+  Alphabet const & operator[] (int index) const { return string_[index]; } 
+  Alphabet & operator[] (int index) { return string_[index]; }
+  abstract_string<Alphabet> & operator= (
+      abstract_string<Alphabet> const &);
+  abstract_string<Alphabet> & operator+= (
+      abstract_string<Alphabet> const &); // concat
+  // Lexicographical order by Alphabet
   bool operator< (
-      abstract_string<Char> const &) const; // for set and map
-  bool operator== (abstract_string<Char> const &) const;
-  bool operator!= (abstract_string<Char> const &) const;
+      abstract_string<Alphabet> const &) const; // for set and map
+  bool operator== (abstract_string<Alphabet> const &) const;
+  bool operator!= (abstract_string<Alphabet> const &) const;
   // Does not include end index
-  abstract_string<Char> const substr(int startIndex, int endIndex) const; 
+  abstract_string<Alphabet> const substr(int startIndex, int endIndex) const; 
   // To the end of string
-  abstract_string<Char> const substr(int startIndex) const; 
+  abstract_string<Alphabet> const substr(int startIndex) const; 
   // reverse
-  abstract_string<Char> const reverse() const;
-  friend abstract_string<Char> const 
-    operator+<> (abstract_string<Char> const &lhs, 
-        abstract_string<Char> const &rhs); 
+  abstract_string<Alphabet> const reverse() const;
+  friend abstract_string<Alphabet> const 
+    operator+<> (abstract_string<Alphabet> const &lhs, 
+        abstract_string<Alphabet> const &rhs); 
     
   void print() const;
 private:
-  Char *string_;
+  Alphabet *string_;
   int len_;
 };
 
-template <typename Char>
+template <typename Alphabet>
 size_t getSizeOfCharSet() {
 	// returns 128 for char
-	return (1 << sizeof(Char) * 8) >> 1;
+	return (1 << sizeof(Alphabet) * 8) >> 1;
 }
 
-template <typename Char>
-Char getNullChar() {
-	return Char(0);
+template <typename Alphabet>
+Alphabet getNullChar() {
+	return Alphabet(0);
 }
 
 // string is normal ascii string
@@ -91,70 +91,70 @@ float   floatOf(string const &);
 
 namespace lib_calvin 
 { 
-/*********************** string <Char> definition **************************/
+/*********************** string <Alphabet> definition **************************/
 
-template <typename Char>
-abstract_string<Char>::abstract_string(): string_(NULL), len_(0) {
+template <typename Alphabet>
+abstract_string<Alphabet>::abstract_string(): string_(NULL), len_(0) {
 }
 
-template <typename Char>
-abstract_string<Char>::abstract_string(Char character) {
+template <typename Alphabet>
+abstract_string<Alphabet>::abstract_string(Alphabet character) {
   len_ = 1;
-  string_ = new Char[1];
+  string_ = new Alphabet[1];
   string_[0] = character;
 }
 
-template <typename Char>
-abstract_string<Char>::abstract_string (Char *instring, int inLen) { 
+template <typename Alphabet>
+abstract_string<Alphabet>::abstract_string (Alphabet *instring, int inLen) { 
   len_ = inLen;
-  string_ = new Char[len_];
+  string_ = new Alphabet[len_];
   for (int i = 0; i < len_; ++i)
     string_[i] = instring[i];
 }
 
-template <typename Char>
-abstract_string<Char>::abstract_string(abstract_string<Char> const &rhs) {
+template <typename Alphabet>
+abstract_string<Alphabet>::abstract_string(abstract_string<Alphabet> const &rhs) {
   len_ = rhs.len_;
-  string_ = new Char[len_];
+  string_ = new Alphabet[len_];
   for (int i = 0; i < len_; ++i)
     string_[i] = rhs.string_[i];
 }
 
-template <typename Char>
-abstract_string<Char>::abstract_string (
-    std::basic_string<Char> const &instring) { 
+template <typename Alphabet>
+abstract_string<Alphabet>::abstract_string (
+    std::basic_string<Alphabet> const &instring) { 
 
   len_ = static_cast<int>(instring.size());
-  string_ = new Char[len_];
+  string_ = new Alphabet[len_];
   for (int i = 0; i < len_; ++i)
     string_[i] = instring[i];
 }
 
-template <typename Char>
-abstract_string<Char>::~abstract_string() {
+template <typename Alphabet>
+abstract_string<Alphabet>::~abstract_string() {
   delete string_;
 }
 
-template <typename Char>
-abstract_string<Char> & 
-abstract_string<Char>::operator= (abstract_string<Char> const &rhs) {
+template <typename Alphabet>
+abstract_string<Alphabet> & 
+abstract_string<Alphabet>::operator= (abstract_string<Alphabet> const &rhs) {
   
   if(this == &rhs)
     return *this;
   len_ = rhs.len_;
   delete[] string_;
-  string_ = new Char[len_];
+  string_ = new Alphabet[len_];
   for (int i = 0; i < len_; ++i)
     string_[i] = rhs.string_[i];
   return *this;
 }
 
-template <typename Char>
-abstract_string<Char> & 
-abstract_string<Char>::operator+= (abstract_string<Char> const &rhs) {
+template <typename Alphabet>
+abstract_string<Alphabet> & 
+abstract_string<Alphabet>::operator+= (abstract_string<Alphabet> const &rhs) {
   
-  Char *newstring = new Char[len_ + rhs.len_];
-  Char *oldstring = string_;
+  Alphabet *newstring = new Alphabet[len_ + rhs.len_];
+  Alphabet *oldstring = string_;
   string_ = newstring;
   for (int i = 0; i < len_; ++i)
     string_[i] = oldstring[i];
@@ -164,13 +164,13 @@ abstract_string<Char>::operator+= (abstract_string<Char> const &rhs) {
   delete[] oldstring;
 }
 
-template <typename Char>
-bool abstract_string<Char>::operator< (abstract_string<Char> const &rhs) const {
+template <typename Alphabet>
+bool abstract_string<Alphabet>::operator< (abstract_string<Alphabet> const &rhs) const {
   bool shorter = (len_ < rhs.len_); // true if this one is shorter
   int shorterLen = (shorter) ? len_ : rhs.len_;
   for (int i = 0; i < shorterLen; ++i) {
-    Char a = string_[i];
-    Char b = rhs.string_[i];
+    Alphabet a = string_[i];
+    Alphabet b = rhs.string_[i];
     if (a < b)
       return true;
     if (b < a)
@@ -182,8 +182,8 @@ bool abstract_string<Char>::operator< (abstract_string<Char> const &rhs) const {
   return false; // same length will return false
 }
 
-template <typename Char>
-bool abstract_string<Char>::operator== (abstract_string<Char> const &rhs) const {
+template <typename Alphabet>
+bool abstract_string<Alphabet>::operator== (abstract_string<Alphabet> const &rhs) const {
   
   if (len_ != rhs.size())
     return false;
@@ -194,49 +194,49 @@ bool abstract_string<Char>::operator== (abstract_string<Char> const &rhs) const 
   return true;
 }
 
-template <typename Char>
-bool abstract_string<Char>::operator!= (abstract_string<Char> const &rhs) const {
+template <typename Alphabet>
+bool abstract_string<Alphabet>::operator!= (abstract_string<Alphabet> const &rhs) const {
   
   return !(operator==(rhs));
 }
 
-template <typename Char>
-abstract_string<Char> const
-abstract_string<Char>::substr (int startIndex, int endIndex) const {
-  abstract_string<Char> substr (string_ + startIndex, endIndex - startIndex);
+template <typename Alphabet>
+abstract_string<Alphabet> const
+abstract_string<Alphabet>::substr (int startIndex, int endIndex) const {
+  abstract_string<Alphabet> substr (string_ + startIndex, endIndex - startIndex);
   return substr;
 }
 
-template <typename Char>
-abstract_string<Char> const
-abstract_string<Char>::substr (int startIndex) const {
-  abstract_string<Char> substr (string_ + startIndex, len_ - startIndex);
+template <typename Alphabet>
+abstract_string<Alphabet> const
+abstract_string<Alphabet>::substr (int startIndex) const {
+  abstract_string<Alphabet> substr (string_ + startIndex, len_ - startIndex);
   return substr;
 }
 
-template <typename Char>
-abstract_string<Char> const
-abstract_string<Char>::reverse() const {
-  Char *pChar = new Char[len_];
+template <typename Alphabet>
+abstract_string<Alphabet> const
+abstract_string<Alphabet>::reverse() const {
+  Alphabet *pChar = new Alphabet[len_];
   for (int i = 0; i < len_; ++i) {
     pChar[i] = string_[len_ - 1 - i];
   }
-  abstract_string<Char> reversedstring (pChar, len_);
+  abstract_string<Alphabet> reversedstring (pChar, len_);
   return reversedstring;
 }
 
-template <typename Char>
-void abstract_string<Char>::print() const {
+template <typename Alphabet>
+void abstract_string<Alphabet>::print() const {
   for (int i = 0; i < len_; ++i)
     cout << string_[i];
 }
 
-template <typename Char>
-abstract_string<Char> const
-operator+ (abstract_string<Char> const &lhs, 
-    abstract_string<Char> const &rhs) {
+template <typename Alphabet>
+abstract_string<Alphabet> const
+operator+ (abstract_string<Alphabet> const &lhs, 
+    abstract_string<Alphabet> const &rhs) {
   
-  Char *pChar = new Char[lhs.len_ + rhs.len_];
+  Alphabet *pChar = new Alphabet[lhs.len_ + rhs.len_];
   int j = 0;
   for (int i = 0; i < lhs.len_; ++i) {
     pChar[j++] = lhs.string_[i];
@@ -244,7 +244,7 @@ operator+ (abstract_string<Char> const &lhs,
   for (int i = 0; i < rhs.len_; ++i) {
     pChar[j++] = rhs.string_[i];
   }
-  abstract_string<Char> newstring (pChar, lhs.len_ + rhs.len_);
+  abstract_string<Alphabet> newstring (pChar, lhs.len_ + rhs.len_);
   return newstring;
 }
 } // end lib_calvin for definitions

@@ -54,12 +54,12 @@ using lib_calvin::abstract_string;
 // Regular language: actual language (but again abstract class)
 // Every language should have its own set of production rules and
 // ..corresponding parse tree node types
-template <typename Char = char>
+template <typename Alphabet = char>
 class RegularExpression {
   public:
     virtual ~RegularExpression() { };
     // I wanted to make some good inheritance, but this is not that useful
-    typedef Char CharType; // char type actually
+    typedef Alphabet CharType; // char type actually
     
     enum class RegExpProduction { 
       Cat, // Concatenation
@@ -74,10 +74,10 @@ class RegularExpression {
     struct ParseTreeNode {
       ParseTreeNode(shared_ptr<ParseTreeNode>, shared_ptr<ParseTreeNode>);
       ParseTreeNode(shared_ptr<ParseTreeNode>);
-      ParseTreeNode(abstract_string<Char> const &);
+      ParseTreeNode(abstract_string<Alphabet> const &);
       ~ParseTreeNode();
       RegExpProduction production;
-      abstract_string<Char> string_; // for leaf nodes
+      abstract_string<Alphabet> string_; // for leaf nodes
       //shared_ptr<ParseTreeNode> parent; 
       shared_ptr<ParseTreeNode> left; // used when there is only 1 child
       shared_ptr<ParseTreeNode> right;
@@ -89,14 +89,14 @@ class RegularExpression {
 
 // A manipulator for NFAs for Thompson construction and subset construction
 // Alphabet should be an alphabet class
-template <typename Char = char>
+template <typename Alphabet = char>
 class NfaLexerGenerator  {
   public:
-    typedef Char CharType; // type of inputs
+    typedef Alphabet CharType; // type of inputs
     typedef int Nfa; // each Nfa is index by integer(its initial state)
     typedef int State; // starts from 0; -1 indicates dead state
-    typedef typename RegularExpression<Char>::ParseTreeNode ParseTreeNode;
-    typedef typename RegularExpression<Char>::ParseTree ParseTree;
+    typedef typename RegularExpression<Alphabet>::ParseTreeNode ParseTreeNode;
+    typedef typename RegularExpression<Alphabet>::ParseTree ParseTree;
     struct Token { // dummy struct for storing a pair
       int key;
       int length;
@@ -117,7 +117,7 @@ class NfaLexerGenerator  {
     void getMove(set<State> const &curStates, CharType input, 
         set<State> &nextStates) const;
     // Match input string, and return corresponding Sentence
-    void getMatch(abstract_string<Char> const &, int index, Token &) const;
+    void getMatch(abstract_string<Alphabet> const &, int index, Token &) const;
     int getMatch(set<State> const &) const;
   private:
     State makeNewState(); // simply return increasing sequence of int
@@ -160,19 +160,19 @@ class NfaLexerGenerator  {
 };
 
 // Deterministic version of Nfa is Dfa: conversion straightforward from Nfa 
-template <typename Char = char>
+template <typename Alphabet = char>
 class DfaLexerGenerator {
   public:
-    typedef Char CharType;
+    typedef Alphabet CharType;
     typedef int NfaState;
     typedef int DfaState; // set of Nfa states
-    typedef typename NfaLexerGenerator<Char>::Token Token;
+    typedef typename NfaLexerGenerator<Alphabet>::Token Token;
   
-    DfaLexerGenerator(): charSize_(static_cast<int>(lib_calvin::getSizeOfCharSet<Char>())) { }
+    DfaLexerGenerator(): charSize_(static_cast<int>(lib_calvin::getSizeOfCharSet<Alphabet>())) { }
     void clear();
-    void convertFrom(NfaLexerGenerator<Char> const &);
+    void convertFrom(NfaLexerGenerator<Alphabet> const &);
     // Same function as its Nfa, but (hopefully) much faster!
-    void getMatch(abstract_string<Char> const &, int index, Token &) const;
+    void getMatch(abstract_string<Alphabet> const &, int index, Token &) const;
   private:
     void setTransition(DfaState curState, CharType input, DfaState nextState);
     void getNextState(DfaState curState, CharType input, 
@@ -191,47 +191,47 @@ namespace lib_calvin_lexer
 {
 /**** Global functions for convenient(?) regex building */
 
-template <typename Char>
-typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>
-CAT(typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>, 
-  typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>);
+template <typename Alphabet>
+typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
+CAT(typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>, 
+  typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>);
 
-template <typename Char>
-typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>
-OR(typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>, 
-  typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>);
+template <typename Alphabet>
+typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
+OR(typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>, 
+  typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>);
 
-template <typename Char>
-typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>
-STAR(typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>);
+template <typename Alphabet>
+typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
+STAR(typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>);
 
-template <typename Char>
-typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>
-PLUS(typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>); 
+template <typename Alphabet>
+typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
+PLUS(typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>); 
 
-template <typename Char>
-typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>
-ONEORZERO(typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>); 
+template <typename Alphabet>
+typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
+ONEORZERO(typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>); 
 
-template <typename Char>
-typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>
-LITERAL(abstract_string<Char> const &);
+template <typename Alphabet>
+typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
+LITERAL(abstract_string<Alphabet> const &);
 
-template <typename Char>
-typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>
-ONEOF(abstract_string<Char> const &);
+template <typename Alphabet>
+typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
+ONEOF(abstract_string<Alphabet> const &);
 
-template <typename Char>
-typename shared_ptr<typename RegularExpression<Char>::ParseTreeNode>
-NOTOF(abstract_string<Char> const &);
+template <typename Alphabet>
+typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
+NOTOF(abstract_string<Alphabet> const &);
 
 } // end namespace lib_calvin_lexer
 
 
-/********************* RegularExpression<Char> definitions *****************/
+/********************* RegularExpression<Alphabet> definitions *****************/
 
-template <typename Char>
-lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode::ParseTreeNode(
+template <typename Alphabet>
+lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode::ParseTreeNode(
     shared_ptr<ParseTreeNode> inLeft, 
     shared_ptr<ParseTreeNode> inRight) {
   this->left = inLeft;
@@ -240,20 +240,20 @@ lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode::ParseTreeNode(
   //inRight->parent = this;
 }
 
-template <typename Char>
-lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode::ParseTreeNode(shared_ptr<ParseTreeNode> inLeft) {
+template <typename Alphabet>
+lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode::ParseTreeNode(shared_ptr<ParseTreeNode> inLeft) {
   this->left = inLeft;
   //inLeft->parent = this;
 }
 
-template <typename Char>
-lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode::ParseTreeNode(abstract_string<Char> const &instring) {
+template <typename Alphabet>
+lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode::ParseTreeNode(abstract_string<Alphabet> const &instring) {
   this->string_ = instring;
 }
 
 // For automatic cleanup chain
-template <typename Char>
-lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode::~ParseTreeNode() {
+template <typename Alphabet>
+lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode::~ParseTreeNode() {
 	/*
   switch (this->production) {
     case RegExpProduction::Cat:
@@ -290,30 +290,30 @@ lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode::~ParseTreeNode() {
   }*/
 }
 
-/************* NfaLexerGenerator<Char>::Sentence definitions ***********/
+/************* NfaLexerGenerator<Alphabet>::Sentence definitions ***********/
 
-template <typename Char>
-lib_calvin_lexer::NfaLexerGenerator<Char>::Sentence::Sentence(
+template <typename Alphabet>
+lib_calvin_lexer::NfaLexerGenerator<Alphabet>::Sentence::Sentence(
 	int inKey, std::shared_ptr<ParseTree const> inTree):
   key_(inKey), pParseTree_(inTree) {
 }
 
 /************************ NfaLexerGenerator definitions ************************/
 
-template <typename Char>
-lib_calvin_lexer::NfaLexerGenerator<Char>::NfaLexerGenerator(): 
-  charSize_(static_cast<int>(lib_calvin::getSizeOfCharSet<Char>())), size_(0) {
+template <typename Alphabet>
+lib_calvin_lexer::NfaLexerGenerator<Alphabet>::NfaLexerGenerator(): 
+  charSize_(static_cast<int>(lib_calvin::getSizeOfCharSet<Alphabet>())), size_(0) {
 }
 
-template <typename Char>
-lib_calvin_lexer::NfaLexerGenerator<Char>::~NfaLexerGenerator() {
+template <typename Alphabet>
+lib_calvin_lexer::NfaLexerGenerator<Alphabet>::~NfaLexerGenerator() {
 	for (int i = 0; i < static_cast<int>(pSentences_.size()); ++i) {
 		delete pSentences_[i];
 	}
 }
 
-template <typename Char>
-void lib_calvin_lexer::NfaLexerGenerator<Char>::clear() {
+template <typename Alphabet>
+void lib_calvin_lexer::NfaLexerGenerator<Alphabet>::clear() {
   nfaToFinalState_.clear();
   keyToFinalState_.clear();
   pSentences_.clear();
@@ -321,16 +321,16 @@ void lib_calvin_lexer::NfaLexerGenerator<Char>::clear() {
   size_ = 0;
 }
 
-template <typename Char>
-void lib_calvin_lexer::NfaLexerGenerator<Char>::addRegularExpression(
+template <typename Alphabet>
+void lib_calvin_lexer::NfaLexerGenerator<Alphabet>::addRegularExpression(
 	int inKey, std::shared_ptr<ParseTree const> inNode) {
  
   Sentence *newSentence = new Sentence(inKey, inNode);
   pSentences_.push_back(newSentence);
 }
 
-template <typename Char>
-void lib_calvin_lexer::NfaLexerGenerator<Char>::buildAll() {
+template <typename Alphabet>
+void lib_calvin_lexer::NfaLexerGenerator<Alphabet>::buildAll() {
 
   typename vector<Sentence *>::const_iterator iter;
   Nfa ultimateStart = makeNewState(); // make ultimate Nfa!
@@ -348,11 +348,11 @@ void lib_calvin_lexer::NfaLexerGenerator<Char>::buildAll() {
 // ..what happens if curStates and nextStates are the same object?
 // And actually that was the way I used this function!
 // Need to consider 'aliasing' throughout my code again.
-template <typename Char>
-void lib_calvin_lexer::NfaLexerGenerator<Char>::getEpsilonClosure(set<State> const &curStates, 
+template <typename Alphabet>
+void lib_calvin_lexer::NfaLexerGenerator<Alphabet>::getEpsilonClosure(set<State> const &curStates, 
     set<State> &nextStates) const {
   // epsilon edge is represented by null_char (hidden character)
-  int null = static_cast<int>(lib_calvin::getNullChar<Char>());
+  int null = static_cast<int>(lib_calvin::getNullChar<Alphabet>());
   vector<bool> isMarked(size_, false); // marked: grey OR black vertex
   vector<State> stack;
   typename set<State>::const_iterator iter, iter2;
@@ -380,8 +380,8 @@ void lib_calvin_lexer::NfaLexerGenerator<Char>::getEpsilonClosure(set<State> con
   }
 }
 
-template <typename Char>
-void lib_calvin_lexer::NfaLexerGenerator<Char>::getMove (
+template <typename Alphabet>
+void lib_calvin_lexer::NfaLexerGenerator<Alphabet>::getMove (
     set<State> const &curStates, CharType input, set<State> &nextStates) const {
   set<State> result; // check for aliasing
   /** This is not a closure !! **/
@@ -396,8 +396,8 @@ void lib_calvin_lexer::NfaLexerGenerator<Char>::getMove (
   nextStates = result;
 }
 
-template <typename Char>
-void lib_calvin_lexer::NfaLexerGenerator<Char>::getMatch(abstract_string<Char> const &instring, 
+template <typename Alphabet>
+void lib_calvin_lexer::NfaLexerGenerator<Alphabet>::getMatch(abstract_string<Alphabet> const &instring, 
     int startIndex, Token &outToken) const {
   // Choice priority: 1. longest lexeme  2. first added regex
   set<State> curStates;
@@ -421,24 +421,24 @@ void lib_calvin_lexer::NfaLexerGenerator<Char>::getMatch(abstract_string<Char> c
   outToken.length = matchedLen;
 }
 
-template <typename Char>
-typename lib_calvin_lexer::NfaLexerGenerator<Char>::State 
-lib_calvin_lexer::NfaLexerGenerator<Char>::makeNewState() {
+template <typename Alphabet>
+typename lib_calvin_lexer::NfaLexerGenerator<Alphabet>::State 
+lib_calvin_lexer::NfaLexerGenerator<Alphabet>::makeNewState() {
   transitionTable_.resize(size_ + 1);  
   transitionTable_[size_] = vector<set<State>>(charSize_);
 	//transitionTable_.push_back(vector<set<State>>(charSize_);
   return(size_++);
 }
 
-template <typename Char>
-void lib_calvin_lexer::NfaLexerGenerator<Char>::setEpsilonTrans (
+template <typename Alphabet>
+void lib_calvin_lexer::NfaLexerGenerator<Alphabet>::setEpsilonTrans (
     State curState, State nextState) {
-  int null = static_cast<int>(lib_calvin::getNullChar<Char>());
+  int null = static_cast<int>(lib_calvin::getNullChar<Alphabet>());
   transitionTable_[curState][null].insert(nextState);
 }
 
-template <typename Char>
-void lib_calvin_lexer::NfaLexerGenerator<Char>::setTransition(State curState, CharType input, 
+template <typename Alphabet>
+void lib_calvin_lexer::NfaLexerGenerator<Alphabet>::setTransition(State curState, CharType input, 
     State nextState) {
   if (input < 0) {
     cout << "setTransition: input is negative: "<< static_cast<int>(input) << "\n";
@@ -451,22 +451,22 @@ void lib_calvin_lexer::NfaLexerGenerator<Char>::setTransition(State curState, Ch
   transitionTable_[curState][static_cast<int>(input)].insert(nextState);
 }
 
-template <typename Char>
-void lib_calvin_lexer::NfaLexerGenerator<Char>::getNextStates(State curState, CharType input, 
+template <typename Alphabet>
+void lib_calvin_lexer::NfaLexerGenerator<Alphabet>::getNextStates(State curState, CharType input, 
     set<State> &nextStates) const {
   nextStates = transitionTable_[curState][static_cast<int>(input)];
 }
 
-template <typename Char>
-typename lib_calvin_lexer::NfaLexerGenerator<Char>::Nfa
-lib_calvin_lexer::NfaLexerGenerator<Char>::convert(std::shared_ptr<ParseTreeNode const> node) {
+template <typename Alphabet>
+typename lib_calvin_lexer::NfaLexerGenerator<Alphabet>::Nfa
+lib_calvin_lexer::NfaLexerGenerator<Alphabet>::convert(std::shared_ptr<ParseTreeNode const> node) {
   Nfa leftStart, rightStart, newStart;
   State leftFinal, rightFinal, newFinal;
   int len;
   // Almost the same with textbook method, I did not merge two states in the
   // ..CAT construction. Just adding an epsilon edge is more sensible. 
   switch (node->production) {
-    case RegularExpression<Char>::RegExpProduction::Cat: 
+    case RegularExpression<Alphabet>::RegExpProduction::Cat: 
       {
         //cout << "Converting CAT\n";
         leftStart = convert(node->left);
@@ -479,7 +479,7 @@ lib_calvin_lexer::NfaLexerGenerator<Char>::convert(std::shared_ptr<ParseTreeNode
         nfaToFinalState_[leftStart] = rightFinal;
         return leftStart;
       }
-    case RegularExpression<Char>::RegExpProduction::Or:
+    case RegularExpression<Alphabet>::RegExpProduction::Or:
       {
         //cout << "Converting OR\n";
         leftStart = convert(node->left);
@@ -497,7 +497,7 @@ lib_calvin_lexer::NfaLexerGenerator<Char>::convert(std::shared_ptr<ParseTreeNode
         nfaToFinalState_[newStart] = newFinal;
         return newStart;
       }
-    case RegularExpression<Char>::RegExpProduction::Star:
+    case RegularExpression<Alphabet>::RegExpProduction::Star:
       {
         //cout << "Converting STAR\n";
         leftStart = convert(node->left);
@@ -513,7 +513,7 @@ lib_calvin_lexer::NfaLexerGenerator<Char>::convert(std::shared_ptr<ParseTreeNode
         return newStart;
       }
     // The same as CAT(A, A*)
-    case RegularExpression<Char>::RegExpProduction::Plus:
+    case RegularExpression<Alphabet>::RegExpProduction::Plus:
       {
         //cout << "Converting PLUS\n";
         leftStart = convert(node->left);
@@ -535,7 +535,7 @@ lib_calvin_lexer::NfaLexerGenerator<Char>::convert(std::shared_ptr<ParseTreeNode
         nfaToFinalState_[newStart] = newFinal;
         return newStart;
       }
-    case RegularExpression<Char>::RegExpProduction::OneOrZero:
+    case RegularExpression<Alphabet>::RegExpProduction::OneOrZero:
       {
         //cout << "Converting ONEORZERO\n";
         leftStart = convert(node->left);
@@ -549,7 +549,7 @@ lib_calvin_lexer::NfaLexerGenerator<Char>::convert(std::shared_ptr<ParseTreeNode
         nfaToFinalState_[newStart] = newFinal;
         return newStart;
       }
-    case RegularExpression<Char>::RegExpProduction::Literal: // consecutive CAT
+    case RegularExpression<Alphabet>::RegExpProduction::Literal: // consecutive CAT
       {
         //cout << "Converting LITERAL\n";
         len = node->string_.size();
@@ -562,7 +562,7 @@ lib_calvin_lexer::NfaLexerGenerator<Char>::convert(std::shared_ptr<ParseTreeNode
         nfaToFinalState_[temp[0]] = temp[len];
         return temp[0];
       }
-    case RegularExpression<Char>::RegExpProduction::OneOf:
+    case RegularExpression<Alphabet>::RegExpProduction::OneOf:
       {
         //cout << "Converting ONEOF\n";
         newStart = makeNewState();
@@ -574,9 +574,9 @@ lib_calvin_lexer::NfaLexerGenerator<Char>::convert(std::shared_ptr<ParseTreeNode
         nfaToFinalState_[newStart] = newFinal;
         return newStart;
       }
-    case RegularExpression<Char>::RegExpProduction::NotOf:
+    case RegularExpression<Alphabet>::RegExpProduction::NotOf:
       {
-        int null = static_cast<int>(lib_calvin::getNullChar<Char>());
+        int null = static_cast<int>(lib_calvin::getNullChar<Alphabet>());
         //cout << "Converting NOTOF. charsize is: " << charSize_ << endl;
         newStart = makeNewState();
         newFinal = makeNewState();
@@ -600,8 +600,8 @@ lib_calvin_lexer::NfaLexerGenerator<Char>::convert(std::shared_ptr<ParseTreeNode
 }
 
 // Returns -1 if no match
-template <typename Char>
-int lib_calvin_lexer::NfaLexerGenerator<Char>::getMatch(set<State> const &curStates) const {
+template <typename Alphabet>
+int lib_calvin_lexer::NfaLexerGenerator<Alphabet>::getMatch(set<State> const &curStates) const {
   // Scan starts from the highest priority sentences
   for (unsigned i = 0; i < pSentences_.size(); ++i) {
     int key = pSentences_[i]->getKey();
@@ -614,16 +614,16 @@ int lib_calvin_lexer::NfaLexerGenerator<Char>::getMatch(set<State> const &curSta
 
 /************************ DfaLexerGenerator definitnios *********************/
 
-template <typename Char>
-void lib_calvin_lexer::DfaLexerGenerator<Char>::clear() {
+template <typename Alphabet>
+void lib_calvin_lexer::DfaLexerGenerator<Alphabet>::clear() {
   transitionTable_.clear();
   nfaStatesToDFAState_.clear(); 
   dfaStateToKey_.clear();
 }
 
-template <typename Char>
-void lib_calvin_lexer::DfaLexerGenerator<Char>::convertFrom (
-    NfaLexerGenerator<Char> const &nfa) {
+template <typename Alphabet>
+void lib_calvin_lexer::DfaLexerGenerator<Alphabet>::convertFrom (
+    NfaLexerGenerator<Alphabet> const &nfa) {
 
   // Subset construction
   DfaState curDFAState, nextDFAState;
@@ -668,8 +668,8 @@ void lib_calvin_lexer::DfaLexerGenerator<Char>::convertFrom (
   cout << "Total Dfa states num is : " << transitionTable_.size() << endl;
 }
 
-template <typename Char>
-void lib_calvin_lexer::DfaLexerGenerator<Char>::getMatch (abstract_string<Char> const &instring, 
+template <typename Alphabet>
+void lib_calvin_lexer::DfaLexerGenerator<Alphabet>::getMatch (abstract_string<Alphabet> const &instring, 
     int startIndex, Token &outToken) const {
   
   DfaState curState = initialState_; // start at initial state
@@ -694,23 +694,23 @@ void lib_calvin_lexer::DfaLexerGenerator<Char>::getMatch (abstract_string<Char> 
   outToken.length = matchedLen;
 }
 
-template <typename Char>
-void lib_calvin_lexer::DfaLexerGenerator<Char>::setTransition(DfaState curState, CharType input, 
+template <typename Alphabet>
+void lib_calvin_lexer::DfaLexerGenerator<Alphabet>::setTransition(DfaState curState, CharType input, 
     DfaState nextState){
   //cout << "Dfa: Seting edge " << curState << " " << input << " " << 
     //nextState << endl;
   transitionTable_[curState][static_cast<int>(input)] = nextState;
 }
 
-template <typename Char>
-void lib_calvin_lexer::DfaLexerGenerator<Char>::getNextState(DfaState curState, CharType input,
+template <typename Alphabet>
+void lib_calvin_lexer::DfaLexerGenerator<Alphabet>::getNextState(DfaState curState, CharType input,
     DfaState &nextState) const {
   nextState = transitionTable_[curState][static_cast<int>(input)];
 }
 
-template <typename Char>
-typename lib_calvin_lexer::DfaLexerGenerator<Char>::DfaState 
-lib_calvin_lexer::DfaLexerGenerator<Char>::makeNewState() {
+template <typename Alphabet>
+typename lib_calvin_lexer::DfaLexerGenerator<Alphabet>::DfaState 
+lib_calvin_lexer::DfaLexerGenerator<Alphabet>::makeNewState() {
   // Initialize values to -1, which means dead state
   transitionTable_.push_back(vector<int>(charSize_, -1));
   return static_cast<int>(transitionTable_.size()) - 1;
@@ -718,85 +718,85 @@ lib_calvin_lexer::DfaLexerGenerator<Char>::makeNewState() {
 
 /************************ Global functions ***********************/
 
-template <typename Char>
-std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode>
-lib_calvin_lexer::CAT(shared_ptr<typename lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode> left, 
-    shared_ptr<typename lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode> right) {
+template <typename Alphabet>
+std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode>
+lib_calvin_lexer::CAT(shared_ptr<typename lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode> left, 
+    shared_ptr<typename lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode> right) {
   
-  typedef typename RegularExpression<Char>::ParseTreeNode ParseTreeNode;
+  typedef typename RegularExpression<Alphabet>::ParseTreeNode ParseTreeNode;
   shared_ptr<ParseTreeNode> pParseNode(new ParseTreeNode(left, right));
-  pParseNode->production = RegularExpression<Char>::RegExpProduction::Cat;
+  pParseNode->production = RegularExpression<Alphabet>::RegExpProduction::Cat;
   return pParseNode;
 }
 
-template <typename Char>
-std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode>
-lib_calvin_lexer::OR(shared_ptr<typename RegularExpression<Char>::ParseTreeNode> left, 
-      shared_ptr<typename RegularExpression<Char>::ParseTreeNode> right) {
+template <typename Alphabet>
+std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode>
+lib_calvin_lexer::OR(shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode> left, 
+      shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode> right) {
 
-  typedef typename RegularExpression<Char>::ParseTreeNode ParseTreeNode;
+  typedef typename RegularExpression<Alphabet>::ParseTreeNode ParseTreeNode;
   shared_ptr<ParseTreeNode> pParseNode(new ParseTreeNode(left, right));
-  pParseNode->production = RegularExpression<Char>::RegExpProduction::Or;
+  pParseNode->production = RegularExpression<Alphabet>::RegExpProduction::Or;
   return pParseNode;
 }
 
-template <typename Char>
-std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode>
-lib_calvin_lexer::STAR(shared_ptr<typename RegularExpression<Char>::ParseTreeNode> left) {
+template <typename Alphabet>
+std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode>
+lib_calvin_lexer::STAR(shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode> left) {
 
-  typedef typename RegularExpression<Char>::ParseTreeNode ParseTreeNode;
+  typedef typename RegularExpression<Alphabet>::ParseTreeNode ParseTreeNode;
   shared_ptr<ParseTreeNode> pParseNode(new ParseTreeNode(left));
-  pParseNode->production = RegularExpression<Char>::RegExpProduction::Star;
+  pParseNode->production = RegularExpression<Alphabet>::RegExpProduction::Star;
   return pParseNode;
 }
 
-template <typename Char>
-std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode>
-lib_calvin_lexer::PLUS(shared_ptr<typename RegularExpression<Char>::ParseTreeNode> left) {
+template <typename Alphabet>
+std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode>
+lib_calvin_lexer::PLUS(shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode> left) {
 
-  typedef typename RegularExpression<Char>::ParseTreeNode ParseTreeNode;
+  typedef typename RegularExpression<Alphabet>::ParseTreeNode ParseTreeNode;
   shared_ptr<ParseTreeNode> pParseNode(new ParseTreeNode(left));
-  pParseNode->production = RegularExpression<Char>::RegExpProduction::Plus;
+  pParseNode->production = RegularExpression<Alphabet>::RegExpProduction::Plus;
   return pParseNode;
 }
 
-template <typename Char>
-std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode>
-lib_calvin_lexer::ONEORZERO(shared_ptr<typename RegularExpression<Char>::ParseTreeNode> left) {
+template <typename Alphabet>
+std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode>
+lib_calvin_lexer::ONEORZERO(shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode> left) {
 
-  typedef typename RegularExpression<Char>::ParseTreeNode ParseTreeNode;
+  typedef typename RegularExpression<Alphabet>::ParseTreeNode ParseTreeNode;
   shared_ptr<ParseTreeNode> pParseNode(new ParseTreeNode(left));
-  pParseNode->production = RegularExpression<Char>::RegExpProduction::OneOrZero;
+  pParseNode->production = RegularExpression<Alphabet>::RegExpProduction::OneOrZero;
   return pParseNode;
 }
 
-template <typename Char>
-std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode>
-lib_calvin_lexer::LITERAL(abstract_string<Char> const &instring) {
+template <typename Alphabet>
+std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode>
+lib_calvin_lexer::LITERAL(abstract_string<Alphabet> const &instring) {
   
-  typedef typename RegularExpression<Char>::ParseTreeNode ParseTreeNode;
+  typedef typename RegularExpression<Alphabet>::ParseTreeNode ParseTreeNode;
   shared_ptr<ParseTreeNode> pParseNode(new ParseTreeNode(instring));
-  pParseNode->production = RegularExpression<Char>::RegExpProduction::Literal;
+  pParseNode->production = RegularExpression<Alphabet>::RegExpProduction::Literal;
   return pParseNode;
 }
 
-template <typename Char>
-std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode>
-lib_calvin_lexer::ONEOF(abstract_string<Char> const &instring) {
+template <typename Alphabet>
+std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode>
+lib_calvin_lexer::ONEOF(abstract_string<Alphabet> const &instring) {
 
-  typedef typename RegularExpression<Char>::ParseTreeNode ParseTreeNode;
+  typedef typename RegularExpression<Alphabet>::ParseTreeNode ParseTreeNode;
   shared_ptr<ParseTreeNode> pParseNode(new ParseTreeNode(instring));
-  pParseNode->production = RegularExpression<Char>::RegExpProduction::OneOf;
+  pParseNode->production = RegularExpression<Alphabet>::RegExpProduction::OneOf;
   return pParseNode;
 }
 
-template <typename Char>
-std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Char>::ParseTreeNode>
-lib_calvin_lexer::NOTOF(abstract_string<Char> const &instring) {
+template <typename Alphabet>
+std::shared_ptr<typename lib_calvin_lexer::RegularExpression<Alphabet>::ParseTreeNode>
+lib_calvin_lexer::NOTOF(abstract_string<Alphabet> const &instring) {
 
-  typedef typename RegularExpression<Char>::ParseTreeNode ParseTreeNode;
+  typedef typename RegularExpression<Alphabet>::ParseTreeNode ParseTreeNode;
   shared_ptr<ParseTreeNode> pParseNode(new ParseTreeNode(instring));
-  pParseNode->production = RegularExpression<Char>::RegExpProduction::NotOf;
+  pParseNode->production = RegularExpression<Alphabet>::RegExpProduction::NotOf;
   return pParseNode;
 }
 
