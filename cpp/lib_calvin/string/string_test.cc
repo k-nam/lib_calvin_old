@@ -1,6 +1,7 @@
 #include "stopwatch.h"
 #include "string_test.h"
 #include "string_matching.h"
+#include "suffix_tree.h"
 
 void lib_calvin_string::stringTest() { 
 	std::cout << "---------- Beginning string test -----------\n\n";
@@ -9,6 +10,8 @@ void lib_calvin_string::stringTest() {
   matchingTest(basicMatch, "Basic string matching(Z-alg)");
   matchingTest(kmp, "KMP");
   matchingTest(boyerMoore, "Boyer-Moore");
+
+	lib_calvin::suffix_tree<char> a("aa");
 	std::cout << "---------- String test finished -----------\n\n\n";
 }
 
@@ -16,13 +19,13 @@ void lib_calvin_string::stringTest() {
 // ... Alphabet is of numerical type. So just test with characters.
 void lib_calvin_string::matchingTest (void (*matchingCharAlg) 
     (abstract_string<> const &text, abstract_string<> const &pattern, 
-     vector<int> &record), std::string title) {
-  vector<int> record;
-  vector<int> answer;
+     vector<size_t> &record), std::string title) {
+  vector<size_t> record;
+  vector<size_t> answer;
 	lib_calvin::stopwatch watch;
 
-  int textLen   = 1000000;
-  int patternLen  = 16;
+  size_t textLen   = 1000000;
+  size_t patternLen  = 16;
   char *pText   = new char[textLen];
   char *pPattern  = new char[patternLen];
   // use only small number of alphabets to make test realistic

@@ -3,6 +3,7 @@
 
 #include "abstract_string.h"
 #include "vector.h"
+#include <cstdint>
 
 namespace lib_calvin_string 
 {
@@ -14,44 +15,44 @@ using std::endl;
 // Z(i) = the length of the string that starts at index i and matches
 // ...the prefix of pattern
 template <typename Alphabet>
-void calculateZ(abstract_string<Alphabet> const &pattern, vector<int> &record);
+void calculateZ(abstract_string<Alphabet> const &pattern, vector<int64_t> &record);
 
 // f(i) = the maximum length of a prefix of pattern which is also a 
 // ...proper suffix of substring pattern[0 i-1]
 template <typename Alphabet>
-void calculateF(abstract_string<Alphabet> const &pattern, vector<int> &record);
+void calculateF(abstract_string<Alphabet> const &pattern, vector<int64_t> &record);
 
 // maps each Alphabet to the index in which the Alphabet first appears in the 
 // ...pattern (looking from the right-end of patttern)
 // assumes that Alphabet can be converted to unsigned int type (which is the
 // ...index in record)
 template <typename Alphabet>
-void badChar(abstract_string<Alphabet> const &pattern, vector<int> &record);
+void badChar(abstract_string<Alphabet> const &pattern, vector<int64_t> &record);
 
 template <typename Alphabet>
 void strongGoodSuffix(abstract_string<Alphabet> const &pattern, 
-											 vector<int> &record);
+											 vector<int64_t> &record);
 
 // save the matching indices in the third argument
 template <typename Alphabet>
 void naiveMatch(abstract_string<Alphabet> const &text, 
     abstract_string<Alphabet> const &pattern, 
-    vector<int> &record);
+    vector<size_t> &result);
 
 template <typename Alphabet>
 void basicMatch(abstract_string<Alphabet> const &text, 
     abstract_string<Alphabet> const &pattern,
-    vector<int> &record);
+    vector<size_t> &result);
 
 template <typename Alphabet>
 void kmp(abstract_string<Alphabet> const &text, 
     abstract_string<Alphabet> const &pattern, 
-    vector<int> &record);
+    vector<size_t> &result);
 
 template <typename Alphabet>
 void boyerMoore(abstract_string<Alphabet> const &text, 
     abstract_string<Alphabet> const &pattern, 
-    vector<int> &record);
+    vector<size_t> &result);
 
 } // end namespace lib_calvin_string
 
@@ -61,18 +62,18 @@ void boyerMoore(abstract_string<Alphabet> const &text,
 // ...also prefix of the entire string. 
 template <typename Alphabet>
 void lib_calvin_string::calculateZ (
-    abstract_string<Alphabet> const &pattern, vector<int> &record) {
+    abstract_string<Alphabet> const &pattern, vector<int64_t> &record) {
 
-  int len = pattern.size();  
-  vector<int> &Z = record;
+  int64_t len = pattern.size();  
+  vector<int64_t> &Z = record;
   record.clear();
   record.resize(len);
   // l(k), r(k): the leftmost and rightmost indices of the substring 
   // ...that spans most to the right and starts at index i <= k 
-  int l = 0; // stores l(k - 1) 
-  int r = 0; // stores r(k - 1)
+  int64_t l = 0; // stores l(k - 1) 
+  int64_t r = 0; // stores r(k - 1)
   Z[0] = -1; // this value will not be used
-	int k, m; // for indices
+	int64_t k, m; // for indices
   for (k = 1; k < len; k++) { // k is current index in the text
     if (r < k) { // start manual matching 
       if (pattern[k] != pattern[0]) { // first character bad
@@ -89,8 +90,8 @@ void lib_calvin_string::calculateZ (
         Z[k] = m - k + 1;
       }
     } else { // use previous data
-      int remainingMatch  = Z[k - l];
-      int remainingBox  = r - k + 1;
+      int64_t remainingMatch  = Z[k - l];
+      int64_t remainingBox  = r - k + 1;
       if (remainingMatch < remainingBox) { // match is contained in Z-block
         Z[k] = Z[k - l];
       } else if (remainingMatch == remainingBox) { // possible to have more matching
@@ -116,11 +117,11 @@ void lib_calvin_string::calculateZ (
 //  in KMP algorithm. f(len) denotes the jump length when a match has been found.
 template <typename Alphabet>
 void lib_calvin_string::calculateF (
-    abstract_string<Alphabet> const &pattern, vector<int> &record) {
+    abstract_string<Alphabet> const &pattern, vector<int64_t> &record) {
 
-  int len = pattern.size();
-  int k, m; // for indices
-  vector<int> &f = record;
+  int64_t len = pattern.size();
+  int64_t k, m; // for indices
+  vector<int64_t> &f = record;
   record.clear();
   record.resize(len + 1);
   f[0] = -1; // this value is not used, but convenient for below procedure
@@ -142,11 +143,11 @@ void lib_calvin_string::calculateF (
 // character i.
 template <typename Alphabet>
 void lib_calvin_string::badChar (
-    abstract_string<Alphabet> const &pattern, vector<int> &record) {
+    abstract_string<Alphabet> const &pattern, vector<int64_t> &record) {
   
   record.clear();
-  int len = pattern.size();
-  int index;
+  int64_t len = pattern.size();
+  int64_t index;
   // we need to know the size of character set (Alphabet::size)
   // Characters not present in the pattern is marked as len; this will
   // ...make the shift amount appropriate
@@ -155,8 +156,8 @@ void lib_calvin_string::badChar (
 		exit(0);
 	}
   record.resize(lib_calvin::getSizeOfCharSet<Alphabet>(), len); 
-  for (int i = len - 1; i >= 0; i--) {
-    index = static_cast<int>(pattern[i]);
+  for (int64_t i = len - 1; i >= 0; i--) {
+    index = static_cast<size_t>(pattern[i]);
     if (record[index] == len) {
       record[index] = len - 1 - i;  // reversed index to fit Boyer-Moore
     }
@@ -170,14 +171,14 @@ void lib_calvin_string::badChar (
 // record[0] is meaningless.
 template <typename Alphabet>
 void lib_calvin_string::strongGoodSuffix (
-    abstract_string<Alphabet> const &pattern, vector<int> &record) {
-  int len = pattern.size();
+    abstract_string<Alphabet> const &pattern, vector<int64_t> &record) {
+  int64_t len = pattern.size();
   record.clear();
   record.resize(len + 1, -1); // initialize as -1
   // use Z algorithm in reverse string
-  vector<int> Z;
+  vector<int64_t> Z;
   calculateZ (pattern.reverse(), Z);
-  for (int i = 1; i < len; ++i) {
+  for (int64_t i = 1; i < len; ++i) {
 		// we must not overwrite; otherwise, we will get greater jump value than
 		// the right one.
     if (record[Z[i]] == -1) { 
@@ -185,10 +186,10 @@ void lib_calvin_string::strongGoodSuffix (
     }
   }  
   // additional processing 
-  int left = len; // possible leftmost element not marked
-  for (int i = 1; i < len; ++i) {
+  int64_t left = len; // possible leftmost element not marked
+  for (int64_t i = 1; i < len; ++i) {
     if (i + Z[i] == len) { // match goes through the end of string
-      for (int j = left; j > len - i; j--) {
+      for (int64_t j = left; j > len - i; j--) {
 				// we must not overwrite, as well as above.
 				if (record[j] == -1) {
 					record[j] = i;
@@ -197,7 +198,7 @@ void lib_calvin_string::strongGoodSuffix (
       left = len - i;
     }
   }
-  for (int k = 0; k < len + 1; k++) { // maximum shift for -1
+  for (int64_t k = 0; k < len + 1; k++) { // maximum shift for -1
     if (record[k] == -1)
       record[k] = len;
   }
@@ -207,19 +208,19 @@ void lib_calvin_string::strongGoodSuffix (
 template <typename Alphabet>
 void lib_calvin_string::naiveMatch (
     abstract_string<Alphabet> const &text, 
-		abstract_string<Alphabet> const &pattern, vector<int> &record) 
+		abstract_string<Alphabet> const &pattern, vector<size_t> &result) 
 {
-  record.clear();
-  int textLen   = text.size();
-  int patternLen  = pattern.size();
-  int k, s; // k for text index, s for pattern index
+  result.clear();
+  int64_t textLen   = text.size();
+  int64_t patternLen  = pattern.size();
+  int64_t k, s; // k for text index, s for pattern index
   for (k = 0; k <= textLen - patternLen; k++) { // last possible match
     for (s = 0; s < patternLen; s++) {
       if(text[k + s] != pattern[s])
         break;
     }
     if (s == patternLen) { // match detected
-      record.push_back(k);
+      result.push_back(k);
     }
   }
 }
@@ -232,19 +233,19 @@ template <typename Alphabet>
 void lib_calvin_string::basicMatch (
     abstract_string<Alphabet> const &text, 
     abstract_string<Alphabet> const &pattern,
-    vector<int> &record) {
+    vector<size_t> &result) {
   
-  record.clear();
-  int patternLen     = pattern.size();
-  int textLen      = text.size();
+  result.clear();
+  int64_t patternLen     = pattern.size();
+  int64_t textLen      = text.size();
   Alphabet *pSpecialChar  = new Alphabet(0);
   abstract_string<Alphabet> newstring  = 
     pattern + abstract_string<Alphabet> (pSpecialChar, 1) + text;
-  vector<int> Z;
+  vector<int64_t> Z;
   calculateZ (newstring, Z);
-  for (int i = patternLen + 1; i < textLen + patternLen + 1; ++i) {
+  for (int64_t i = patternLen + 1; i < textLen + patternLen + 1; ++i) {
     if (Z[i] == patternLen) { // match detected
-      record.push_back(i - patternLen - 1);
+      result.push_back(i - patternLen - 1);
     }
     if (Z[i] > patternLen) {
       cout << "basicMatch error with Z algorithm\n";
@@ -259,19 +260,19 @@ void lib_calvin_string::basicMatch (
 template <typename Alphabet>
 void lib_calvin_string::kmp(
     abstract_string<Alphabet> const &text, 
-		abstract_string<Alphabet> const &pattern, vector<int> &record) {
-  record.clear();
-  int patternLen  = pattern.size();
-  int textLen   = text.size();
-  vector<int> f; 
+		abstract_string<Alphabet> const &pattern, vector<size_t> &result) {
+  result.clear();
+  int64_t patternLen  = pattern.size();
+  int64_t textLen   = text.size();
+  vector<int64_t> f; 
   calculateF (pattern, f);
-  int k = 0, s = 0;
+  int64_t k = 0, s = 0;
   
 // about to match k (text index), s (pattern index)
 AboutToMatch:
   while (true) {
     if (s == patternLen) { // match
-      record.push_back(k - patternLen);
+      result.push_back(k - patternLen);
       if (k == textLen) {
         return;
 			} else {
@@ -321,16 +322,16 @@ FirstWrong:
 template <typename Alphabet>
 void lib_calvin_string::boyerMoore (
     abstract_string<Alphabet> const &text, 
-		abstract_string<Alphabet> const &pattern, vector<int> &record) {		
-  record.clear();
+		abstract_string<Alphabet> const &pattern, vector<size_t> &result) {		
+  result.clear();
   abstract_string<Alphabet> reverse = pattern.reverse();
-  int textLen   = text.size();
-  int patternLen  = pattern.size();
+  int64_t textLen   = text.size();
+  int64_t patternLen  = pattern.size();
   // h: head in text, k: index in text, s: index in pattern (reversed)
-  int h = patternLen - 1, k = patternLen - 1, s = 0;
-  int badCharJump = 0, goodSuffixJump = 0;
+  int64_t h = patternLen - 1, k = patternLen - 1, s = 0;
+  int64_t badCharJump = 0, goodSuffixJump = 0;
 	bool matched = false;
-  vector<int> charTable, suffixTable;
+  vector<int64_t> charTable, suffixTable;
   badChar(pattern, charTable);
   strongGoodSuffix (pattern, suffixTable);
   while (h < textLen) {
@@ -343,7 +344,7 @@ void lib_calvin_string::boyerMoore (
       k--;
       s++;
       if (s == patternLen) { // match at (k + 1)
-        record.push_back (k + 1);
+        result.push_back (k + 1);
         badCharJump = -1; // can not use badchar when matched
         matched = true;
 				break;
@@ -351,7 +352,7 @@ void lib_calvin_string::boyerMoore (
     }
     // jump forward
 		if (!matched) {
-			badCharJump = charTable[static_cast<int>(text[k])] - s;
+			badCharJump = charTable[static_cast<size_t>(text[k])] - s;
 		}
     goodSuffixJump  = suffixTable[s];
     if (badCharJump > goodSuffixJump) {

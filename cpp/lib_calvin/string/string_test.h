@@ -14,7 +14,7 @@ using lib_calvin::abstract_string;
 void stringTest();
 void matchingTest (void (*matchingCharAlg) 
     (abstract_string<> const &text, abstract_string<> const &pattern, 
-     lib_calvin::vector<int> &record), std::string title);
+     lib_calvin::vector<size_t> &record), std::string title);
 }
 
 #endif

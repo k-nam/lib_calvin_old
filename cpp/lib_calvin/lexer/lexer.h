@@ -405,7 +405,7 @@ void lib_calvin_lexer::NfaLexerGenerator<Alphabet>::getMatch(abstract_string<Alp
   int matchedLen = 0; // length of the matched lexeme
   curStates.insert(initialState_); // ultimate initial state of Nfa
   getEpsilonClosure(curStates, curStates); // be careful with aliasing
-  int stringLen = instring.size();
+  int stringLen = static_cast<int>(instring.size());
   for (int i = startIndex; i < stringLen; ++i) {
     getMove(curStates, instring[i], curStates);
     if (curStates.empty()) // fell into dead state
@@ -552,7 +552,7 @@ lib_calvin_lexer::NfaLexerGenerator<Alphabet>::convert(std::shared_ptr<ParseTree
     case RegularExpression<Alphabet>::RegExpProduction::Literal: // consecutive CAT
       {
         //cout << "Converting LITERAL\n";
-        len = node->string_.size();
+        len = static_cast<int>(node->string_.size());
         vector<State> temp(len + 1);
         temp[0] = makeNewState();
         for (int i = 0; i < len; ++i) {
@@ -567,7 +567,7 @@ lib_calvin_lexer::NfaLexerGenerator<Alphabet>::convert(std::shared_ptr<ParseTree
         //cout << "Converting ONEOF\n";
         newStart = makeNewState();
         newFinal = makeNewState();
-        len = node->string_.size();
+        len = static_cast<int>(node->string_.size());
         for (int i = 0; i < len; ++i) {
           setTransition(newStart, node->string_[i], newFinal);
         }
@@ -580,7 +580,7 @@ lib_calvin_lexer::NfaLexerGenerator<Alphabet>::convert(std::shared_ptr<ParseTree
         //cout << "Converting NOTOF. charsize is: " << charSize_ << endl;
         newStart = makeNewState();
         newFinal = makeNewState();
-        len = node->string_.size();
+        len = static_cast<int>(node->string_.size());
         // I started with i = 0, adding an epsilong edge !!! oTL
         for (int i = 0; i < charSize_; ++i) { 
           if (i != null) // don't touch null character
@@ -675,7 +675,7 @@ void lib_calvin_lexer::DfaLexerGenerator<Alphabet>::getMatch (abstract_string<Al
   DfaState curState = initialState_; // start at initial state
   int matchedKey = -1; // records the latest matched key
   int matchedLen = 1; // length of the matched lexeme
-  int stringLen = instring.size();
+  int stringLen = static_cast<int>(instring.size());
   for (int i = startIndex; i < stringLen; ++i) {
     getNextState(curState, instring[i], curState);
     if (curState == -1) { // fell into dead state
