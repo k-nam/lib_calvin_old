@@ -10,7 +10,7 @@
 namespace lib_calvin_graph {
 	void graphTest();
 
-	template <typename V, typename E, typename W = E, typename ExtractWeight = std::identity<E>>
+	template <typename V, typename E>
 	class GraphTest {
 	public:
 		GraphTest(int numV, int numE, int numNegativeE);
@@ -23,8 +23,8 @@ namespace lib_calvin_graph {
 		void getClosestPathTest();	
 		
 	private:
-		void populateGraph(graph_base<V, E, W, ExtractWeight> &graph, int numV, int numE, int numNegativeE);
-		void populateGraph(graph_base<V, E, W, ExtractWeight> &graph, int numV, int numE, int numNegativeE,
+		void populateGraph(graph_base<V, E> &graph, int numV, int numE, int numNegativeE);
+		void populateGraph(graph_base<V, E> &graph, int numV, int numE, int numNegativeE,
 											 E const &defaultEdge);
 	private:
 		int numV_;
@@ -89,12 +89,12 @@ namespace lib_calvin_graph {
 	};
 } // end namespace lib_calvin_graph
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::GraphTest(int numV, int numE, int numNegativeE):
+template <typename V, typename E>
+lib_calvin_graph::GraphTest<V, E>::GraphTest(int numV, int numE, int numNegativeE):
 	numV_(numV), numE_(numE), numNegativeE_(numNegativeE_) { }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::insertionTest() {
+template <typename V, typename E>
+void lib_calvin_graph::GraphTest<V, E>::insertionTest() {
 	using namespace lib_calvin;
   graph<V, E> graph1;
   undirected_graph<V, E> graph2; 
@@ -113,8 +113,8 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::insertionTest() {
 	std::cout << "\n";
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::insertionTest2() {
+template <typename V, typename E>
+void lib_calvin_graph::GraphTest<V, E>::insertionTest2() {
 	using namespace lib_calvin;
 	graph_base<V, E> *graph1, *graph2;
 	graph1 = new graph<V, E>();
@@ -133,8 +133,8 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::insertionTest2() {
 }
 
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::dfsTest() {
+template <typename V, typename E>
+void lib_calvin_graph::GraphTest<V, E>::dfsTest() {
 	using namespace lib_calvin;
 	graph<V, E> graph;
 	populateGraph(graph, numV_, numE_, 0);
@@ -169,8 +169,8 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::dfsTest() {
 	cout << "\n";
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::bfsTest() {
+template <typename V, typename E>
+void lib_calvin_graph::GraphTest<V, E>::bfsTest() {
 	using namespace lib_calvin;
 	graph<V, int> graph;
 	populateGraph(graph, numV_, numE_, 0, 1);
@@ -200,15 +200,15 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::bfsTest() {
 	cout << "\n";
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest() {
+template <typename V, typename E>
+void lib_calvin_graph::GraphTest<V, E>::algorithmTest() {
 	using namespace lib_calvin;
-	graph<V, E, W, ExtractWeight> graph;
+	weighted_graph<V, E> graph;
 	populateGraph(graph, numV_, numE_, 0);
 	graph.goStatic();
 	// Additional tests for weighted graph: shortetst paths problems
 	// dijkstra with array data
-	vector<Arc<W>> solution;
+	vector<Arc<E>> solution;
 	stopwatch watch;
   watch.start();
   dijkstra<E>(graph.arrayData_, 0, solution);
@@ -221,7 +221,7 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest() {
     "\t" << watch.read() << endl;
 
   // Vellman-Ford
-  vector<Arc<W>> solution_v;
+  vector<Arc<E>> solution_v;
   for (int i = numV_ - 1; i < numV_; ++i) {
     watch.start();
     vellmanFord (graph.arrayData_, i, solution_v);
@@ -234,9 +234,9 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest() {
   cout << "Vellman-Ford of vertices: " << numV_ << "\tedges: " << numE_ << 
     "\t" << watch.read() << endl;
 	
-  vector<Arc<W>> row;
+  vector<Arc<E>> row;
   // matrixApsp
-  matrix<Arc<W>> apspResult(1);
+  matrix<Arc<E>> apspResult(1);
   watch.start();
   matrixApsp(graph.matrixData_, apspResult);
   watch.stop();
@@ -244,7 +244,7 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest() {
     "\t" << watch.read() << endl;
 
   // Floyd-Earshall
-  matrix<Arc<W>> floydResult(1);
+  matrix<Arc<E>> floydResult(1);
   watch.start();
   floydWarshall (graph.matrixData_, floydResult);
   watch.stop();
@@ -252,7 +252,7 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest() {
     "\t" << watch.read() << endl;
 
   // johnson's
-  matrix<Arc<W>> johnsonResult(1);
+  matrix<Arc<E>> johnsonResult(1);
   watch.start();
   johnson(graph.arrayData_, johnsonResult);
   watch.stop();
@@ -294,12 +294,12 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::algorithmTest() {
 	std::cout << "\n";
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::undirectedAlgorithmTest() {
+template <typename V, typename E>
+void lib_calvin_graph::GraphTest<V, E>::undirectedAlgorithmTest() {
 	// Additional test only for symmetric graph
   // MST algorithms
 	using namespace lib_calvin;
-	undirected_graph<V, E, W, ExtractWeight> graph;
+	undirected_graph<V, E> graph;
 	populateGraph(graph, numV_, numE_, 0);
 	graph.goStatic();
 	set<std::pair<int, int>> result1, result2;  
@@ -333,10 +333,10 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::undirectedAlgorithmTes
 	cout << "\n";
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::getClosestPathTest() {
+template <typename V, typename E>
+void lib_calvin_graph::GraphTest<V, E>::getClosestPathTest() {
 	using namespace lib_calvin;
-	graph<V, E, W, ExtractWeight> testGraph;
+	weighted_graph<V, E> testGraph;
 	testGraph.insert(1, 2, 2);
 	testGraph.insert(1, 4, 5);
 	testGraph.insert(2, 4, 2);
@@ -378,9 +378,9 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::getClosestPathTest() {
 	std::cout << "\n";
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::populateGraph(
-			graph_base<V, E, W, ExtractWeight> &graph, int numV, int numE, int numNegativeE) {
+template <typename V, typename E>
+void lib_calvin_graph::GraphTest<V, E>::populateGraph(
+			graph_base<V, E> &graph, int numV, int numE, int numNegativeE) {
 	using namespace lib_calvin;
   for (int i = 0; i < numE; ++i) {
     int edge = rand() % 100000 + 1000;
@@ -393,9 +393,9 @@ void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::populateGraph(
   }
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-void lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>::populateGraph(
-			graph_base<V, E, W, ExtractWeight> &graph, 
+template <typename V, typename E>
+void lib_calvin_graph::GraphTest<V, E>::populateGraph(
+			graph_base<V, E> &graph, 
 			int numV, int numE, int numNegativeE, E const &defaultEdge) {
   for (int i = 0; i < numE; ++i) {
 		int srcV = (rand() * 32768 + rand()) % numV;

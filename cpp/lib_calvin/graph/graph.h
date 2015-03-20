@@ -109,7 +109,7 @@ struct WeightedEdge {
 
 class null_edge { };
 
-template <typename V, typename E, typename W, typename ExtractWeight>
+template <typename V, typename E>
 class GraphTest;
 
 // Generic directed graph.
@@ -117,17 +117,18 @@ class GraphTest;
 // V must support '<'and '==' operator (key).
 // At least two subclasses will be derived from this: undirected graph and
 // ..network flow.
-template <typename V, typename E = null_edge, typename W = E, typename ExtractWeight = std::identity<E>>
+template <typename V, typename E = null_edge>
 class graph_base { 
 public: // basic data access
   graph_base();
-  graph_base & operator= (graph_base<V, E, W, ExtractWeight> const &);
+  graph_base & operator= (graph_base<V, E> const &);
   int size() const { return numV_; }
   int number_of_vertex() const { return numV_; }
   int number_of_edge() const { return numE_; }
   bool has(V vertex) const;
   bool has(V src, V dest) const;
   E const & get_edge_of(V src, V dest) const;
+public:
   /// modifying methods force enter into dynamic mode automatically
   // returns true when inserted, false when already existed
   virtual bool insert(V src, V dest, E edge = E()) = 0;
@@ -136,24 +137,16 @@ public: // basic data access
   // returns true when deleted, false when there was not the edge
   virtual bool remove(V src, V dest) = 0;
   //virtual void print() const;
-	void goStatic() const; // make data structures ready for algorithms.
-
-	// Return values of algorithms
-  struct edge {
-  protected:
-    V src_;
-    V dest_;
-    E edge_;
-  };
-
+	virtual void goStatic() const; // make data structures ready for algorithms.
+public:
+	friend class lib_calvin_graph::GraphTest<V, E>;
   class path {
   public:
 		path(V const &source, vector<std::pair<V, E>> const &path);
-    // Size is path length. If it is zero, it means there is no path from
+    // If path length is zero, it means there is no path from
     // ..the source to the target vertex
 	public:
-		size_t length() const;
-		W const total_weight() const;
+		size_t length() const; // number of edges
 		V const & get_source() const;
 		V const & get_vertex(size_t index) const;
 		E const & get_edge(size_t index) const;
@@ -164,69 +157,71 @@ public: // basic data access
     V const source_; // source vertex
 		vector<std::pair<V, E>> const path_; // does not contain source vertex
   };		
-	class weighted_path: public path {
-  public:
-    E total_weight();
-  };
-
-	// solution for a spanning tree (directed graph)
-  // ..used for all kinds of shortest path and MST problem (for subclasses)
-  class predecessor_table {
-  };
-
-  class weighted_predecessor_table: public predecessor_table {
-  public:
-	weighted_path path_to(V &dest); 
-  };
-
-  // solution for Scc or other partition problem
-  class components {
-  public:
-    // size is the num of components, not num of vertices
-    int size() const { return components_.size(); }
-    graph_base<V, E, W, ExtractWeight> const & get_graph() const { return srcGraph_; }
-    int where_is(V const &vertex) const;
-    int get_size_of(int set) const { return setSizes_[set]; }
-  protected:
-    graph_base<V, E, W, ExtractWeight> const &srcGraph_;
-    // V maps to a set number it belongs to (0 ~ #sets - 1)
-		map<V, int> const components_;
-    vector<int> const setSizes_;
-  };
 
 public: // Algorithms. If empty return vector means there are no solution
 	// Shortest path in terms of the number of edges between vertices
 	vector<path> get_closest_path(V const &src, V const &target) const;	
-	// Shortest path in terms of weight
-	vector<path> get_shortest_path(V const &src, V const &target) const;
-	// returns n shortest paths
-	vector<path> get_n_shortest_paths(V const &src, V const &target, size_t num) const;
-private:
+
+protected:
 	template <typename T>
 		path getPathAfterAlgorithm(vector<Arc<T>> result, int src, int target) const;
-	template <typename T>
-		vector<path> getPathsAfterAlgorithm(vector<vector<GeneralArc<T>>> result, 
-																				int src, int target) const;
 		path getPathFromReversedPath(int src, vector<int> const &reversedPath) const;
-protected: // member variables
-  int numV_; 
-  int numE_;
-  // true when modifying mode, false when static mode
-  mutable bool isDynamic_;
+protected: 
 	lib_calvin_adt::IntIndexer<V> mapping_; // 1:1 mapping of verticex and integers
 	vector<map<int, E>> dynamicData_; // for dynamic mode, vertex indexed
-  // Only valid in static mode
-	mutable vector<vector<std::pair<int, W>>> arrayData_; 
-	
+	// Only valid in static mode
+	mutable vector<vector<std::pair<int, E>>> arrayData_; 
+	mutable bool isDynamic_; // turns true after every modifying operation
+private:
+  int numV_; 
+  int numE_;
+}; // end graph
+
+template <typename V, typename E = null_edge, typename W = E, typename ExtractWeight = std::identity<E>>
+class weighted_graph_base: public virtual graph_base<V, E> {
+public:
+	class weighted_path: public graph_base::path {
+	public:
+		weighted_path(path const &);
+    W const total_weight() const;
+  };
+public:
+	weighted_graph_base();
+public:
+	// Shortest path in terms of weight
+	vector<weighted_path> get_shortest_path(V const &src, V const &target) const;
+	// returns n shortest paths
+	vector<weighted_path> get_n_shortest_paths(V const &src, V const &target, size_t num) const;
+public:
+	virtual void goStatic() const override;
+public:
+	friend class lib_calvin_graph::GraphTest<V, E>;
+protected:
+	template <typename T>
+		vector<weighted_path> getPathsAfterAlgorithm(vector<vector<GeneralArc<T>>> result, 
+																				int src, int target) const;
+private:
 	// additional data structure for algorithms
   // graph algorithms are performed only with integers (not V type)
 	mutable lib_calvin::matrix<lib_calvin_graph::Arc<W>> matrixData_; // For matrix computation.
-
   // SSSP solution; not solved if size is 0.
   //vector<vector<Arc<W>>> SSSP_; 
 	// Apsp solution; not solved if size is 1.
 	mutable lib_calvin::matrix<lib_calvin_graph::Arc<W>> apspSolution_; 
-}; // end graph
+};
+
+template <typename V, typename E = null_edge>
+class undirected_graph_base: public virtual graph_base<V, E> {
+public:
+  virtual bool insert(V src, V dest, E edge = E()) = 0;
+  virtual void modify(V src, V dest, E edge = E()) = 0;
+  virtual bool remove(V src, V dest) = 0;
+};
+
+template <typename V, typename E = null_edge, typename W = E, typename ExtractWeight = std::identity<E>>
+class undirected_weighted_graph_base: public undirected_graph_base<V, E>, 
+																				public weighted_graph_base<V, E, W, ExtractWeight> { };
+
 } // end namespace lib_calvin_graph
 
 /************** Adaptor classes for graph representation **************/
@@ -248,27 +243,45 @@ protected: // member variables
 
 namespace lib_calvin {
 
-template <typename V, typename E, typename W = E, typename ExtractWeight = std::identity<E>>
-class graph: public lib_calvin_graph::graph_base<V, E, W, ExtractWeight> {
+template <typename V, typename E>
+class graph: public lib_calvin_graph::graph_base<V, E> {
 public:
   bool insert(V src, V dest, E edge) override;
   void modify(V src, V dest, E edge) override;
   bool remove(V src, V dest) override;
-	friend class lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>;
+	friend class lib_calvin_graph::GraphTest<V, E>;
 };
 
 // Undirected graphs override insertiong and modifying methods to ensure
 // ..symmetry at all times.
-template <typename V, typename E, typename W = E, typename ExtractWeight = std::identity<E>>
-class undirected_graph: public lib_calvin_graph::graph_base<V, E, W, ExtractWeight> {
+template <typename V, typename E>
+class undirected_graph: public lib_calvin_graph::undirected_graph_base<V, E> {
 public:
   // override some methods to ensure symmetry
   bool insert(V src, V dest, E edge) override;
   void modify(V src, V dest, E edge) override;
   bool remove(V src, V dest) override;
-	friend class lib_calvin_graph::GraphTest<V, E, W, ExtractWeight>;
+	friend class lib_calvin_graph::GraphTest<V, E>;
 };
-   
+  
+template <typename V, typename E, typename W = E, typename ExtractWeight = std::identity<E>>
+class weighted_graph: public lib_calvin_graph::weighted_graph_base<V, E, W, ExtractWeight> {
+public:
+  bool insert(V src, V dest, E edge) override;
+  void modify(V src, V dest, E edge) override;
+  bool remove(V src, V dest) override;
+	friend class lib_calvin_graph::GraphTest<V, E>;
+};
+
+template <typename V, typename E, typename W = E, typename ExtractWeight = std::identity<E>>
+class undirected_weighted_graph: public lib_calvin_graph::undirected_weighted_graph_base<V, E, W, ExtractWeight> {
+public:
+  bool insert(V src, V dest, E edge) override;
+  void modify(V src, V dest, E edge) override;
+  bool remove(V src, V dest) override;
+	
+};
+
 } // end namespace lib_calvin
 
 namespace lib_calvin_graph { // namespace for helper functions
@@ -620,14 +633,12 @@ bool WeightedEdge<W>::operator< (WeightedEdge<W> const &rhs) const {
 
 namespace lib_calvin_graph { // open for definitions
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-graph_base<V, E, W, ExtractWeight>::graph_base(): numV_(0), numE_(0), isDynamic_(true), 
-												matrixData_(1), apspSolution_(1) {
-}
+template <typename V, typename E>
+graph_base<V, E>::graph_base(): numV_(0), numE_(0), isDynamic_(true) { }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-graph_base<V, E, W, ExtractWeight> &
-graph_base<V, E, W, ExtractWeight>::operator= (graph_base<V, E, W, ExtractWeight> const &rhs) {
+template <typename V, typename E>
+graph_base<V, E> &
+graph_base<V, E>::operator= (graph_base<V, E> const &rhs) {
 	if (this == &rhs) {
 		return *this;
 	}
@@ -642,15 +653,15 @@ graph_base<V, E, W, ExtractWeight>::operator= (graph_base<V, E, W, ExtractWeight
   return *this;
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-bool graph_base<V, E, W, ExtractWeight>::has(V vertex) const {
+template <typename V, typename E>
+bool graph_base<V, E>::has(V vertex) const {
   if (mapping_.indexOf(vertex) < 0)
     return false;
   return true;
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-bool graph_base<V, E, W, ExtractWeight>::has(V src, V dest) const {
+template <typename V, typename E>
+bool graph_base<V, E>::has(V src, V dest) const {
   int source    = mapping_.indexOf(src);
   int destination = mapping_.indexOf(dest);
   // false if either of vertex is not here
@@ -662,8 +673,8 @@ bool graph_base<V, E, W, ExtractWeight>::has(V src, V dest) const {
   return true;
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-bool graph_base<V, E, W, ExtractWeight>::insert(V src, V dest, E edge) {
+template <typename V, typename E>
+bool graph_base<V, E>::insert(V src, V dest, E edge) {
   if (src == dest) { // No self loop !!!
     return false;
   }
@@ -686,8 +697,8 @@ bool graph_base<V, E, W, ExtractWeight>::insert(V src, V dest, E edge) {
   return (isInserted);
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-void graph_base<V, E, W, ExtractWeight>::modify(V src, V dest, E edge) {
+template <typename V, typename E>
+void graph_base<V, E>::modify(V src, V dest, E edge) {
   if (src == dest) { // No self loop !!!
     return;
   }
@@ -711,8 +722,8 @@ void graph_base<V, E, W, ExtractWeight>::modify(V src, V dest, E edge) {
   isDynamic_ = true; 
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-bool graph_base<V, E, W, ExtractWeight>::remove(V src, V dest) {
+template <typename V, typename E>
+bool graph_base<V, E>::remove(V src, V dest) {
   int source      = mapping_.indexOf(src);
   int destination = mapping_.indexOf(dest);
   // false if either of vertex is not here
@@ -745,20 +756,17 @@ void graph<V, E, ExtractWeight>::print() const {
   }
 }*/
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-void graph_base<V, E, W, ExtractWeight>::goStatic() const {
-  if (isDynamic_ == false) { // already in static mode
-    return;
+template <typename V, typename E>
+void graph_base<V, E>::goStatic() const {
+  if (isDynamic_ == true) { 
+		lib_calvin_graph::makeArrayData<E, E, std::identity<E>>(dynamicData_, arrayData_);
   }
-  // fill static data structures
-	lib_calvin_graph::makeArrayData<E, W, ExtractWeight>(dynamicData_, arrayData_);
-	lib_calvin_graph::makeMatrixData<W>(arrayData_, matrixData_);
 }
 
 // Shortest path in terms of the number of edges
-template <typename V, typename E, typename W, typename ExtractWeight>
-vector<typename graph_base<V, E, W, ExtractWeight>::path>
-graph_base<V, E, W, ExtractWeight>::get_closest_path(V const &src, V const &target) const {
+template <typename V, typename E>
+vector<typename graph_base<V, E>::path>
+graph_base<V, E>::get_closest_path(V const &src, V const &target) const {
 	goStatic();
 	vector<path> paths;
 	if (!has(src) || !has(target)) { // input is invalid
@@ -780,10 +788,14 @@ graph_base<V, E, W, ExtractWeight>::get_closest_path(V const &src, V const &targ
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-vector<typename graph_base<V, E, W, ExtractWeight>::path>
-graph_base<V, E, W, ExtractWeight>::get_shortest_path(V const &src, V const &target) const {
+weighted_graph_base<V, E, W, ExtractWeight>::weighted_graph_base(): graph_base(), 
+				matrixData_(1), apspSolution_(1) { }
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+vector<typename weighted_graph_base<V, E, W, ExtractWeight>::weighted_path>
+weighted_graph_base<V, E, W, ExtractWeight>::get_shortest_path(V const &src, V const &target) const {
 	goStatic();
-	vector<path> paths;
+	vector<weighted_path> paths;
 	bool pathExists = true;
 	if (!has(src) || !has(target) || src == target) { // input is invalid
 		std::cout << "get_shortest_path input error\n";
@@ -802,8 +814,8 @@ graph_base<V, E, W, ExtractWeight>::get_shortest_path(V const &src, V const &tar
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-vector<typename graph_base<V, E, W, ExtractWeight>::path>
-graph_base<V, E, W, ExtractWeight>::get_n_shortest_paths(V const &src, V const &target, size_t num) const {
+vector<typename weighted_graph_base<V, E, W, ExtractWeight>::weighted_path>
+weighted_graph_base<V, E, W, ExtractWeight>::get_n_shortest_paths(V const &src, V const &target, size_t num) const {
 	goStatic();
 	if (!has(src) || !has(target) || src == target) { // input is invalid, return empty vector
 		std::cout << "get_n_shortest_paths input error\n";
@@ -815,16 +827,16 @@ graph_base<V, E, W, ExtractWeight>::get_n_shortest_paths(V const &src, V const &
 	dijkstra2(arrayData_, srcVertex, result, num);	
 	//std::cout << "after dijkstra2\n";
 	if (result[targetVertex].empty()) { // not reachable
-		return vector<graph_base<V, E, W, ExtractWeight>::path>();
+		return vector<weighted_graph_base<V, E, W, ExtractWeight>::weighted_path>();
 	} else {
-		return graph_base<V, E, W, ExtractWeight>::getPathsAfterAlgorithm<W>(result, srcVertex, targetVertex);
+		return weighted_graph_base<V, E, W, ExtractWeight>::getPathsAfterAlgorithm<W>(result, srcVertex, targetVertex);
 	}
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
+template <typename V, typename E>
 template <typename T>
-typename graph_base<V, E, W, ExtractWeight>::path
-graph_base<V, E, W, ExtractWeight>::getPathAfterAlgorithm(
+typename graph_base<V, E>::path
+graph_base<V, E>::getPathAfterAlgorithm(
 			vector<Arc<T>> result, int srcVertex, int targetVertex) const {
 	vector<int> reversedPath;
 	for (int curVertex = targetVertex; curVertex != srcVertex; ) {
@@ -837,8 +849,8 @@ graph_base<V, E, W, ExtractWeight>::getPathAfterAlgorithm(
 
 template <typename V, typename E, typename W, typename ExtractWeight>
 template <typename T>
-vector<typename graph_base<V, E, W, ExtractWeight>::path>
-graph_base<V, E, W, ExtractWeight>::getPathsAfterAlgorithm(
+vector<typename weighted_graph_base<V, E, W, ExtractWeight>::weighted_path>
+weighted_graph_base<V, E, W, ExtractWeight>::getPathsAfterAlgorithm(
 			vector<vector<GeneralArc<T>>> result, int srcVertex, int targetVertex) const {
 	size_t numPaths = result[targetVertex].size();
 	vector<vector<int>> reversedPaths(numPaths);
@@ -852,16 +864,16 @@ graph_base<V, E, W, ExtractWeight>::getPathsAfterAlgorithm(
 			curNThClosest = arc.nThClosest_;
 		}
 	}
-	vector<path> realPaths;
+	vector<weighted_path> realPaths;
 	for (size_t i = 0; i < numPaths; i++) {
 		realPaths.push_back(getPathFromReversedPath(srcVertex, reversedPaths[i]));
 	}
 	return realPaths;
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-typename graph_base<V, E, W, ExtractWeight>::path
-graph_base<V, E, W, ExtractWeight>::getPathFromReversedPath(int srcVertex, vector<int> const &reversedPath) const {
+template <typename V, typename E>
+typename graph_base<V, E>::path
+graph_base<V, E>::getPathFromReversedPath(int srcVertex, vector<int> const &reversedPath) const {
 	vector<std::pair<V, E>> realPath;
 	int previousVertex = srcVertex;
 	int curVertex;
@@ -872,91 +884,84 @@ graph_base<V, E, W, ExtractWeight>::getPathFromReversedPath(int srcVertex, vecto
 			mapping_[curVertex], dynamicData_[previousVertex].find(curVertex)->second));
 		previousVertex = curVertex;
 	}
-	return graph_base<V, E, W, ExtractWeight>::path(mapping_[srcVertex], realPath);
+	return graph_base<V, E>::path(mapping_[srcVertex], realPath);
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-graph_base<V, E, W, ExtractWeight>::path::path(V const &source, vector<std::pair<V, E>> const &path): 
+template <typename V, typename E>
+graph_base<V, E>::path::path(V const &source, vector<std::pair<V, E>> const &path): 
 			source_(source), path_(path) { }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-size_t graph_base<V, E, W, ExtractWeight>::path::length() const {
+template <typename V, typename E>
+size_t graph_base<V, E>::path::length() const {
 	// Size is path length. If it is zero, it means there is no path from
   // ..the source to the target vertex
 	return path_.size();
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-W const
-graph_base<V, E, W, ExtractWeight>::path::total_weight() const {
-	W totalWeight = 0;
-	for (int i = 0; i < path_.size(); i++) {
-		totalWeight += ExtractWeight()(path_[i].second);
-	}
-	return totalWeight;
-}
-
-template <typename V, typename E, typename W, typename ExtractWeight>
+template <typename V, typename E>
 V const & 
-graph_base<V, E, W, ExtractWeight>::path::get_source() const {
+graph_base<V, E>::path::get_source() const {
 	return source_;
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
+template <typename V, typename E>
 V const &
-graph_base<V, E, W, ExtractWeight>::path::get_vertex(size_t index) const {
+graph_base<V, E>::path::get_vertex(size_t index) const {
 	if (index > 0) {
 		return path_[index - 1].first;
 	} else {
 		return source_;
 	}
 }
-template <typename V, typename E, typename W, typename ExtractWeight>
+template <typename V, typename E>
 E const &
-graph_base<V, E, W, ExtractWeight>::path::get_edge(size_t index) const {
-	return return path_[index].second; 
+graph_base<V, E>::path::get_edge(size_t index) const {
+	return path_[index].second; 
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-typename graph_base<V, E, W, ExtractWeight>::path &
-graph_base<V, E, W, ExtractWeight>::path::operator= (path const &rhs) {
+template <typename V, typename E>
+typename graph_base<V, E>::path &
+graph_base<V, E>::path::operator= (path const &rhs) {
 	source_ = rhs.source_;
 	path_ = rhs.path_;
 	return *this;
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-typename graph_base<V, E, W, ExtractWeight>::path &
-graph_base<V, E, W, ExtractWeight>::path::operator= (path &&rhs) {
+template <typename V, typename E>
+typename graph_base<V, E>::path &
+graph_base<V, E>::path::operator= (path &&rhs) {
 	source_ = rhs.source_;
 	path_ = std::forward<vector<std::pair<V, E>>(rhs.path_);
 	return *this;
 }
 
-} // end namespace lib_calvin_graph
-
-//------------------------- additional methods -------------------------
-namespace lib_calvin {
+template <typename V, typename E, typename W, typename ExtractWeight>
+weighted_graph_base<V, E, W, ExtractWeight>::weighted_path::weighted_path(graph_base<V, E>::path const &path): 
+		path(path) { }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-bool graph<V, E, W, ExtractWeight>::insert(V src, V dest, E edge) {
-	return graph_base<V, E, W, ExtractWeight>::insert(src, dest, edge);
+W const
+weighted_graph_base<V, E, W, ExtractWeight>::weighted_path::total_weight() const {
+	W totalWeight = 0;
+	for (size_t i = 0; i < path::length(); i++) {
+		totalWeight += ExtractWeight()(path::get_edge(i));
+	}
+	return totalWeight;
 }
 
 template <typename V, typename E, typename W, typename ExtractWeight>
-void graph<V, E, W, ExtractWeight>::modify(V src, V dest, E edge) {
-	graph_base<V, E, W, ExtractWeight>::modify(src, dest, edge);
+void
+weighted_graph_base<V, E, W, ExtractWeight>::goStatic() const {
+	graph_base<V, E>::goStatic();
+	if (isDynamic_ == true) {
+		lib_calvin_graph::makeMatrixData<W>(arrayData_, matrixData_);
+	}
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-bool graph<V, E, W, ExtractWeight>::remove(V src, V dest) {
-	return graph_base<V, E, W, ExtractWeight>::remove(src, dest);
-}
-
-template <typename V, typename E, typename W, typename ExtractWeight>
-bool undirected_graph<V, E, W, ExtractWeight>::insert(V src, V dest, E edge) {
-  bool result1 = graph_base<V, E, W, ExtractWeight>::insert(src, dest, edge);
-  bool result2 = graph_base<V, E, W, ExtractWeight>::insert(dest, src, edge);
+template <typename V, typename E>
+bool undirected_graph_base<V, E>::insert(V src, V dest, E edge) {
+  bool result1 = graph_base<V, E>::insert(src, dest, edge);
+  bool result2 = graph_base<V, E>::insert(dest, src, edge);
   if (result1 != result2) {
     std::cout << "undirected_weighted_graph insert error!!\n";
 		exit(0);
@@ -964,22 +969,88 @@ bool undirected_graph<V, E, W, ExtractWeight>::insert(V src, V dest, E edge) {
   return result1;
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-void undirected_graph<V, E, W, ExtractWeight>::modify(V src, V dest, E edge) {
-  graph_base<V, E, W, ExtractWeight>::modify(src, dest, edge);
-  graph_base<V, E, W, ExtractWeight>::modify(dest, src, edge);
+template <typename V, typename E>
+void undirected_graph_base<V, E>::modify(V src, V dest, E edge) {
+  graph_base<V, E>::modify(src, dest, edge);
+  graph_base<V, E>::modify(dest, src, edge);
 }
 
-template <typename V, typename E, typename W, typename ExtractWeight>
-bool undirected_graph<V, E, W, ExtractWeight>::remove(V src, V dest) {
-  bool result1 = graph_base<V, E, W, ExtractWeight>::remove(src, dest);
-  bool result2 = graph_base<V, E, W, ExtractWeight>::remove(dest, src);
+template <typename V, typename E>
+bool undirected_graph_base<V, E>::remove(V src, V dest) {
+  bool result1 = graph_base<V, E>::remove(src, dest);
+  bool result2 = graph_base<V, E>::remove(dest, src);
   if (result1 != result2) {
     std::cout << "undirected_weighted_graph remove error!!\n";
 		exit(0);
 	}
   return result1;
 }
+
+} // end namespace lib_calvin_graph
+
+//------------------------- additional methods -------------------------
+namespace lib_calvin 
+{
+template <typename V, typename E>
+bool graph<V, E>::insert(V src, V dest, E edge) {
+	return graph_base<V, E>::insert(src, dest, edge);
+}
+
+template <typename V, typename E>
+void graph<V, E>::modify(V src, V dest, E edge) {
+	graph_base<V, E>::modify(src, dest, edge);
+}
+
+template <typename V, typename E>
+bool graph<V, E>::remove(V src, V dest) {
+	return graph_base<V, E>::remove(src, dest);
+}
+
+template <typename V, typename E>
+bool undirected_graph<V, E>::insert(V src, V dest, E edge) {
+	return undirected_graph_base<V, E>::insert(src, dest, edge);
+}
+
+template <typename V, typename E>
+void undirected_graph<V, E>::modify(V src, V dest, E edge) {
+	undirected_graph_base<V, E>::modify(src, dest, edge);
+}
+
+template <typename V, typename E>
+bool undirected_graph<V, E>::remove(V src, V dest) {
+	return undirected_graph_base<V, E>::remove(src, dest);
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+bool weighted_graph<V, E, W, ExtractWeight>::insert(V src, V dest, E edge) {
+	return graph_base<V, E>::insert(src, dest, edge);
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+void weighted_graph<V, E, W, ExtractWeight>::modify(V src, V dest, E edge) {
+	graph_base<V, E>::modify(src, dest, edge);
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+bool weighted_graph<V, E, W, ExtractWeight>::remove(V src, V dest) {
+	return graph_base<V, E>::remove(src, dest);
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+bool undirected_weighted_graph<V, E, W, ExtractWeight>::insert(V src, V dest, E edge) {
+	return undirected_graph_base<V, E>::insert(src, dest, edge);
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+void undirected_weighted_graph<V, E, W, ExtractWeight>::modify(V src, V dest, E edge) {
+	undirected_graph_base<V, E>::modify(src, dest, edge);
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+bool undirected_weighted_graph<V, E, W, ExtractWeight>::remove(V src, V dest) {
+	return undirected_graph_base<V, E>::remove(src, dest);
+}
+
 } // end namespace lib_calvin
 
 //--------------------------- Global functions ----------------------------
