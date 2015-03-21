@@ -37,17 +37,19 @@ namespace lib_calvin_adt
   class IntIndexer {
     public:
       IntIndexer();
-      int size() const { return itok_.size_(); }
+			int size() const;
       // return negative if not exist
       int indexOf (K const &key) const;
-      // does both insertion and finding: always return valid index
-      int insert (K const &key); 
+      // true is inserted. always return valid index
+      std::pair<int, bool> insert(K const &key); 
+			void erase(int index);
       // undefined if index is invalid!
       K const & operator[] (int index) const; // get key from int
+			K & operator[] (int index);
     private:
-      int size_;
-      vector<K> keyArray_; // map int to key
-      map<K, int> keyToInt_; // map key to int
+      int newIndex_;
+      map<int, K> indexToKey_; // map int to key
+      map<K, int> keyToIndex_; // map key to int
   };
 
   // P: priority should have < operator
@@ -149,33 +151,51 @@ namespace lib_calvin_adt // open for definitions
 /******************* IntIndexer definitions *******************/
 
 template <typename K>
-IntIndexer<K>::IntIndexer(): size_(0) { }
+IntIndexer<K>::IntIndexer(): newIndex_(0) { }
+
+template <typename K>
+int IntIndexer<K>::size() const {
+  return keyToIndex_.size();
+}
 
 template <typename K>
 int IntIndexer<K>::indexOf(K const &key) const {
-  map<K, int>::const_iterator iter = keyToInt_.find(key);
-  if (iter == keyToInt_.end()) {
+  map<K, int>::const_iterator iter = keyToIndex_.find(key);
+  if (iter == keyToIndex_.end()) {
     return -1;
   }
   return (iter->second);
 }
 
 template <typename K>
-int IntIndexer<K>::insert(K const &key) {
-  map<K, int>::iterator iter = keyToInt_.find(key);
-  if (iter == keyToInt_.end()) {
-    keyToInt_.insert(std::pair<K, int>(key, size_));
-    keyArray_.push_back (key);
-    return (size_++);
+std::pair<int, bool> IntIndexer<K>::insert(K const &key) {
+  map<K, int>::iterator iter = keyToIndex_.find(key);
+  if (iter == keyToIndex_.end()) {
+    keyToIndex_.insert(std::pair<K, int>(key, newIndex_));
+    indexToKey_.insert(std::pair<int, K>(newIndex_, key));
+    return std::make_pair(newIndex_++, true);
   } else {
-		return (iter->second);
+		return std::make_pair(iter->second, false);
 	}
+}
+
+template <typename K>
+void IntIndexer<K>::erase(int index) {
+	K const &key = indexToKey_[index];
+	keyToIndex_.erase(key);
+	indexToKey_.erase(index);
 }
 
 template <typename K>
 K const & 
 IntIndexer<K>::operator[] (int index) const {
-  return keyArray_[index];
+  return const_cast<map<int, K> &>(indexToKey_)[index];
+}
+
+template <typename K>
+K & 
+IntIndexer<K>::operator[] (int index) {
+  return indexToKey_[index];
 }
 
 /******************* IntPq definitions *******************/

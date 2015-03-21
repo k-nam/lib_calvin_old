@@ -121,25 +121,29 @@ template <typename V, typename E = null_edge>
 class graph_base { 
 public: // basic data access
   graph_base();
+	graph_base(graph_base const &);
   graph_base & operator= (graph_base<V, E> const &);
-  int size() const { return numV_; }
-  int number_of_vertex() const { return numV_; }
-  int number_of_edge() const { return numE_; }
-  bool has(V vertex) const;
-  bool has(V src, V dest) const;
-  E const & get_edge_of(V src, V dest) const;
+public:
+  int size() const { return mapping_.size(); }
+  int number_of_vertex() const { return size(); }
+  int number_of_edge() const { return numEdges_; }
+  bool has_vertex(V vertex) const;
+  bool has_edge(V src, V dest) const;
 public:
   /// modifying methods force enter into dynamic mode automatically
   // returns true when inserted, false when already existed
-  virtual bool insert(V src, V dest, E edge = E()) = 0;
-  // insert or modify automatically
-  virtual void modify(V src, V dest, E edge = E()) = 0;
+	bool insert_vertex(V const &src);
+  virtual bool insert_edge(V const &src, V const &dest, E const &edge = E());
   // returns true when deleted, false when there was not the edge
-  virtual bool remove(V src, V dest) = 0;
+  virtual bool remove_edge(V const &src, V const &dest);
+	E const & get_edge(V const &src, V const &dest) const;
+	E & get_edge(V const &src, V const &dest);
+	vector<std::pair<V, E>> get_vertex_edge_pairs_from(V const &src) const;
+	vector<V> get_vertices_to(V const &dest) const;
   //virtual void print() const;
+public:
 	virtual void goStatic() const; // make data structures ready for algorithms.
 public:
-	friend class lib_calvin_graph::GraphTest<V, E>;
   class path {
   public:
 		path(V const &source, vector<std::pair<V, E>> const &path);
@@ -161,20 +165,28 @@ public:
 public: // Algorithms. If empty return vector means there are no solution
 	// Shortest path in terms of the number of edges between vertices
 	vector<path> get_closest_path(V const &src, V const &target) const;	
-
+public:
+	friend class lib_calvin_graph::GraphTest<V, E>;
 protected:
 	template <typename T>
-		path getPathAfterAlgorithm(vector<Arc<T>> result, int src, int target) const;
-		path getPathFromReversedPath(int src, vector<int> const &reversedPath) const;
+	path getPathAfterAlgorithm(vector<Arc<T>> result, int src, int target) const;
+	path getPathFromReversedPath(int src, vector<int> const &reversedPath) const;
 protected: 
 	lib_calvin_adt::IntIndexer<V> mapping_; // 1:1 mapping of verticex and integers
-	vector<map<int, E>> dynamicData_; // for dynamic mode, vertex indexed
+	vector<map<int, E>> outLinks_;
+	vector<set<int>> inLinks_;
 	// Only valid in static mode
 	mutable vector<vector<std::pair<int, E>>> arrayData_; 
 	mutable bool isDynamic_; // turns true after every modifying operation
 private:
-  int numV_; 
-  int numE_;
+	// returns (vertexId, wasInserted)
+	std::pair<int, bool> insertVertex(V const &);
+	// has no effect if vertex is already present
+	void increaseSizeByOne();
+	// src and dest must be present
+	bool hasEdge(int src, int dest) const;
+private:
+	int numEdges_;
 }; // end graph
 
 template <typename V, typename E = null_edge, typename W = E, typename ExtractWeight = std::identity<E>>
@@ -213,15 +225,19 @@ private:
 template <typename V, typename E = null_edge>
 class undirected_graph_base: public virtual graph_base<V, E> {
 public:
-  virtual bool insert(V src, V dest, E edge = E()) = 0;
-  virtual void modify(V src, V dest, E edge = E()) = 0;
-  virtual bool remove(V src, V dest) = 0;
+  virtual bool insert_edge(V const &src, V const &dest, E const &edge = E()) override;
+  virtual bool remove_edge(V const &src, V const &dest) override;
 };
 
 template <typename V, typename E = null_edge, typename W = E, typename ExtractWeight = std::identity<E>>
 class undirected_weighted_graph_base: public undirected_graph_base<V, E>, 
-																				public weighted_graph_base<V, E, W, ExtractWeight> { };
-
+																				public weighted_graph_base<V, E, W, ExtractWeight> {
+public:
+  virtual bool insert_edge(V const &src, V const &dest, E const &edge = E()) override;
+  virtual bool remove_edge(V const &src, V const &dest) override;
+public:
+	void goStatic() const override;
+};
 } // end namespace lib_calvin_graph
 
 /************** Adaptor classes for graph representation **************/
@@ -244,43 +260,18 @@ class undirected_weighted_graph_base: public undirected_graph_base<V, E>,
 namespace lib_calvin {
 
 template <typename V, typename E>
-class graph: public lib_calvin_graph::graph_base<V, E> {
-public:
-  bool insert(V src, V dest, E edge) override;
-  void modify(V src, V dest, E edge) override;
-  bool remove(V src, V dest) override;
-	friend class lib_calvin_graph::GraphTest<V, E>;
-};
+class graph: public lib_calvin_graph::graph_base<V, E> { };
 
 // Undirected graphs override insertiong and modifying methods to ensure
 // ..symmetry at all times.
 template <typename V, typename E>
-class undirected_graph: public lib_calvin_graph::undirected_graph_base<V, E> {
-public:
-  // override some methods to ensure symmetry
-  bool insert(V src, V dest, E edge) override;
-  void modify(V src, V dest, E edge) override;
-  bool remove(V src, V dest) override;
-	friend class lib_calvin_graph::GraphTest<V, E>;
-};
+class undirected_graph: public lib_calvin_graph::undirected_graph_base<V, E> { };
   
 template <typename V, typename E, typename W = E, typename ExtractWeight = std::identity<E>>
-class weighted_graph: public lib_calvin_graph::weighted_graph_base<V, E, W, ExtractWeight> {
-public:
-  bool insert(V src, V dest, E edge) override;
-  void modify(V src, V dest, E edge) override;
-  bool remove(V src, V dest) override;
-	friend class lib_calvin_graph::GraphTest<V, E>;
-};
+class weighted_graph: public lib_calvin_graph::weighted_graph_base<V, E, W, ExtractWeight> { };
 
 template <typename V, typename E, typename W = E, typename ExtractWeight = std::identity<E>>
-class undirected_weighted_graph: public lib_calvin_graph::undirected_weighted_graph_base<V, E, W, ExtractWeight> {
-public:
-  bool insert(V src, V dest, E edge) override;
-  void modify(V src, V dest, E edge) override;
-  bool remove(V src, V dest) override;
-	
-};
+class undirected_weighted_graph: public lib_calvin_graph::undirected_weighted_graph_base<V, E, W, ExtractWeight> { };
 
 } // end namespace lib_calvin
 
@@ -634,7 +625,12 @@ bool WeightedEdge<W>::operator< (WeightedEdge<W> const &rhs) const {
 namespace lib_calvin_graph { // open for definitions
 
 template <typename V, typename E>
-graph_base<V, E>::graph_base(): numV_(0), numE_(0), isDynamic_(true) { }
+graph_base<V, E>::graph_base(): isDynamic_(true), numEdges_(0) { }
+
+template <typename V, typename E>
+graph_base<V, E>::graph_base(graph_base const &rhs) {
+	*this = rhs;
+}
 
 template <typename V, typename E>
 graph_base<V, E> &
@@ -642,101 +638,135 @@ graph_base<V, E>::operator= (graph_base<V, E> const &rhs) {
 	if (this == &rhs) {
 		return *this;
 	}
-  numV_       = rhs.numV_;
-  numE_       = rhs.numE_,
-  isDynamic_    = rhs.isDynamic_;
-  mapping_    = rhs.mapping_;
-  dynamicData_  = rhs.dynamicData_;
-  arrayData_    = rhs.arrayData_;
+  isDynamic_ = rhs.isDynamic_;
+	numEdges_ = rhs.numEdges_;
+  mapping_ = rhs.mapping_;
+	outLinks_ = rhs.outLinks_;
+	inLinks_ = rhs.inLinks_;
+  arrayData_ = rhs.arrayData_;
 	matrixData_ = rhs.matrixData_;
-  apspSolution_     = rhs.apspSolution_;
+  apspSolution_ = rhs.apspSolution_;
   return *this;
 }
 
 template <typename V, typename E>
-bool graph_base<V, E>::has(V vertex) const {
-  if (mapping_.indexOf(vertex) < 0)
-    return false;
-  return true;
+bool graph_base<V, E>::has_vertex(V vertex) const {
+  return mapping_.indexOf(vertex) >= 0;
 }
 
 template <typename V, typename E>
-bool graph_base<V, E>::has(V src, V dest) const {
+bool graph_base<V, E>::has_edge(V src, V dest) const {
   int source    = mapping_.indexOf(src);
-  int destination = mapping_.indexOf(dest);
-  // false if either of vertex is not here
-  if (source < 0 || destination < 0)
-    return false;
-  map<int, E> &connected = dynamicData_[source];
-  if (connected.find(destination) == connected.end())
-    return false;
-  return true;
-}
-
-template <typename V, typename E>
-bool graph_base<V, E>::insert(V src, V dest, E edge) {
-  if (src == dest) { // No self loop !!!
-    return false;
-  }
-  int source = mapping_.insert(src); // auto insertion
-  if (source == numV_) { // new vertex
-    numV_++;
-    dynamicData_.resize(numV_);
-  }
-  int destination = mapping_.insert(dest); // auto insertion
-  if (destination == numV_) { // new vertex
-    numV_++;
-    dynamicData_.resize(numV_);
-  }
-  bool isInserted = (dynamicData_[source].insert (
-		typename map<int, E>::value_type(destination, edge))).second;
-  if (isInserted) {
-    isDynamic_ = true; // graph has been modified
-    ++numE_;
-  }
-  return (isInserted);
-}
-
-template <typename V, typename E>
-void graph_base<V, E>::modify(V src, V dest, E edge) {
-  if (src == dest) { // No self loop !!!
-    return;
-  }
-  int source = mapping_.insert(src); // auto insertion
-  if (source == numV_) { // new vertex
-    numV_++;
-    dynamicData_.resize(numV_);
-  }
-  int destination = mapping_.insert(dest); // auto insertion
-  if (destination == numV_) { // new vertex
-    numV_++;
-    dynamicData_.resize(numV_);
-  }
-  bool isInserted = (dynamicData_[source].insert (
-		typename map<int, E>::value_type(destination, edge))).second;
-  if (!isInserted) { // already inserted -> modification
-    dynamicData_[source][destination] = edge;
-  }
-  if (isInserted)
-    ++numE_;
-  isDynamic_ = true; 
-}
-
-template <typename V, typename E>
-bool graph_base<V, E>::remove(V src, V dest) {
-  int source      = mapping_.indexOf(src);
   int destination = mapping_.indexOf(dest);
   // false if either of vertex is not here
   if (source < 0 || destination < 0) {
     return false;
 	}
-  size_t erased = dynamicData_[source].erase(destination); // num of erased elements
-  if (erased == 0) {
+  return hasEdge(source, destination);
+}
+
+template <typename V, typename E>
+bool graph_base<V, E>::hasEdge(int srcId, int destId) const {
+	return outLinks_[srcId].count(destId) != 0;
+}
+
+template <typename V, typename E>
+void graph_base<V, E>::increaseSizeByOne() {
+	outLinks_.push_back(map<int, E>());
+	inLinks_.push_back(set<int>());
+}
+
+template <typename V, typename E>
+bool graph_base<V, E>::insert_vertex(V const &src) {
+  return insertVertex(src).second;
+}
+
+template <typename V, typename E>
+std::pair<int, bool>
+graph_base<V, E>::insertVertex(V const &src) {
+  auto result = mapping_.insert(src); 
+	if (result.second == true) {
+		increaseSizeByOne();
+	}
+	return result;
+}
+
+template <typename V, typename E>
+bool graph_base<V, E>::insert_edge(V const &src, V const &dest, E const &edge) {
+  if (src == dest) { // No self loop !!!
+    return false;
+  }
+  auto result1 = insertVertex(src);
+  auto result2 = insertVertex(dest);
+	if (hasEdge(result1.first, result2.first)) {
+		return false;
+	} else {
+		int srcId = result1.first;
+		int destId = result2.first;
+		outLinks_[srcId].insert(std::make_pair(destId, edge));;
+		inLinks_[destId].insert(srcId);
+		isDynamic_ = true; // graph has been modified
+		return true;
+	}
+}
+
+template <typename V, typename E>
+bool graph_base<V, E>::remove_edge(V const &src, V const &dest) {
+  int srcId      = mapping_.indexOf(src);
+  int destId = mapping_.indexOf(dest);
+  if (srcId < 0 || destId < 0) {
     return false;
 	}
-  --numE_;
-  isDynamic_ = true;
-  return true;
+  size_t result1 = outLinks_[srcId].erase(destId);
+	size_t result2 = inLinks_[destId].erase(srcId);
+	if (result1 != result2) {
+		std::cout << "graph remove_edge error\n";
+		exit(0);
+	}
+  if (result1 == 0) {
+    return false;
+	} else {
+		isDynamic_ = true;
+		return true;
+	}
+}
+
+template <typename V, typename E>
+E const & 
+graph_base<V, E>::get_edge(V const &src, V const &dest) const {
+  int srcId = mapping_.indexOf(src);
+  int destId = mapping_.indexOf(dest);
+	return outLinks_[srcId].find(destId)->first;
+}
+
+template <typename V, typename E>
+E & 
+graph_base<V, E>::get_edge(V const &src, V const &dest) {
+	return const_cast<E &>(const_cast<graph_base<V, E> const *>(this)->get_edge(src, dest));
+}
+
+template <typename V, typename E>
+vector<std::pair<V, E>> 
+graph_base<V, E>::get_vertex_edge_pairs_from(V const &src) const {
+	int srcId = mapping_.indexOf(src);
+	vector<std::pair<V, E>> result;
+	result.reserve(outLinks_[srcId].size());
+	for (auto iter = outLinks_[srcId].begin(); iter != outLinks_[srcId].end(); ++iter) {
+		result.push_back(std::make_pair(mapping_[iter->first], iter->second));
+	}
+	return result;
+}
+
+template <typename V, typename E>
+vector<V> 
+graph_base<V, E>::get_vertices_to(V const &dest) const {
+	int destId = mapping_.indexOf(dest);
+	vector<V> result;
+	result.reserve(inLinks_[destId].size());
+	for (auto iter = inLinks_[destId].begin(); iter != inLinks_[destId].end(); ++iter) {
+		result.push_back(mapping_[iter->first]);
+	}
+	return result;
 }
 
 /*------------- print -------------*/  /*
@@ -759,7 +789,7 @@ void graph<V, E, ExtractWeight>::print() const {
 template <typename V, typename E>
 void graph_base<V, E>::goStatic() const {
   if (isDynamic_ == true) { 
-		lib_calvin_graph::makeArrayData<E, E, std::identity<E>>(dynamicData_, arrayData_);
+		lib_calvin_graph::makeArrayData<E, E, std::identity<E>>(outLinks_, arrayData_);
   }
 }
 
@@ -769,7 +799,7 @@ vector<typename graph_base<V, E>::path>
 graph_base<V, E>::get_closest_path(V const &src, V const &target) const {
 	goStatic();
 	vector<path> paths;
-	if (!has(src) || !has(target)) { // input is invalid
+	if (!has_vertex(src) || !has_vertex(target)) { // input is invalid
 		std::cout << "get_closest_path input error\n";
 		exit(0);
 	}
@@ -797,7 +827,7 @@ weighted_graph_base<V, E, W, ExtractWeight>::get_shortest_path(V const &src, V c
 	goStatic();
 	vector<weighted_path> paths;
 	bool pathExists = true;
-	if (!has(src) || !has(target) || src == target) { // input is invalid
+	if (!has_vertex(src) || !has_vertex(target) || src == target) { // input is invalid
 		std::cout << "get_shortest_path input error\n";
 		exit(0);
 	}
@@ -817,7 +847,7 @@ template <typename V, typename E, typename W, typename ExtractWeight>
 vector<typename weighted_graph_base<V, E, W, ExtractWeight>::weighted_path>
 weighted_graph_base<V, E, W, ExtractWeight>::get_n_shortest_paths(V const &src, V const &target, size_t num) const {
 	goStatic();
-	if (!has(src) || !has(target) || src == target) { // input is invalid, return empty vector
+	if (!has_vertex(src) || !has_vertex(target) || src == target) { // input is invalid, return empty vector
 		std::cout << "get_n_shortest_paths input error\n";
 		exit(0);
 	}
@@ -881,7 +911,7 @@ graph_base<V, E>::getPathFromReversedPath(int srcVertex, vector<int> const &reve
 		//std::cout << "making final result\n";
 		curVertex = reversedPath[reversedPath.size() - 1 - i];
 		realPath.push_back(std::pair<V, E>(
-			mapping_[curVertex], dynamicData_[previousVertex].find(curVertex)->second));
+			mapping_[curVertex], outLinks_[previousVertex].find(curVertex)->second));
 		previousVertex = curVertex;
 	}
 	return graph_base<V, E>::path(mapping_[srcVertex], realPath);
@@ -954,14 +984,15 @@ void
 weighted_graph_base<V, E, W, ExtractWeight>::goStatic() const {
 	graph_base<V, E>::goStatic();
 	if (isDynamic_ == true) {
+		lib_calvin_graph::makeArrayData<E, W, ExtractWeight>(outLinks_, arrayData_);
 		lib_calvin_graph::makeMatrixData<W>(arrayData_, matrixData_);
 	}
 }
 
 template <typename V, typename E>
-bool undirected_graph_base<V, E>::insert(V src, V dest, E edge) {
-  bool result1 = graph_base<V, E>::insert(src, dest, edge);
-  bool result2 = graph_base<V, E>::insert(dest, src, edge);
+bool undirected_graph_base<V, E>::insert_edge(V const &src, V const &dest, E const &edge) {
+  bool result1 = graph_base<V, E>::insert_edge(src, dest, edge);
+  bool result2 = graph_base<V, E>::insert_edge(dest, src, edge);
   if (result1 != result2) {
     std::cout << "undirected_weighted_graph insert error!!\n";
 		exit(0);
@@ -970,15 +1001,9 @@ bool undirected_graph_base<V, E>::insert(V src, V dest, E edge) {
 }
 
 template <typename V, typename E>
-void undirected_graph_base<V, E>::modify(V src, V dest, E edge) {
-  graph_base<V, E>::modify(src, dest, edge);
-  graph_base<V, E>::modify(dest, src, edge);
-}
-
-template <typename V, typename E>
-bool undirected_graph_base<V, E>::remove(V src, V dest) {
-  bool result1 = graph_base<V, E>::remove(src, dest);
-  bool result2 = graph_base<V, E>::remove(dest, src);
+bool undirected_graph_base<V, E>::remove_edge(V const &src, V const &dest) {
+  bool result1 = graph_base<V, E>::remove_edge(src, dest);
+  bool result2 = graph_base<V, E>::remove_edge(dest, src);
   if (result1 != result2) {
     std::cout << "undirected_weighted_graph remove error!!\n";
 		exit(0);
@@ -986,72 +1011,23 @@ bool undirected_graph_base<V, E>::remove(V src, V dest) {
   return result1;
 }
 
+template <typename V, typename E, typename W, typename ExtractWeight>
+bool undirected_weighted_graph_base<V, E, W, ExtractWeight>::insert_edge(
+		V const &src, V const &dest, E const &edge) {
+	return undirected_graph_base<V, E>::insert_edge(src, dest, edge);
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+bool undirected_weighted_graph_base<V, E, W, ExtractWeight>::remove_edge(V const &src, V const &dest) {
+	return undirected_graph_base<V, E>::remove_edge(src, dest);
+}
+
+template <typename V, typename E, typename W, typename ExtractWeight>
+void undirected_weighted_graph_base<V, E, W, ExtractWeight>::goStatic() const {
+	weighted_graph_base<V, E, W, ExtractWeight>::goStatic();
+}
+
 } // end namespace lib_calvin_graph
-
-//------------------------- additional methods -------------------------
-namespace lib_calvin 
-{
-template <typename V, typename E>
-bool graph<V, E>::insert(V src, V dest, E edge) {
-	return graph_base<V, E>::insert(src, dest, edge);
-}
-
-template <typename V, typename E>
-void graph<V, E>::modify(V src, V dest, E edge) {
-	graph_base<V, E>::modify(src, dest, edge);
-}
-
-template <typename V, typename E>
-bool graph<V, E>::remove(V src, V dest) {
-	return graph_base<V, E>::remove(src, dest);
-}
-
-template <typename V, typename E>
-bool undirected_graph<V, E>::insert(V src, V dest, E edge) {
-	return undirected_graph_base<V, E>::insert(src, dest, edge);
-}
-
-template <typename V, typename E>
-void undirected_graph<V, E>::modify(V src, V dest, E edge) {
-	undirected_graph_base<V, E>::modify(src, dest, edge);
-}
-
-template <typename V, typename E>
-bool undirected_graph<V, E>::remove(V src, V dest) {
-	return undirected_graph_base<V, E>::remove(src, dest);
-}
-
-template <typename V, typename E, typename W, typename ExtractWeight>
-bool weighted_graph<V, E, W, ExtractWeight>::insert(V src, V dest, E edge) {
-	return graph_base<V, E>::insert(src, dest, edge);
-}
-
-template <typename V, typename E, typename W, typename ExtractWeight>
-void weighted_graph<V, E, W, ExtractWeight>::modify(V src, V dest, E edge) {
-	graph_base<V, E>::modify(src, dest, edge);
-}
-
-template <typename V, typename E, typename W, typename ExtractWeight>
-bool weighted_graph<V, E, W, ExtractWeight>::remove(V src, V dest) {
-	return graph_base<V, E>::remove(src, dest);
-}
-
-template <typename V, typename E, typename W, typename ExtractWeight>
-bool undirected_weighted_graph<V, E, W, ExtractWeight>::insert(V src, V dest, E edge) {
-	return undirected_graph_base<V, E>::insert(src, dest, edge);
-}
-
-template <typename V, typename E, typename W, typename ExtractWeight>
-void undirected_weighted_graph<V, E, W, ExtractWeight>::modify(V src, V dest, E edge) {
-	undirected_graph_base<V, E>::modify(src, dest, edge);
-}
-
-template <typename V, typename E, typename W, typename ExtractWeight>
-bool undirected_weighted_graph<V, E, W, ExtractWeight>::remove(V src, V dest) {
-	return undirected_graph_base<V, E>::remove(src, dest);
-}
-
-} // end namespace lib_calvin
 
 //--------------------------- Global functions ----------------------------
 

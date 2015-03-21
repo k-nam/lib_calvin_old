@@ -98,10 +98,14 @@ void lib_calvin_graph::GraphTest<V, E>::insertionTest() {
 	using namespace lib_calvin;
   graph<V, E> graph1;
   undirected_graph<V, E> graph2; 
+	weighted_graph<V, E> graph3;
+	undirected_weighted_graph<V, E> graph4;
   stopwatch watch;
   watch.start();
 	populateGraph(graph1, numV_, numE_, numNegativeE_);
 	populateGraph(graph2, numV_, numE_, numNegativeE_);
+	populateGraph(graph3, numV_, numE_, numNegativeE_);
+	populateGraph(graph4, numV_, numE_, numNegativeE_);
   watch.stop();
   cout << "Insertion into graph took: " << watch.read() << endl;
   /*
@@ -119,14 +123,12 @@ void lib_calvin_graph::GraphTest<V, E>::insertionTest2() {
 	graph_base<V, E> *graph1, *graph2;
 	graph1 = new graph<V, E>();
 	graph2 = new undirected_graph<V, E>();
-	graph1->insert(2, 4);
-	graph1->insert(2, 3);
-	graph1->modify(4, 2);
-	graph1->remove(3, 2);
-	graph2->insert(2, 4);
-	graph2->insert(2, 3);
-	graph2->modify(4, 2);
-	graph2->remove(3, 2);
+	graph1->insert_edge(2, 4);
+	graph1->insert_edge(2, 3);
+	graph1->remove_edge(3, 2);
+	graph2->insert_edge(2, 4);
+	graph2->insert_edge(2, 3);
+	graph2->remove_edge(3, 2);
 	std::cout << "# edges in graph e-size: " << graph1->number_of_edge() << "\n";
 	std::cout << "# edges in undirected graph e-size: " << graph2->number_of_edge() << "\n";
 	std::cout << "\n";
@@ -337,12 +339,12 @@ template <typename V, typename E>
 void lib_calvin_graph::GraphTest<V, E>::getClosestPathTest() {
 	using namespace lib_calvin;
 	weighted_graph<V, E> testGraph;
-	testGraph.insert(1, 2, 2);
-	testGraph.insert(1, 4, 5);
-	testGraph.insert(2, 4, 2);
-	testGraph.insert(2, 3, 2);
-	testGraph.insert(3, 5, 1);
-	testGraph.insert(4, 5, 2);
+	testGraph.insert_edge(1, 2, 2);
+	testGraph.insert_edge(1, 4, 5);
+	testGraph.insert_edge(2, 4, 2);
+	testGraph.insert_edge(2, 3, 2);
+	testGraph.insert_edge(3, 5, 1);
+	testGraph.insert_edge(4, 5, 2);
 	auto paths1 = testGraph.get_closest_path(1, 5);
 	auto paths2 = testGraph.get_shortest_path(1, 5);
 	auto paths3 = testGraph.get_n_shortest_paths(1, 5, 4);
@@ -389,7 +391,7 @@ void lib_calvin_graph::GraphTest<V, E>::populateGraph(
 		}
 		int srcV = (rand() * 32768 + rand()) % numV;
 		int targetV = (rand() * 32768 + rand()) % numV;
-    graph.insert(srcV, targetV, edge);
+    graph.insert_edge(srcV, targetV, edge);
   }
 }
 
@@ -400,7 +402,7 @@ void lib_calvin_graph::GraphTest<V, E>::populateGraph(
   for (int i = 0; i < numE; ++i) {
 		int srcV = (rand() * 32768 + rand()) % numV;
 		int targetV = (rand() * 32768 + rand()) % numV;
-    graph.insert(srcV, targetV, defaultEdge);
+    graph.insert_edge(srcV, targetV, defaultEdge);
   }
 }
 
