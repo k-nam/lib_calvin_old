@@ -6,8 +6,7 @@
 
 namespace lib_calvin_container 
 {
-template <typename T, typename Comp = std::less<T>, 
-	typename K = T, typename ExtractKey = std::identity<T>, 
+template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = std::identity<T>,
 	typename VectorImpl = lib_calvin_container::Array<T>>
 class OrderedArray {
 public:
@@ -22,13 +21,13 @@ public:
 	typedef typename VectorImpl::reverse_iterator reverse_iterator;
 	typedef typename VectorImpl::const_reverse_iterator const_reverse_iterator;
 
-	OrderedArray<T, Comp, K, ExtractKey, VectorImpl>();
-	OrderedArray<T, Comp, K, ExtractKey, VectorImpl>(OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &); 
-	OrderedArray<T, Comp, K, ExtractKey, VectorImpl>(OrderedArray<T, Comp, K, ExtractKey, VectorImpl> &&);
-	OrderedArray<T, Comp, K, ExtractKey, VectorImpl> & operator= (OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &);
-	OrderedArray<T, Comp, K, ExtractKey, VectorImpl> & operator= (OrderedArray<T, Comp, K, ExtractKey, VectorImpl> &&);
-	void swap(OrderedArray<T, Comp, K, ExtractKey, VectorImpl> & rhs);
-	~OrderedArray<T, Comp, K, ExtractKey, VectorImpl>();
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl>();
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl>(OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &); 
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl>(OrderedArray<T, K, Comp, ExtractKey, VectorImpl> &&);
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> & operator= (OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &);
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> & operator= (OrderedArray<T, K, Comp, ExtractKey, VectorImpl> &&);
+	void swap(OrderedArray<T, K, Comp, ExtractKey, VectorImpl> & rhs);
+	~OrderedArray<T, K, Comp, ExtractKey, VectorImpl>();
 
 	size_t size() const;
 	const_iterator find(K const &) const;
@@ -57,90 +56,90 @@ private:
 	VectorImpl vectorImpl_;
 };
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-bool operator==(OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &lhs, 
-	OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+bool operator==(OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &lhs, 
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-bool operator!=(OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &lhs, 
-	OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+bool operator!=(OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &lhs, 
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-bool operator< (OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &lhs, 
-	OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+bool operator< (OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &lhs, 
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-bool operator<= (OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &lhs, 
-	OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+bool operator<= (OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &lhs, 
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-bool operator> (OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &lhs, 
-	OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+bool operator> (OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &lhs, 
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-bool operator>= (OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &lhs, 
-	OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+bool operator>= (OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &lhs, 
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &rhs);
 
 } // lib_calvin_container
 
 namespace lib_calvin_container 
 {
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::OrderedArray(): vectorImpl_() { }
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::OrderedArray(): vectorImpl_() { }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::OrderedArray(OrderedArray const &rhs):
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::OrderedArray(OrderedArray const &rhs):
 	vectorImpl_(rhs.vectorImpl_) { }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::OrderedArray(OrderedArray &&rhs):
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::OrderedArray(OrderedArray &&rhs):
 	vectorImpl_(std::forward<VectorImpl>(rhs.vectorImpl_)) { }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl> & 
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::operator=(
-	OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl> & 
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::operator=(
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &rhs) {
 		vectorImpl_ = rhs.vectorImpl_; 
 		return *this;
 }
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl> & 
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::operator= (
-	OrderedArray<T, Comp, K, ExtractKey, VectorImpl> &&rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl> & 
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::operator= (
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> &&rhs) {
 		vectorImpl_ = std::forward<VectorImpl>(rhs.vectorImpl_); 
 		return *this;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
 void 
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::swap(OrderedArray &rhs) {
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::swap(OrderedArray &rhs) {
 	vectorImpl_.swap(rhs.vectorImpl_);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::~OrderedArray() { }
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::~OrderedArray() { }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
 size_t
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::size() const {
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::size() const {
 	return vectorImpl_.size();
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-typename OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::const_iterator
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::find(K const &key) const {
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+typename OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::const_iterator
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::find(K const &key) const {
 	return const_iterator(findPointer(key));
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-typename OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::iterator
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::find(K const &key) {
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+typename OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::iterator
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::find(K const &key) {
 	return iterator(findPointer(key));
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
 size_t
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::count(K const &key) const {
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::count(K const &key) const {
 	if (find(key) == end()) { // does not exist
 		return 0;
 	} else {
@@ -148,12 +147,12 @@ OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::count(K const &key) const {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
 template <typename T1> 
-std::pair<typename OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::iterator, bool>
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::insert(T1 &&elem) {
+std::pair<typename OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::iterator, bool>
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::insert(T1 &&elem) {
 	T *elements = getElementArray();
-	auto result = lib_calvin_container::getIndexToInsert<T, Comp, K, ExtractKey>(
+	auto result = lib_calvin_container::getIndexToInsert<T, K, Comp, ExtractKey>(
 		elements, elements + size(), ExtractKey()(elem), true);
 	if (result.second == true) { // does not exist
 		vectorImpl_.insert(vectorImpl_.begin() + result.first, elem);
@@ -163,20 +162,20 @@ OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::insert(T1 &&elem) {
 	}	
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
 template <typename Iterator> 
 void
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::insert(Iterator begin, Iterator end) {
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::insert(Iterator begin, Iterator end) {
 	for ( ; begin != end; ++begin) {
 		insert(*begin);
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
 size_t
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::erase(K const &key) {
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::erase(K const &key) {
 	T *elements = getElementArray();
-	auto result = lib_calvin_container::getIndexToInsert<T, Comp, K, ExtractKey>(
+	auto result = lib_calvin_container::getIndexToInsert<T, K, Comp, ExtractKey>(
 		elements, elements + size(), key, true);
 	if (result.second == true) { // does not exist
 		return 0;
@@ -186,29 +185,29 @@ OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::erase(K const &key) {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
 void
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::clear() {
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::clear() {
 	vectorImpl_.clear();
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
 bool
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::empty() const {
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::empty() const {
 	return vectorImpl_.empty();
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
 T *
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::getElementArray() const {
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::getElementArray() const {
 	return const_cast<T *>(&(*vectorImpl_.begin()));
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
 T *
-OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::findPointer(K const &key) const {
+OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::findPointer(K const &key) const {
 	T *elements = getElementArray();
-	auto result = lib_calvin_container::getIndexToInsert<T, Comp, K, ExtractKey>(
+	auto result = lib_calvin_container::getIndexToInsert<T, K, Comp, ExtractKey>(
 		elements, elements + size(), key, true);
 	if (result.second == true) { // does not exist
 		return elements + size();
@@ -217,39 +216,39 @@ OrderedArray<T, Comp, K, ExtractKey, VectorImpl>::findPointer(K const &key) cons
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-bool operator==(OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &lhs, 
-		OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+bool operator==(OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &lhs, 
+		OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &rhs) {
 	return containerEqual(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-bool operator!=(OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &lhs, 
-		OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+bool operator!=(OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &lhs, 
+		OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &rhs) {
 	return !(lhs == rhs);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-bool operator< (OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &lhs, 
-		OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+bool operator< (OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &lhs, 
+		OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &rhs) {
 	return containerLess(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-bool operator<= (OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &lhs, 
-		OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+bool operator<= (OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &lhs, 
+		OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &rhs) {
 	return !(lhs > rhs);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-bool operator> (OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &lhs, 
-		OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+bool operator> (OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &lhs, 
+		OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &rhs) {
 	return rhs < lhs;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, typename VectorImpl>
-bool operator>= (OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &lhs, 
-		OrderedArray<T, Comp, K, ExtractKey, VectorImpl> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey, typename VectorImpl>
+bool operator>= (OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &lhs, 
+		OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &rhs) {
 	return !(lhs < rhs);
 }
 

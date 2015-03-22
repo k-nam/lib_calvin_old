@@ -13,8 +13,7 @@ public:
 	K operator()(T *const &ptr) const { return ExtractKey()(*ptr); }
 };
 
-template <typename T, typename Comp = std::less<T>, 
-	typename K = T, typename ExtractKey = std::identity<T>, 
+template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = std::identity<T>,
 	typename SetImpl = BTree<T *, Comp, K, PtrExtractKey<T, K, ExtractKey>>>
 class PtrSet 
 {
@@ -57,13 +56,13 @@ public:
 	typedef lib_calvin_container::ConstReverseIterator<IteratorImpl> const_reverse_iterator;
 
 public:
-	PtrSet<T, Comp, K, ExtractKey, SetImpl>() { }
+	PtrSet<T, K, Comp, ExtractKey, SetImpl>() { }
 	// copy constructor
-	PtrSet<T, Comp, K, ExtractKey, SetImpl>(
-		PtrSet<T, Comp, K, ExtractKey, SetImpl> const &rhs); 
-	PtrSet<T, Comp, K, ExtractKey, SetImpl> & operator= (
-		PtrSet<T, Comp, K, ExtractKey, SetImpl> const &rhs); // assignment
-	virtual ~PtrSet<T, Comp, K, ExtractKey, SetImpl>() { clear(); }
+	PtrSet<T, K, Comp, ExtractKey, SetImpl>(
+		PtrSet<T, K, Comp, ExtractKey, SetImpl> const &rhs); 
+	PtrSet<T, K, Comp, ExtractKey, SetImpl> & operator= (
+		PtrSet<T, K, Comp, ExtractKey, SetImpl> const &rhs); // assignment
+	virtual ~PtrSet<T, K, Comp, ExtractKey, SetImpl>() { clear(); }
 public:
 	size_t size() const { return set_.size(); }
 	const_iterator find(K const &key) const { return const_iterator(set_.find(key)); }
@@ -100,9 +99,9 @@ protected:
 
 //-------------------------- PtrSet implementation ----------------------//
 
-template <typename T, typename Comp, typename K, typename ExtractKey, 
+template <typename T, typename K, typename Comp, typename ExtractKey, 
 	typename SetImpl>
-PtrSet<T, Comp, K, ExtractKey, SetImpl>::PtrSet(PtrSet const &rhs): set_(rhs.set_) {
+PtrSet<T, K, Comp, ExtractKey, SetImpl>::PtrSet(PtrSet const &rhs): set_(rhs.set_) {
 	typename SetImpl::iterator lhsIter = set_.begin();
 	typename SetImpl::const_iterator rhsIter = rhs.set_.begin();
 	for (; rhsIter != rhs.set_.end(); ++lhsIter, ++rhsIter) {
@@ -110,10 +109,10 @@ PtrSet<T, Comp, K, ExtractKey, SetImpl>::PtrSet(PtrSet const &rhs): set_(rhs.set
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, 
+template <typename T, typename K, typename Comp, typename ExtractKey, 
 	typename SetImpl>
-PtrSet<T, Comp, K, ExtractKey, SetImpl> &
-PtrSet<T, Comp, K, ExtractKey, SetImpl>::operator=(PtrSet const &rhs) {
+PtrSet<T, K, Comp, ExtractKey, SetImpl> &
+PtrSet<T, K, Comp, ExtractKey, SetImpl>::operator=(PtrSet const &rhs) {
 	if (this == &rhs) {
 		return *this;
 	}
@@ -127,10 +126,10 @@ PtrSet<T, Comp, K, ExtractKey, SetImpl>::operator=(PtrSet const &rhs) {
 	return *this;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, 
+template <typename T, typename K, typename Comp, typename ExtractKey, 
 	typename SetImpl>
-std::pair<typename PtrSet<T, Comp, K, ExtractKey, SetImpl>::iterator, bool>
-PtrSet<T, Comp, K, ExtractKey, SetImpl>::insert(T const &elem) {
+std::pair<typename PtrSet<T, K, Comp, ExtractKey, SetImpl>::iterator, bool>
+PtrSet<T, K, Comp, ExtractKey, SetImpl>::insert(T const &elem) {
 	std::pair<typename SetImpl::iterator, bool> result = 
 		set_.insert(&const_cast<T &>(elem));
 	if (result.second == true) { // inserted
@@ -139,10 +138,10 @@ PtrSet<T, Comp, K, ExtractKey, SetImpl>::insert(T const &elem) {
 	return std::pair<iterator, bool>(iterator(result.first), result.second);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, 
+template <typename T, typename K, typename Comp, typename ExtractKey, 
 	typename SetImpl>
 size_t
-PtrSet<T, Comp, K, ExtractKey, SetImpl>::erase(K const &key) {
+PtrSet<T, K, Comp, ExtractKey, SetImpl>::erase(K const &key) {
 	iterator result = find(key);
 	if (result != end()) { // key exists
 		T *ptr = &(*result);
@@ -154,10 +153,10 @@ PtrSet<T, Comp, K, ExtractKey, SetImpl>::erase(K const &key) {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey, 
+template <typename T, typename K, typename Comp, typename ExtractKey, 
 	typename SetImpl>
 void 
-PtrSet<T, Comp, K, ExtractKey, SetImpl>::clear() {
+PtrSet<T, K, Comp, ExtractKey, SetImpl>::clear() {
 	vector<T *> ptrToDelete;
 	for (iterator iter = begin(); iter != end(); iter++) {
 		ptrToDelete.push_back(&(*iter));	
@@ -169,39 +168,39 @@ PtrSet<T, Comp, K, ExtractKey, SetImpl>::clear() {
 	set_.clear();
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator==(PtrSet<T, Comp, K, ExtractKey> const &lhs, 
-		PtrSet<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator==(PtrSet<T, K, Comp, ExtractKey> const &lhs, 
+		PtrSet<T, K, Comp, ExtractKey> const &rhs) {
 	return containerEqual(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator!=(PtrSet<T, Comp, K, ExtractKey> const &lhs, 
-		PtrSet<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator!=(PtrSet<T, K, Comp, ExtractKey> const &lhs, 
+		PtrSet<T, K, Comp, ExtractKey> const &rhs) {
 	return !(lhs == rhs);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator< (PtrSet<T, Comp, K, ExtractKey> const &lhs, 
-		PtrSet<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator< (PtrSet<T, K, Comp, ExtractKey> const &lhs, 
+		PtrSet<T, K, Comp, ExtractKey> const &rhs) {
 	return containerLess(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator<= (PtrSet<T, Comp, K, ExtractKey> const &lhs, 
-	PtrSet<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator<= (PtrSet<T, K, Comp, ExtractKey> const &lhs, 
+	PtrSet<T, K, Comp, ExtractKey> const &rhs) {
 	return !(lhs > rhs);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator> (PtrSet<T, Comp, K, ExtractKey> const &lhs, 
-	PtrSet<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator> (PtrSet<T, K, Comp, ExtractKey> const &lhs, 
+	PtrSet<T, K, Comp, ExtractKey> const &rhs) {
 	return rhs < lhs;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator>= (PtrSet<T, Comp, K, ExtractKey> const &lhs, 
-	PtrSet<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator>= (PtrSet<T, K, Comp, ExtractKey> const &lhs, 
+	PtrSet<T, K, Comp, ExtractKey> const &rhs) {
 	return !(lhs < rhs);
 }
 

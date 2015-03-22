@@ -41,8 +41,7 @@ private:
 // K and ExtractKey added to implement map using this set implementation
 // ExtractKey: function object T -> K
 // Comp: function object (K, K) -> bool
-template <typename T, typename Comp = std::less<T>, 
-	typename K = T, typename ExtractKey = std::identity<T>>
+template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = std::identity<T>>
 class BinTree {
 public:
 	typedef T value_type;
@@ -86,14 +85,14 @@ public:
 	typedef lib_calvin_container::ReverseIterator<IteratorImpl> reverse_iterator;
 	typedef lib_calvin_container::ConstReverseIterator<IteratorImpl> const_reverse_iterator;
 	
-	BinTree<T, Comp, K, ExtractKey>();
-	BinTree<T, Comp, K, ExtractKey>(BinTree<T, Comp, K, ExtractKey> const &); 
-	BinTree<T, Comp, K, ExtractKey>(BinTree<T, Comp, K, ExtractKey> &&);
-	BinTree<T, Comp, K, ExtractKey> & operator= (BinTree<T, Comp, K, ExtractKey> const &);
-	BinTree<T, Comp, K, ExtractKey> & operator= (BinTree<T, Comp, K, ExtractKey> &&);
-	void swap(BinTree<T, Comp, K, ExtractKey> & rhs);
+	BinTree<T, K, Comp, ExtractKey>();
+	BinTree<T, K, Comp, ExtractKey>(BinTree<T, K, Comp, ExtractKey> const &); 
+	BinTree<T, K, Comp, ExtractKey>(BinTree<T, K, Comp, ExtractKey> &&);
+	BinTree<T, K, Comp, ExtractKey> & operator= (BinTree<T, K, Comp, ExtractKey> const &);
+	BinTree<T, K, Comp, ExtractKey> & operator= (BinTree<T, K, Comp, ExtractKey> &&);
+	void swap(BinTree<T, K, Comp, ExtractKey> & rhs);
 	// disallow instantiation, because log(n) is not guaranteed
-	~BinTree<T, Comp, K, ExtractKey>();
+	~BinTree<T, K, Comp, ExtractKey>();
 
 	size_t size() const;
 	const_iterator find(K const &) const;
@@ -140,29 +139,29 @@ protected: // member variables
 	BinTreeNode<T> *end_; // iterator for end()
 };
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator==(BinTree<T, Comp, K, ExtractKey> const &lhs, 
-	BinTree<T, Comp, K, ExtractKey> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator==(BinTree<T, K, Comp, ExtractKey> const &lhs, 
+	BinTree<T, K, Comp, ExtractKey> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator!=(BinTree<T, Comp, K, ExtractKey> const &lhs, 
-	BinTree<T, Comp, K, ExtractKey> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator!=(BinTree<T, K, Comp, ExtractKey> const &lhs, 
+	BinTree<T, K, Comp, ExtractKey> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator< (BinTree<T, Comp, K, ExtractKey> const &lhs, 
-	BinTree<T, Comp, K, ExtractKey> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator< (BinTree<T, K, Comp, ExtractKey> const &lhs, 
+	BinTree<T, K, Comp, ExtractKey> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator<= (BinTree<T, Comp, K, ExtractKey> const &lhs, 
-	BinTree<T, Comp, K, ExtractKey> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator<= (BinTree<T, K, Comp, ExtractKey> const &lhs, 
+	BinTree<T, K, Comp, ExtractKey> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator> (BinTree<T, Comp, K, ExtractKey> const &lhs, 
-	BinTree<T, Comp, K, ExtractKey> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator> (BinTree<T, K, Comp, ExtractKey> const &lhs, 
+	BinTree<T, K, Comp, ExtractKey> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator>= (BinTree<T, Comp, K, ExtractKey> const &lhs, 
-	BinTree<T, Comp, K, ExtractKey> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator>= (BinTree<T, K, Comp, ExtractKey> const &lhs, 
+	BinTree<T, K, Comp, ExtractKey> const &rhs);
 
 // Return successor of node; return NULL if node is the last element
 template <typename T>
@@ -257,98 +256,98 @@ BinTreeNode<T>::getOpposite(Direction direction) {
  
 /************************ Iterator definitions **********************/
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-BinTree<T, Comp, K, ExtractKey>::IteratorImpl::IteratorImpl(): node_(NULL) { }
+template <typename T, typename K, typename Comp, typename ExtractKey>
+BinTree<T, K, Comp, ExtractKey>::IteratorImpl::IteratorImpl(): node_(NULL) { }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-BinTree<T, Comp, K, ExtractKey>::IteratorImpl::IteratorImpl(BinTreeNode<T> *node): node_(node) { }
+template <typename T, typename K, typename Comp, typename ExtractKey>
+BinTree<T, K, Comp, ExtractKey>::IteratorImpl::IteratorImpl(BinTreeNode<T> *node): node_(node) { }
 	
-template <typename T, typename Comp, typename K, typename ExtractKey>
-BinTree<T, Comp, K, ExtractKey>::IteratorImpl::IteratorImpl(IteratorImpl const &rhs): node_(rhs.node_) { } 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+BinTree<T, K, Comp, ExtractKey>::IteratorImpl::IteratorImpl(IteratorImpl const &rhs): node_(rhs.node_) { } 
 		
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::IteratorImpl &
-BinTree<T, Comp, K, ExtractKey>::IteratorImpl::operator=(IteratorImpl const &rhs) { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::IteratorImpl &
+BinTree<T, K, Comp, ExtractKey>::IteratorImpl::operator=(IteratorImpl const &rhs) { 
 	node_ = rhs.node_; 
 	return *this; 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::IteratorImpl::reference
-BinTree<T, Comp, K, ExtractKey>::IteratorImpl::operator*() const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::IteratorImpl::reference
+BinTree<T, K, Comp, ExtractKey>::IteratorImpl::operator*() const {
 	return node_->getKey();
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::IteratorImpl::pointer
-BinTree<T, Comp, K, ExtractKey>::IteratorImpl::operator->() const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::IteratorImpl::pointer
+BinTree<T, K, Comp, ExtractKey>::IteratorImpl::operator->() const {
 	return &node_->getKey();
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::IteratorImpl &
-BinTree<T, Comp, K, ExtractKey>::IteratorImpl::operator++() { // prefix
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::IteratorImpl &
+BinTree<T, K, Comp, ExtractKey>::IteratorImpl::operator++() { // prefix
 	node_ = binTreeSuccessor(node_);
 	return *this;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::IteratorImpl &
-BinTree<T, Comp, K, ExtractKey>::IteratorImpl::operator--() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::IteratorImpl &
+BinTree<T, K, Comp, ExtractKey>::IteratorImpl::operator--() {
 	node_ = binTreePredecessor(node_);
 	return *this;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::IteratorImpl const
-BinTree<T, Comp, K, ExtractKey>::IteratorImpl::operator++(int) { // suffix
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::IteratorImpl const
+BinTree<T, K, Comp, ExtractKey>::IteratorImpl::operator++(int) { // suffix
 	IteratorImpl original = *this;
 	operator++();
 	return original;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::IteratorImpl const
-BinTree<T, Comp, K, ExtractKey>::IteratorImpl::operator--(int) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::IteratorImpl const
+BinTree<T, K, Comp, ExtractKey>::IteratorImpl::operator--(int) {
 	IteratorImpl original = *this;
 	operator--();
 	return original;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 bool 
-BinTree<T, Comp, K, ExtractKey>::IteratorImpl::operator==(IteratorImpl const &rhs) const { 
+BinTree<T, K, Comp, ExtractKey>::IteratorImpl::operator==(IteratorImpl const &rhs) const { 
 	return node_ == rhs.node_; 
 }
 	
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 bool 
-BinTree<T, Comp, K, ExtractKey>::IteratorImpl::operator!=(IteratorImpl const &rhs) const { 
+BinTree<T, K, Comp, ExtractKey>::IteratorImpl::operator!=(IteratorImpl const &rhs) const { 
 	return node_ != rhs.node_;
 }
 
 /*************************** BinTree definitions **************************/
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-BinTree<T, Comp, K, ExtractKey>::BinTree(): 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+BinTree<T, K, Comp, ExtractKey>::BinTree(): 
 	size_(0), root_(NULL), end_(NULL) { }
  
-template <typename T, typename Comp, typename K, typename ExtractKey>
-BinTree<T, Comp, K, ExtractKey>::BinTree(BinTree<T, Comp, K, ExtractKey> const &rhs): 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+BinTree<T, K, Comp, ExtractKey>::BinTree(BinTree<T, K, Comp, ExtractKey> const &rhs): 
 	size_(0), root_(NULL), end_(NULL) {
 	copyFrom(rhs);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-BinTree<T, Comp, K, ExtractKey>::BinTree(BinTree<T, Comp, K, ExtractKey> &&rhs): 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+BinTree<T, K, Comp, ExtractKey>::BinTree(BinTree<T, K, Comp, ExtractKey> &&rhs): 
 	size_(0), root_(NULL), end_(NULL) {
 	swap(rhs);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-BinTree<T, Comp, K, ExtractKey> & 
-BinTree<T, Comp, K, ExtractKey>::operator=(BinTree<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+BinTree<T, K, Comp, ExtractKey> & 
+BinTree<T, K, Comp, ExtractKey>::operator=(BinTree<T, K, Comp, ExtractKey> const &rhs) {
 	//std::cout << "bintree assign\n";
 	if (&rhs == this) {
 		return *this;
@@ -358,8 +357,8 @@ BinTree<T, Comp, K, ExtractKey>::operator=(BinTree<T, Comp, K, ExtractKey> const
 	return *this;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void BinTree<T, Comp, K, ExtractKey>::copyFrom(BinTree<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void BinTree<T, K, Comp, ExtractKey>::copyFrom(BinTree<T, K, Comp, ExtractKey> const &rhs) {
 	// this object should be empty at this point
 	if (rhs.empty()) {
 		return;
@@ -371,9 +370,9 @@ void BinTree<T, Comp, K, ExtractKey>::copyFrom(BinTree<T, Comp, K, ExtractKey> c
 	end_->setLeftChild(root_);	
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-BinTree<T, Comp, K, ExtractKey> & 
-BinTree<T, Comp, K, ExtractKey>::operator=(BinTree<T, Comp, K, ExtractKey> &&rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+BinTree<T, K, Comp, ExtractKey> & 
+BinTree<T, K, Comp, ExtractKey>::operator=(BinTree<T, K, Comp, ExtractKey> &&rhs) {
 	//std::cout << "bintree move assign\n";
 	if (&rhs == this) {
 		return *this;
@@ -382,8 +381,8 @@ BinTree<T, Comp, K, ExtractKey>::operator=(BinTree<T, Comp, K, ExtractKey> &&rhs
 	return *this;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void BinTree<T, Comp, K, ExtractKey>::swap(BinTree<T, Comp, K, ExtractKey> &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void BinTree<T, K, Comp, ExtractKey>::swap(BinTree<T, K, Comp, ExtractKey> &rhs) {
 	typedef BinTreeNode<T> * Node;
 	Node tempRoot = root_;
 	Node tempEnd = end_;
@@ -396,8 +395,8 @@ void BinTree<T, Comp, K, ExtractKey>::swap(BinTree<T, Comp, K, ExtractKey> &rhs)
 	rhs.size_ = tempSize;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-BinTree<T, Comp, K, ExtractKey>::~BinTree() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+BinTree<T, K, Comp, ExtractKey>::~BinTree() {
 	// --- Misterious runtime error occurs unless we qualify the destructor ---
 	// In fact there is no point in destructing the object in this case.
 	//end_->BinTreeNode<T>::~BinTreeNode();
@@ -405,15 +404,15 @@ BinTree<T, Comp, K, ExtractKey>::~BinTree() {
 	binTreeNodeDelete(root_);
 }
 	
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 size_t 
-BinTree<T, Comp, K, ExtractKey>::size() const { 
+BinTree<T, K, Comp, ExtractKey>::size() const { 
 	return size_; 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::const_iterator
-BinTree<T, Comp, K, ExtractKey>::find(K const &key) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::const_iterator
+BinTree<T, K, Comp, ExtractKey>::find(K const &key) const {
 	if (empty()) {
 		return const_iterator(end_);	
 	}
@@ -425,9 +424,9 @@ BinTree<T, Comp, K, ExtractKey>::find(K const &key) const {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::iterator
-BinTree<T, Comp, K, ExtractKey>::find(K const &key) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::iterator
+BinTree<T, K, Comp, ExtractKey>::find(K const &key) {
 	if (empty()) {
 		return iterator(end_);	
 	}
@@ -439,8 +438,8 @@ BinTree<T, Comp, K, ExtractKey>::find(K const &key) {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-size_t BinTree<T, Comp, K, ExtractKey>::count(K const &key) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+size_t BinTree<T, K, Comp, ExtractKey>::count(K const &key) const {
 	if (empty()) {
 		return 0;
 	}
@@ -453,29 +452,29 @@ size_t BinTree<T, Comp, K, ExtractKey>::count(K const &key) const {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-std::pair<typename BinTree<T, Comp, K, ExtractKey>::iterator, bool> 
-BinTree<T, Comp, K, ExtractKey>::insert(T const &elem) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+std::pair<typename BinTree<T, K, Comp, ExtractKey>::iterator, bool> 
+BinTree<T, K, Comp, ExtractKey>::insert(T const &elem) {
 	return insert_(elem);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-std::pair<typename BinTree<T, Comp, K, ExtractKey>::iterator, bool> 
-BinTree<T, Comp, K, ExtractKey>::insert(T &&elem) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+std::pair<typename BinTree<T, K, Comp, ExtractKey>::iterator, bool> 
+BinTree<T, K, Comp, ExtractKey>::insert(T &&elem) {
 	return insert_(std::forward<T>(elem));
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename InputIterator>
-void BinTree<T, Comp, K, ExtractKey>::insert(InputIterator beg, InputIterator end) {
+void BinTree<T, K, Comp, ExtractKey>::insert(InputIterator beg, InputIterator end) {
 	while (beg != end) {
 		insert(*beg);
 		++beg;
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-size_t BinTree<T, Comp, K, ExtractKey>::erase(K const &key) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+size_t BinTree<T, K, Comp, ExtractKey>::erase(K const &key) {
 	BinTreeNode<T> *deleted = erase_impl(key);
 	if (deleted == NULL) {
 		return 0;
@@ -485,8 +484,8 @@ size_t BinTree<T, Comp, K, ExtractKey>::erase(K const &key) {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void BinTree<T, Comp, K, ExtractKey>::clear() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void BinTree<T, K, Comp, ExtractKey>::clear() {
 	size_ = 0;
 	binTreeNodeDelete<T>(root_);
 	operator delete (end_);
@@ -494,71 +493,71 @@ void BinTree<T, Comp, K, ExtractKey>::clear() {
 	end_ = NULL;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool BinTree<T, Comp, K, ExtractKey>::empty() const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool BinTree<T, K, Comp, ExtractKey>::empty() const {
 	return size_ == 0;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::const_iterator
-BinTree<T, Comp, K, ExtractKey>::begin() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::const_iterator
+BinTree<T, K, Comp, ExtractKey>::begin() const { 
 	return const_iterator(getFirstNode()); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::const_iterator
-BinTree<T, Comp, K, ExtractKey>::end() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::const_iterator
+BinTree<T, K, Comp, ExtractKey>::end() const { 
 	return const_iterator(end_); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::iterator
-BinTree<T, Comp, K, ExtractKey>::begin() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::iterator
+BinTree<T, K, Comp, ExtractKey>::begin() { 
 	return iterator(getFirstNode()); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::iterator
-BinTree<T, Comp, K, ExtractKey>::end() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::iterator
+BinTree<T, K, Comp, ExtractKey>::end() { 
 	return iterator(end_); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::const_reverse_iterator
-BinTree<T, Comp, K, ExtractKey>::rbegin() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::const_reverse_iterator
+BinTree<T, K, Comp, ExtractKey>::rbegin() const { 
 	return const_reverse_iterator(end_); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::const_reverse_iterator
-BinTree<T, Comp, K, ExtractKey>::rend() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::const_reverse_iterator
+BinTree<T, K, Comp, ExtractKey>::rend() const { 
 	return const_reverse_iterator(getFirstNode()); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::reverse_iterator
-BinTree<T, Comp, K, ExtractKey>::rbegin() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::reverse_iterator
+BinTree<T, K, Comp, ExtractKey>::rbegin() { 
 	return reverse_iterator(end_); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename BinTree<T, Comp, K, ExtractKey>::reverse_iterator
-BinTree<T, Comp, K, ExtractKey>::rend() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename BinTree<T, K, Comp, ExtractKey>::reverse_iterator
+BinTree<T, K, Comp, ExtractKey>::rend() { 
 	return reverse_iterator(getFirstNode()); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename T1>
-std::pair<typename BinTree<T, Comp, K, ExtractKey>::iterator, bool> 
-BinTree<T, Comp, K, ExtractKey>::insert_(T1 &&elem) {
+std::pair<typename BinTree<T, K, Comp, ExtractKey>::iterator, bool> 
+BinTree<T, K, Comp, ExtractKey>::insert_(T1 &&elem) {
 	std::pair<BinTreeNode<T> *, bool> result = insert_impl(std::forward<T1>(elem));
 	return std::pair<iterator, bool>(iterator(result.first), result.second);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename T1>
 std::pair<BinTreeNode<T> *, bool> 
-BinTree<T, Comp, K, ExtractKey>::insert_impl(T1 &&elem) {
+BinTree<T, K, Comp, ExtractKey>::insert_impl(T1 &&elem) {
 	using std::pair;
 	if (empty()) { // special case for empty tree
 		root_ = makeNewNode(std::forward<T1>(elem));
@@ -588,9 +587,9 @@ BinTree<T, Comp, K, ExtractKey>::insert_impl(T1 &&elem) {
 	}	
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 BinTreeNode<T> * 
-BinTree<T, Comp, K, ExtractKey>::erase_impl(K const &key) {
+BinTree<T, K, Comp, ExtractKey>::erase_impl(K const &key) {
 	if (empty()) {
 		return NULL;
 	}
@@ -608,9 +607,9 @@ BinTree<T, Comp, K, ExtractKey>::erase_impl(K const &key) {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 BinTreeNode<T> * 
-BinTree<T, Comp, K, ExtractKey>::getFirstNode() const {
+BinTree<T, K, Comp, ExtractKey>::getFirstNode() const {
 	if (empty()) {
 		return end_;
 	}
@@ -620,9 +619,9 @@ BinTree<T, Comp, K, ExtractKey>::getFirstNode() const {
 	return temp;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 std::pair<BinTreeNode<T> *, int>
-BinTree<T, Comp, K, ExtractKey>::findNode(K const &key) const {
+BinTree<T, K, Comp, ExtractKey>::findNode(K const &key) const {
 	if (empty()) {
 		std::cout << "findNode called when empty tree\n";
 		return std::pair<BinTreeNode<T> *, int>(NULL, 0);
@@ -650,9 +649,9 @@ BinTree<T, Comp, K, ExtractKey>::findNode(K const &key) const {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 BinTreeNode<T> *
-BinTree<T, Comp, K, ExtractKey>::deleteValueInNode(BinTreeNode<T> *node) {
+BinTree<T, K, Comp, ExtractKey>::deleteValueInNode(BinTreeNode<T> *node) {
 	BinTreeNode<T> *nodeToDelete = node;
 	if (node->getLeftChild() && node->getRightChild()) { // both children exist
 		// successor of internal must be a leaf
@@ -693,45 +692,45 @@ BinTree<T, Comp, K, ExtractKey>::deleteValueInNode(BinTreeNode<T> *node) {
 	return nodeToDelete;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator==(BinTree<T, Comp, K, ExtractKey> const &lhs, 
-		BinTree<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator==(BinTree<T, K, Comp, ExtractKey> const &lhs, 
+		BinTree<T, K, Comp, ExtractKey> const &rhs) {
 	return containerEqual(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator!=(BinTree<T, Comp, K, ExtractKey> const &lhs, 
-		BinTree<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator!=(BinTree<T, K, Comp, ExtractKey> const &lhs, 
+		BinTree<T, K, Comp, ExtractKey> const &rhs) {
 	return !(lhs == rhs);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator< (BinTree<T, Comp, K, ExtractKey> const &lhs, 
-		BinTree<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator< (BinTree<T, K, Comp, ExtractKey> const &lhs, 
+		BinTree<T, K, Comp, ExtractKey> const &rhs) {
 	return containerLess(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator<= (BinTree<T, Comp, K, ExtractKey> const &lhs, 
-		BinTree<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator<= (BinTree<T, K, Comp, ExtractKey> const &lhs, 
+		BinTree<T, K, Comp, ExtractKey> const &rhs) {
 	return !(lhs > rhs);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator> (BinTree<T, Comp, K, ExtractKey> const &lhs, 
-		BinTree<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator> (BinTree<T, K, Comp, ExtractKey> const &lhs, 
+		BinTree<T, K, Comp, ExtractKey> const &rhs) {
 	return rhs < lhs;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator>= (BinTree<T, Comp, K, ExtractKey> const &lhs, 
-		BinTree<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator>= (BinTree<T, K, Comp, ExtractKey> const &lhs, 
+		BinTree<T, K, Comp, ExtractKey> const &rhs) {
 	return !(lhs < rhs);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 void 
-BinTree<T, Comp, K, ExtractKey>::binTreeNodeCopy(BinTreeNode<T> *srcNode, BinTreeNode<T> *&targetNode)
+BinTree<T, K, Comp, ExtractKey>::binTreeNodeCopy(BinTreeNode<T> *srcNode, BinTreeNode<T> *&targetNode)
 {
 	if (srcNode == NULL) {
 		targetNode = NULL;
@@ -753,28 +752,28 @@ BinTree<T, Comp, K, ExtractKey>::binTreeNodeCopy(BinTreeNode<T> *srcNode, BinTre
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 BinTreeNode<T> *
-BinTree<T, Comp, K, ExtractKey>::makeNewNode(T &&key) const { 
+BinTree<T, K, Comp, ExtractKey>::makeNewNode(T &&key) const { 
 	return new RbTreeNode<T>(std::forward<T>(key)); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 BinTreeNode<T> *
-BinTree<T, Comp, K, ExtractKey>::makeNewNode(T const &key) const { 
+BinTree<T, K, Comp, ExtractKey>::makeNewNode(T const &key) const { 
 	return new RbTreeNode<T>(key); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 BinTreeNode<T> *
-BinTree<T, Comp, K, ExtractKey>::makeNewNode(BinTreeNode<T> const *rhs) const { 
+BinTree<T, K, Comp, ExtractKey>::makeNewNode(BinTreeNode<T> const *rhs) const { 
 	return new RbTreeNode<T>(rhs->getKey(), 
 		static_cast<RbTreeNode<T> const *>(rhs)->getColor());
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 BinTreeNode<T> *
-BinTree<T, Comp, K, ExtractKey>::makeEndNode() const { 
+BinTree<T, K, Comp, ExtractKey>::makeEndNode() const { 
 	BinTreeNode<T> *endNode = static_cast<BinTreeNode<T> *>(operator new(sizeof(BinTreeNode<T>)));
 	endNode->setParent(NULL);
 	endNode->setLeftChild(NULL);

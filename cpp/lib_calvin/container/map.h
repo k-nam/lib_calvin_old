@@ -24,7 +24,7 @@ namespace lib_calvin
 	// insert method's return type contains iterator, which can not be included
 	// in the base class. 
 template <typename K, typename V, typename Comp = std::less<K>,
-	typename SetImpl = lib_calvin_container::BPlusTree<std::pair<K, V>, Comp, K, 
+	typename SetImpl = lib_calvin_container::BPlusTree<std::pair<K, V>, K, Comp, 
 											lib_calvin_container::TakeFirstOfPair<K, V>>>
 class map {
 public:

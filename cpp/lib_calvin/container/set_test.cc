@@ -30,8 +30,8 @@ void lib_calvin_container::setTest() {
 	setRvalueTest<BPlusTree<HeavyObjectWithMessage>>("BPlusTree / HeavyObject");
 
 	int const testSize = 1000;
-	//setFunctionTest<lib_calvin::set<int>>(testSize, "lib_calvin::set");
-	setFunctionTest<BinTree<int>>(testSize, "lib_calvin_container::BinTree");
+	setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
+	setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
 	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
 	setFunctionTest<BTree<HeavyObject>>(testSize, "lib_calvin_container::BTree");
 	setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");

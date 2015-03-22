@@ -11,8 +11,8 @@
 
 namespace lib_calvin
 {
-template <typename T, typename Comp = std::less<T>, 
-	typename Impl = lib_calvin_container::BPlusTree<T, Comp>>
+template <typename T, typename Comp = std::less<T>,
+	typename Impl = lib_calvin_container::BPlusTree<T, T, Comp, std::identity<T>>>
 class set 
 {
 public:

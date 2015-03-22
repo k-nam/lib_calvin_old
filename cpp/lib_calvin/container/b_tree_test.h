@@ -106,17 +106,17 @@ void BTreeTest<T>::searchAlgoTest() {
 	BTree<int> tree;
 	int testArray[10] = { 0, 1, 1, 2, 3, 4, 4, 5, 6, 7 };
 	cout << "sequential: \n";
-	cout << "0: " << sequentialSearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 0) << "\n";
-	cout << "1: " << sequentialSearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 1) << "\n";
-	cout << "2: " << sequentialSearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 2) << "\n";
-	cout << "4: " << sequentialSearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 4) << "\n";
-	cout << "8: " << sequentialSearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 8) << "\n";
+	cout << "0: " << sequentialSearch<int, int, std::less<int>, std::identity<int>>(testArray, testArray + 10, 0) << "\n";
+	cout << "1: " << sequentialSearch<int, int, std::less<int>, std::identity<int>>(testArray, testArray + 10, 1) << "\n";
+	cout << "2: " << sequentialSearch<int, int, std::less<int>, std::identity<int>>(testArray, testArray + 10, 2) << "\n";
+	cout << "4: " << sequentialSearch<int, int, std::less<int>, std::identity<int>>(testArray, testArray + 10, 4) << "\n";
+	cout << "8: " << sequentialSearch<int, int, std::less<int>, std::identity<int>>(testArray, testArray + 10, 8) << "\n";
 	cout << "binary: \n";
-	cout << "0: " << binarySearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 0) << "\n";
-	cout << "1: " << binarySearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 1) << "\n";
-	cout << "2: " << binarySearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 2) << "\n";
-	cout << "4: " << binarySearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 4) << "\n";
-	cout << "8: " << binarySearch<int, std::less<int>, int, std::identity<int>>(testArray, testArray + 10, 8) << "\n";
+	cout << "0: " << binarySearch<int, int, std::less<int>, std::identity<int>>(testArray, testArray + 10, 0) << "\n";
+	cout << "1: " << binarySearch<int, int, std::less<int>, std::identity<int>>(testArray, testArray + 10, 1) << "\n";
+	cout << "2: " << binarySearch<int, int, std::less<int>, std::identity<int>>(testArray, testArray + 10, 2) << "\n";
+	cout << "4: " << binarySearch<int, int, std::less<int>, std::identity<int>>(testArray, testArray + 10, 4) << "\n";
+	cout << "8: " << binarySearch<int, int, std::less<int>, std::identity<int>>(testArray, testArray + 10, 8) << "\n";
 	std::cout <<"\n";
 }
 

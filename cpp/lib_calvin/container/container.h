@@ -46,10 +46,10 @@ void eraseSingleElement(T *elements, size_t size, size_t index);
 
 // Returns the leftmost position(index) where elem should be inserted 
 // in a sorted array, so Iterator should be a random iterator.
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 size_t binarySearch(T const *begin, T const *end, K const &key);
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 size_t sequentialSearch(T const *begin, T const *end, K const &key); 
 
 // Interface for generic iterators
@@ -345,7 +345,7 @@ void destruct(T *elements, size_t size) {
 }
 
 // This leads to lower_bound position
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 size_t binarySearch(T const *begin, T const *end, K const &key) {
 	if (begin == end) {
 		return 0;
@@ -371,7 +371,7 @@ size_t binarySearch(T const *begin, T const *end, K const &key) {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 size_t sequentialSearch(T const *begin, T const *end, K const &key) {
 	// Should return the same value with binarySearch algorithm above
 	T const *temp = begin;
@@ -385,15 +385,15 @@ size_t sequentialSearch(T const *begin, T const *end, K const &key) {
 	return static_cast<size_t>(end - begin);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 std::pair<size_t, bool> 
 getIndexToInsert(T const *begin, T const *end, K const &key, bool toUseBinarySearch) {
 	size_t indexToInsert = 0;
 	if (toUseBinarySearch) {
-		indexToInsert = binarySearch<T, Comp, K, ExtractKey>(
+		indexToInsert = binarySearch<T, K, Comp, ExtractKey>(
 			begin, end, key);
 	} else {
-		indexToInsert = sequentialSearch<T, Comp, K, ExtractKey>(
+		indexToInsert = sequentialSearch<T, K, Comp, ExtractKey>(
 			begin, end, key);
 	}
 	size_t size = end - begin;

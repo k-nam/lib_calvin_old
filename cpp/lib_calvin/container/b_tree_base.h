@@ -8,7 +8,7 @@
 
 namespace lib_calvin_container
 {
-template <typename T, typename Comp = std::less<T>, typename K = T, typename ExtractKey = std::identity<T>>
+template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = std::identity<T>>
 class B_TREE_BASE 
 {
 private:
@@ -168,7 +168,7 @@ private:
 		reference operator*() const;
 		pointer operator->() const;
 	private:
-		typedef B_TREE_BASE<T, Comp, K, ExtractKey> TreeType;
+		typedef B_TREE_BASE<T, K, Comp, ExtractKey> TreeType;
 	public:
 		IteratorImpl();
 		IteratorImpl(TreeType const *tree, Node *node, int index = 0);
@@ -195,15 +195,15 @@ public:
 	typedef lib_calvin_container::ConstReverseIterator<IteratorImpl> const_reverse_iterator;
 
 public:
-	B_TREE_BASE<T, Comp, K, ExtractKey>();
+	B_TREE_BASE<T, K, Comp, ExtractKey>();
 	// copy constructor
-	B_TREE_BASE<T, Comp, K, ExtractKey>(B_TREE_BASE<T, Comp, K, ExtractKey> const &); 
-	B_TREE_BASE<T, Comp, K, ExtractKey>(B_TREE_BASE<T, Comp, K, ExtractKey> &&); 
+	B_TREE_BASE<T, K, Comp, ExtractKey>(B_TREE_BASE<T, K, Comp, ExtractKey> const &); 
+	B_TREE_BASE<T, K, Comp, ExtractKey>(B_TREE_BASE<T, K, Comp, ExtractKey> &&); 
 	// assignment
-	B_TREE_BASE<T, Comp, K, ExtractKey> & operator= (B_TREE_BASE<T, Comp, K, ExtractKey> const &); 
-	B_TREE_BASE<T, Comp, K, ExtractKey> & operator= (B_TREE_BASE<T, Comp, K, ExtractKey> &&); 
-	void swap(B_TREE_BASE<T, Comp, K, ExtractKey> &rhs);
-	~B_TREE_BASE<T, Comp, K, ExtractKey>();
+	B_TREE_BASE<T, K, Comp, ExtractKey> & operator= (B_TREE_BASE<T, K, Comp, ExtractKey> const &); 
+	B_TREE_BASE<T, K, Comp, ExtractKey> & operator= (B_TREE_BASE<T, K, Comp, ExtractKey> &&); 
+	void swap(B_TREE_BASE<T, K, Comp, ExtractKey> &rhs);
+	~B_TREE_BASE<T, K, Comp, ExtractKey>();
 public:
 	size_t size() const;
 	const_iterator find(K const &) const;
@@ -275,7 +275,7 @@ private:
 	std::pair<int, bool> getIndexToInsert2(Node *node, K const &key) const;
 private:
 	// subroutine for copy con & copy assign. Should be called only when in initial state.
-	void copyFrom(B_TREE_BASE<T, Comp, K, ExtractKey> const &); 
+	void copyFrom(B_TREE_BASE<T, K, Comp, ExtractKey> const &); 
 	void bTreeNodeCopy(Node const *source, Node *&target);
 	void bTreeNodeCopy(Node const *source, Node *&target, Node *&leftMode, Node *&rightMost);
 	// target node is assumed empty
@@ -296,34 +296,34 @@ public:
 	friend class BTreeTest<T>;
 };
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator==(B_TREE_BASE<T, Comp, K, ExtractKey> const &lhs, 
-	B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator==(B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs, 
+	B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator!=(B_TREE_BASE<T, Comp, K, ExtractKey> const &lhs, 
-	B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator!=(B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs, 
+	B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator< (B_TREE_BASE<T, Comp, K, ExtractKey> const &lhs, 
-	B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator< (B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs, 
+	B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator<= (B_TREE_BASE<T, Comp, K, ExtractKey> const &lhs, 
-	B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator<= (B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs, 
+	B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator> (B_TREE_BASE<T, Comp, K, ExtractKey> const &lhs, 
-	B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator> (B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs, 
+	B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs);
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator>= (B_TREE_BASE<T, Comp, K, ExtractKey> const &lhs, 
-	B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs);
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator>= (B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs, 
+	B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs);
 
 //--------------------------  node implementations -------------------------//
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::reserve(int capacity) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::reserve(int capacity) {
 	if (capacity_ >= capacity) {
 		return;
 	}
@@ -338,134 +338,134 @@ void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::reserve(int capacity) {
 	elements_ = newArray;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-int B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getCapacity() const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+int B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getCapacity() const {
 	return capacity_; 
 }
 
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-int B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getSize() const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+int B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getSize() const {
 	return size_;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-size_t B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getTreeSize() const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+size_t B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getTreeSize() const {
 	return size_;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::refreshTreeSize() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::refreshTreeSize() {
 	return;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::increaseTreeSizeByOne() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::increaseTreeSizeByOne() {
 	if (getParent()){
 		getParent()->increaseTreeSizeByOne();
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::decreaseTreeSizeByOne() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::decreaseTreeSizeByOne() {
 	if (getParent()){
 		getParent()->decreaseTreeSizeByOne();
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::setSize(int size) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setSize(int size) {
 	size_ = size;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode * 
-B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getParent() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode * 
+B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getParent() {
 	return parent_;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::setParent(InternalNode *parent) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setParent(InternalNode *parent) {
 	parent_ = parent;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-int B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getIndexInParent() const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+int B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getIndexInParent() const {
 	return indexInParent_;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::setIndexInParent(int index) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setIndexInParent(int index) {
 	indexInParent_ = index;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool B_TREE_BASE<T, Comp, K, ExtractKey>::Node::isLeafNode() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool B_TREE_BASE<T, K, Comp, ExtractKey>::Node::isLeafNode() const { 
 	return isLeafNode_; 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-T & B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getElement(int index) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+T & B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getElement(int index) {
 	return getElementArray()[index];
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-T const & B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getElement(int index) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+T const & B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getElement(int index) const {
 	return getElementArray()[index];
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-T const & B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getFirstElement() const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+T const & B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getFirstElement() const {
 	return getElementArray()[0];
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-T const & B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getLastElement() const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+T const & B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getLastElement() const {
 	return getElementArray()[size_ - 1];
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-T * B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getElementArray() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+T * B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getElementArray() {
 	return const_cast<T *>(static_cast<Node const *>(this)->getElementArray());
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-T const * B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getElementArray() const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+T const * B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getElementArray() const {
 	return elements_;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::constructElement(int index, T const &elem) { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::constructElement(int index, T const &elem) { 
 	new (getElementArray() + index) T(elem); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::constructElement(int index, T &&elem) { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::constructElement(int index, T &&elem) { 
 	new (getElementArray() + index) T(std::forward<T>(elem)); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::assignElement(int index, T const &elem) { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::assignElement(int index, T const &elem) { 
 	getElementArray()[index] = elem; 
 }
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::assignElement(int index, T &&elem) { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::assignElement(int index, T &&elem) { 
 	getElementArray()[index] = std::forward<T>(elem);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::increaseSizeByOne() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::increaseSizeByOne() { 
 	size_++; 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::decreaseSizeByOne() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::decreaseSizeByOne() { 
 	size_--; 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename T1>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::insertElement(int index, T1 &&elem) {
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::insertElement(int index, T1 &&elem) {
 	if (this->isFull()) {
 		std::cout << "inserting into full node\n";
 		exit(0);
@@ -476,64 +476,64 @@ void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::insertElement(int index, T1 &&el
 	insertSingleElement(getElementArray(), size_, index, std::forward<T1>(elem));
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename T1>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::insertFirstElement(T1 &&elem) {
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::insertFirstElement(T1 &&elem) {
 	insertElement(0, std::forward<T1>(elem));
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename T1>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::insertLastElement(T1 &&elem) {
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::insertLastElement(T1 &&elem) {
 	insertElement(size_, std::forward<T1>(elem));
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::eraseFirstElement() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::eraseFirstElement() {
 	eraseElement(0);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::eraseLastElement() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::eraseLastElement() {
 	eraseElement(size_ - 1);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::giveRightHalfTo(Node *target) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::giveRightHalfTo(Node *target) {
 
 	moveConstructAndDestruct(getElementArray() + t, target->getElementArray(), t - 1);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::receiveRightHalfFrom(Node *source) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::receiveRightHalfFrom(Node *source) {
 	moveConstructAndDestruct(source->getElementArray(), getElementArray() + t, t - 1);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::receiveRightHalfFromBPlusLeaf(Node *source) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::receiveRightHalfFromBPlusLeaf(Node *source) {
 	moveConstructAndDestruct(source->getElementArray(), getElementArray() + t - 1, t - 1);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 T const 
-B_TREE_BASE<T, Comp, K, ExtractKey>::Node::eraseElement(int index) {
+B_TREE_BASE<T, K, Comp, ExtractKey>::Node::eraseElement(int index) {
 	T const elem(std::move(getElementArray()[index]));
 	eraseSingleElement(getElementArray(), size_, index);
 	return elem;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool B_TREE_BASE<T, Comp, K, ExtractKey>::Node::isFull() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool B_TREE_BASE<T, K, Comp, ExtractKey>::Node::isFull() const { 
 	return size_ == B_TREE_FULL_NODE_CAPACITY; 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool B_TREE_BASE<T, Comp, K, ExtractKey>::Node::isLeast() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool B_TREE_BASE<T, K, Comp, ExtractKey>::Node::isLeast() const { 
 	return size_ == t - 1; 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-int B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getTargetCapacity(int capacity) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+int B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getTargetCapacity(int capacity) const {
 	int targetCapacity = capacity_;
 	while (true) {
 		if (capacity <= targetCapacity) {
@@ -551,43 +551,43 @@ int B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getTargetCapacity(int capacity) c
 
 
 #ifdef BPLUS
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node *  
-B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getNext() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *  
+B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getNext() { 
 	return next_; 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node *  
-B_TREE_BASE<T, Comp, K, ExtractKey>::Node::getPrevious() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *  
+B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getPrevious() { 
 	return previous_; 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::setNext(Node *next) { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setNext(Node *next) { 
 	next_ = next; 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::Node::setPrevious(Node *previous) { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setPrevious(Node *previous) { 
 	previous_ = previous; 
 }
 #endif
 
 //--------------------------  internal node implementations -------------------------//
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-size_t B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::getTreeSize() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+size_t B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::getTreeSize() const { 
 	return treeSize_;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::setTreeSize(size_t treeSize) { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::setTreeSize(size_t treeSize) { 
 	treeSize_ = treeSize;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::refreshTreeSize() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::refreshTreeSize() { 
 	//std::cout << "refreshTreeSize called\n";
 	size_t treeSize = 0;
 #ifndef BPLUS
@@ -601,60 +601,60 @@ void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::refreshTreeSize() {
 	treeSize_ = treeSize;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::increaseTreeSizeByOne() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::increaseTreeSizeByOne() { 
 	treeSize_++;
 	if (getParent()) {
 		getParent()->increaseTreeSizeByOne();
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::decreaseTreeSizeByOne() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::decreaseTreeSizeByOne() { 
 	treeSize_--;
 	if (getParent()) {
 		getParent()->decreaseTreeSizeByOne();
 	}	
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node * 
-B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::getChild(int index) { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node * 
+B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::getChild(int index) { 
 	return children_[index]; 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node const *  
-B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::getChild(int index) const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node const *  
+B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::getChild(int index) const { 
 	return children_[index]; 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::setChild(int index, Node *child) { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::setChild(int index, Node *child) { 
 	children_[index] = child; 
 	child->setIndexInParent(index); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node *  
-B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::getFirstChild() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *  
+B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::getFirstChild() { 
 	return getChild(0); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node *  
-B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::getLastChild() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *  
+B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::getLastChild() { 
 	return getChild(size_); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-int B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::findChild(Node const *child) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+int B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::findChild(Node const *child) const {
 	return child->getIndexInParent();
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename T1>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::insertElementAndChild(
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::insertElementAndChild(
 		int index, T1 &&elem, Node *child) {
 	// insert elem right before index'th elem 
 	// and insert child right before index + 1'th child
@@ -662,8 +662,8 @@ void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::insertElementAndChild(
 	insertChild(index + 1, child);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::insertChild(int index, Node *child) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::insertChild(int index, Node *child) {
 	for (int i = size_; i >= index; --i) {
 		//children_[i + 1] = children_[i];
 		setChild(i + 1, getChild(i));
@@ -672,36 +672,36 @@ void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::insertChild(int index, N
 	setChild(index, child);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename T1>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::insertFirstElementAndChild(
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::insertFirstElementAndChild(
 		T1 &&elem, Node *child) { 
 	insertChild(0, child); 
 	insertFirstElement(std::forward<T1>(elem));	
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename T1>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::insertLastElementAndChild(
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::insertLastElementAndChild(
 		T1 &&elem, Node *child) {
 	insertChild(getSize() + 1, child);
 	insertLastElement(std::forward<T1>(elem));	
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::eraseFirstElementAndChild() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::eraseFirstElementAndChild() {
 	eraseChild(0);
 	eraseFirstElement();	
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::eraseLastElementAndChild() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::eraseLastElementAndChild() {
 	eraseChild(size_);
 	eraseLastElement();	
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::eraseChild(int index) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::eraseChild(int index) {
 	for (int i = index; i < size_; ++i) { 
 		//children_[i] = children_[i + 1];
 		setChild(i, getChild(i + 1));
@@ -709,45 +709,45 @@ void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::eraseChild(int index) {
 	children_[size_] = NULL;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode::eraseElementAndChild(int index) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::eraseElementAndChild(int index) {
 	eraseChild(index + 1);
 	eraseElement(index);	
 }
 
 //----------------------- iterator implementation ------------------//
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::IteratorImpl():
+template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::IteratorImpl():
 	tree_(NULL), node_(NULL), index_(0) { }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::IteratorImpl(
-	B_TREE_BASE<T, Comp, K, ExtractKey> const *tree, Node *node, int index):
+template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::IteratorImpl(
+	B_TREE_BASE<T, K, Comp, ExtractKey> const *tree, Node *node, int index):
 		tree_(tree), node_(node), index_(index) { }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::IteratorImpl(IteratorImpl const &rhs): 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::IteratorImpl(IteratorImpl const &rhs): 
 	tree_(rhs.tree_), node_(rhs.node_), index_(rhs.index_) { }		
 		
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl &
-B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::operator=(IteratorImpl const &rhs) { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl &
+B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::operator=(IteratorImpl const &rhs) { 
 	const_cast<TreeType const *>(tree_) = rhs.tree_;
 	node_ = rhs.node_; 
 	index_ = rhs.index_; 
 	return *this; 
 }	
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::reference
-B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::operator*() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::reference
+B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::operator*() const { 
 	return node_->getElement(index_); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::pointer
-B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::operator->() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::pointer
+B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::operator->() const { 
 	return &node_->getElement(index_); 
 }
 
@@ -785,9 +785,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::operator->() const {
 
 //------------------------------------------------------- MACRO END -----//
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl &
-B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::operator++() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl &
+B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::operator++() {
 #ifdef BPLUS
 	index_++;
 	if (index_ < node_->getSize()) {
@@ -804,9 +804,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::operator++() {
 	return *this;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl &
-B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::operator--() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl &
+B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::operator--() {
 	if (!node_) { // currently end (null)
 		node_ = tree_->getLastNode();
 		index_ = node_->getSize() - 1;
@@ -826,56 +826,56 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::operator--() {
 #undef ITERATOR_MOVE_ROUTINE
 
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl const 
-B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::operator++(int) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl const 
+B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::operator++(int) {
 	IteratorImpl returnValue(*this);
 	operator++(); 
 	return returnValue;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl const 
-B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::operator--(int) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl const 
+B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::operator--(int) {
 	IteratorImpl returnValue(*this);
 	operator--(); 
 	return returnValue;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::operator==(IteratorImpl const &rhs) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::operator==(IteratorImpl const &rhs) const {
 	return tree_ == rhs.tree_ && node_ == rhs.node_ && index_ == rhs.index_;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl::operator!=(IteratorImpl const &rhs) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl::operator!=(IteratorImpl const &rhs) const {
 	return !(*this == rhs);
 }
 
 //--------------------------- tree implementation ------------------//
  
-template <typename T, typename Comp, typename K, typename ExtractKey>
-B_TREE_BASE<T, Comp, K, ExtractKey>::B_TREE_BASE():size_(0), root_(NULL) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey>::B_TREE_BASE():size_(0), root_(NULL) {
 	//std::cout << "btree default ctor\n";
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-B_TREE_BASE<T, Comp, K, ExtractKey>::B_TREE_BASE(B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs):
+template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey>::B_TREE_BASE(B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs):
 size_(0), root_(NULL) {
 	//std::cout << "btree copy ctor\n";
 	copyFrom(rhs);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-B_TREE_BASE<T, Comp, K, ExtractKey>::B_TREE_BASE(B_TREE_BASE<T, Comp, K, ExtractKey> &&rhs):
+template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey>::B_TREE_BASE(B_TREE_BASE<T, K, Comp, ExtractKey> &&rhs):
 size_(0), root_(NULL) {
 	//std::cout << "btree move ctor\n";
 	swap(rhs);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-B_TREE_BASE<T, Comp, K, ExtractKey> &
-B_TREE_BASE<T, Comp, K, ExtractKey>::operator=(B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey> &
+B_TREE_BASE<T, K, Comp, ExtractKey>::operator=(B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs) {
 	//std::cout << "btree copy assignment\n";
 	if (this == &rhs) {
 		return *this;
@@ -885,9 +885,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::operator=(B_TREE_BASE<T, Comp, K, ExtractKe
 	return *this;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-B_TREE_BASE<T, Comp, K, ExtractKey> &
-B_TREE_BASE<T, Comp, K, ExtractKey>::operator=(B_TREE_BASE<T, Comp, K, ExtractKey> &&rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey> &
+B_TREE_BASE<T, K, Comp, ExtractKey>::operator=(B_TREE_BASE<T, K, Comp, ExtractKey> &&rhs) {
 	//std::cout << "btree move assignment\n";
 	if (this == &rhs) {
 		return *this;
@@ -896,8 +896,8 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::operator=(B_TREE_BASE<T, Comp, K, ExtractKe
 	return *this;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::swap(B_TREE_BASE<T, Comp, K, ExtractKey> &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::swap(B_TREE_BASE<T, K, Comp, ExtractKey> &rhs) {
 	size_t tempSize = size_;
 	Node *tempRoot = root_;
 	size_ = rhs.size_;
@@ -906,18 +906,18 @@ void B_TREE_BASE<T, Comp, K, ExtractKey>::swap(B_TREE_BASE<T, Comp, K, ExtractKe
 	rhs.root_ = tempRoot;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-B_TREE_BASE<T, Comp, K, ExtractKey>::~B_TREE_BASE() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey>::~B_TREE_BASE() {
 	bTreeNodeDelete(root_);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-size_t B_TREE_BASE<T, Comp, K, ExtractKey>::size() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+size_t B_TREE_BASE<T, K, Comp, ExtractKey>::size() const { 
 	return size_; 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-size_t B_TREE_BASE<T, Comp, K, ExtractKey>::count(K const &key) const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+size_t B_TREE_BASE<T, K, Comp, ExtractKey>::count(K const &key) const { 
 	if (find(key) == end()) {
 		return 0; 
 	} else {
@@ -925,53 +925,53 @@ size_t B_TREE_BASE<T, Comp, K, ExtractKey>::count(K const &key) const {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::const_iterator
-B_TREE_BASE<T, Comp, K, ExtractKey>::find(K const &key) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::const_iterator
+B_TREE_BASE<T, K, Comp, ExtractKey>::find(K const &key) const {
 	return findIterator(key);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::iterator
-B_TREE_BASE<T, Comp, K, ExtractKey>::find(K const &key) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::iterator
+B_TREE_BASE<T, K, Comp, ExtractKey>::find(K const &key) {
 	return findIterator(key);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::const_iterator
-B_TREE_BASE<T, Comp, K, ExtractKey>::at(size_t index) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::const_iterator
+B_TREE_BASE<T, K, Comp, ExtractKey>::at(size_t index) const {
 	return findIteratorAt(index);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::iterator
-B_TREE_BASE<T, Comp, K, ExtractKey>::at(size_t index) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::iterator
+B_TREE_BASE<T, K, Comp, ExtractKey>::at(size_t index) {
 	return findIteratorAt(index);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-std::pair<typename B_TREE_BASE<T, Comp, K, ExtractKey>::iterator, bool>
-B_TREE_BASE<T, Comp, K, ExtractKey>::insert(T const &elem) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+std::pair<typename B_TREE_BASE<T, K, Comp, ExtractKey>::iterator, bool>
+B_TREE_BASE<T, K, Comp, ExtractKey>::insert(T const &elem) {
 	return insert_(elem);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-std::pair<typename B_TREE_BASE<T, Comp, K, ExtractKey>::iterator, bool>
-B_TREE_BASE<T, Comp, K, ExtractKey>::insert(T &&elem) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+std::pair<typename B_TREE_BASE<T, K, Comp, ExtractKey>::iterator, bool>
+B_TREE_BASE<T, K, Comp, ExtractKey>::insert(T &&elem) {
 	return insert_(std::forward<T>(elem));
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename InputIterator>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::insert(InputIterator beg, InputIterator end) { 
+void B_TREE_BASE<T, K, Comp, ExtractKey>::insert(InputIterator beg, InputIterator end) { 
 	while(beg != end) { 
 		insert(*beg++); 
 	} 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 size_t 
-B_TREE_BASE<T, Comp, K, ExtractKey>::erase(K const &key) {
+B_TREE_BASE<T, K, Comp, ExtractKey>::erase(K const &key) {
 	if (empty()) { 
 		return 0; 
 	} else { 
@@ -980,31 +980,31 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::erase(K const &key) {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::clear() {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::clear() {
 	size_ = 0;
 	bTreeNodeDelete(root_);
 	root_ = NULL;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool B_TREE_BASE<T, Comp, K, ExtractKey>::empty() const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool B_TREE_BASE<T, K, Comp, ExtractKey>::empty() const {
 	return size_ == 0; 
 }
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node *
-B_TREE_BASE<T, Comp, K, ExtractKey>::getFirstNode() const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
+B_TREE_BASE<T, K, Comp, ExtractKey>::getFirstNode() const {
 	return getFirstOrLastNode(true);
 }
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node *
-B_TREE_BASE<T, Comp, K, ExtractKey>::getLastNode() const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
+B_TREE_BASE<T, K, Comp, ExtractKey>::getLastNode() const {
 	return getFirstOrLastNode(false);
 
 }
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node *
-B_TREE_BASE<T, Comp, K, ExtractKey>::getFirstOrLastNode(bool isFirst) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
+B_TREE_BASE<T, K, Comp, ExtractKey>::getFirstOrLastNode(bool isFirst) const {
 	if (empty()) {
 		return NULL;
 	}
@@ -1018,58 +1018,58 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::getFirstOrLastNode(bool isFirst) const {
 	}
 	return node;
 }
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::const_iterator 
-B_TREE_BASE<T, Comp, K, ExtractKey>::begin() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::const_iterator 
+B_TREE_BASE<T, K, Comp, ExtractKey>::begin() const { 
 	return makeIterator(this->getFirstNode()); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::const_iterator 
-B_TREE_BASE<T, Comp, K, ExtractKey>::end() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::const_iterator 
+B_TREE_BASE<T, K, Comp, ExtractKey>::end() const { 
 	return makeIterator(NULL); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::iterator 
-B_TREE_BASE<T, Comp, K, ExtractKey>::begin() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::iterator 
+B_TREE_BASE<T, K, Comp, ExtractKey>::begin() { 
 	return makeIterator(this->getFirstNode()); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::iterator 
-B_TREE_BASE<T, Comp, K, ExtractKey>::end() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::iterator 
+B_TREE_BASE<T, K, Comp, ExtractKey>::end() { 
 	return makeIterator(NULL);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::const_reverse_iterator 
-B_TREE_BASE<T, Comp, K, ExtractKey>::rbegin() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::const_reverse_iterator 
+B_TREE_BASE<T, K, Comp, ExtractKey>::rbegin() const { 
 	return makeIterator(NULL); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::const_reverse_iterator 
-B_TREE_BASE<T, Comp, K, ExtractKey>::rend() const { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::const_reverse_iterator 
+B_TREE_BASE<T, K, Comp, ExtractKey>::rend() const { 
 	return makeIterator(this->getFirstNode()); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::reverse_iterator 
-B_TREE_BASE<T, Comp, K, ExtractKey>::rbegin() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::reverse_iterator 
+B_TREE_BASE<T, K, Comp, ExtractKey>::rbegin() { 
 	return makeIterator(NULL);  
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::reverse_iterator 
-B_TREE_BASE<T, Comp, K, ExtractKey>::rend() { 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::reverse_iterator 
+B_TREE_BASE<T, K, Comp, ExtractKey>::rend() { 
 	return makeIterator(this->getFirstNode()); 
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename T1>
-std::pair<typename B_TREE_BASE<T, Comp, K, ExtractKey>::iterator, bool>
-B_TREE_BASE<T, Comp, K, ExtractKey>::insert_(T1 &&elem) {
+std::pair<typename B_TREE_BASE<T, K, Comp, ExtractKey>::iterator, bool>
+B_TREE_BASE<T, K, Comp, ExtractKey>::insert_(T1 &&elem) {
 	if (empty()) { // empty 
 		Node *newRoot = makeNewLeafNode(B_TREE_ROOT_INIT_CAPACITY);
 		root_ = newRoot;
@@ -1087,9 +1087,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::insert_(T1 &&elem) {
 	return insertIntoNode(root_, std::forward<T1>(elem), 0);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl
-B_TREE_BASE<T, Comp, K, ExtractKey>::findIterator(K const &key) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl
+B_TREE_BASE<T, K, Comp, ExtractKey>::findIterator(K const &key) const {
 	std::pair<IteratorImpl, bool> result = lowerBoundIterator(key);
 	if (result.second == false) { // element was not present
 		return makeIterator(nullptr);
@@ -1098,9 +1098,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::findIterator(K const &key) const {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-std::pair<typename B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl, bool> 
-B_TREE_BASE<T, Comp, K, ExtractKey>::lowerBoundIterator(K const &key) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+std::pair<typename B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl, bool> 
+B_TREE_BASE<T, K, Comp, ExtractKey>::lowerBoundIterator(K const &key) const {
 	if (empty()) { 
 		return std::make_pair(makeIterator(nullptr), false); 
 	} 
@@ -1131,9 +1131,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::lowerBoundIterator(K const &key) const {
 	}	
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl
-B_TREE_BASE<T, Comp, K, ExtractKey>::findIteratorAt(size_t index) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl
+B_TREE_BASE<T, K, Comp, ExtractKey>::findIteratorAt(size_t index) const {
 	Node *currentNode = root_;
 	if (root_ == nullptr) { // empty
 		return makeIterator(nullptr);
@@ -1168,16 +1168,16 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::findIteratorAt(size_t index) const {
 	exit(0);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::IteratorImpl
-B_TREE_BASE<T, Comp, K, ExtractKey>::makeIterator(Node *node, int index) const {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl
+B_TREE_BASE<T, K, Comp, ExtractKey>::makeIterator(Node *node, int index) const {
 	return IteratorImpl(this, node, index);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename T1>
-std::pair<typename B_TREE_BASE<T, Comp, K, ExtractKey>::iterator, bool>
-B_TREE_BASE<T, Comp, K, ExtractKey>::insertIntoNode(Node *node, T1 &&elem, int parentIndex) {
+std::pair<typename B_TREE_BASE<T, K, Comp, ExtractKey>::iterator, bool>
+B_TREE_BASE<T, K, Comp, ExtractKey>::insertIntoNode(Node *node, T1 &&elem, int parentIndex) {
 	//std::cout << "insertInto node size: " << node->getSize() << "\n";
 	//std::cout << "called insertIntoNode\n";
 	std::pair<int, bool> result = getIndexToInsert(node, elem);
@@ -1224,9 +1224,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::insertIntoNode(Node *node, T1 &&elem, int p
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 int
-B_TREE_BASE<T, Comp, K, ExtractKey>::deleteFromNode(Node *node, K const &key, int parentIndex) {
+B_TREE_BASE<T, K, Comp, ExtractKey>::deleteFromNode(Node *node, K const &key, int parentIndex) {
 	if (node != root_) {
 		 node = addToOrMergeIfNeeded(node, parentIndex);
 		 if (node == NULL) {
@@ -1287,10 +1287,10 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::deleteFromNode(Node *node, K const &key, in
 	return returnValue;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename T1>
-std::pair<typename B_TREE_BASE<T, Comp, K, ExtractKey>::iterator, bool>
-B_TREE_BASE<T, Comp, K, ExtractKey>::insertValue(Node *node, T1 &&elem) {
+std::pair<typename B_TREE_BASE<T, K, Comp, ExtractKey>::iterator, bool>
+B_TREE_BASE<T, K, Comp, ExtractKey>::insertValue(Node *node, T1 &&elem) {
 	//std::cout << "called insertValue1\n";
 	if (node->isLeafNode() == false) {
 		std::cout << "insertValue error: is not a leaf node\n";
@@ -1308,10 +1308,10 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::insertValue(Node *node, T1 &&elem) {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 template <typename T1>
 void
-B_TREE_BASE<T, Comp, K, ExtractKey>::insertValue(
+B_TREE_BASE<T, K, Comp, ExtractKey>::insertValue(
 		Node *node, T1 &&elem, int indexToInsert) {
 	node->insertElement(indexToInsert, std::forward<T1>(elem));	
 	node->increaseSizeByOne();
@@ -1319,9 +1319,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::insertValue(
 	size_++;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 T const
-B_TREE_BASE<T, Comp, K, ExtractKey>::deleteValue(Node *node, int indexToDelete) {
+B_TREE_BASE<T, K, Comp, ExtractKey>::deleteValue(Node *node, int indexToDelete) {
   T const deletedElement = (node->eraseElement(indexToDelete));	
 	node->decreaseSizeByOne();
 	node->decreaseTreeSizeByOne();
@@ -1329,9 +1329,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::deleteValue(Node *node, int indexToDelete) 
 	return deletedElement;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node *
-B_TREE_BASE<T, Comp, K, ExtractKey>::splitNode(Node *node, int parentIndex) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
+B_TREE_BASE<T, K, Comp, ExtractKey>::splitNode(Node *node, int parentIndex) {
 	//std::cout << "splitnode called with: " << parentIndex << "\n";
 	int t = node->t;
 	// possible elems in a node: t-1 ~ 2t-1
@@ -1424,15 +1424,15 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::splitNode(Node *node, int parentIndex) {
 	brotherNode->decreaseSizeByOne();
 #endif
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 void
-B_TREE_BASE<T, Comp, K, ExtractKey>::addToLeafNodeFromLeft(Node *node, Node *brotherNode, int parentIndex) {
+B_TREE_BASE<T, K, Comp, ExtractKey>::addToLeafNodeFromLeft(Node *node, Node *brotherNode, int parentIndex) {
 	ADD_TO_NODE_ROUTINE_LEAF(-1, getLastElement, eraseLastElement, insertFirstElement, brotherNode)
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 void
-B_TREE_BASE<T, Comp, K, ExtractKey>::addToLeafNodeFromRight(Node *node, Node *brotherNode, int parentIndex) {
+B_TREE_BASE<T, K, Comp, ExtractKey>::addToLeafNodeFromRight(Node *node, Node *brotherNode, int parentIndex) {
 	ADD_TO_NODE_ROUTINE_LEAF( , getFirstElement, eraseFirstElement, insertLastElement, node)
 }
 #undef ADD_TO_NODE_ROUTINE_LEAF
@@ -1446,22 +1446,22 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::addToLeafNodeFromRight(Node *node, Node *br
 	static_cast<InternalNode *>(brotherNode)->ARG5(); \
 	brotherNode->decreaseSizeByOne();
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 void
-B_TREE_BASE<T, Comp, K, ExtractKey>::addToInternalNodeFromLeft(Node *node, Node *brotherNode, int parentIndex) {
+B_TREE_BASE<T, K, Comp, ExtractKey>::addToInternalNodeFromLeft(Node *node, Node *brotherNode, int parentIndex) {
 	ADD_TO_NODE_ROUTINE_INTERNAL(insertFirstElementAndChild, -1, getLastChild, getLastElement, eraseLastElementAndChild)
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 void
-B_TREE_BASE<T, Comp, K, ExtractKey>::addToInternalNodeFromRight(Node *node, Node *brotherNode, int parentIndex) {
+B_TREE_BASE<T, K, Comp, ExtractKey>::addToInternalNodeFromRight(Node *node, Node *brotherNode, int parentIndex) {
 	ADD_TO_NODE_ROUTINE_INTERNAL(insertLastElementAndChild, , getFirstChild, getFirstElement, eraseFirstElementAndChild)
 }
 #undef ADD_TO_NODE_ROUTINE_INTERNAL
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 bool
-B_TREE_BASE<T, Comp, K, ExtractKey>::addToNode(Node *node, int parentIndex) {
+B_TREE_BASE<T, K, Comp, ExtractKey>::addToNode(Node *node, int parentIndex) {
 	if (root_ == node) { // should not have been called
 		std::cout << "addToNode called on the root node\n";
 		return false;
@@ -1498,9 +1498,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::addToNode(Node *node, int parentIndex) {
 	return true;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node *
-B_TREE_BASE<T, Comp, K, ExtractKey>::mergeNode(Node *node, int parentIndex) {	
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
+B_TREE_BASE<T, K, Comp, ExtractKey>::mergeNode(Node *node, int parentIndex) {	
 	if (node == root_) { // should not have been called
 		std::cout << "mergeNode called on the root node\n";
 		return NULL;
@@ -1561,9 +1561,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::mergeNode(Node *node, int parentIndex) {
 	return node;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node *
-B_TREE_BASE<T, Comp, K, ExtractKey>::addToOrMerge(Node *node, int parentIndex) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
+B_TREE_BASE<T, K, Comp, ExtractKey>::addToOrMerge(Node *node, int parentIndex) {
 	bool addToExcuted = addToNode(node, parentIndex);
 	if (addToExcuted == false) {
 		return mergeNode(node, parentIndex);
@@ -1572,9 +1572,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::addToOrMerge(Node *node, int parentIndex) {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node *
-B_TREE_BASE<T, Comp, K, ExtractKey>::addToOrMergeIfNeeded(Node *node, int parentIndex) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
+B_TREE_BASE<T, K, Comp, ExtractKey>::addToOrMergeIfNeeded(Node *node, int parentIndex) {
 	if (node->isLeast()) {
 		return addToOrMerge(node, parentIndex);
 	} else {		
@@ -1582,9 +1582,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::addToOrMergeIfNeeded(Node *node, int parent
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 T const
-B_TREE_BASE<T, Comp, K, ExtractKey>::
+B_TREE_BASE<T, K, Comp, ExtractKey>::
 deleteLeftMost(Node *node, int parentIndex) {
 	node = addToOrMergeIfNeeded(node, parentIndex);
 	if (node->isLeafNode() == true) {
@@ -1595,9 +1595,9 @@ deleteLeftMost(Node *node, int parentIndex) {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 T const
-B_TREE_BASE<T, Comp, K, ExtractKey>::deleteRightMost(
+B_TREE_BASE<T, K, Comp, ExtractKey>::deleteRightMost(
 		Node *node, int parentIndex) {
 	node = addToOrMergeIfNeeded(node, parentIndex);
 	if (node->isLeafNode() == true) {
@@ -1608,15 +1608,15 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::deleteRightMost(
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::Node *
-B_TREE_BASE<T, Comp, K, ExtractKey>::makeNewLeafNode(int capacity) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
+B_TREE_BASE<T, K, Comp, ExtractKey>::makeNewLeafNode(int capacity) {
 	//std::cout << "size of elem is " << sizeof(T) << "\n";
-	//std::cout << "size of btree is " << sizeof(B_TREE_BASE<T, Comp, K, ExtractKey>) << "\n";
-	//std::cout << "size of node is " << sizeof(B_TREE_BASE<T, Comp, K, ExtractKey>::Node) << "\n";
-	//std::cout << "size of fullnode is " << sizeof(B_TREE_BASE<T, Comp, K, ExtractKey>::FullNode) << "\n";
-	//std::cout << "size of internal node is " << sizeof(B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode) << "\n";
-	//std::cout << "size of full internal node is " << sizeof(B_TREE_BASE<T, Comp, K, ExtractKey>::FullInternalNode) << "\n";
+	//std::cout << "size of btree is " << sizeof(B_TREE_BASE<T, K, Comp, ExtractKey>) << "\n";
+	//std::cout << "size of node is " << sizeof(B_TREE_BASE<T, K, Comp, ExtractKey>::Node) << "\n";
+	//std::cout << "size of fullnode is " << sizeof(B_TREE_BASE<T, K, Comp, ExtractKey>::FullNode) << "\n";
+	//std::cout << "size of internal node is " << sizeof(B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode) << "\n";
+	//std::cout << "size of full internal node is " << sizeof(B_TREE_BASE<T, K, Comp, ExtractKey>::FullInternalNode) << "\n";
 	Node *newNode = NULL;
 	if (capacity == B_TREE_FULL_NODE_CAPACITY) {
 		FullNode *fullNode = new FullNode();
@@ -1638,9 +1638,9 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::makeNewLeafNode(int capacity) {
 	return newNode;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-typename B_TREE_BASE<T, Comp, K, ExtractKey>::InternalNode *
-B_TREE_BASE<T, Comp, K, ExtractKey>::makeNewInternalNode(int capacity) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+typename B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode *
+B_TREE_BASE<T, K, Comp, ExtractKey>::makeNewInternalNode(int capacity) {
 	InternalNode *newNode = NULL;
 	if (capacity == B_TREE_FULL_NODE_CAPACITY) {
 		FullInternalNode *fullNode = new FullInternalNode();
@@ -1664,24 +1664,24 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::makeNewInternalNode(int capacity) {
 	return newNode;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 void
-B_TREE_BASE<T, Comp, K, ExtractKey>::print() const {
+B_TREE_BASE<T, K, Comp, ExtractKey>::print() const {
 	printTree(root_);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 void
-B_TREE_BASE<T, Comp, K, ExtractKey>::printNode(Node *node) const {
+B_TREE_BASE<T, K, Comp, ExtractKey>::printNode(Node *node) const {
 	for (int i = 0; i < node->getSize(); ++i) {
 		std::cout << node->getElement(i) << " ";
 	}
 	std::cout << "\n";
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 void
-B_TREE_BASE<T, Comp, K, ExtractKey>::printTree(Node *node) const {
+B_TREE_BASE<T, K, Comp, ExtractKey>::printTree(Node *node) const {
 	if (node->isLeafNode() == false) {
 		for (int i = 0; i < node->getSize(); ++i) {
 			printTree(static_cast<InternalNode *>(node)->getChild(i));
@@ -1694,24 +1694,24 @@ B_TREE_BASE<T, Comp, K, ExtractKey>::printTree(Node *node) const {
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 std::pair<int, bool> 
-B_TREE_BASE<T, Comp, K, ExtractKey>::getIndexToInsert(Node *node, T const &elem) const {
+B_TREE_BASE<T, K, Comp, ExtractKey>::getIndexToInsert(Node *node, T const &elem) const {
 	K const &key = ExtractKey()(elem);
 	return getIndexToInsert2(node, key);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
+template <typename T, typename K, typename Comp, typename ExtractKey>
 std::pair<int, bool> 
-B_TREE_BASE<T, Comp, K, ExtractKey>::getIndexToInsert2(Node *node, K const &key) const {
+B_TREE_BASE<T, K, Comp, ExtractKey>::getIndexToInsert2(Node *node, K const &key) const {
 	T *begin = node->getElementArray();
 	T *end = node->getElementArray() + node->getSize();
-	auto result = lib_calvin_container::getIndexToInsert<T, Comp, K, ExtractKey>(begin, end, key, true);
+	auto result = lib_calvin_container::getIndexToInsert<T, K, Comp, ExtractKey>(begin, end, key, true);
 	return std::pair<int, bool>(static_cast<int>(result.first), result.second);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::copyFrom(B_TREE_BASE const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::copyFrom(B_TREE_BASE const &rhs) {
 	// this object is empty at the point of calling this function
 	size_ = rhs.size_;
 	if (rhs.empty()) { // rhs is empty
@@ -1726,15 +1726,15 @@ void B_TREE_BASE<T, Comp, K, ExtractKey>::copyFrom(B_TREE_BASE const &rhs) {
 #endif
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::bTreeNodeCopy(Node const *source, Node *&target) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeCopy(Node const *source, Node *&target) {
 	Node *dummyLeftMost;
 	Node *dummyRightMost;
 	bTreeNodeCopy(source, target, dummyLeftMost, dummyRightMost);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::bTreeNodeCopy(
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeCopy(
 		Node const *source, Node *&target, Node *&leftMost, Node *&rightMost) {	
 	if (source == NULL) {
 		target = NULL;
@@ -1781,14 +1781,14 @@ void B_TREE_BASE<T, Comp, K, ExtractKey>::bTreeNodeCopy(
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::bTreeNodeElemCopy(Node const *source, Node *target) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeElemCopy(Node const *source, Node *target) {
 	target->setSize(source->getSize());
 	copyConstruct(source->getElementArray(), target->getElementArray(), source->getSize());
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::bTreeNodeDelete(Node *node) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeDelete(Node *node) {
 	if (node == NULL) {
 		return;
 	}
@@ -1802,46 +1802,46 @@ void B_TREE_BASE<T, Comp, K, ExtractKey>::bTreeNodeDelete(Node *node) {
 	operator delete(node);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-void B_TREE_BASE<T, Comp, K, ExtractKey>::bTreeNodeDeleteElement(Node *node) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeDeleteElement(Node *node) {
 	for (int i = 0; i <  node->getSize(); ++i) {
 		node->getElement(i).~T();
 	}
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator==(B_TREE_BASE<T, Comp, K, ExtractKey> const &lhs, 
-		B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator==(B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs, 
+		B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs) {
 	return containerEqual(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator!=(B_TREE_BASE<T, Comp, K, ExtractKey> const &lhs, 
-		B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator!=(B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs, 
+		B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs) {
 	return !(lhs == rhs);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator< (B_TREE_BASE<T, Comp, K, ExtractKey> const &lhs, 
-		B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator< (B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs, 
+		B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs) {
 	return containerLess(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator<= (B_TREE_BASE<T, Comp, K, ExtractKey> const &lhs, 
-		B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator<= (B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs, 
+		B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs) {
 	return !(lhs > rhs);
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator> (B_TREE_BASE<T, Comp, K, ExtractKey> const &lhs, 
-		B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator> (B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs, 
+		B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs) {
 	return rhs < lhs;
 }
 
-template <typename T, typename Comp, typename K, typename ExtractKey>
-bool operator>= (B_TREE_BASE<T, Comp, K, ExtractKey> const &lhs, 
-		B_TREE_BASE<T, Comp, K, ExtractKey> const &rhs) {
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool operator>= (B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs, 
+		B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs) {
 	return !(lhs < rhs);
 }
 }
