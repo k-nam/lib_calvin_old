@@ -120,17 +120,23 @@ void lib_calvin_graph::GraphTest<V, E>::insertionTest() {
 template <typename V, typename E>
 void lib_calvin_graph::GraphTest<V, E>::insertionTest2() {
 	using namespace lib_calvin;
-	graph_base<V, E> *graph1, *graph2;
-	graph1 = new graph<V, E>();
-	graph2 = new undirected_graph<V, E>();
-	graph1->insert_edge(2, 4);
-	graph1->insert_edge(2, 3);
-	graph1->remove_edge(3, 2);
-	graph2->insert_edge(2, 4);
-	graph2->insert_edge(2, 3);
-	graph2->remove_edge(3, 2);
-	std::cout << "# edges in graph e-size: " << graph1->number_of_edge() << "\n";
-	std::cout << "# edges in undirected graph e-size: " << graph2->number_of_edge() << "\n";
+	graph<V, E> graph1;
+	undirected_graph<V, E> graph2;
+	graph1.insert_vertex(2);
+	graph1.insert_vertex(3);
+	graph1.insert_vertex(4);
+	graph1.insert_edge(2, 4);
+	graph1.insert_edge(2, 3);
+	graph1.remove_edge(3, 2);
+
+	graph2.insert_vertex(2);
+	graph2.insert_vertex(3);
+	graph2.insert_vertex(4);
+	graph2.insert_edge(2, 4);
+	graph2.insert_edge(2, 3);
+	graph2.remove_edge(3, 2);
+	std::cout << "# edges in graph e-size: " << graph1.number_of_edge() << "\n";
+	std::cout << "# edges in undirected graph e-size: " << graph2.number_of_edge() << "\n";
 	std::cout << "\n";
 }
 
@@ -339,6 +345,11 @@ template <typename V, typename E>
 void lib_calvin_graph::GraphTest<V, E>::getClosestPathTest() {
 	using namespace lib_calvin;
 	weighted_graph<V, E> testGraph;
+	testGraph.insert_vertex(1);
+	testGraph.insert_vertex(2);
+	testGraph.insert_vertex(3);
+	testGraph.insert_vertex(4);
+	testGraph.insert_vertex(5);
 	testGraph.insert_edge(1, 2, 2);
 	testGraph.insert_edge(1, 4, 5);
 	testGraph.insert_edge(2, 4, 2);
@@ -391,6 +402,8 @@ void lib_calvin_graph::GraphTest<V, E>::populateGraph(
 		}
 		int srcV = (rand() * 32768 + rand()) % numV;
 		int targetV = (rand() * 32768 + rand()) % numV;
+		graph.insert_vertex(srcV);
+		graph.insert_vertex(targetV);
     graph.insert_edge(srcV, targetV, edge);
   }
 }
@@ -402,6 +415,8 @@ void lib_calvin_graph::GraphTest<V, E>::populateGraph(
   for (int i = 0; i < numE; ++i) {
 		int srcV = (rand() * 32768 + rand()) % numV;
 		int targetV = (rand() * 32768 + rand()) % numV;
+		graph.insert_vertex(srcV);
+		graph.insert_vertex(targetV);
     graph.insert_edge(srcV, targetV, defaultEdge);
   }
 }

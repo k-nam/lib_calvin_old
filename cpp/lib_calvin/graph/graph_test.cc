@@ -13,7 +13,6 @@ void lib_calvin_graph::graphTest() {
 	test.bfsTest();
 	test.algorithmTest();
 	test.undirectedAlgorithmTest();
-	
 	test.getClosestPathTest();
 	std::cout << "-------------- Graph test finished ---------------\n\n\n";
 }
