@@ -7,9 +7,9 @@ void lib_calvin_sort::sortTest() {
 	std::cout << "---------------- Beginning sort test -----------------\n\n";
 	using namespace lib_calvin_sort;
 	typedef SimpleStruct ElemType;
-	//binSearchTest();
-	//binSearchTest2();
-	//getSamplesTest();
+	binSearchTest();
+	binSearchTest2();
+	getSamplesTest();
 
 	//sortTest<ElemType>(cacheTest1, "cacheTest1");
 	//sortTest<ElemType>(cacheTest2, "cacheTest2");

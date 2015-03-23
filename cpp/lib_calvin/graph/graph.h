@@ -204,6 +204,8 @@ public:
   };
 public:
 	weighted_graph_base();
+	weighted_graph_base(weighted_graph_base const &);
+  weighted_graph_base & operator= (weighted_graph_base const &);
 public:
 	// Shortest path in terms of weight
 	vector<weighted_path> get_shortest_path(K const &src, K const &target) const;
@@ -653,8 +655,6 @@ graph_base<V, E, K, ExtractKey>::operator= (graph_base<V, E, K, ExtractKey> cons
 	outLinks_ = rhs.outLinks_;
 	inLinks_ = rhs.inLinks_;
   arrayData_ = rhs.arrayData_;
-	matrixData_ = rhs.matrixData_;
-  apspSolution_ = rhs.apspSolution_;
   return *this;
 }
 template <typename V, typename E, typename K, typename ExtractKey>
@@ -787,7 +787,7 @@ graph_base<V, E, K, ExtractKey>::get_vertex_edge_pairs_from(K const &src) const 
 	vector<std::pair<V, E>> result;
 	result.reserve(outLinks_[srcId].size());
 	for (auto iter = outLinks_[srcId].begin(); iter != outLinks_[srcId].end(); ++iter) {
-		result.push_back(std::make_pair(mapping_[iter->first], iter->second));
+		result.push_back(std::make_pair(*vertices_.find(mapping_[iter->first]), iter->second));
 	}
 	return result;
 }
@@ -799,7 +799,7 @@ graph_base<V, E, K, ExtractKey>::get_vertices_to(K const &dest) const {
 	vector<V> result;
 	result.reserve(inLinks_[destId].size());
 	for (auto iter = inLinks_[destId].begin(); iter != inLinks_[destId].end(); ++iter) {
-		result.push_back(mapping_[iter->first]);
+		result.push_back(*vertices_.find(mapping_[*iter]));
 	}
 	return result;
 }
@@ -854,7 +854,19 @@ graph_base<V, E, K, ExtractKey>::get_closest_path(K const &src, K const &target)
 
 template <typename V, typename E, typename K, typename ExtractKey, typename W, typename ExtractWeight>
 weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_graph_base(): graph_base(), 
-				matrixData_(1), apspSolution_(1) { }
+matrixData_(1), apspSolution_(1) { }
+
+template <typename V, typename E, typename K, typename ExtractKey, typename W, typename ExtractWeight>
+weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_graph_base(weighted_graph_base const &rhs):
+graph_base(rhs), matrixData_(rhs.matrixData_), apspSolution_(rhs.apspSolution_) { }
+
+template <typename V, typename E, typename K, typename ExtractKey, typename W, typename ExtractWeight>
+weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight> & 
+weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::operator= (weighted_graph_base const &rhs) {
+	graph_base::operator=(rhs);
+	matrixData_ = rhs.matrixData_;
+	apspSolution_ = rhs.apspSolution_;
+}
 
 template <typename V, typename E, typename K, typename ExtractKey, typename W, typename ExtractWeight>
 vector<typename weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_path>
