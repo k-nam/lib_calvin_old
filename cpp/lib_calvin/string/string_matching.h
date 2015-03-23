@@ -230,19 +230,16 @@ void lib_calvin_string::naiveMatch (
 // need a special character($) that is not present either in text or pattern
 // using null character for this case
 template <typename Alphabet>
-void lib_calvin_string::basicMatch (
-    abstract_string<Alphabet> const &text, 
-    abstract_string<Alphabet> const &pattern,
-    vector<size_t> &result) {
-  
+void lib_calvin_string::basicMatch (abstract_string<Alphabet> const &text, 
+    abstract_string<Alphabet> const &pattern, vector<size_t> &result) {
   result.clear();
   int64_t patternLen     = pattern.size();
   int64_t textLen      = text.size();
   Alphabet *pSpecialChar  = new Alphabet(0);
   abstract_string<Alphabet> newstring  = 
-    pattern + abstract_string<Alphabet> (pSpecialChar, 1) + text;
+    pattern + abstract_string<Alphabet>(pSpecialChar, 1) + text;
   vector<int64_t> Z;
-  calculateZ (newstring, Z);
+  calculateZ(newstring, Z);
   for (int64_t i = patternLen + 1; i < textLen + patternLen + 1; ++i) {
     if (Z[i] == patternLen) { // match detected
       result.push_back(i - patternLen - 1);

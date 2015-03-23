@@ -99,5 +99,8 @@
     <ClCompile Include="..\util\random.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\string\suffix_tree_test.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

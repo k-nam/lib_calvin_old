@@ -275,12 +275,14 @@
     <ClCompile Include="string_main.cc" />
     <ClCompile Include="string_test.cc" />
     <ClCompile Include="..\util\Stopwatch.cc" />
+    <ClCompile Include="suffix_tree_test.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="abstract_string.h" />
     <ClInclude Include="string_matching.h" />
     <ClInclude Include="string_test.h" />
     <ClInclude Include="suffix_tree.h" />
+    <ClInclude Include="suffix_tree_test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

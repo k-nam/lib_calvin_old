@@ -27,6 +27,9 @@
     <ClCompile Include="string_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="suffix_tree_test.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="abstract_string.h">
@@ -39,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="suffix_tree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="suffix_tree_test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -183,6 +183,7 @@
     <ClCompile Include="..\sort\sort_test.cc" />
     <ClCompile Include="..\string\abstract_string.cc" />
     <ClCompile Include="..\string\string_test.cc" />
+    <ClCompile Include="..\string\suffix_tree_test.cc" />
     <ClCompile Include="..\subcc\compiler.cc" />
     <ClCompile Include="..\subcc\c_code_generator.cc" />
     <ClCompile Include="..\subcc\subcc_lexer.cc" />

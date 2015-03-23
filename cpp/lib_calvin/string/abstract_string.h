@@ -11,6 +11,7 @@
 #include <deque>
 #include <cstdlib>
 #include "stopwatch.h"
+#include "vector.h"
 
 namespace lib_calvin 
 {
@@ -20,9 +21,12 @@ template <typename Alphabet>
 class abstract_string;
 
 template <typename Alphabet>
-abstract_string<Alphabet> const
-operator+ (abstract_string<Alphabet> const &, 
-    abstract_string<Alphabet> const &);
+abstract_string<Alphabet>
+operator+ (abstract_string<Alphabet> const &, abstract_string<Alphabet> const &);
+
+template <typename Alphabet>
+abstract_string<Alphabet> &&
+operator+ (abstract_string<Alphabet> &&, abstract_string<Alphabet> const &);
 
 // Maintains its own data (value semantic) and immutable
 // Do not use 'string' for its name to avoid collision with std::string 
@@ -30,41 +34,40 @@ template <typename Alphabet = char>
 class abstract_string { 
 public:
 	typedef Alphabet CharType;
-  abstract_string();
-  abstract_string(Alphabet); // one letter string
+	abstract_string();
+  abstract_string(Alphabet const &); // one letter string
   abstract_string(Alphabet const *instring, size_t len);
 	abstract_string(Alphabet const *instring);
   abstract_string(abstract_string<Alphabet> const &);
+	abstract_string(abstract_string<Alphabet> &&);
   abstract_string(std::basic_string<Alphabet> const &); 
-  ~abstract_string();
-  size_t size() const { return length_; }
-  Alphabet const & operator[] (size_t index) const { return string_[index]; } 
-  Alphabet & operator[] (size_t index) { return string_[index]; }
-  abstract_string<Alphabet> & operator= (
-      abstract_string<Alphabet> const &);
-  abstract_string<Alphabet> & operator+= (
-      abstract_string<Alphabet> const &); // concat
+	void swap(abstract_string<Alphabet> &&rhs);
+  size_t size() const;
+	size_t length() const;
+  Alphabet const & operator[] (size_t index) const;
+  Alphabet & operator[] (size_t index);
   // Lexicographical order by Alphabet
-  bool operator< (
-      abstract_string<Alphabet> const &) const; // for set and map
+  bool operator< (abstract_string<Alphabet> const &) const;
   bool operator== (abstract_string<Alphabet> const &) const;
   bool operator!= (abstract_string<Alphabet> const &) const;
   // Does not include end index
-  abstract_string<Alphabet> const substr(int startIndex, int endIndex) const; 
+  abstract_string<Alphabet> substr(size_t startIndex, size_t endIndex) const; 
   // To the end of string
-  abstract_string<Alphabet> const substr(int startIndex) const; 
+  abstract_string<Alphabet> substr(size_t startIndex) const; 
   // reverse
-  abstract_string<Alphabet> const reverse() const;
-  friend abstract_string<Alphabet> const 
+  abstract_string<Alphabet> reverse() const;
+  friend abstract_string<Alphabet>
     operator+<> (abstract_string<Alphabet> const &lhs, abstract_string<Alphabet> const &rhs); 
+  friend abstract_string<Alphabet> &&
+    operator+<> (abstract_string<Alphabet> &&lhs, abstract_string<Alphabet> const &rhs); 
 public:
   void print() const;
 private:
+	abstract_string(vector<Alphabet> &&);
 	void init(Alphabet const *string, size_t len);
 	size_t countLength(Alphabet const *string) const;
 private:
-  Alphabet *string_;
-  size_t length_;
+  vector<Alphabet> vector_;
 };
 
 template <typename Alphabet>
@@ -97,34 +100,22 @@ namespace lib_calvin
 /*********************** string <Alphabet> definition **************************/
 
 template <typename Alphabet>
-abstract_string<Alphabet>::abstract_string(): string_(NULL), length_(0) {
-}
-
-template <typename Alphabet>
 void abstract_string<Alphabet>::init(Alphabet const *string, size_t length) {
-  length_ = length;
-  string_ = new Alphabet[length];
-  for (int i = 0; i < length; ++i) {
-    string_[i] = string[i];
+  vector_.resize(length);
+	for (size_t i = 0; i < length; i++) {
+		vector_[i] = string[i];
 	}
 }
 
+template <typename Alphabet>
+abstract_string<Alphabet>::abstract_string(): vector_() { }
 
 template <typename Alphabet>
-size_t abstract_string<Alphabet>::countLength(Alphabet const *string) const {
-	size_t length = 0;
-	while (*string != 0) {
-		string++;
-		length++;
-	}
-	return length;
-}
+abstract_string<Alphabet>::abstract_string(vector<Alphabet> &&vector): vector_(std::move(vector)) { }
 
 template <typename Alphabet>
-abstract_string<Alphabet>::abstract_string(Alphabet character) {
-  length_ = 1;
-  string_ = new Alphabet[1];
-  string_[0] = character;
+abstract_string<Alphabet>::abstract_string(Alphabet const &character) {
+  init(&character, 1);
 }
 
 template <typename Alphabet>
@@ -134,136 +125,119 @@ abstract_string<Alphabet>::abstract_string(Alphabet const *string, size_t length
 
 template <typename Alphabet>
 abstract_string<Alphabet>::abstract_string(Alphabet const *string) {
-	init(string, countLength(string));
+	for (size_t i = 0; string[i] != 0; i++) {
+		vector_.push_back(string[i]);
+	}
 }
 
 template <typename Alphabet>
-abstract_string<Alphabet>::abstract_string(abstract_string<Alphabet> const &rhs) {
-	init(rhs.string_, rhs.length_);
+abstract_string<Alphabet>::abstract_string(abstract_string<Alphabet> const &rhs): vector_(rhs.vector_) { }
+
+template <typename Alphabet>
+abstract_string<Alphabet>::abstract_string(abstract_string<Alphabet> &&rhs) {
+	swap(std::move(rhs));
 }
 
 template <typename Alphabet>
-abstract_string<Alphabet>::abstract_string (std::basic_string<Alphabet> const &string) { 
+abstract_string<Alphabet>::abstract_string(std::basic_string<Alphabet> const &string) { 
 	init(string.c_str(), string.length());
 }
 
 template <typename Alphabet>
-abstract_string<Alphabet>::~abstract_string() {
-  delete string_;
+void abstract_string<Alphabet>::swap(abstract_string<Alphabet> &&rhs) { 
+	vector_.swap(rhs.vector_);
 }
 
 template <typename Alphabet>
-abstract_string<Alphabet> & 
-abstract_string<Alphabet>::operator= (abstract_string<Alphabet> const &rhs) {
-  
-  if(this == &rhs)
-    return *this;
-  length_ = rhs.length_;
-  delete[] string_;
-  string_ = new Alphabet[length_];
-  for (int i = 0; i < length_; ++i)
-    string_[i] = rhs.string_[i];
-  return *this;
+size_t abstract_string<Alphabet>::size() const {
+	return vector_.size();
 }
 
 template <typename Alphabet>
-abstract_string<Alphabet> & 
-abstract_string<Alphabet>::operator+= (abstract_string<Alphabet> const &rhs) {
-  
-  Alphabet *newstring = new Alphabet[length_ + rhs.length_];
-  Alphabet *oldstring = string_;
-  string_ = newstring;
-  for (int i = 0; i < length_; ++i)
-    string_[i] = oldstring[i];
-  for (int i = 0; i < rhs.length_; ++i)
-    string_[length_ + i] = rhs.string_[i];
-  length_ += rhs.length_;
-  delete[] oldstring;
+size_t abstract_string<Alphabet>::length() const {
+	return size();
+}
+
+template <typename Alphabet>
+Alphabet const & abstract_string<Alphabet>::operator[] (size_t index) const {
+	return vector_[index];
+}
+
+template <typename Alphabet>
+Alphabet & abstract_string<Alphabet>::operator[] (size_t index) {
+	return vector_[index];
 }
 
 template <typename Alphabet>
 bool abstract_string<Alphabet>::operator< (abstract_string<Alphabet> const &rhs) const {
-  bool shorter = (length_ < rhs.length_); // true if this one is shorter
-  size_t shorterLen = (shorter) ? length_ : rhs.length_;
-  for (size_t i = 0; i < shorterLen; ++i) {
-    Alphabet a = string_[i];
-    Alphabet b = rhs.string_[i];
-    if (a < b)
-      return true;
-    if (b < a)
-      return false;
-  }
-  // All chars are the same, then determine by length
-  if (shorter)
-    return true;
-  return false; // same length will return false
+  return vector_ < rhs.vector_;
 }
 
 template <typename Alphabet>
-bool abstract_string<Alphabet>::operator== (abstract_string<Alphabet> const &rhs) const {
-  
-  if (length_ != rhs.size())
-    return false;
-  for (int i = 0; i < length_; ++i) {
-    if (string_[i] != rhs.string_[i])
-      return false;
-  }
-  return true;
+bool abstract_string<Alphabet>::operator==(abstract_string<Alphabet> const &rhs) const {
+  return vector_ == rhs.vector_;
 }
 
 template <typename Alphabet>
-bool abstract_string<Alphabet>::operator!= (abstract_string<Alphabet> const &rhs) const {
-  
+bool abstract_string<Alphabet>::operator!=(abstract_string<Alphabet> const &rhs) const {
   return !(operator==(rhs));
 }
 
 template <typename Alphabet>
-abstract_string<Alphabet> const
-abstract_string<Alphabet>::substr (int startIndex, int endIndex) const {
-  abstract_string<Alphabet> substr (string_ + startIndex, endIndex - startIndex);
-  return substr;
+abstract_string<Alphabet>
+abstract_string<Alphabet>::substr(size_t startIndex, size_t endIndex) const {
+  return abstract_string<Alphabet> (&(*vector_.begin()) + startIndex, endIndex - startIndex);
 }
 
 template <typename Alphabet>
-abstract_string<Alphabet> const
-abstract_string<Alphabet>::substr (int startIndex) const {
-  abstract_string<Alphabet> substr (string_ + startIndex, length_ - startIndex);
-  return substr;
+abstract_string<Alphabet>
+abstract_string<Alphabet>::substr(size_t startIndex) const {
+  return substr(startIndex, vector_.size());
 }
 
 template <typename Alphabet>
-abstract_string<Alphabet> const
+abstract_string<Alphabet>
 abstract_string<Alphabet>::reverse() const {
-  Alphabet *pChar = new Alphabet[length_];
-  for (int i = 0; i < length_; ++i) {
-    pChar[i] = string_[length_ - 1 - i];
+  vector<Alphabet> reverse(vector_.size());
+  for (size_t i = 0; i < vector_.size(); ++i) {
+    reverse[i] = vector_[vector_.size() - 1 - i];
   }
-  abstract_string<Alphabet> reversedstring (pChar, length_);
-  return reversedstring;
+  return abstract_string<Alphabet>(std::move(reverse));
 }
 
 template <typename Alphabet>
 void abstract_string<Alphabet>::print() const {
-  for (int i = 0; i < length_; ++i)
-    cout << string_[i];
+	std::cout << "<";
+  for (size_t i = 0; i < size(); ++i) {
+    std::cout << vector_[i];
+	}
+	std::cout << ">\n";
 }
 
 template <typename Alphabet>
-abstract_string<Alphabet> const
-operator+ (abstract_string<Alphabet> const &lhs, 
-    abstract_string<Alphabet> const &rhs) {
-  
-  Alphabet *pChar = new Alphabet[lhs.length_ + rhs.length_];
-  int j = 0;
-  for (int i = 0; i < lhs.length_; ++i) {
-    pChar[j++] = lhs.string_[i];
-  }
-  for (int i = 0; i < rhs.length_; ++i) {
-    pChar[j++] = rhs.string_[i];
-  }
-  abstract_string<Alphabet> newstring (pChar, lhs.length_ + rhs.length_);
-  return newstring;
+abstract_string<Alphabet>
+operator+ (abstract_string<Alphabet> const &lhs, abstract_string<Alphabet> const &rhs) {
+	if (&lhs == &rhs) {
+		std::cout << "string + error\n";
+		exit(0);
+	}
+	std::cout << "vector size became: " << lhs.vector_.size() << "\n";
+  vector<Alphabet> vector(lhs.vector_);
+	std::cout << "vector size became: " << rhs.vector_.size() << "\n";
+	vector.insert(vector.end(), rhs.vector_.begin(), rhs.vector_.end());
+	std::cout << "vector size became: " << vector.size() << "\n";
+	return abstract_string<Alphabet>(std::move(vector));
 }
+
+template <typename Alphabet>
+abstract_string<Alphabet> &&
+operator+ (abstract_string<Alphabet> &&lhs, abstract_string<Alphabet> const &rhs) {
+  vector<Alphabet> &vector = lhs.vector_;
+	vector.insert(vector.end(), rhs.vector_.begin(), rhs.vector_.end());
+  return std::move(lhs);
+}
+
+
 } // end lib_calvin for definitions
 
 #endif
