@@ -292,19 +292,19 @@ typename Array<T>::iterator Array<T>::insert(const_iterator const &pos, T1 &&ele
 
 template <typename T>
 template <typename Iterator>
-typename Array<T>::iterator Array<T>::insert(const_iterator const &pos, 
-												Iterator const &begin, Iterator const &end) {
+typename Array<T>::iterator 
+Array<T>::insert(const_iterator const &pos, Iterator const &first, Iterator const &last) {
 	ptrdiff_t insertingIndex = pos - begin();
-	size_t numElementsToInsert = distanceBetweenIterator(begin, end);
+	size_t numElementsToInsert = distanceBetweenIterator(first, last);
 	if (size_ + numElementsToInsert > capacity_) {
 		size_t newCapacity = (size_ + numElementsToInsert)*VECTOR_REALLOC_MULTIPLIER;
 		T *newArray = (T *)operator new(sizeof(T)*newCapacity);
-		insertMultipleElement(array_, size_, insertingIndex, begin, end, numElementsToInsert, newArray);
+		insertMultipleElement(array_, size_, insertingIndex, first, last, numElementsToInsert, newArray);
 		operator delete(array_);
 		array_ = newArray;
 		capacity_ = newCapacity;
 	} else {
-		insertMultipleElement(array_, size_, insertingIndex, begin, end, numElementsToInsert);
+		insertMultipleElement(array_, size_, insertingIndex, first, last, numElementsToInsert);
 	}
 	size_ += numElementsToInsert;
 	return begin() + insertingIndex;

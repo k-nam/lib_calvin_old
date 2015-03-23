@@ -55,7 +55,7 @@ private:
 		typedef T & reference;
 		typedef T const & const_reference;
 		typedef ptrdiff_t difference_type;
-		typedef std::random_access_iterator_tag iterator_category;
+		typedef std::bidirectional_iterator_tag iterator_category;
 		IteratorImpl();
 		IteratorImpl(Block *block, int index);
 		IteratorImpl(IteratorImpl const &rhs);

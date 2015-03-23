@@ -101,7 +101,7 @@ public:
 	typedef value_type const * pointer;
 	typedef value_type const & reference;
 	typedef ptrdiff_t difference_type;
-	typedef std::bidirectional_iterator_tag iterator_category;
+	typedef typename Impl::iterator_category iterator_category;
 
 	ConstIterator(): impl_() { }
 	ConstIterator(Impl impl): impl_(impl) { }
@@ -177,7 +177,7 @@ public:
 	typedef value_type const * pointer;
 	typedef value_type const & reference;
 	typedef ptrdiff_t difference_type;
-	typedef std::bidirectional_iterator_tag iterator_category;
+	typedef typename Impl::iterator_category iterator_category;
 
 	ConstReverseIterator(): impl_() { }
 	ConstReverseIterator(Impl impl): impl_(impl) { }
@@ -220,7 +220,7 @@ public:
 	typedef value_type * pointer;
 	typedef value_type & reference;
 	typedef ptrdiff_t difference_type;
-	typedef std::bidirectional_iterator_tag iterator_category;
+	typedef typename Impl::iterator_category iterator_category;
 
 	ReverseIterator(): ConstReverseIterator() { }
 	ReverseIterator(Impl impl): ConstReverseIterator(impl) { }

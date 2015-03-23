@@ -38,10 +38,10 @@ void lib_calvin_container::vectorTest() {
 	
 	//vectorPerformanceTest(lib_calvin_container::Array<int>(), 
 		//"lib_calvin_container::Array / int", largeTesetSize);
-	vectorPerformanceTest(lib_calvin_container::BlockedArray<int>(), 
-		"lib_calvin_container::BlockedArray / int", largeTesetSize);
+	//vectorPerformanceTest(lib_calvin_container::BlockedArray<int>(), 
+		//"lib_calvin_container::BlockedArray / int", largeTesetSize);
 	//vectorPerformanceTest(std::vector<int>(), "std::vector / int", largeTesetSize);
-	vectorPerformanceTest(std::list<int>(), "std::list / int", largeTesetSize);
+	//vectorPerformanceTest(std::list<int>(), "std::list / int", largeTesetSize);
 
 	//vectorPerformanceTest2(lib_calvin_container::Array<int>(), "lib_calvin_container::Array", testSize);
 	//vectorPerformanceTest3(lib_calvin_container::Array<int>(), "lib_calvin_container::Array", testSize);
@@ -109,7 +109,7 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 	}
 	cout << "vector insert single OK!\n";
 	
-		/*
+	
 	// insert multiple elements
 	for (int i = 0; i < numIteration; ++i) {
 		int const arraySize = rand() % testSize + 1;
@@ -121,22 +121,25 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 		decltype(stdVector) insertionBlock2;
 		resetVectorForSize(insertionBlock1, insertionBlockLength);
 		resetVectorForSize(insertionBlock2, insertionBlockLength);
+		
 		impl.insert(advanceIteratorBy(impl.begin(), positionToInsert), 
 			insertionBlock2.begin(), insertionBlock2.end());
 		stdVector.insert(advanceIteratorBy(stdVector.begin(), positionToInsert), 
 			insertionBlock1.begin(), insertionBlock1.end());
+			
 		if (!areSame(impl, stdVector)) {
 			cout << "vector insert multi elem error\n";
 			exit(0);
 		}
 	}
-	*/
+	cout << "vector insert multi OK!\n";
+	
 	for (int i = 0; i < numIteration; ++i) {
 		int const arraySize = rand() % testSize + 1; // prevent 0
 		resetVectorForSize(impl, arraySize);
 		resetVectorForSize(stdVector, arraySize);
-		int const positionToErase = rand() % arraySize;
-		for (int i = 0; i < arraySize / 10; ++i) { 
+		for (int i = 0; i < arraySize / 10; ++i) { 		
+			int const positionToErase = rand() % impl.size();
 			impl.erase(advanceIteratorBy(impl.begin(), positionToErase));
 			stdVector.erase(advanceIteratorBy(stdVector.begin(), positionToErase));
 		}

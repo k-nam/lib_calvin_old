@@ -16,7 +16,6 @@ public:
 	typedef typename Impl::const_iterator const_iterator;
 	typedef typename Impl::reverse_iterator reverse_iterator;
 	typedef typename Impl::const_reverse_iterator const_reverse_iterator;
-
 	typedef typename Impl::value_type value_type;
 	typedef typename Impl::pointer pointer;
 	typedef typename Impl::reference reference;
