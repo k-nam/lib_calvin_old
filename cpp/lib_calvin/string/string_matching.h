@@ -3,6 +3,7 @@
 
 #include "abstract_string.h"
 #include "vector.h"
+#include "suffix_tree.h"
 #include <cstdint>
 
 namespace lib_calvin_string 
@@ -51,6 +52,11 @@ void kmp(abstract_string<Alphabet> const &text,
 
 template <typename Alphabet>
 void boyerMoore(abstract_string<Alphabet> const &text, 
+    abstract_string<Alphabet> const &pattern, 
+    vector<size_t> &result);
+
+template <typename Alphabet>
+void suffixTreeMatching(abstract_string<Alphabet> const &text, 
     abstract_string<Alphabet> const &pattern, 
     vector<size_t> &result);
 
@@ -361,5 +367,15 @@ void lib_calvin_string::boyerMoore (
     s = 0;
   }
 }
+
+
+template <typename Alphabet>
+void lib_calvin_string::suffixTreeMatching(abstract_string<Alphabet> const &text, 
+    abstract_string<Alphabet> const &pattern, vector<size_t> &result) {
+	using namespace lib_calvin;
+	suffix_tree<Alphabet> tree(text);
+	result = tree.find_pattern(pattern);
+}
+
 
 #endif

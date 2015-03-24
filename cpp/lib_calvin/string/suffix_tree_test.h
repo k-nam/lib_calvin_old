@@ -3,6 +3,7 @@
 
 #include "suffix_tree.h"
 #include "string_test.h"
+#include "vector.h"
 
 namespace lib_calvin_string
 {
@@ -20,8 +21,12 @@ public:
 private:
 	void readSuffixTest();
 	void followPathTest();
+	void createBranchTest();
+	void buildTest();
+	void findPatternTest();
 private:
 	void prepareTree();
+	void printMatchResult(abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> const &) const;
 private:
 
 };

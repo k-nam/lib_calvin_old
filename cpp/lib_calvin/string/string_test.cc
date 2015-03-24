@@ -6,7 +6,7 @@
 
 void lib_calvin_string::stringTest() { 
 	std::cout << "---------- Beginning string test -----------\n\n";
-	abstractStringTest();
+	//abstractStringTest();
 	matchingAlgorithmTest();
 	suffixTreeTest();
 	std::cout << "---------- String test finished -----------\n\n\n";
@@ -30,6 +30,7 @@ void lib_calvin_string::matchingAlgorithmTest() {
   matchingTest(basicMatch, "Basic string matching(Z-alg)");
   matchingTest(kmp, "KMP");
   matchingTest(boyerMoore, "Boyer-Moore");
+	matchingTest(suffixTreeMatching, "Suffix Tree");
 	std::cout << "--------------- matchingAlgorithmTest finished --------------\n\n";
 }
 
@@ -42,17 +43,17 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
   vector<size_t> answer;
 	lib_calvin::stopwatch watch;
 
-  size_t textLen   = 1000000;
+  size_t textLen   = 100000;
   size_t patternLen  = 16;
   char *pText   = new char[textLen];
   char *pPattern  = new char[patternLen];
   // use only small number of alphabets to make test realistic
   // don't use null character 0 (reserved for algorithms)
   for (int i = 0; i < textLen; ++i) {
-    pText[i] = rand() % 2 + 2;
+    pText[i] = rand() % 4 + 2;
   }	
   for (int i = 0; i < patternLen; ++i) {
-    pPattern[i] = rand() % 2 + 2;
+    pPattern[i] = rand() % 4 + 2;
   }
 	/*
 	pPattern[0] = 2;

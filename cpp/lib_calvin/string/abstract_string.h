@@ -221,11 +221,8 @@ operator+ (abstract_string<Alphabet> const &lhs, abstract_string<Alphabet> const
 		std::cout << "string + error\n";
 		exit(0);
 	}
-	std::cout << "vector size became: " << lhs.vector_.size() << "\n";
   vector<Alphabet> vector(lhs.vector_);
-	std::cout << "vector size became: " << rhs.vector_.size() << "\n";
 	vector.insert(vector.end(), rhs.vector_.begin(), rhs.vector_.end());
-	std::cout << "vector size became: " << vector.size() << "\n";
 	return abstract_string<Alphabet>(std::move(vector));
 }
 

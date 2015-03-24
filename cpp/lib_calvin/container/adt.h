@@ -155,7 +155,7 @@ IntIndexer<K>::IntIndexer(): newIndex_(0) { }
 
 template <typename K>
 int IntIndexer<K>::size() const {
-  return keyToIndex_.size();
+  return static_cast<int>(keyToIndex_.size());
 }
 
 template <typename K>
