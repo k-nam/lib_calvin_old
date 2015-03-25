@@ -8,7 +8,7 @@ void lib_calvin_string::stringTest() {
 	std::cout << "---------- Beginning string test -----------\n\n";
 	//abstractStringTest();
 	matchingAlgorithmTest();
-	suffixTreeTest();
+	//suffixTreeTest();
 	std::cout << "---------- String test finished -----------\n\n\n";
 }
 
@@ -27,8 +27,8 @@ void lib_calvin_string::matchingAlgorithmTest() {
 	using namespace lib_calvin_string;
 	std::cout << "------------matchingAlgorithmTest start ----------------\n\n";
   matchingTest(naiveMatch, "Naive string matching");
-  matchingTest(basicMatch, "Basic string matching(Z-alg)");
-  matchingTest(kmp, "KMP");
+  //matchingTest(basicMatch, "Basic string matching(Z-alg)");
+  //matchingTest(kmp, "KMP");
   matchingTest(boyerMoore, "Boyer-Moore");
 	matchingTest(suffixTreeMatching, "Suffix Tree");
 	std::cout << "--------------- matchingAlgorithmTest finished --------------\n\n";
@@ -44,16 +44,16 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
 	lib_calvin::stopwatch watch;
 
   size_t textLen   = 100000;
-  size_t patternLen  = 16;
+  size_t patternLen  = 64;
   char *pText   = new char[textLen];
   char *pPattern  = new char[patternLen];
   // use only small number of alphabets to make test realistic
   // don't use null character 0 (reserved for algorithms)
   for (int i = 0; i < textLen; ++i) {
-    pText[i] = rand() % 4 + 2;
+    pText[i] = rand() % 2 + 1;
   }	
   for (int i = 0; i < patternLen; ++i) {
-    pPattern[i] = rand() % 4 + 2;
+    pPattern[i] = rand() % 2 + 1;
   }
 	/*
 	pPattern[0] = 2;
@@ -78,14 +78,26 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
   cout << title << endl;
   cout << "Running time: " << watch.read() << endl;
   cout << "# of match was: " << record.size() << endl;
+	// sorting is needed as suffix tree's result is not in ascending order
+	lib_calvin::introSort(record.begin(), record.end());
   if (answer == record)
     cout << "Matching is correct.\n";
   else {
     cout << "Matching error!!\n";
+		text.print();
+		pattern.print();
     size_t realsize = answer.size();
     size_t wrongsize = record.size();
     cout << "Real match number : " << realsize << endl;
+		cout << "Real match:\n";
+		for (auto iter = answer.begin(); iter != answer.end(); ++iter) {
+			std::cout << *iter << "\n";
+		}
     cout << "Wrong match number : " << wrongsize << endl;
+		cout << "Wrong match:\n";
+		for (auto iter = record.begin(); iter != record.end(); ++iter) {
+			std::cout << *iter << "\n";
+		}
 		exit(0);
   }
   delete[] pText;

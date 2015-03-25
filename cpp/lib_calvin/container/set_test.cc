@@ -30,8 +30,8 @@ void lib_calvin_container::setTest() {
 	setRvalueTest<BPlusTree<HeavyObjectWithMessage>>("BPlusTree / HeavyObject");
 
 	int const testSize = 1000;
-	setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
-	setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
+	//setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
+	//setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
 	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
 	setFunctionTest<BTree<HeavyObject>>(testSize, "lib_calvin_container::BTree");
 	setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
@@ -50,30 +50,30 @@ void lib_calvin_container::setTest() {
 	int const smallSize = 1000;
 	int const mediumSize = 10000;
 	int const largeSize = 1000000;	
-	//setPerformanceTest(std::set<int>(), largeSize, "std::set / int");
-	//setPerformanceTest(boost::container::set<int>(), largeSize, "boost::set / int");
-	//setPerformanceTest(BinTree<int>(), largeSize, "RbTree / int");
-	//setPerformanceTest(RbTree<int>(), largeSize, "RbTree / int");
-	//setPerformanceTest(BTree<int>(), largeSize, "BTree / int");
-	//setPerformanceTest(BPlusTree<int>(), largeSize, "BPlusTree / int");
+	setPerformanceTest<std::set<int>>(largeSize, "std::set / int");
+	//setPerformanceTest<boost::container::set<int>>(largeSize, "boost::set / int");
+	//setPerformanceTest<BinTree<int>>(largeSize, "RbTree / int");
+	//setPerformanceTest<RbTree<int>>(largeSize, "RbTree / int");
+	//setPerformanceTest<BTree<int>>(largeSize, "BTree / int");
+	//setPerformanceTest<BPlusTree<int>>(largeSize, "BPlusTree / int");
 	
-	//setPerformanceTest(OrderedArray<int>(), largeSize, "OrderedArray / int");
-	//setPerformanceTest(std::unordered_set<int>(), largeSize, "std::unordered_set / int");
-  //setPerformanceTest(boost::unordered_set<int>(), largeSize, "boost::unordered_set / int");
-	//setPerformanceTest(HashTable<int>(), largeSize, "HashTable / int");
+	//setPerformanceTest<OrderedArray<int>>(largeSize, "OrderedArray / int");
+	//setPerformanceTest<std::unordered_set<int>>(largeSize, "std::unordered_set / int");
+  //setPerformanceTest<boost::unordered_set<int>>(largeSize, "boost::unordered_set / int");
+	setPerformanceTest<HashTable<int>>(largeSize, "HashTable / int");
 
-	//setPerformanceTest<std::set<LightObject>>(largeSize, "std::set / LightObject");
-	//setPerformanceTest<boost::container::set<LightObject>(), largeSize, "boost::set / LightObject");
+	setPerformanceTest<std::set<LightObject>>(largeSize, "std::set / LightObject");
+	//setPerformanceTest<boost::container::set<LightObject>>(largeSize, "boost::set / LightObject");
 	setPerformanceTest<RbTree<LightObject>>(largeSize, "RbTree / LightObject");
-	setPerformanceTest<BTree<LightObject>>(largeSize, "BTree / LightObject");
+	//setPerformanceTest<BTree<LightObject>>(largeSize, "BTree / LightObject");
 	setPerformanceTest<BPlusTree<LightObject>>(largeSize, "BPlusTree / LightObject");
 	//setPerformanceTest<OrderedArray<LightObject>>(largeSize, "OrderedArray / LightObject");
 
 	//setPerformanceTest<std::set<HeavyObject>>(mediumSize, "std::set / HeavyObject");
 	//setPerformanceTest<boost::container::set<HeavyObject>>(mediumSize, "boost::set / HeavyObject");
-	setPerformanceTest<RbTree<HeavyObject>>(mediumSize, "RbTree / HeavyObject");
-	setPerformanceTest<BTree<HeavyObject>>(mediumSize, "BTree / HeavyObject");
-	setPerformanceTest<BPlusTree<HeavyObject>>(mediumSize, "BPlusTree / HeavyObject");
+	//setPerformanceTest<RbTree<HeavyObject>>(mediumSize, "RbTree / HeavyObject");
+	//setPerformanceTest<BTree<HeavyObject>>(mediumSize, "BTree / HeavyObject");
+	//setPerformanceTest<BPlusTree<HeavyObject>>(mediumSize, "BPlusTree / HeavyObject");
 	//setPerformanceTest<OrderedArray<LightObject>>(mediumSize, "OrderedArray / HeavyObject");
 	//setPerformanceTest<HashTable<HeavyObject, GenericHash<HeavyObject>>>(mediumSize, "HashTable / HeavyObject");
 	//setPerformanceTest<boost::unordered_set<HeavyObject, GenericHash<HeavyObject>>>(

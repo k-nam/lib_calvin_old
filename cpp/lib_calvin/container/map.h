@@ -6,7 +6,7 @@
 #include "b_plus_tree.h"
 #include "bin_tree.h"
 #include "rb_tree.h"
-#include <map>
+#include "hash_table.h"
 
 namespace lib_calvin_container
 {
@@ -99,6 +99,13 @@ public:
 private:
 	SetImpl setImpl_;
 };
+
+template <typename K, typename V>
+class hash_map: public map<K, V, std::less<K>, 
+	lib_calvin_container::HashTable<std::pair<K, V>, K, lib_calvin_container::TakeFirstOfPair<K, V>>> {
+
+};
+
 } // end namespace lib_calvin
 
 #endif

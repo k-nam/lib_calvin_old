@@ -14,6 +14,7 @@ void lib_calvin_string::SuffixTreeTest<Alphabet>::suffixTreeTest() {
 	createBranchTest();
 	buildTest();
 	findPatternTest();
+	Node::countThisObject();
 	//followPathTest();
 	std::cout << "------------suffixTreeTest finished ----------------\n\n";
 }

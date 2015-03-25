@@ -25,6 +25,9 @@ public:
 	};
 	struct Node {
 		Node(NodeType type, size_t id, size_t parentId, size_t suffixLink);
+		Node(Node const &);
+		~Node();
+		static void countThisObject();
 		NodeType type_; 
 		// For leaf nodes, id also denotes the starting index of corresponding Point
 		size_t id_; // 0 for the entire string
@@ -32,6 +35,7 @@ public:
 		size_t suffixLink_; // if this node represents ax, points to x. only for internal node.
 		bool operator==(Node const &rhs) const;
 		bool operator<(Node const &rhs) const;
+		static int64_t objectCount_;
 	};
 	struct NodeExtractKey {
 		size_t operator()(Node const &) const;
@@ -72,7 +76,8 @@ private:
 	bool continuesWith(Point const &, Alphabet const &) const;
 	bool rootContinuesWith(Alphabet const &) const;
 	bool nodeContinuesWith(size_t node, Alphabet const &) const;
-	void createBranch(Point const &, Alphabet const &);
+	// returns internal braching node (either created or not)
+	size_t createBranch(Point const &, Alphabet const &); 
 	void createBranchAtRoot(Alphabet const &character);
 	void printSuffix(size_t leaf) const;
 	void printAllSuffix() const;
@@ -106,7 +111,7 @@ text_(text + abstract_string<Alphabet>(Alphabet('$'))), internalNodeId_(text_.si
 
 template <typename Alphabet>
 void suffix_tree<Alphabet>::build() {
-	bool wasNodeCreatedInLastExtension = false;
+	bool waBranchCreatedInLastExtension = false;
 	size_t lastCreated = 0;
 	bool wasPhasedEndedExplicitly = true;
 	// inserting root
@@ -116,11 +121,12 @@ void suffix_tree<Alphabet>::build() {
 	// $ char at the tail for convenience
 	for (phase_ = 1; phase_ <= text_.size(); phase_++) { // must add text[phase] to each suffix		
 		wasPhasedEndedExplicitly = true;	
+		waBranchCreatedInLastExtension = false;
 		Alphabet const &character = text_[phase_ - 1];
 		//std::cout << "phase: " << phase_ << " char: " << character << "\n";
 		for ( ; extension_ < phase_; extension_++) { 
 			//std::cout << " ext: " << extension_  << " ";
-			if (extension_ + 1 == phase_) { // last one char
+			if (extension_ + 1 == phase_) { // last one char; deal with root only
 				if (!rootContinuesWith(character)) {
 					//std::cout << "  Rule A: " << "\n";
 					createBranchAtRoot(character);
@@ -134,7 +140,12 @@ void suffix_tree<Alphabet>::build() {
 				Point currentPoint = followPathDown(rootId_, extension_, phase_ - 1);
 				if (!continuesWith(currentPoint, character)) { // Rule2
 					//std::cout << "  Rule A': " << "\n";
-					createBranch(currentPoint, character);
+					size_t branchNode = createBranch(currentPoint, character);
+					if (waBranchCreatedInLastExtension) {
+						getNode(lastCreated).suffixLink_ = branchNode;
+					}				
+					waBranchCreatedInLastExtension = true;
+					lastCreated = branchNode;					
 					leafNodes_.push_back(extension_);
 				} else { // Rule3
 					//std::cout << "  Rule B': " << "\n";
@@ -153,7 +164,6 @@ vector<size_t>
 suffix_tree<Alphabet>::find_pattern(abstract_string<Alphabet> const &pattern) const {
 	stopwatch watch;
 	watch.start();
-
 	vector<size_t> result;
 	auto point = findPatternPoint(pattern);
 	if (point.second == false) {
@@ -217,7 +227,7 @@ template <typename Alphabet>
 void
 suffix_tree<Alphabet>::findReachableLeaves(size_t node, vector<size_t> &result) const {
 	if (getNode(node).type_ == NodeType::Leaf) {
-		std::cout << "findReachableLeaves adding: " << node << "\n";
+		//std::cout << "findReachableLeaves adding: " << node << "\n";
 		result.push_back(node);
 	} else {
 		auto pairs = graph_.get_vertex_edge_pairs_from(node);
@@ -229,7 +239,40 @@ suffix_tree<Alphabet>::findReachableLeaves(size_t node, vector<size_t> &result) 
 
 template <typename Alphabet>
 suffix_tree<Alphabet>::Node::Node(NodeType type, size_t id, size_t parentId, size_t suffixLink):
-	type_(type), id_(id), parentId_(parentId), suffixLink_(suffixLink) { }
+	type_(type), id_(id), parentId_(parentId), suffixLink_(suffixLink) { 
+	objectCount_++; 
+	//std::cout << "objectCount_ is: " << objectCount_ << "\n";
+}
+
+template <typename Alphabet>
+suffix_tree<Alphabet>::Node::Node(Node const &rhs): type_(rhs.type_), id_(rhs.id_), 
+parentId_(rhs.parentId_), suffixLink_(rhs.suffixLink_) {
+	objectCount_++; 
+	//std::cout << "objectCount_ is: " << objectCount_ << "\n";
+}
+
+template <typename Alphabet>
+suffix_tree<Alphabet>::Node::~Node() {
+	objectCount_--;
+	if (objectCount_ < 0) {
+		std::cout << "objectCount_ is: " << objectCount_ << "\n";
+	}
+	//std::cout << "objectCount_ is: " << objectCount_ << "\n";
+}
+
+template <typename Alphabet>
+void suffix_tree<Alphabet>::Node::countThisObject() {
+	std::cout << "Node current count is: \"" << objectCount_ << "\": ";
+	if (objectCount_ == 0) {
+		std::cout << "O.K\n\n";
+	} else {
+		std::cout << "memory leak!!!\n";
+		exit(0);
+	}
+}
+
+template <typename Alphabet>
+int64_t suffix_tree<Alphabet>::Node::objectCount_ = 0;
 
 template <typename Alphabet>
 bool suffix_tree<Alphabet>::Node::operator==(Node const &rhs) const {
@@ -427,7 +470,8 @@ bool suffix_tree<Alphabet>::rootContinuesWith(Alphabet const &character) const {
 }
 
 template <typename Alphabet>
-void suffix_tree<Alphabet>::createBranch(Point const &point, Alphabet const &character) {
+size_t
+suffix_tree<Alphabet>::createBranch(Point const &point, Alphabet const &character) {
 	if (!isNode(point)) {
 		Node &parent = getNode(point.src_);
 		Node &child = getNode(point.dest_);
@@ -439,7 +483,6 @@ void suffix_tree<Alphabet>::createBranch(Point const &point, Alphabet const &cha
 		Node newInternal(NodeType::Internal, newInternalId, parentId, 0);
 		child.parentId_ = newInternalId;
 		Node newLeaf(NodeType::Leaf, extension_, newInternalId, 0);
-		//std::cout << "b\n";
 		Link oldLink(getLink(point));
 		Link newLink1(text_[point.endIndex_], 
 											point.endIndex_, oldLink.endIndex_); // internal -> child
@@ -447,24 +490,20 @@ void suffix_tree<Alphabet>::createBranch(Point const &point, Alphabet const &cha
 		//std::cout << "changing old link end to: " << point.endIndex_ <<"\n";
 		oldLink.endIndex_ = point.endIndex_;
 		//std::cout << "old link start: " << oldLink.startIndex_ << "end " << oldLink.endIndex_ << "\n";
-		if (2 == oldLink.endIndex_) {
-			//std::cout << "createBranch error: old start: " << oldLink.startIndex_ << " end: " << oldLink.endIndex_ << "\n";
-		}
-		//std::cout << "a\n";
 		graph_.insert_vertex(newInternal);
 		graph_.insert_vertex(newLeaf);	
 		graph_.remove_edge(parentId, childId);
 		insertEdge(parentId, newInternalId, oldLink);
 		insertEdge(newInternalId, childId, newLink1);
 		insertEdge(newInternalId, extension_, newLink2);
-		//std::cout << "graph size: " << graph_.size() << "\n";
-		//std::cout << "c\n";
+		return newInternalId;
 	} else {
 		size_t parentId = getNode(point.dest_).id_;
 		Node newLeaf(NodeType::Leaf, extension_, parentId, 0);
 		Link newLink(character, phase_ - 1, 0); // internal -> newLeaf
 		graph_.insert_vertex(newLeaf);
 		insertEdge(parentId, extension_, newLink);
+		return parentId;
 	}
 }
 

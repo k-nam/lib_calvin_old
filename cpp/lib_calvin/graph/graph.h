@@ -8,12 +8,10 @@
  */
 
 #include <utility>
-#include <vector>
-#include <set>
-#include <map>
 #include "matrix.h"
 #include "adt.h"
 #include "set.h"
+#include "hash_table.h"
 #include "map.h"
 #include "vector.h"
 #include "sort.h"
@@ -175,7 +173,8 @@ protected:
 	path getPathFromReversedPath(int src, vector<int> const &reversedPath) const;
 protected: 
 	lib_calvin_adt::IntIndexer<K> mapping_; // 1:1 mapping of verticex and integers
-	lib_calvin_container::BPlusTree<V, K, std::less<K>, ExtractKey> vertices_;
+	//lib_calvin_container::BPlusTree<V, K, std::less<K>, ExtractKey> vertices_;
+	lib_calvin_container::HashTable<V, K, ExtractKey> vertices_;
 	vector<map<int, E>> outLinks_;
 	vector<set<int>> inLinks_;
 	// Only valid in static mode

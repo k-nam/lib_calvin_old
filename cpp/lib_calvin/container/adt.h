@@ -14,6 +14,7 @@
 
 #include "vector.h"
 #include "map.h"
+#include "hash_table.h"
 #include <list>
 #include <utility>
 
@@ -21,6 +22,7 @@ namespace lib_calvin_adt
 {
 	using lib_calvin::vector;
 	using lib_calvin::map;
+	using lib_calvin::hash_map;
 	using std::list;
 	using std::pair;
 
@@ -48,8 +50,10 @@ namespace lib_calvin_adt
 			K & operator[] (int index);
     private:
       int newIndex_;
-      map<int, K> indexToKey_; // map int to key
-      map<K, int> keyToIndex_; // map key to int
+      hash_map<int, K> indexToKey_;
+			hash_map<K, int> keyToIndex_;
+			//map<int, K> indexToKey_; // map int to key
+      //map<K, int> keyToIndex_; // map key to int
   };
 
   // P: priority should have < operator
@@ -160,7 +164,7 @@ int IntIndexer<K>::size() const {
 
 template <typename K>
 int IntIndexer<K>::indexOf(K const &key) const {
-  map<K, int>::const_iterator iter = keyToIndex_.find(key);
+  auto iter = keyToIndex_.find(key);
   if (iter == keyToIndex_.end()) {
     return -1;
   }
@@ -169,7 +173,7 @@ int IntIndexer<K>::indexOf(K const &key) const {
 
 template <typename K>
 std::pair<int, bool> IntIndexer<K>::insert(K const &key) {
-  map<K, int>::iterator iter = keyToIndex_.find(key);
+  auto iter = keyToIndex_.find(key);
   if (iter == keyToIndex_.end()) {
     keyToIndex_.insert(std::pair<K, int>(key, newIndex_));
     indexToKey_.insert(std::pair<int, K>(newIndex_, key));
@@ -189,7 +193,8 @@ void IntIndexer<K>::erase(int index) {
 template <typename K>
 K const & 
 IntIndexer<K>::operator[] (int index) const {
-  return const_cast<map<int, K> &>(indexToKey_)[index];
+  return const_cast<hash_map<int, K> &>(indexToKey_)[index];
+	//return const_cast<map<int, K> &>(indexToKey_)[index];
 }
 
 template <typename K>
