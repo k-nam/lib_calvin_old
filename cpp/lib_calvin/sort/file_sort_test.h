@@ -1,3 +1,6 @@
+#ifndef LIB_CALVIN__SORT__FILE_SORT_TEST_H
+#define LIB_CALVIN__SORT__FILE_SORT_TEST_H
+
 #include <string>
 
 namespace lib_calvin_sort
@@ -12,3 +15,5 @@ namespace lib_calvin_sort
 	void readFileTest(std::string);
 	void sortFileTest(std::string);
 }
+
+#endif

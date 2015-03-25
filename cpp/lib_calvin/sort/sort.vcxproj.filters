@@ -15,23 +15,20 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="file.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="file_test.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="sort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="sort_test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="file_sort_test.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="file_sort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="file_test.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="sort_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -46,6 +43,9 @@
     </ClCompile>
     <ClCompile Include="..\util\random.cc">
       <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="file_sort_test.cc">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

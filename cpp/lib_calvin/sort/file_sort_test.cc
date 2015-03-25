@@ -1,5 +1,5 @@
-#include "file_test.h"
-#include "file.h"
+#include "file_sort_test.h"
+#include "file_sort.h"
 #include "sort.h"
 #include "stopwatch.h"
 #include <iostream>

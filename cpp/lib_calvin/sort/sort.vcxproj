@@ -152,8 +152,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="file.h" />
-    <ClInclude Include="file_test.h" />
+    <ClInclude Include="file_sort.h" />
+    <ClInclude Include="file_sort_test.h" />
     <ClInclude Include="sort.h" />
     <ClInclude Include="sort_test.h" />
   </ItemGroup>
@@ -161,7 +161,7 @@
     <ClCompile Include="..\thread\common_thread.cc" />
     <ClCompile Include="..\util\random.cc" />
     <ClCompile Include="..\util\stopwatch.cc" />
-    <ClCompile Include="file_test.cc" />
+    <ClCompile Include="file_sort_test.cc" />
     <ClCompile Include="sort_main.cc" />
     <ClCompile Include="sort_test.cc" />
   </ItemGroup>

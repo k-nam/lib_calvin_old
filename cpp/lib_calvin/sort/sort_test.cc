@@ -47,6 +47,7 @@ void lib_calvin_sort::sortTest() {
 
 	ElemType::countObjects();
 
+	//lib_calvin_sort::fileTest();
 	std::cout << "---------------- Sort test finished -----------------\n\n\n";
 }
 

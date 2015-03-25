@@ -1,3 +1,6 @@
+#ifndef LIB_CALVIN__SORT__FILE_SORT_H
+#define LIB_CALVIN__SORT__FILE_SORT_H
+
 #include <iostream>
 #include <fstream>
 
@@ -114,3 +117,5 @@ void writeToFile(Iterator first, Iterator last, std::string fileName) {
 }
 
 }
+
+#endif
