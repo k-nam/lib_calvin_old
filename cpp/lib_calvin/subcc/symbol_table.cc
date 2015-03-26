@@ -45,7 +45,7 @@ void Symbol::countObjects() {
 	std::cout << "\n";
 }
 
-int64_t Symbol::objectCount_ = 0;
+intmax_t Symbol::objectCount_ = 0;
 
 /********************* Constant methods **************************/
 
@@ -170,7 +170,7 @@ void SymbolTable::countObjects() {
 	std::cout << "\n";
 }
 
-int64_t SymbolTable::objectCount_ = 0;
+intmax_t SymbolTable::objectCount_ = 0;
 
 /****************** GlobalSymbolTable methods ****************/
 
@@ -327,7 +327,7 @@ void GlobalSymbolTable::countObjects() {
 	std::cout << "\n";
 }
 
-int64_t GlobalSymbolTable::objectCount_ = 0;
+intmax_t GlobalSymbolTable::objectCount_ = 0;
 
 } // end namespace subcc
 

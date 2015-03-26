@@ -69,7 +69,7 @@ char lib_calvin::charOf(string const &string) {
 
 int lib_calvin::intOfDec(string const &string) {
   int value = 0;
-  for (int i = 0; i < string.size(); ++i) {
+  for (size_t i = 0; i < string.size(); ++i) {
     value *= 10;
     value += string[i] - '0';
   }
@@ -83,7 +83,7 @@ int lib_calvin::intOfHex(string const &string) {
     exit(0);
   }
   int value = 0;
-  for (int i = 2; i < string.size(); ++i) {
+  for (size_t i = 2; i < string.size(); ++i) {
     value <<= 4;
     char digit = string[i];
     if (digit >= '0' && digit <= '9') {

@@ -26,8 +26,8 @@ namespace lib_calvin_adt
 	using std::list;
 	using std::pair;
 
-	// D-ary heap for IntPq
-	int const D = 80;
+	// HEAP_D-ary heap for IntPq
+	int const HEAP_D = 80;
 
 	/*************************** ADT Classes ***************************/
 
@@ -50,10 +50,10 @@ namespace lib_calvin_adt
 			K & operator[] (int index);
     private:
       int newIndex_;
-      hash_map<int, K> indexToKey_;
-			hash_map<K, int> keyToIndex_;
-			//map<int, K> indexToKey_; // map int to key
-      //map<K, int> keyToIndex_; // map key to int
+      //hash_map<int, K> indexToKey_;
+			//hash_map<K, int> keyToIndex_;
+			map<int, K> indexToKey_; // map int to key
+      map<K, int> keyToIndex_; // map key to int
   };
 
   // P: priority should have < operator
@@ -193,8 +193,8 @@ void IntIndexer<K>::erase(int index) {
 template <typename K>
 K const & 
 IntIndexer<K>::operator[] (int index) const {
-  return const_cast<hash_map<int, K> &>(indexToKey_)[index];
-	//return const_cast<map<int, K> &>(indexToKey_)[index];
+  //return const_cast<hash_map<int, K> &>(indexToKey_)[index];
+	return const_cast<map<int, K> &>(indexToKey_)[index];
 }
 
 template <typename K>
@@ -206,12 +206,12 @@ IntIndexer<K>::operator[] (int index) {
 /******************* IntPq definitions *******************/
 
 template <typename P>
-IntPq<P>::IntPq(int maxsize): size_(0), maxsize_(maxsize), d_(D), 
+IntPq<P>::IntPq(int maxsize): size_(0), maxsize_(maxsize), d_(HEAP_D), 
   heap_(maxsize), indexArray_(maxsize, -1) { // LibrarySetAdaptor indices to -1 (null) 
 }
 
 template <typename P>
-IntPq<P>::IntPq(int maxsize, P const &initValue): size_(0), maxsize_(maxsize), d_(D), 
+IntPq<P>::IntPq(int maxsize, P const &initValue): size_(0), maxsize_(maxsize), d_(HEAP_D), 
   heap_(maxsize, std::make_pair(0, initValue)), indexArray_(maxsize, -1) { // LibrarySetAdaptor indices to -1 (null) 
 }
 
@@ -363,7 +363,5 @@ T Stack<T>::pop() {
   return temp;
 }
 } // end namespace lib_calvin_adt definitions
-
-#undef D
 
 #endif

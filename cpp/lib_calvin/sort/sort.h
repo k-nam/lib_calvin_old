@@ -24,9 +24,9 @@ using std::pair;
 using std::iterator_traits;
 using namespace lib_calvin_thread;
 
-int const heapD = 6;
-int const introSort_thre = 18;
-int const mergeSort_thre = 18;
+int const HEAP_D = 6;
+int const INTROSORT_THRESHOLD = 18;
+int const MERGESORT_THRESHOLD = 18;
 int const L1_CACHE_SIZE = 32000;
 int const L2_CACHE_SIZE = 256000;
 int const CACHE_LINE_SIZE = 64;
@@ -509,17 +509,17 @@ void lib_calvin_sort::unguardedInsertionSort(Iterator first, Iterator last, Comp
   }
 }
 
-// maxheap, size: heap size, heapD > 1
+// maxheap, size: heap size, HEAP_D > 1
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::percolateDown(Iterator const base, Comparator comp, int index, int const size) {
   // save original element and insert it back later
   typename iterator_traits<Iterator>::value_type store = *(base + index);
   while (true) {
     Iterator parent = base + index;
-    Iterator max  = base + index * heapD + 1;
-    if (index * heapD + heapD < size) { // all children included, most common case
+    Iterator max  = base + index * HEAP_D + 1;
+    if (index * HEAP_D + HEAP_D < size) { // all children included, most common case
       Iterator child  = max + 1;
-      Iterator last   = base + index * heapD + heapD + 1;
+      Iterator last   = base + index * HEAP_D + HEAP_D + 1;
       for ( ; child < last; ++child ) { 
         if (comp(*max, *child))
           max = child;
@@ -534,13 +534,13 @@ void lib_calvin_sort::percolateDown(Iterator const base, Comparator comp, int in
         return;
       }
     } 
-    if (index * heapD + 1 >= size) { // no children included
+    if (index * HEAP_D + 1 >= size) { // no children included
       *parent = store;
       return;
     } else { // some children are included: rare case
       Iterator child  = max;
       Iterator last   = base + size;
-      for ( ; child != last; ++child) { // iterate heapD-1 times
+      for ( ; child != last; ++child) { // iterate HEAP_D-1 times
         if (comp(*max, *child))
           max = child;
       }
@@ -613,7 +613,7 @@ Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last, Comparat
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSortSub(Iterator first, Iterator last, Comparator comp,
     int remainingDepth) {
-  if (last - first < introSort_thre) {
+  if (last - first < INTROSORT_THRESHOLD) {
     return;
   }
   if (remainingDepth == 0) {
@@ -765,7 +765,7 @@ void lib_calvin_sort::merge(SrcIterator first, SrcIterator middle, SrcIterator l
 
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::inPlaceMerge(Iterator first, Iterator middle, Iterator last, Comparator comp) {
-	if (middle - first < mergeSort_thre || last - middle < mergeSort_thre) {
+	if (middle - first < MERGESORT_THRESHOLD || last - middle < MERGESORT_THRESHOLD) {
 		insertionSort(first, last, comp);
 		return;
 	}
@@ -805,7 +805,7 @@ void lib_calvin_sort::mergeSortSub(SrcIterator first, SrcIterator last,
 																	TargetIterator target, Comparator comp) {
   size_t num = last - first;
   TargetIterator targetLast = target + num;
-  if (last - first < mergeSort_thre) {
+  if (last - first < MERGESORT_THRESHOLD) {
     insertionSort(target, targetLast, comp);
     return;
   }
@@ -871,7 +871,7 @@ template <typename Iterator, typename Comparator>
 void lib_calvin_sort::heapSort(Iterator first, Iterator last, Comparator comp) {
   int size = static_cast<int>(last - first); // size of heap
   // max-heapify
-  for (int i = (size - 2) / heapD; i >= 0; i--) {
+  for (int i = (size - 2) / HEAP_D; i >= 0; i--) {
     percolateDown(first, comp, i, size);
   }
   // sorting
@@ -886,12 +886,12 @@ void lib_calvin_sort::heapSort(Iterator first, Iterator last, Comparator comp) {
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSort(Iterator first, Iterator last, Comparator comp) {
   introSortSub(first, last, comp, lib_calvin_util::log(last - first) * 3);
-  if (last - first < introSort_thre) {
+  if (last - first < INTROSORT_THRESHOLD) {
     insertionSort(first, last, comp);
     return;
   } else {
-    insertionSort(first, first + introSort_thre, comp);
-    unguardedInsertionSort (first + introSort_thre, last, comp);
+    insertionSort(first, first + INTROSORT_THRESHOLD, comp);
+    unguardedInsertionSort (first + INTROSORT_THRESHOLD, last, comp);
     return;
   }	
 }
@@ -981,7 +981,7 @@ void lib_calvin_sort::mergeSort(Iterator first, Iterator last, Comparator comp) 
 
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::inPlaceMergeSort(Iterator first, Iterator last, Comparator comp) {
-	if (last - first < mergeSort_thre) {
+	if (last - first < MERGESORT_THRESHOLD) {
 		insertionSort(first, last, comp);
 		return;
 	}

@@ -18,6 +18,7 @@ private:
 	static int const B_TREE_FULL_NODE_CAPACITY = 127;
 	static int const B_TREE_ROOT_INIT_CAPACITY = 4;
 	static int const B_TREE_NODE_REALLOC_MULTIPLIER = 2;
+	static bool const USE_BINARY_SEARCH = true;
 	class InternalNode;
 	// btree node. number of links in a node: t ~ 2t, number of elements in a node:
 	// t-1 ~ 2t-1. Therefore, maxNumKeys = 2t-1
@@ -1706,7 +1707,7 @@ std::pair<int, bool>
 B_TREE_BASE<T, K, Comp, ExtractKey>::getIndexToInsert2(Node *node, K const &key) const {
 	T *begin = node->getElementArray();
 	T *end = node->getElementArray() + node->getSize();
-	auto result = lib_calvin_container::getIndexToInsert<T, K, Comp, ExtractKey>(begin, end, key, true);
+	auto result = lib_calvin_container::getIndexToInsert<T, K, Comp, ExtractKey>(begin, end, key, USE_BINARY_SEARCH);
 	return std::pair<int, bool>(static_cast<int>(result.first), result.second);
 }
 

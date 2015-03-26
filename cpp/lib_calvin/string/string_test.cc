@@ -25,10 +25,10 @@ void lib_calvin_string::abstractStringTest() {
 
 void lib_calvin_string::matchingAlgorithmTest() {
 	using namespace lib_calvin_string;
-	std::cout << "------------matchingAlgorithmTest start ----------------\n\n";
+	std::cout << "-------------- matchingAlgorithmTest start ----------------\n\n";
   matchingTest(naiveMatch, "Naive string matching");
-  //matchingTest(basicMatch, "Basic string matching(Z-alg)");
-  //matchingTest(kmp, "KMP");
+  matchingTest(basicMatch, "Basic string matching(Z-alg)");
+  matchingTest(kmp, "KMP");
   matchingTest(boyerMoore, "Boyer-Moore");
 	matchingTest(suffixTreeMatching, "Suffix Tree");
 	std::cout << "--------------- matchingAlgorithmTest finished --------------\n\n";
@@ -49,10 +49,10 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
   char *pPattern  = new char[patternLen];
   // use only small number of alphabets to make test realistic
   // don't use null character 0 (reserved for algorithms)
-  for (int i = 0; i < textLen; ++i) {
+  for (size_t i = 0; i < textLen; ++i) {
     pText[i] = rand() % 2 + 50;
   }	
-  for (int i = 0; i < patternLen; ++i) {
+  for (size_t i = 0; i < patternLen; ++i) {
     pPattern[i] = rand() % 2 + 50;
   }
 	/*

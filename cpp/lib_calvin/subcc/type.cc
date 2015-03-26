@@ -57,7 +57,7 @@ void Type::countObjects() {
 	std::cout << "\n";
 }
 
-int64_t Type::objectCount_ = 0;
+intmax_t Type::objectCount_ = 0;
 
 BaseType::BaseType(enum BaseTypes baseTypeValue): Type(TYPE_BASE),
     baseTypeValue_(baseTypeValue) {

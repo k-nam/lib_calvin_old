@@ -173,12 +173,12 @@ protected:
 	path getPathFromReversedPath(int src, vector<int> const &reversedPath) const;
 protected: 
 	lib_calvin_adt::IntIndexer<K> mapping_; // 1:1 mapping of verticex and integers
-	//lib_calvin_container::BPlusTree<V, K, std::less<K>, ExtractKey> vertices_;
-	lib_calvin_container::HashTable<V, K, ExtractKey> vertices_;
-	vector<map<int, E>> outLinks_;
-	vector<set<int>> inLinks_;
-	// Only valid in static mode
+	lib_calvin_container::BPlusTree<V, K, std::less<K>, ExtractKey> vertices_;
+	//lib_calvin_container::HashTable<V, K, ExtractKey> vertices_;
+	map<int, map<int, E>> outLinks_;
+	map<int, set<int>> inLinks_;
 public:
+	// Only valid in static mode
 	mutable vector<vector<std::pair<int, E>>> arrayData_; 
 	mutable bool isDynamic_; // turns true after every modifying operation
 private:
@@ -700,15 +700,8 @@ graph_base<V, E, K, ExtractKey>::get_vertex(K const &key) {
 
 template <typename V, typename E, typename K, typename ExtractKey>
 bool graph_base<V, E, K, ExtractKey>::hasEdge(int srcId, int destId) const {
-	return outLinks_[srcId].count(destId) != 0;
+	return outLinks_.find(srcId)->second.count(destId) != 0;
 }
-
-template <typename V, typename E, typename K, typename ExtractKey>
-void graph_base<V, E, K, ExtractKey>::increaseSizeByOne() {
-	outLinks_.push_back(map<int, E>());
-	inLinks_.push_back(set<int>());
-}
-
 template <typename V, typename E, typename K, typename ExtractKey>
 bool graph_base<V, E, K, ExtractKey>::insert_vertex(V const &src) {
   return insertVertex(src).second;
@@ -720,7 +713,8 @@ graph_base<V, E, K, ExtractKey>::insertVertex(V const &src) {
   auto result = mapping_.insert(ExtractKey()(src));
 	vertices_.insert(src);
 	if (result.second == true) {
-		increaseSizeByOne();
+		outLinks_.insert(std::make_pair(result.first, map<int, E>()));
+		inLinks_.insert(std::make_pair(result.first, set<int>()));
 	}
 	return result;
 }
@@ -770,7 +764,7 @@ E const &
 graph_base<V, E, K, ExtractKey>::get_edge(K const &src, K const &dest) const {
   int srcId = mapping_.indexOf(src);
   int destId = mapping_.indexOf(dest);
-	return outLinks_[srcId].find(destId)->second;
+	return outLinks_.find(srcId)->second.find(destId)->second;
 }
 
 template <typename V, typename E, typename K, typename ExtractKey>
@@ -784,8 +778,9 @@ vector<std::pair<V, E>>
 graph_base<V, E, K, ExtractKey>::get_vertex_edge_pairs_from(K const &src) const {
 	int srcId = mapping_.indexOf(src);
 	vector<std::pair<V, E>> result;
-	result.reserve(outLinks_[srcId].size());
-	for (auto iter = outLinks_[srcId].begin(); iter != outLinks_[srcId].end(); ++iter) {
+	map<int, E> const & edges = outLinks_.find(srcId)->second;
+	result.reserve(edges.size());
+	for (auto iter = edges.begin(); iter != edges.end(); ++iter) {
 		result.push_back(std::make_pair(*vertices_.find(mapping_[iter->first]), iter->second));
 	}
 	return result;
@@ -906,7 +901,8 @@ weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::
 	if (result[targetVertex].empty()) { // not reachable
 		return vector<weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_path>();
 	} else {
-		return weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::getPathsAfterAlgorithm<W>(result, srcVertex, targetVertex);
+		return weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::getPathsAfterAlgorithm<W>(
+			result, srcVertex, targetVertex);
 	}
 }
 
@@ -958,7 +954,7 @@ graph_base<V, E, K, ExtractKey>::getPathFromReversedPath(int srcVertex, vector<i
 		//std::cout << "making final result\n";
 		curVertex = reversedPath[reversedPath.size() - 1 - i];
 		realPath.push_back(std::pair<V, E>(
-			mapping_[curVertex], outLinks_[previousVertex].find(curVertex)->second));
+			*vertices_.find(mapping_[curVertex]), outLinks_.find(previousVertex)->second.find(curVertex)->second));
 		previousVertex = curVertex;
 	}
 	return graph_base<V, E, K, ExtractKey>::path(mapping_[srcVertex], realPath);
@@ -1094,13 +1090,14 @@ bool relax (Arc<E> const &lhs1, Arc<E> const &lhs2, Arc<E> &rhs) {
 }
 
 template <typename E, typename W, typename ExtractWeight>
-void makeArrayData (vector<map<int, E>> const &dynamicData, 
+void makeArrayData (map<int, map<int, E>> const &dynamicData, 
     vector<vector<pair<int, W>>> &arrayData) {
   size_t numV = dynamicData.size();
   arrayData.clear();
   arrayData.resize(numV);
-  for (size_t i = 0; i < numV; ++i) { // for each source vertex
-    map<int, E> const &original = dynamicData[i];
+	size_t i = 0;
+  for (auto iter = dynamicData.begin(); iter != dynamicData.end(); iter++, i++) {
+    map<int, E> const &original = iter->second;
     vector<pair<int, W>> &copy = arrayData[i];
 		copy.reserve(original.size());
     for (auto iter = original.begin(); iter != original.end(); ++iter) {

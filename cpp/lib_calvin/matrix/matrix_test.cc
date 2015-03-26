@@ -40,7 +40,7 @@ void lib_calvin_matrix::matrixTest() {
 		}
 	}
 
-	lib_calvin::matrix<int64_t> m1(size);
+	lib_calvin::matrix<intmax_t> m1(size);
 	m1.check();
 
 	__m128 aa = _mm_set_ps(1, 2, 3, 4);

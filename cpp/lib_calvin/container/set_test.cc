@@ -55,7 +55,7 @@ void lib_calvin_container::setTest() {
 	//setPerformanceTest<BinTree<int>>(largeSize, "RbTree / int");
 	//setPerformanceTest<RbTree<int>>(largeSize, "RbTree / int");
 	//setPerformanceTest<BTree<int>>(largeSize, "BTree / int");
-	//setPerformanceTest<BPlusTree<int>>(largeSize, "BPlusTree / int");
+	setPerformanceTest<BPlusTree<int>>(largeSize, "BPlusTree / int");
 	
 	//setPerformanceTest<OrderedArray<int>>(largeSize, "OrderedArray / int");
 	//setPerformanceTest<std::unordered_set<int>>(largeSize, "std::unordered_set / int");

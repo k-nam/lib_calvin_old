@@ -66,7 +66,7 @@ protected:
   enum Types const typeType_; // type of type
   int width_; // memory space in bytes
 private:
-	static int64_t objectCount_;
+	static intmax_t objectCount_;
 };
 
 class BaseType: public Type {

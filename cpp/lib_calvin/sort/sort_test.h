@@ -30,7 +30,7 @@ struct SimpleStruct {
   //double x2;
 	//int array[10];
   int get_value() { return first; }
-	static int64_t objectCount_; // for checking memory leak
+	static intmax_t objectCount_; // for checking memory leak
 };
 
 std::string getRandomString(int length);
