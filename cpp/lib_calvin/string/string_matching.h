@@ -16,23 +16,23 @@ using std::endl;
 // Z(i) = the length of the string that starts at index i and matches
 // ...the prefix of pattern
 template <typename Alphabet>
-void calculateZ(abstract_string<Alphabet> const &pattern, vector<intmax_t> &record);
+void calculateZ(abstract_string<Alphabet> const &pattern, vector<size_t> &record);
 
 // f(i) = the maximum length of a prefix of pattern which is also a 
 // ...proper suffix of substring pattern[0 i-1]
 template <typename Alphabet>
-void calculateF(abstract_string<Alphabet> const &pattern, vector<intmax_t> &record);
+void calculateF(abstract_string<Alphabet> const &pattern, vector<size_t> &record);
 
 // maps each Alphabet to the index in which the Alphabet first appears in the 
 // ...pattern (looking from the right-end of patttern)
 // assumes that Alphabet can be converted to unsigned int type (which is the
 // ...index in record)
 template <typename Alphabet>
-void badChar(abstract_string<Alphabet> const &pattern, vector<intmax_t> &record);
+void badChar(abstract_string<Alphabet> const &pattern, vector<size_t> &record);
 
 template <typename Alphabet>
 void strongGoodSuffix(abstract_string<Alphabet> const &pattern, 
-											 vector<intmax_t> &record);
+											 vector<size_t> &record);
 
 // save the matching indices in the third argument
 template <typename Alphabet>
@@ -68,10 +68,10 @@ void suffixTreeMatching(abstract_string<Alphabet> const &text,
 // ...also prefix of the entire string. 
 template <typename Alphabet>
 void lib_calvin_string::calculateZ (
-    abstract_string<Alphabet> const &pattern, vector<intmax_t> &record) {
+    abstract_string<Alphabet> const &pattern, vector<size_t> &record) {
 
   size_t len = pattern.size();  
-  vector<intmax_t> &Z = record;
+  vector<size_t> &Z = record;
   record.clear();
   record.resize(len, 0);
   // l(k), r(k): the leftmost and rightmost indices of the substring 
@@ -123,25 +123,31 @@ void lib_calvin_string::calculateZ (
 //  in KMP algorithm. f(len) denotes the jump length when a match has been found.
 template <typename Alphabet>
 void lib_calvin_string::calculateF (
-    abstract_string<Alphabet> const &pattern, vector<intmax_t> &record) {
-
+    abstract_string<Alphabet> const &pattern, vector<size_t> &record) {
   size_t len = pattern.size();
   size_t k;
-	intmax_t m; // for indices
-  vector<intmax_t> &f = record;
+	size_t m; // for indices
+  vector<size_t> &f = record;
   record.clear();
   record.resize(len + 1);
-  f[0] = -1; // this value is not used, but convenient for below procedure
+  f[0] = 0; // this value is not used, but convenient for below procedure
   f[1] = 0; //string of length 1 can not have proper prefix
   for (k = 2; k <= len; k++) { // include past-end char
     m = f[k - 1]; // m is the index to consider f[m] value
-    while (pattern[static_cast<size_t>(m)] != pattern[k - 1]) {
-      m = f[static_cast<size_t>(m)];
-      if (m < 0) { // m is necessarily -1 now
+		bool didReachZero = false;
+    while (pattern[m] != pattern[k - 1]) {
+			if (m != 0) {
+				m = f[m];
+			} else {
+				didReachZero = true;
         break;
       }
     } 
-    f[k] = m + 1; // correct because m == -1 if no match
+		if (didReachZero) {
+			f[k] = 0;
+		} else {
+			f[k] = m + 1; // correct because m == -1 if no match
+		}
   }
 }
 
@@ -150,7 +156,7 @@ void lib_calvin_string::calculateF (
 // character i.
 template <typename Alphabet>
 void lib_calvin_string::badChar (
-    abstract_string<Alphabet> const &pattern, vector<intmax_t> &record) {
+    abstract_string<Alphabet> const &pattern, vector<size_t> &record) {
   
   record.clear();
   size_t len = pattern.size();
@@ -163,11 +169,9 @@ void lib_calvin_string::badChar (
 		exit(0);
 	}
   record.resize(lib_calvin::getSizeOfCharSet<Alphabet>(), len); 
-  for (intmax_t i = len - 1; i >= 0; i--) {
-    index = static_cast<size_t>(pattern[static_cast<size_t>(i)]);
-    if (record[index] == len) {
-      record[index] = len - 1 - i;  // reversed index to fit Boyer-Moore
-    }
+  for (size_t i = 0; i < len; i++) {
+    index = static_cast<size_t>(pattern[i]);
+    record[index] = len - 1 - i;  // reversed index to fit Boyer-Moore
   }
 }
 
@@ -175,42 +179,42 @@ void lib_calvin_string::badChar (
 // The shift amount determined by strong good suffix rule is recorded in the
 // array. Record[i] is the amount to shift (to right) if wrong character was
 // detected on index i (from right).
-// record[0] is meaningless.
 template <typename Alphabet>
 void lib_calvin_string::strongGoodSuffix (
-    abstract_string<Alphabet> const &pattern, vector<intmax_t> &record) {
+    abstract_string<Alphabet> const &pattern, vector<size_t> &record) {
   size_t len = pattern.size();
   record.clear();
-  record.resize(len + 1, -1); // initialize as -1
+  record.resize(len + 1, len); // initialize as -1
   // use Z algorithm in reverse string
-  vector<intmax_t> Z;
+  vector<size_t> Z;
   calculateZ (pattern.reverse(), Z);
   for (size_t i = 1; i < len; ++i) {
 		// we must not overwrite; otherwise, we will get greater jump value than
 		// the right one.
-    if (record[static_cast<size_t>(Z[i])] == -1) { 
-      record[static_cast<size_t>(Z[i])] = i;
+    if (record[Z[i]] == len) { 
+      record[Z[i]] = i;
     }
   }  
   // additional processing 
-  intmax_t left = len; // possible leftmost element not marked
+  size_t left = len; // possible leftmost element not marked
   for (size_t i = 1; i < len; ++i) {
-    if (i + static_cast<size_t>(Z[i]) == len) { // match goes through the end of string
-      for (intmax_t j = left; j > static_cast<intmax_t>(len) - static_cast<intmax_t>(i); j--) {
-				// we must not overwrite, as well as above.
-				if (record[static_cast<size_t>(j)] == -1) {
-					record[static_cast<size_t>(j)] = i;
+    if (i + Z[i] == len) { // match goes through the end of string
+      for (size_t j = left; j > len - i; j--) {
+				// we must not overwrite, like above.
+				if (record[j] == len) {
+					record[j] = i;
 				}        
       }
       left = len - i;
     }
   }
   for (size_t k = 0; k < len + 1; k++) { // maximum shift for -1
-    if (record[k] == -1) {
+    if (record[k] == len) {
       record[k] = len;
 		}
   }
-  record[0] = -1; // not to be used (actually, this caused me trouble ^^)
+	// not to be used, but the right answer is 1 
+  record[0] = 1; 
 }
 
 template <typename Alphabet>
@@ -246,13 +250,13 @@ void lib_calvin_string::basicMatch (abstract_string<Alphabet> const &text,
   Alphabet *pSpecialChar  = new Alphabet(0);
   abstract_string<Alphabet> newstring  = 
     pattern + abstract_string<Alphabet>(pSpecialChar, 1) + text;
-  vector<intmax_t> Z;
+  vector<size_t> Z;
   calculateZ(newstring, Z);
   for (size_t i = patternLen + 1; i < textLen + patternLen + 1; ++i) {
-    if (Z[i] == static_cast<intmax_t>(patternLen)) { // match detected
+    if (Z[i] == patternLen) { // match detected
       result.push_back(i - patternLen - 1);
     }
-    if (Z[i] > static_cast<intmax_t>(patternLen)) {
+    if (Z[i] > patternLen) {
       cout << "basicMatch error with Z algorithm\n";
       exit(0);
     }
@@ -269,7 +273,7 @@ void lib_calvin_string::kmp(
   result.clear();
   size_t patternLen  = pattern.size();
   size_t textLen   = text.size();
-  vector<intmax_t> f; 
+  vector<size_t> f; 
   calculateF (pattern, f);
   size_t k = 0, s = 0;
   
@@ -299,7 +303,7 @@ Wrong:
   if (s == 0) {
     goto FirstWrong;
 	}
-  s = static_cast<size_t>(f[s]);
+  s = f[s];
   if (text[k] != pattern[s]) {
     goto Wrong;
 	} else { 
@@ -334,9 +338,10 @@ void lib_calvin_string::boyerMoore (
   size_t patternLen  = pattern.size();
   // h: head in text, k: index in text, s: index in pattern (reversed)
   size_t h = patternLen - 1, k = patternLen - 1, s = 0;
-  intmax_t badCharJump = 0, goodSuffixJump = 0;
+  size_t badCharJump = 0, goodSuffixJump = 0;
 	bool matched = false;
-  vector<intmax_t> charTable, suffixTable;
+  vector<size_t> charTable;
+	vector<size_t> suffixTable;
   badChar(pattern, charTable);
   strongGoodSuffix (pattern, suffixTable);
   while (h < textLen) {
@@ -350,20 +355,25 @@ void lib_calvin_string::boyerMoore (
       s++;
       if (s == patternLen) { // match at (k + 1)
         result.push_back (k + 1);
-        badCharJump = -1; // can not use badchar when matched
+        badCharJump = 0; // can not use badchar when matched
         matched = true;
 				break;
       }
     }
     // jump forward
 		if (!matched) {
-			badCharJump = charTable[static_cast<size_t>(text[k])] - s;
+			badCharJump = charTable[static_cast<size_t>(text[k])];
+			if (badCharJump > s) {
+				badCharJump -= s;
+			} else {
+				badCharJump = 0;
+			}
 		}
     goodSuffixJump  = suffixTable[s];
     if (badCharJump > goodSuffixJump) {
-      h += static_cast<size_t>(badCharJump);
+      h += badCharJump;
 		} else {
-      h += static_cast<size_t>(goodSuffixJump);
+      h += goodSuffixJump;
 		}
     k = h;
     s = 0;
