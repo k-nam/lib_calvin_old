@@ -40,7 +40,7 @@ template <typename T>
 void matrixMultiAdd(matrix<T> const &lhs, matrix<T> const &rhs, 
 										matrix<T> &result);
 
-//--------------------------- intermediates ---------------------------
+//--------------------------- size_termediates ---------------------------
 
 template <typename T>
 void 
@@ -94,105 +94,105 @@ void recursiveSelfMultiAdd(matrix<T> &lhs);
 //----------------------------- algorithms ------------------------------
 
 template <typename T>
-void add(T const *src, T const *target, int height, int width, 
-				 int lw, int rw);
+void add(T const *src, T const *target, size_t height, size_t width, 
+				 size_t lw, size_t rw);
 
 // all height and width are measured from source.
 // height, width, rwidth: operation region
 // l1w, l2w, rw: matrix dimensions
 template <typename T>
 void transCopy(T const *src, T *tar, 
-    int height, int width, int lw, int rw, int trans_thre);
+    size_t height, size_t width, size_t lw, size_t rw, size_t trans_thre);
 
 // Normal layout
 template <typename T>
 void naiveMultiAdd(T const *A, T const *B, T *C, 
-    int lheight, int lwidth, int rwidth, int Aw, int Bw);
+    size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
 // using loop unrolling with k
 template <typename T>
 void naiveMultiAdd2(T const *A, T const *B, T *C, 
-    int lheight, int lwidth, int rwidth, int Aw, int Bw);
+    size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
 // Normal layout, transpose B for sequential access
 template <typename T>
 void naiveMultiAdd3(T const *A, T const *B, T *C, 
-    int lheight, int lwidth, int rwidth, int Aw, int Bw);
+    size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
 // normal layout multiply (row * row)
 // lheight, lwidth, rwidth: operating region
 template <typename T>
 void simpleMultiAdd(T const * __restrict A, T const * __restrict B, T * __restrict C, 
-    int lheight, int lwidth, int rwidth, int Aw, int Bw);
+    size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
 template <>
 void simpleMultiAdd<float>(float const * __restrict A, float const * __restrict B, float * __restrict C, 
-    int lheight, int lwidth, int rwidth, int Aw, int Bw);
+    size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
 // normal layout multiply (cache-optimized)
 template <typename T>
 void blockedMultiAdd(T const *A, T const *B, T *C, 
-    int lheight, int lwidth, int rwidth,
-      int Aw, int Bw, int blockH, int blockW);
+    size_t lheight, size_t lwidth, size_t rwidth,
+      size_t Aw, size_t Bw, size_t blockH, size_t blockW);
 
 template <typename T>
 void blockedMultiAdd(T const *A, T const *B, T *C, 
-    int lheight, int lwidth, int rwidth, int Aw, int Bw);
+    size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
 // This assumes recursive layout of matrices
 template <typename T>
 void recursiveMultiAdd(T const *A, T const *B, T *C,
-    int lheight, int lwidth, int rwidth, int remainingRecursion);
+    size_t lheight, size_t lwidth, size_t rwidth, size_t remainingRecursion);
 
 template <typename T>
 void recursiveMultiAddParallelAdvanced(T const *A, T const *B, T *C,
-		int lheight, int lwidth, int rwidth, int remainingRecursion);
+		size_t lheight, size_t lwidth, size_t rwidth, size_t remainingRecursion);
 
 template <typename T>
 void recursiveMultiAddParallel(T const *A, T const *B, T *C,
-    int lheight, int lwidth, int rwidth, 
-		int remainingRecursion, int parallelDepth);
+    size_t lheight, size_t lwidth, size_t rwidth, 
+		size_t remainingRecursion, size_t parallelDepth);
 
 template <typename T>
 void strassenMultiAdd(T const *A, T const *B, T *C,
-											int n, int remainingRecursion);
+											size_t n, size_t remainingRecursion);
 
 template <typename T>
 void strassenMultiAddParallel(T const *A, T const *B, T *C,
-											int n, int remainingRecursion);
+											size_t n, size_t remainingRecursion);
 template <typename T>
 void strassenMultiAddParallel(T const *A, T const *B, T *C,
-											int n, int remainingRecursion, int parallelDepth);
+											size_t n, size_t remainingRecursion, size_t parallelDepth);
 
 template <typename T>
 struct recursiveMultiThreadArg {
-	recursiveMultiThreadArg(T const *A, T const *B, T *C, int l, int m, int n,
-		int remainingRecursion, int parallelDepth): 
+	recursiveMultiThreadArg(T const *A, T const *B, T *C, size_t l, size_t m, size_t n,
+		size_t remainingRecursion, size_t parallelDepth): 
 			A_(A), B_(B), C_(C), l_(l), m_(m), n_(n), 
 				remainingRecursion_(remainingRecursion), parallelDepth_(parallelDepth) { }
 	T const *A_;
 	T const *B_;
 	T *C_;
-	int l_;
-	int m_;
-	int n_;
-	int remainingRecursion_; 
-	int parallelDepth_;
+	size_t l_;
+	size_t m_;
+	size_t n_;
+	size_t remainingRecursion_; 
+	size_t parallelDepth_;
 };
 
 
 template <typename T>
 struct StrassenThreadArg {
-	StrassenThreadArg(T const *A, T const *B, T *C, int n, 
-			int remainingRecursion, int parallelDepth):
+	StrassenThreadArg(T const *A, T const *B, T *C, size_t n, 
+			size_t remainingRecursion, size_t parallelDepth):
 		A_(A), B_(B), C_(C), n_(n), 
 		remainingRecursion_(remainingRecursion), parallelDepth_(parallelDepth) { }
 	T const *A_;
 	T const *B_;
 	T *C_;
-	int n_;
-	int remainingRecursion_;
-	int parallelDepth_;
+	size_t n_;
+	size_t remainingRecursion_;
+	size_t parallelDepth_;
 };
 
 template <typename T>
@@ -209,7 +209,7 @@ void* strassenThreadFunc(void *lpParam);
 // Using one functions for both transformation
 template <typename T>
 void recursiveArrange(T *src, T *dest, 
-    int height, int width, int srcW, int threshold, bool direction);
+    size_t height, size_t width, size_t srcW, size_t threshold, bool direction);
 
 } // end namespace lib_calvin_matrix
 
@@ -219,32 +219,32 @@ void recursiveArrange(T *src, T *dest,
 // ..will be done with constants rather than variables.
 namespace lib_calvin {
 
-template <typename T>  // --> typename T, int height, int width
+template <typename T>  // --> typename T, size_t height, size_t width
 class matrix {
 public:
-  explicit matrix(int);
-  matrix(int, int); // height * width
+  explicit matrix(size_t);
+  matrix(size_t, size_t); // height * width
   matrix(matrix const &matrix); 
   ~matrix();
   
-  int height() const { return height_; }
-  int width() const {return width_; }
-  void reset(int dimension); // for square matrix
-  void reset(int height, int width);
+  size_t height() const { return height_; }
+  size_t width() const {return width_; }
+  void reset(size_t dimension); // for square matrix
+  void reset(size_t height, size_t width);
   void reset(matrix<T> const &rhs); // assignment with arbitrary dimensions
 
   // No boundary check; fast
-  T const &getval(int row, int col) const;
-  T &setval(int row, int col);
+  T const &getval(size_t row, size_t col) const;
+  T &setval(size_t row, size_t col);
   
   struct matrixRow {
-    int width_; // number of elements in a single row
+    size_t width_; // number of elements in a single row
     T *start_;
-    T &operator[] (int col) const;
+    T &operator[] (size_t col) const;
   };
   // meant to be used as: m1[row][col] = val;
-  // Does boundary check; safe and clean interface
-  matrixRow const operator[] (int row);
+  // Does boundary check; safe and clean size_terface
+  matrixRow const operator[] (size_t row);
 
   bool operator== (matrix<T> const &rhs) const;
   bool operator!= (matrix<T> const &rhs) const;
@@ -288,22 +288,22 @@ public:
   //const matrix<T> inverse (const matrix<T> &rhs); 
   
   // show the content. Assuming that "cout <<  E" works!
-  void print() const;      
+  void prsize_t() const;      
   void check(); // unit test 
   void test();
   void randomize (); // for unit testing
 
-  static int const trans_thre_;  
-  static int const mul_thre_;  
-  static int const blockHeight_;
-  static int const blockWidth_;
+  static size_t const trans_thre_;  
+  static size_t const mul_thre_;  
+  static size_t const blockHeight_;
+  static size_t const blockWidth_;
 
 private:
   T *elements_; // array of E (raw oriented representation)
-  int height_; 
-  int width_;
-  // interval of each row; this might be different from width_
-  int rowInterval_; 
+  size_t height_; 
+  size_t width_;
+  // size_terval of each row; this might be different from width_
+  size_t rowsize_terval_; 
   // Static data for algorithm optimization
   
   void init ();
@@ -320,12 +320,12 @@ namespace lib_calvin  // for definitions
 { 
 
 template <typename T>
-matrix<T>::matrix(int height): height_(height), width_(height) {
+matrix<T>::matrix(size_t height): height_(height), width_(height) {
 	init();
 }
 
 template <typename T>
-matrix<T>::matrix(int height, int width): height_(height), width_(width) {
+matrix<T>::matrix(size_t height, size_t width): height_(height), width_(width) {
 	init();
 }
 
@@ -352,8 +352,8 @@ matrix<T>::operator= (matrix<T> const &rhs) {
 
 template <typename T>
 matrix<T>::~matrix() {
-	int const num = height_ * width_;
-	for (int i = 0; i < num; ++i) {
+	size_t const num = height_ * width_;
+	for (size_t i = 0; i < num; ++i) {
 		elements_[i].~T();
 	}
   operator delete (elements_);
@@ -362,12 +362,12 @@ matrix<T>::~matrix() {
 /*************** reset ***************/
 
 template <typename T>
-void matrix<T>::reset(int height) {
+void matrix<T>::reset(size_t height) {
   reset(height, height);
 }
 
 template <typename T>
-void matrix<T>::reset(int height, int width) {
+void matrix<T>::reset(size_t height, size_t width) {
   delete[] elements_;
   height_ = height;
   width_ = width;
@@ -389,7 +389,7 @@ void matrix<T>::reset(matrix<T> const &rhs) {
 
 template <typename T>
 T const & 
-matrix<T>::getval (int row, int col) const {
+matrix<T>::getval(size_t row, size_t col) const {
   // No boundary check!
   return (elements_[width_ * row + col]);
 }
@@ -398,7 +398,7 @@ matrix<T>::getval (int row, int col) const {
 
 template <typename T>
 T & 
-matrix<T>::setval(int row, int col) {
+matrix<T>::setval(size_t row, size_t col) {
   // No boundary check!
   return (elements_[width_ * row + col]);
 }
@@ -406,7 +406,7 @@ matrix<T>::setval(int row, int col) {
 /*--------------- operator[] --------------*/
 
 template <typename T>
-T & matrix<T>::matrixRow::operator[] (int col) const {
+T & matrix<T>::matrixRow::operator[] (size_t col) const {
   if (col >= width_ ) {
     cout << "matirx operator[][] boundary error.\n";
     return;
@@ -416,7 +416,7 @@ T & matrix<T>::matrixRow::operator[] (int col) const {
 
 template <typename T>
 typename matrix<T>::matrixRow const 
-matrix<T>::operator[] (int row) {
+matrix<T>::operator[] (size_t row) {
   if (row >= height_) {
     cout << "matrix operator[][] boundary error.\n";
     return;
@@ -432,9 +432,9 @@ template <typename T>
 bool matrix<T>::operator== (matrix<T> const &rhs) const {
   if (height_ != rhs.height_ || width_ != rhs.width_) 
     return false;
-  int num = height_ * width_;
+  size_t num = height_ * width_;
   // supposing T has != operation defined
-  for (int i = 0; i < num; ++i) {
+  for (size_t i = 0; i < num; ++i) {
     if (elements_[i] != rhs.elements_[i])
       return false;
   }
@@ -445,9 +445,9 @@ template <typename T>
 bool matrix<T>::operator!= (matrix<T> const &rhs) const {
   if (height_ != rhs.height_ || width_ != rhs.width_) 
     return true;
-  int num = height_ * width_;
+  size_t num = height_ * width_;
   // supposing T has != operation defined
-  for (int i = 0; i < num; ++i) {
+  for (size_t i = 0; i < num; ++i) {
     if (elements_[i] != rhs.elements_[i])
       return true;
   }
@@ -458,13 +458,13 @@ bool matrix<T>::operator!= (matrix<T> const &rhs) const {
 template <typename T>
 matrix<T> const
 matrix<T>::operator+ (matrix<T> const &rhs) const {
-  int num = height_ * width_;
+  size_t num = height_ * width_;
   matrix<T> result(height_, width_);
   if(height_ != rhs.height_ || width_ != rhs.width_) {
     std::cout << "raise error here.\n";
     return result;
   }
-  for(int i = 0; i < num; ++i) {
+  for(size_t i = 0; i < num; ++i) {
     result.elements_[i] = elements_[i] + rhs.elements_[i]; 
   }
   return result;
@@ -473,13 +473,13 @@ matrix<T>::operator+ (matrix<T> const &rhs) const {
 template <typename T>
 matrix<T> const
 matrix<T>::operator- (matrix<T> const &rhs) const {
-  int num = height_ * width_;
+  size_t num = height_ * width_;
   matrix<T> result(height_, width_);
   if(height_ != rhs.height_ || width_ != rhs.width_) {
     cout << "raise error here.\n";
     return result;
   }
-  for(int i = 0; i < num; ++i) {
+  for(size_t i = 0; i < num; ++i) {
     result.elements_[i] = elements_[i] - rhs.elements_[i]; 
   }
   return result;
@@ -489,12 +489,12 @@ matrix<T>::operator- (matrix<T> const &rhs) const {
 template <typename T>
 matrix<T> &
 matrix<T>::operator+= (matrix<T> const &rhs) {
-  int num = height_ * width_;
+  size_t num = height_ * width_;
   if(height_ != rhs.height_ || width_ != rhs.width_) {
     cout << "raise exception here.\n";
     return *this;
   }
-  for(int i = 0; i < num; ++i) {
+  for(size_t i = 0; i < num; ++i) {
     elements_[i] = elements_[i] + rhs.elements_[i];
   }
   return *this;
@@ -503,12 +503,12 @@ matrix<T>::operator+= (matrix<T> const &rhs) {
 template <typename T>
 matrix<T> &
 matrix<T>::operator-= (matrix<T> const &rhs) {
-  int num = height_ * width_;
+  size_t num = height_ * width_;
   if(height_ != rhs.height_ || width_ != rhs.width_) {
     cout << "raise exception here.\n";
     return *this;
   }
-  for(int i = 0; i < num; ++i) {
+  for(size_t i = 0; i < num; ++i) {
     elements_[i] = elements_[i] - rhs.elements_[i];
   }
   return *this;
@@ -540,11 +540,11 @@ matrix<T> const
   return result;
 }
 
-/*------------- print --------------*/
+/*------------- prsize_t --------------*/
 template <typename T>
-void matrix<T>::print() const {
-  for(int i = 0; i < height_; ++i) {
-    for(int j = 0; j < height_; ++j) {
+void matrix<T>::prsize_t() const {
+  for(size_t i = 0; i < height_; ++i) {
+    for(size_t j = 0; j < height_; ++j) {
       std::cout << elements_[width_*i + j] << "  "; 
     }
     std::cout << std::endl;
@@ -558,7 +558,7 @@ void matrix<T>::check() {
 	using namespace lib_calvin_matrix;
 	using std::cout;
 	using std::endl;
-	int const GIGA = 1000000000;
+	size_t const GIGA = 1000000000;
 	double const multiProblemSize = (double)height_*height_*height_*2;
   cout << "Testing with matrix dimension: " << height_ << " * " << width_ 
     << endl;
@@ -576,8 +576,8 @@ void matrix<T>::check() {
   m2 = m1.transpose();
   watch.stop();
 	cout << "Transpose took " << watch.read() << "\n";
-  for (int i = 0; i < height_; ++i) {
-    for (int j = 0; j < width_; ++j) {
+  for (size_t i = 0; i < height_; ++i) {
+    for (size_t j = 0; j < width_; ++j) {
       if (m1.getval(i, j) != m2.getval(j, i)) {
         cout << "transpose Error!!!\n";
 				exit(0);
@@ -637,9 +637,9 @@ void matrix<T>::check() {
   } else {
     cout << "recursiveMulti Error!!!\n"; 
     cout << "Right answer is:\n";
-    m4.print();
+    m4.prsize_t();
     cout << "Recursive multi result is:\n";
-    m6.print();
+    m6.prsize_t();
 		exit(0);
 	}
 	m6.reset(m1.height(), m2.width());
@@ -662,15 +662,15 @@ void matrix<T>::check() {
   } else {
     cout << "Strassen Error!!!\n";  
 		cout << "A = \n";
-		m1.print();
+		m1.prsize_t();
 		cout << "B = \n";
-		m2.print();
+		m2.prsize_t();
     cout << "Right answer is:\n";
-    m4.print();
+    m4.prsize_t();
     cout << "Strassen multi result is:\n";
-    m7.print(); 
-    for (int i = 0; i < m4.height(); ++i) {
-      for (int j = 0; j < m4.width(); ++j) {
+    m7.prsize_t(); 
+    for (size_t i = 0; i < m4.height(); ++i) {
+      for (size_t j = 0; j < m4.width(); ++j) {
         if (m4.getval(i, j) != m7.getval(i, j)) {
           cout << i << " , " << j << " is error\t" << 
             m4.getval(i, j) << " " << m7.getval(i, j) << endl;
@@ -704,10 +704,10 @@ void matrix<T>::test() {
 // elements_ must have been deleted
 template <typename T>
 void matrix<T>::init() {
-  int num = height_ * width_;
+  size_t num = height_ * width_;
   elements_ = (T *)operator new(sizeof(T)*num); // default constructor should work
-	//std::cout << "alignmemnt is " << ((int)elements_ % 256) << "\n";
-  for(int i = 0; i < num; ++i) {
+	//std::cout << "alignmemnt is " << ((size_t)elements_ % 256) << "\n";
+  for(size_t i = 0; i < num; ++i) {
     // important! needed for built-in type initialization
     elements_[i] = T();
   }
@@ -718,18 +718,18 @@ void matrix<T>::init() {
 // Assuming that rhs has same dimension!
 template <typename T>
 void matrix<T>::copy (matrix<T> const &rhs) {
-	int num = rhs.height_ * rhs.width_;
-  for(int i = 0; i < num; ++i) {
+	size_t num = rhs.height_ * rhs.width_;
+  for(size_t i = 0; i < num; ++i) {
     elements_[i] = rhs.elements_[i];
   }
 }
 
 template <typename T>
 void matrix<T>::randomize() {
-  srand(height_ * width_);
-  for (int i = 0; i < height_; ++i) {
-    for (int j = 0; j < width_; ++j) {
-      setval(i, j) = (T) (rand() % 10); 
+  srand(static_cast<int>(height_ * width_));
+  for (size_t i = 0; i < height_; ++i) {
+    for (size_t j = 0; j < width_; ++j) {
+      setval(i, j) = T(rand() % 10); 
     }
   }
 }
@@ -737,24 +737,24 @@ void matrix<T>::randomize() {
 /************************ matrix<T> static fields ************************/
 
 template <typename T>
-int const matrix<T>::trans_thre_ =  
-	std::max((int)(sqrt((float)lib_calvin_misc::L1_SIZE/2.0/sizeof(T))), 3); 
+size_t const matrix<T>::trans_thre_ =  
+	std::max<size_t>((size_t)(sqrt((float)lib_calvin_misc::L1_SIZE/2.0/sizeof(T))), 3); 
     
 template <typename T>
-int const matrix<T>::mul_thre_ = 32;
-	//std::max((int)(sqrt((float)L1_SIZE/3.0/sizeof(T))/2), 3);
+size_t const matrix<T>::mul_thre_ = 32;
+	//std::max((size_t)(sqrt((float)L1_SIZE/3.0/sizeof(T))/2), 3);
 			
 
 template <typename T>
-int const matrix<T>::blockWidth_ = 64;
-	//std::max((int)((float)L1_SIZE/sizeof(T)/3.0), 300);
+size_t const matrix<T>::blockWidth_ = 64;
+	//std::max((size_t)((float)L1_SIZE/sizeof(T)/3.0), 300);
 
 // Note that we cannot use blockWidth_ value here
 // (order of computation not guaranteed)
 template <typename T>
-int const matrix<T>::blockHeight_ = 48;
-	//(int)(((float)L2_SIZE)/sizeof(T)/
-	//std::max ((int)((float)L1_SIZE/sizeof(T)/3.0), 300))/ 1.5);
+size_t const matrix<T>::blockHeight_ = 48;
+	//(size_t)(((float)L2_SIZE)/sizeof(T)/
+	//std::max ((size_t)((float)L1_SIZE/sizeof(T)/3.0), 300))/ 1.5);
 
 } // end namesapce lib_calvin for definitions
 
@@ -764,19 +764,19 @@ int const matrix<T>::blockHeight_ = 48;
 // copy with transposing: source and destination should be different
 template <typename T>
 void lib_calvin_matrix::transCopy (T const *src, T * __restrict dest, 
-    int height, int width, int lw, int rw, int trans_thre) {
+    size_t height, size_t width, size_t lw, size_t rw, size_t trans_thre) {
   if (height < trans_thre || width < trans_thre) {
-    for (int i = 0; i < height; ++i) {
-      for (int j = 0; j < width; ++j) {
+    for (size_t i = 0; i < height; ++i) {
+      for (size_t j = 0; j < width; ++j) {
          *(dest + rw*j + i) = *(src + lw*i + j);
       }
     }
     return;
   }
-  int up_height = height / 2;
-  int down_height = height - up_height;
-  int left_width = width / 2;
-  int right_width = width - left_width;
+  size_t up_height = height / 2;
+  size_t down_height = height - up_height;
+  size_t left_width = width / 2;
+  size_t right_width = width - left_width;
   transCopy(src, dest, up_height, left_width, lw, rw, trans_thre);
   transCopy(src + left_width, dest + rw * left_width, up_height, right_width, lw, rw, trans_thre);
   transCopy(src + lw * up_height, dest + up_height, down_height, left_width, lw, rw, trans_thre);
@@ -806,7 +806,7 @@ lib_calvin_matrix::matrixMultiply(matrix<T> const &lhs, matrix<T> const &rhs) {
   return result;
 }
 
-/*----------------------- multiply intermediates -------------------------*/
+/*----------------------- multiply size_termediates -------------------------*/
 
 template <typename T>
 void lib_calvin_matrix::naiveMultiAdd (
@@ -897,8 +897,8 @@ void lib_calvin_matrix::recursiveMultiAdd(
   T *rhs = new T[B.height_*B.width_];
   T *result = new T[A.height_*B.width_];
   T *temp = new T[A.height_*B.width_];
-	int mul_thre = A.mul_thre_;
-	int initialRecursionDepth = log(A.width_) - log(mul_thre);
+	size_t mul_thre = A.mul_thre_;
+	size_t initialRecursionDepth = log(A.width_) - log(mul_thre);
 	std::cout << "recursion depth starting: " << initialRecursionDepth << "\n";
 	lib_calvin::stopwatch watch;
   recursiveArrange (A.elements_, lhs, 
@@ -922,7 +922,7 @@ void lib_calvin_matrix::recursiveMultiAdd(
 	/*
   recursiveArrange (C.elements_, temp, 
       C.height_, C.width_, C.width_, initialRecursionDepth, true);
-  for (int i = 0; i < A.height_*B.width_; ++i) {
+  for (size_t i = 0; i < A.height_*B.width_; ++i) {
     if (result[i] != temp[i]) {
 			std::cout << "recursiveArrange error\n";
       exit(0);
@@ -956,8 +956,8 @@ void lib_calvin_matrix::strassenMultiAdd (
 		std::cout << "Strassen multiply not compatible\n";
     exit(0);
   }
-	int n = A.height_;
-	int initialRecursionDepth = log(n) - log(A.mul_thre_);
+	size_t n = A.height_;
+	size_t initialRecursionDepth = log(n) - log(A.mul_thre_);
   T *lhs =		new T[n*n];
   T *rhs =		new T[n*n];
   T *result = new T[n*n];
@@ -999,11 +999,11 @@ void lib_calvin_matrix::recursiveSelfMultiAdd (matrix<T> &A) {
 /**************************** Algorithms ***************************/
 template <typename T>
 void lib_calvin_matrix::naiveMultiAdd(T const *A, T const *B, T * __restrict C, 
-    int lheight, int lwidth, int rwidth, int Aw, int Bw) {
-  int Cw = Bw;
-  for (int i = 0; i < lheight; ++i) {
-		for (int k = 0; k < rwidth; k++) {
-			for (int j = 0; j < lwidth; ++j) {
+    size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
+  size_t Cw = Bw;
+  for (size_t i = 0; i < lheight; ++i) {
+		for (size_t k = 0; k < rwidth; k++) {
+			for (size_t j = 0; j < lwidth; ++j) {
 				C[Cw * i + k] +=  A[Aw * i + j] * B[Bw * j + k];
 			}
 		}  
@@ -1012,13 +1012,13 @@ void lib_calvin_matrix::naiveMultiAdd(T const *A, T const *B, T * __restrict C,
 
 template <typename T>
 void lib_calvin_matrix::naiveMultiAdd2(T const *A, T const *B, T * __restrict C, 
-    int lheight, int lwidth, int rwidth, int Aw, int Bw) {
-  int Cw = Bw;
-  for (int i = 0; i < lheight; ++i) {
-		int const loopUnroll = 4;
-		int k = 0;
+    size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
+  size_t Cw = Bw;
+  for (size_t i = 0; i < lheight; ++i) {
+		size_t const loopUnroll = 4;
+		size_t k = 0;
 		for ( ; k + loopUnroll - 1 < rwidth; k += loopUnroll) {
-			for (int j = 0; j < lwidth; ++j) {
+			for (size_t j = 0; j < lwidth; ++j) {
 				C[Cw * i + (k + 0)] += A[Aw * i + j] * B[Bw * j + (k + 0)];
 				C[Cw * i + (k + 1)] += A[Aw * i + j] * B[Bw * j + (k + 1)];
 				C[Cw * i + (k + 2)] += A[Aw * i + j] * B[Bw * j + (k + 2)];
@@ -1026,7 +1026,7 @@ void lib_calvin_matrix::naiveMultiAdd2(T const *A, T const *B, T * __restrict C,
 			}
 		}  
 		for ( ; k < rwidth; ++k) {
-			for (int j = 0; j < lwidth; ++j) {
+			for (size_t j = 0; j < lwidth; ++j) {
 				C[Cw * i + k] += ( A[Aw * i + j] * B[Bw * j + k] );
 			}
 		}
@@ -1035,13 +1035,13 @@ void lib_calvin_matrix::naiveMultiAdd2(T const *A, T const *B, T * __restrict C,
 
 template <typename T>
 void lib_calvin_matrix::naiveMultiAdd3(T const *A, T const *B, T * __restrict C, 
-    int lheight, int lwidth, int rwidth, int Aw, int Bw) {
-  int Cw = Bw;
+    size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
+  size_t Cw = Bw;
 	T *transposedB = new T[lwidth*rwidth];
 	transCopy(B, transposedB, lwidth, rwidth, Bw, lwidth, 15);
-  for (int i = 0; i < lheight; ++i) {
-		for (int k = 0; k < rwidth; k++) {
-			for (int j = 0; j < lwidth; j++) {
+  for (size_t i = 0; i < lheight; ++i) {
+		for (size_t k = 0; k < rwidth; k++) {
+			for (size_t j = 0; j < lwidth; j++) {
 				C[Cw * i + k] +=  A[Aw * i + j] * transposedB[lwidth * k + j];
 			}
 		}  
@@ -1051,11 +1051,11 @@ void lib_calvin_matrix::naiveMultiAdd3(T const *A, T const *B, T * __restrict C,
 template <typename T>
 void
 lib_calvin_matrix::simpleMultiAdd (T const *A, T const *B, T * __restrict C, 
-		int lheight, int lwidth, int rwidth, int Aw, int Bw) {
-  int Cw = Bw;
-  for (int i = 0; i < lheight; ++i) {
-		for (int j = 0; j < lwidth; j++) {
-			for (int k = 0; k < rwidth; k++) {
+		size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
+  size_t Cw = Bw;
+  for (size_t i = 0; i < lheight; ++i) {
+		for (size_t j = 0; j < lwidth; j++) {
+			for (size_t k = 0; k < rwidth; k++) {
 				C[Cw * i + k] += A[Aw * i + j] * B[Bw * j + k];
 			}
 		}
@@ -1068,14 +1068,14 @@ lib_calvin_matrix::simpleMultiAdd (T const *A, T const *B, T * __restrict C,
 // Aw, Bw: widths or total matrices
 template <typename T>
 void lib_calvin_matrix::blockedMultiAdd (T const *A, T const *B, T *C, 
-		int lheight, int lwidth, int rwidth, 
-		int Aw, int Bw, int blockH, int blockW ) {
+		size_t lheight, size_t lwidth, size_t rwidth, 
+		size_t Aw, size_t Bw, size_t blockH, size_t blockW ) {
 	//std::cout << "blockH: " << blockH << " blockW: " << blockW << "\n";
-  int rheight = lwidth, Cw = Bw; // for convenience
+  size_t rheight = lwidth, Cw = Bw; // for convenience
   // right, down: offset
   // h, w: size of current working block size
   // blockH, blockW: size of default block (determined by cache and sizeof T)
-  int right, down, h, w, i = 0, j = 0, k = 0;
+  size_t right, down, h, w, i = 0, j = 0, k = 0;
 	// status: is there remaing rows or columns
   bool status1 = true, status2 = true;
   for(right = 0; status1; right += blockW) {
@@ -1103,7 +1103,7 @@ void lib_calvin_matrix::blockedMultiAdd (T const *A, T const *B, T *C,
 
 template <typename T>
 void lib_calvin_matrix::blockedMultiAdd(T const *A, T const *B, T *C, 
-		int lheight, int lwidth, int rwidth, int Aw, int Bw) {
+		size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
 	matrix<T> temp(100);
 	blockedMultiAdd(A, B, C, lheight, lwidth, rwidth, Aw, Bw, 
 		temp.blockHeight_, temp.blockWidth_);
@@ -1112,7 +1112,7 @@ void lib_calvin_matrix::blockedMultiAdd(T const *A, T const *B, T *C,
 // Work only on recursively arranged matrix
 template <typename T>
 void lib_calvin_matrix::recursiveMultiAdd(T const *A, T const *B, T *C,
-    int l, int m, int n, int remainingRecursion) 
+    size_t l, size_t m, size_t n, size_t remainingRecursion) 
 {  
   if (remainingRecursion <= 0) { 
 		naiveMultiAdd2(A, B, C, l, m, n, m, n);
@@ -1160,10 +1160,10 @@ void lib_calvin_matrix::recursiveMultiAdd(T const *A, T const *B, T *C,
 // does not brings performance gain; refer to one-note files
 template <typename T>
 void lib_calvin_matrix::recursiveMultiAddParallelAdvanced(T const *A, T const *B, T *C,
-    int l, int m, int n, int remainingRecursion) 
+    size_t l, size_t m, size_t n, size_t remainingRecursion) 
 {  
-	int const parallelBeginRecursion = 6;
-	int const parallelRecursionDepth = 3;
+	size_t const parallelBeginRecursion = 6;
+	size_t const parallelRecursionDepth = 3;
   if (remainingRecursion <= parallelBeginRecursion) { 
 		recursiveMultiAddParallel(A, B, C, l, m, n, remainingRecursion, parallelRecursionDepth);
     return;
@@ -1208,7 +1208,7 @@ void lib_calvin_matrix::recursiveMultiAddParallelAdvanced(T const *A, T const *B
 
 template <typename T>
 void lib_calvin_matrix::recursiveMultiAddParallel(T const *A, T const *B, T *C,
-    int l, int m, int n, int remainingRecursion, int parallelDepth) {
+    size_t l, size_t m, size_t n, size_t remainingRecursion, size_t parallelDepth) {
 	if (remainingRecursion <= 0) {
 		naiveMultiAdd2(A, B, C, l, m, n, m, n);
 		return;
@@ -1268,7 +1268,7 @@ void lib_calvin_matrix::recursiveMultiAddParallel(T const *A, T const *B, T *C,
 
 template <typename T>
 void lib_calvin_matrix::strassenMultiAdd(T const *A, T const *B, T *C, 
-																				int n, int remainingRecursion) {
+																				size_t n, size_t remainingRecursion) {
 	if (n % 2 != 0) {
 		recursiveMultiAdd(A, B, C, n, n, n, remainingRecursion);
 		return;
@@ -1286,7 +1286,7 @@ void lib_calvin_matrix::strassenMultiAdd(T const *A, T const *B, T *C,
 	T *p5 = new T[(n/2)*(n/2)];
 	T *p6 = new T[(n/2)*(n/2)];
 	T *p7 = new T[(n/2)*(n/2)];
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		p1[i] = T();
 		p2[i] = T();
 		p3[i] = T();
@@ -1296,43 +1296,43 @@ void lib_calvin_matrix::strassenMultiAdd(T const *A, T const *B, T *C,
 		p7[i] = T();
 	}
 	// A = a, B = f - h
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs[i] = A[i];
 	  rhs[i] = B[(n/2)*(n/2) + i] - B[(n/2)*(n/2)*3 + i];		
 	}
 	strassenMultiAdd(lhs, rhs, p1, n/2, remainingRecursion - 1);
 	// A2 = a + b, B2 = h
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs[i] = A[i] + A[(n/2)*(n/2) + i];
 	  rhs[i] = B[(n/2)*(n/2)*3 + i];		
 	}
 	strassenMultiAdd(lhs, rhs, p2, n/2, remainingRecursion - 1);
 	// A3 = c + d, B3 = e
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs[i] = A[(n/2)*(n/2)*2 + i] + A[(n/2)*(n/2)*3 + i];		
 	  rhs[i] = B[i];		
 	}
 	strassenMultiAdd(lhs, rhs, p3, n/2, remainingRecursion - 1);
 	// A4 = d, B4 = g - e
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs[i] = A[(n/2)*(n/2)*3 + i];
 	  rhs[i] = B[(n/2)*(n/2)*2 + i] - B[i];	
 	}
 	strassenMultiAdd(lhs, rhs, p4, n/2, remainingRecursion - 1);
 	// A5 = a + d, B5 = e + h
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs[i] = A[i] + A[(n/2)*(n/2)*3 + i];
 	  rhs[i] = B[i] + B[(n/2)*(n/2)*3 + i];		
 	}
 	strassenMultiAdd(lhs, rhs, p5, n/2, remainingRecursion - 1);
 	// A6 = b - d, B6 = g + h
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs[i] = A[(n/2)*(n/2) + i] - A[(n/2)*(n/2)*3 + i];
 	  rhs[i] = B[(n/2)*(n/2)*2 + i] + B[(n/2)*(n/2)*3 + i];	
 	}
 	strassenMultiAdd(lhs, rhs, p6, n/2, remainingRecursion - 1);
 	// A7 = a - c, B7 = e + f
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs[i] = A[i] - A[(n/2)*(n/2)*2 + i];
 	  rhs[i] = B[i] + B[(n/2)*(n/2) + i];		
 	}
@@ -1342,7 +1342,7 @@ void lib_calvin_matrix::strassenMultiAdd(T const *A, T const *B, T *C,
 	// s = P1 + P2
 	// t = P3 + P4
 	// u = P1 - P3 + P5 - P7
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		//std::cout << "p1 i= "  << p1[i] << "p2 i= "  << p2[i] << "p3 i= "  << p3[i] <<
 		//	"p4 i= "  << p4[i] << "p5 i= "  << p5[i] << "p6 i= "  << p6[i] <<	
 			//"p7 i= "  << p7[i] << "\n";
@@ -1364,13 +1364,13 @@ void lib_calvin_matrix::strassenMultiAdd(T const *A, T const *B, T *C,
 
 template <typename T>
 void lib_calvin_matrix::strassenMultiAddParallel(T const *A, T const *B, T *C, 
-		int n, int remainingRecursion) {
+		size_t n, size_t remainingRecursion) {
 	strassenMultiAddParallel(A, B, C, n, remainingRecursion, 1);
 }
 
 template <typename T>
 void lib_calvin_matrix::strassenMultiAddParallel(T const *A, T const *B, T *C, 
-		int n, int remainingRecursion, int parallelDepth) {
+		size_t n, size_t remainingRecursion, size_t parallelDepth) {
 	if (n % 2 != 0) {
 		recursiveMultiAddParallel(A, B, C, n, n, n, remainingRecursion, 2);
 		return;
@@ -1404,7 +1404,7 @@ void lib_calvin_matrix::strassenMultiAddParallel(T const *A, T const *B, T *C,
 	T *p5 = new T[(n/2)*(n/2)];
 	T *p6 = new T[(n/2)*(n/2)];
 	T *p7 = new T[(n/2)*(n/2)];
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		p1[i] = T();
 		p2[i] = T();
 		p3[i] = T();
@@ -1414,49 +1414,49 @@ void lib_calvin_matrix::strassenMultiAddParallel(T const *A, T const *B, T *C,
 		p7[i] = T();
 	}
 	// A = a, B = f - h
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs1[i] = A[i];
 	  rhs1[i] = B[(n/2)*(n/2) + i] - B[(n/2)*(n/2)*3 + i];		
 	}
 	StrassenThreadArg<T> arg1(lhs1, rhs1, p1, n/2, 
 		remainingRecursion - 1, parallelDepth - 1);
 	// A2 = a + b, B2 = h
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs2[i] = A[i] + A[(n/2)*(n/2) + i];
 	  rhs2[i] = B[(n/2)*(n/2)*3 + i];		
 	}
 	StrassenThreadArg<T> arg2(lhs2, rhs2, p2, n/2, 
 		remainingRecursion - 1, parallelDepth - 1);
 	// A3 = c + d, B3 = e
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs3[i] = A[(n/2)*(n/2)*2 + i] + A[(n/2)*(n/2)*3 + i];		
 	  rhs3[i] = B[i];		
 	}
 	StrassenThreadArg<T> arg3(lhs3, rhs3, p3, n/2, 
 		remainingRecursion - 1, parallelDepth - 1);
 	// A4 = d, B4 = g - e
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs4[i] = A[(n/2)*(n/2)*3 + i];
 	  rhs4[i] = B[(n/2)*(n/2)*2 + i] - B[i];	
 	}
 	StrassenThreadArg<T> arg4(lhs4, rhs4, p4, n/2, 
 		remainingRecursion - 1, parallelDepth - 1);
 	// A5 = a + d, B5 = e + h
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs5[i] = A[i] + A[(n/2)*(n/2)*3 + i];
 	  rhs5[i] = B[i] + B[(n/2)*(n/2)*3 + i];		
 	}
 	StrassenThreadArg<T> arg5(lhs5, rhs5, p5, n/2, 
 		remainingRecursion - 1, parallelDepth - 1);
 	// A6 = b - d, B6 = g + h
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs6[i] = A[(n/2)*(n/2) + i] - A[(n/2)*(n/2)*3 + i];
 	  rhs6[i] = B[(n/2)*(n/2)*2 + i] + B[(n/2)*(n/2)*3 + i];	
 	}
 	StrassenThreadArg<T> arg6(lhs6, rhs6, p6, n/2, 
 		remainingRecursion - 1, parallelDepth - 1);
 	// A7 = a - c, B7 = e + f
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		lhs7[i] = A[i] - A[(n/2)*(n/2)*2 + i];
 	  rhs7[i] = B[i] + B[(n/2)*(n/2) + i];		
 	}
@@ -1483,7 +1483,7 @@ void lib_calvin_matrix::strassenMultiAddParallel(T const *A, T const *B, T *C,
 	// s = P1 + P2
 	// t = P3 + P4
 	// u = P1 - P3 + P5 - P7
-	for (int i = 0; i < (n/2)*(n/2); ++i) {
+	for (size_t i = 0; i < (n/2)*(n/2); ++i) {
 		C[i]									+= (-p2[i] + p4[i] + p5[i] + p6[i]);
 		C[(n/2)*(n/2) + i]		+= (p1[i] + p2[i]);
 		C[(n/2)*(n/2)*2 + i]	+= (p3[i] + p4[i]);
@@ -1533,19 +1533,19 @@ lib_calvin_matrix::strassenThreadFunc(void *lpParam) {
 
 template <typename T>
 void lib_calvin_matrix::recursiveArrange(T *src, T *dest, 
-    int height, int width, int srcW, int remainingDepth, bool isToRecursive) {
+    size_t height, size_t width, size_t srcW, size_t remainingDepth, bool isToRecursive) {
   
   //cout << "recursiveArrange for " << height << " , " << width << "\n";
   if (remainingDepth <= 0) { // fall back to row-major order
     if (isToRecursive) { // going from raw-major to recursive
-      for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width; ++j) {
+      for (size_t i = 0; i < height; ++i) {
+        for (size_t j = 0; j < width; ++j) {
           dest[width*i + j] = src[srcW*i + j];
         }
       }
     } else { // restoring from recursive to raw-major
-      for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width; ++j) {
+      for (size_t i = 0; i < height; ++i) {
+        for (size_t j = 0; j < width; ++j) {
           src[srcW*i + j] = dest[width*i + j];
         }
       }
@@ -1553,10 +1553,10 @@ void lib_calvin_matrix::recursiveArrange(T *src, T *dest,
     return;
   }
   // Recursive calls for sub-problems
-  int upHeight = height / 2;
-  int downHeight = height - upHeight;
-  int leftWidth = width / 2;
-  int rightWidth = width - leftWidth;
+  size_t upHeight = height / 2;
+  size_t downHeight = height - upHeight;
+  size_t leftWidth = width / 2;
+  size_t rightWidth = width - leftWidth;
   recursiveArrange(src, dest, upHeight, leftWidth, 
       srcW, remainingDepth - 1, isToRecursive);
   recursiveArrange(src + leftWidth, dest + upHeight*leftWidth, 

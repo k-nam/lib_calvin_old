@@ -13,7 +13,7 @@ namespace lib_calvin_graph {
 	template <typename V, typename E>
 	class GraphTest {
 	public:
-		GraphTest(int numV, int numE, int numNegativeE);
+		GraphTest(size_t numV, size_t numE, size_t numNegativeE);
 		void insertionTest();
 		void insertionTest2();
 		void algorithmTest();
@@ -23,30 +23,33 @@ namespace lib_calvin_graph {
 		void getClosestPathTest();	
 		
 	private:
-		void populateGraph(graph_base<V, E> &graph, int numV, int numE, int numNegativeE);
-		void populateGraph(graph_base<V, E> &graph, int numV, int numE, int numNegativeE,
-											 E const &defaultEdge);
-	private:
-		int numV_;
-		int numE_;
-		int numNegativeE_;
+		size_t numV_;
+		size_t numE_;
+		size_t numNegativeE_;
 	};
 
+	template <typename V, typename E>
+	void populateGraph(graph_base<V, E> &graph, size_t numV, size_t numE, size_t numNegativeE);
+
+	template <typename V, typename E>
+	void populateGraph(graph_base<V, E> &graph, size_t numV, size_t numE, size_t numNegativeE,
+											E const &defaultEdge);
+
 	struct SampleEdge {
-		SampleEdge(int weight = 0): weight_(weight) { }
-		int getWeight() const {
+		SampleEdge(size_t weight = 0): weight_(weight) { }
+		size_t getWeight() const {
 			return weight_; }
-		int weight_;
+		size_t weight_;
 	};
 	struct SampleEdgeWeight {
-		int operator()(SampleEdge sampleEdge) {
+		size_t operator()(SampleEdge sampleEdge) {
 			return sampleEdge.getWeight();}
 	};
 
 	struct my {
 		my(): value_(0) { }  
-		my(int value): value_(value) { }
-		operator int() { return value_; }
+		my(intmax_t value): value_(value) { }
+		operator intmax_t() { return value_; }
 		bool operator== (const struct my &rhs) const {
 			if (value_ == rhs.value_) return true;
 			return false;
@@ -81,16 +84,16 @@ namespace lib_calvin_graph {
 		struct my const operator+ (struct my const &rhs) const {
 			return my(value_ + rhs.value_);
 		}
-		int value_;
-		int dummy1;
-		//int dummy2;
-		//int dummy3;
+		intmax_t value_;
+		intmax_t dummy1;
+		//size_t dummy2;
+		//size_t dummy3;
 		//double dummy4;
 	};
 } // end namespace lib_calvin_graph
 
 template <typename V, typename E>
-lib_calvin_graph::GraphTest<V, E>::GraphTest(int numV, int numE, int numNegativeE):
+lib_calvin_graph::GraphTest<V, E>::GraphTest(size_t numV, size_t numE, size_t numNegativeE):
 	numV_(numV), numE_(numE), numNegativeE_(numNegativeE_) { }
 
 template <typename V, typename E>
@@ -107,7 +110,7 @@ void lib_calvin_graph::GraphTest<V, E>::insertionTest() {
 	populateGraph(graph3, numV_, numE_, numNegativeE_);
 	populateGraph(graph4, numV_, numE_, numNegativeE_);
   watch.stop();
-  cout << "Insertion into graph took: " << watch.read() << endl;
+  cout << "Insertion size_to graph took: " << watch.read() << endl;
   /*
   graph1.insert (0, 1, 2);
   graph1.insert (1, 2, 2);
@@ -147,14 +150,14 @@ void lib_calvin_graph::GraphTest<V, E>::dfsTest() {
 	graph<V, E> graph;
 	populateGraph(graph, numV_, numE_, 0);
 	graph.goStatic();
-  vector<vector<V>> arrayDataWithoutEdge;
+  vector<vector<size_t>> arrayDataWithoutEdge;
 	ripEdge(graph.arrayData_, arrayDataWithoutEdge);
-  vector<int> visitOrder(numV_);
-  for (int i = 0; i < numV_ / 3; ++i) {
+  vector<size_t> visitOrder(numV_);
+  for (size_t i = 0; i < numV_ / 3; ++i) {
     visitOrder[i] = i;
   }
-  vector<int> returnOrder;
-  vector<int> returnOrder2;
+  vector<size_t> returnOrder;
+  vector<size_t> returnOrder2;
 
   // dfs with array data
 	stopwatch watch;
@@ -180,11 +183,12 @@ void lib_calvin_graph::GraphTest<V, E>::dfsTest() {
 template <typename V, typename E>
 void lib_calvin_graph::GraphTest<V, E>::bfsTest() {
 	using namespace lib_calvin;
-	graph<V, int> graph;
-	populateGraph(graph, numV_, numE_, 0, 1);
+	graph<V, size_t> graph;
+	populateGraph<V, size_t>(graph, numV_, numE_, 0, 1);
   graph.goStatic();
-  vector<Arc<int>> result1, result2;
-  vector<vector<int>> arrayDataWithoutEdge;
+  vector<Arc<size_t>> result1; 
+	vector<Arc<size_t>> result2;
+  vector<vector<size_t>> arrayDataWithoutEdge;
   ripEdge(graph.arrayData_, arrayDataWithoutEdge);
 	stopwatch watch;
   watch.start();
@@ -193,7 +197,7 @@ void lib_calvin_graph::GraphTest<V, E>::bfsTest() {
   cout << "bfs of vertices: " << numV_ << "\tedges: " << numE_ << "\t" <<
     watch.read() << endl;
 	
-  dijkstra(graph.arrayData_, 0, result2);
+  dijkstra<size_t>(graph.arrayData_, 0, result2);
   if (result1.size() != result2.size()) {
     cout << "bfs error\n";
     exit(0);
@@ -230,7 +234,7 @@ void lib_calvin_graph::GraphTest<V, E>::algorithmTest() {
 
   // Vellman-Ford
   vector<Arc<E>> solution_v;
-  for (int i = numV_ - 1; i < numV_; ++i) {
+  for (size_t i = numV_ - 1; i < numV_; ++i) {
     watch.start();
     vellmanFord (graph.arrayData_, i, solution_v);
     watch.stop();
@@ -270,9 +274,9 @@ void lib_calvin_graph::GraphTest<V, E>::algorithmTest() {
   bool isApspCorrect = true;
 	bool isFloydCorrect = true;
 	bool isJohnsonCorrect = true;
-  for (int i = 0; i < numV_; ++i) {
+  for (size_t i = 0; i < numV_; ++i) {
     vellmanFord(graph.arrayData_, i, row); 
-    for (int j = 0; j < numV_; j++) {
+    for (size_t j = 0; j < numV_; j++) {
       if (apspResult.getval(i, j).weight_ != row[j].weight_ && 
           row[j].predecessor_!= -1) {
         isApspCorrect = false;
@@ -310,7 +314,7 @@ void lib_calvin_graph::GraphTest<V, E>::undirectedAlgorithmTest() {
 	undirected_graph<V, E> graph;
 	populateGraph(graph, numV_, numE_, 0);
 	graph.goStatic();
-	set<std::pair<int, int>> result1, result2;  
+	set<std::pair<size_t, size_t>> result1, result2;  
 	stopwatch watch;
   watch.start();
 	lib_calvin_graph::kruskal(graph.arrayData_, result1);
@@ -325,7 +329,7 @@ void lib_calvin_graph::GraphTest<V, E>::undirectedAlgorithmTest() {
     "\t" << watch.read() << endl;
 
   if (result1 != result2) {
-		set<std::pair<int, int>>::iterator iter;
+		set<std::pair<size_t, size_t>>::iterator iter;
     cout << "MST algorithms does not match each other: size of kruskal: " << result1.size() << 
 			" size of prim " << result2.size();
     /*
@@ -392,16 +396,16 @@ void lib_calvin_graph::GraphTest<V, E>::getClosestPathTest() {
 }
 
 template <typename V, typename E>
-void lib_calvin_graph::GraphTest<V, E>::populateGraph(
-			graph_base<V, E> &graph, int numV, int numE, int numNegativeE) {
+void lib_calvin_graph::populateGraph(
+			graph_base<V, E> &graph, size_t numV, size_t numE, size_t numNegativeE) {
 	using namespace lib_calvin;
-  for (int i = 0; i < numE; ++i) {
-    int edge = rand() % 100000 + 1000;
+  for (size_t i = 0; i < numE; ++i) {
+    intmax_t edge = rand() % 100000 + 1000;
 		if (i < numNegativeE) {
       edge = -edge / 500 + 5; // negative edge
 		}
-		int srcV = (rand() * 32768 + rand()) % numV;
-		int targetV = (rand() * 32768 + rand()) % numV;
+		intmax_t srcV = (rand() * 32768 + rand()) % numV;
+		intmax_t targetV = (rand() * 32768 + rand()) % numV;
 		graph.insert_vertex(srcV);
 		graph.insert_vertex(targetV);
     graph.insert_edge(srcV, targetV, edge);
@@ -409,12 +413,12 @@ void lib_calvin_graph::GraphTest<V, E>::populateGraph(
 }
 
 template <typename V, typename E>
-void lib_calvin_graph::GraphTest<V, E>::populateGraph(
+void lib_calvin_graph::populateGraph(
 			graph_base<V, E> &graph, 
-			int numV, int numE, int numNegativeE, E const &defaultEdge) {
-  for (int i = 0; i < numE; ++i) {
-		int srcV = (rand() * 32768 + rand()) % numV;
-		int targetV = (rand() * 32768 + rand()) % numV;
+			size_t numV, size_t numE, size_t numNegativeE, E const &defaultEdge) {
+  for (size_t i = 0; i < numE; ++i) {
+		intmax_t srcV = (rand() * 32768 + rand()) % numV;
+		intmax_t targetV = (rand() * 32768 + rand()) % numV;
 		graph.insert_vertex(srcV);
 		graph.insert_vertex(targetV);
     graph.insert_edge(srcV, targetV, defaultEdge);

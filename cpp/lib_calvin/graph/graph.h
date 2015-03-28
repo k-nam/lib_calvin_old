@@ -30,6 +30,8 @@
 
 namespace lib_calvin_graph { // auxiliary for graph class
 
+size_t const UNREACHABLE_VERTEX = SIZE_MAX;
+
 using lib_calvin::map;
 using lib_calvin::vector;
 using lib_calvin::set;
@@ -40,7 +42,7 @@ using std::endl;
 template <typename W>
 struct Arc { 
   Arc(); // default constructor should work for matrix elements
-  Arc(int predecessor, W weight);
+  Arc(size_t predecessor, W weight);
   Arc<W> & operator= (Arc<W> const &rhs);
   // operators tuned to specific purposes: this will enable us to just
   // ...use matrix multiplication for shortest path algorithms.
@@ -50,8 +52,8 @@ struct Arc {
   Arc<W> & operator+= (Arc<W> const &rhs); 
   bool operator== (Arc<W> const &rhs) const;
   bool operator!= (Arc<W> const &rhs) const;
-
-  int predecessor_; // negative value indicates non-reachability.
+	bool isUnreachable() const;
+  size_t predecessor_; // negative value indicates non-reachability.
   W weight_; // may be single or total weight, depending on context.  
 };
 
@@ -59,11 +61,11 @@ struct Arc {
 template <typename W>
 struct GeneralArc: public Arc<W> {
 	GeneralArc();
-	GeneralArc(int predecessor, W weight, int nThClosest);
-	void print() const;
+	GeneralArc(size_t predecessor, W weight, size_t nThClosest);
+	void prsize_t() const;
 	bool operator< (GeneralArc<W> const &) const;
 	// denotes that the path to predecessor is n'th closest path.
-	int nThClosest_;
+	size_t nThClosest_;
 };
 
 // extension of Arc for n'th closest path algorithm
@@ -85,7 +87,7 @@ public:
 public:
 	bool operator< (Node const &rhs) const;
 public:
-	void print() const;
+	void prsize_t() const;
 private:
 	bool isFull() const;
 private:
@@ -97,11 +99,11 @@ private:
 template <typename W>
 struct WeightedEdge {
   WeightedEdge();
-  WeightedEdge(int src, int dest, W weight);
+  WeightedEdge(size_t src, size_t dest, W weight);
   bool operator> (WeightedEdge<W> const &rhs) const;
   bool operator< (WeightedEdge<W> const &rhs) const;
-  int src_;
-  int dest_;
+  size_t src_;
+  size_t dest_;
   W weight_;
 };
 
@@ -122,15 +124,15 @@ public: // basic data access
 	graph_base(graph_base const &);
   graph_base & operator= (graph_base<V, E, K, ExtractKey> const &);
 public:
-  int size() const;
-  int number_of_vertex() const;
-  int number_of_edge() const;
+  size_t size() const;
+  size_t number_of_vertex() const;
+  size_t number_of_edge() const;
   bool has_vertex(K key) const;
   bool has_edge(K src, K dest) const;
 	V const & get_vertex(K const &) const;
 	V & get_vertex(K const &);
 public:
-  /// modifying methods force enter into dynamic mode automatically
+  /// modifying methods force enter size_to dynamic mode automatically
   // returns true when inserted, false when already existed
 	bool insert_vertex(V const &src);
   virtual bool insert_edge(K const &src, K const &dest, E const &edge = E());
@@ -140,7 +142,7 @@ public:
 	E & get_edge(K const &src, K const &dest);
 	vector<std::pair<V, E>> get_vertex_edge_pairs_from(K const &src) const;
 	vector<V> get_vertices_to(K const &dest) const;
-  //virtual void print() const;
+  //virtual void prsize_t() const;
 public:
 	virtual void goStatic() const; // make data structures ready for algorithms.
 public:
@@ -169,27 +171,27 @@ public:
 	friend class lib_calvin_graph::GraphTest<V, E>;
 protected:
 	template <typename T>
-	path getPathAfterAlgorithm(vector<Arc<T>> result, int src, int target) const;
-	path getPathFromReversedPath(int src, vector<int> const &reversedPath) const;
+	path getPathAfterAlgorithm(vector<Arc<T>> result, size_t src, size_t target) const;
+	path getPathFromReversedPath(size_t src, vector<size_t> const &reversedPath) const;
 protected: 
-	lib_calvin_adt::IntIndexer<K> mapping_; // 1:1 mapping of verticex and integers
+	lib_calvin_adt::IntIndexer<K> mapping_; // 1:1 mapping of verticex and size_tegers
 	lib_calvin_container::BPlusTree<V, K, std::less<K>, ExtractKey> vertices_;
 	//lib_calvin_container::HashTable<V, K, ExtractKey> vertices_;
-	map<int, map<int, E>> outLinks_;
-	map<int, set<int>> inLinks_;
+	map<size_t, map<size_t, E>> outLinks_;
+	map<size_t, set<size_t>> inLinks_;
 public:
 	// Only valid in static mode
-	mutable vector<vector<std::pair<int, E>>> arrayData_; 
+	mutable vector<vector<std::pair<size_t, E>>> arrayData_; 
 	mutable bool isDynamic_; // turns true after every modifying operation
 private:
 	// returns (vertexId, wasInserted)
-	std::pair<int, bool> insertVertex(V const &);
+	std::pair<size_t, bool> insertVertex(V const &);
 	// has no effect if vertex is already present
 	void increaseSizeByOne();
 	// src and dest must be present
-	bool hasEdge(int src, int dest) const;
+	bool hasEdge(size_t src, size_t dest) const;
 private:
-	int numEdges_;
+	size_t numEdges_;
 }; // end graph
 
 template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>, 
@@ -217,10 +219,10 @@ public:
 protected:
 	template <typename T>
 		vector<weighted_path> getPathsAfterAlgorithm(vector<vector<GeneralArc<T>>> result, 
-																				int src, int target) const;
+																				size_t src, size_t target) const;
 private:
 	// additional data structure for algorithms
-  // graph algorithms are performed only with integers (not V type)
+  // graph algorithms are performed only with size_tegers (not V type)
 	mutable lib_calvin::matrix<lib_calvin_graph::Arc<W>> matrixData_; // For matrix computation.
   // SSSP solution; not solved if size is 0.
   //vector<vector<Arc<W>>> SSSP_; 
@@ -253,15 +255,15 @@ public:
 // Rationale for this adaptor classes are only for performance and code
 // ..simplicity. For example, I wanted my dfs algorithms to perform both on
 // ..dynamic(map<>) and array(vector<>) input type, because if it works only
-// ..on array type, we have to convert dynamic data into array data each time
+// ..on array type, we have to convert dynamic data size_to array data each time
 // ..dfs is called (which is a waste). 
 // And I want to avoid redundant codes for those input types. So I need an 
 // ..adaptor.
 // 2010-04-05
-// Abandoned above change. It introduces needless indirection. Using specific data
+// Abandoned above change. It size_troduces needless indirection. Using specific data
 // types like vector and map does not harm generality of algorithms, as we can 
 // substitue implementations for those containers at will. And algorithms should be
-// defined with minimal interface in the first place. 
+// defined with minimal size_terface in the first place. 
 //----------------------------- END --------------------------------------------
 
 namespace lib_calvin {
@@ -290,33 +292,33 @@ namespace lib_calvin_graph { // namespace for helper functions
 using lib_calvin::matrix;
 // should use only this one in actual algorithms! (faster than above)
 // It turned out that g++ is so good that it optimizes perfectly in this case:
-// ...no need to introduce another integrated function at all! (of course only
+// ...no need to size_troduce another size_tegrated function at all! (of course only
 // ...in -O3 option)
 template <typename W>
 bool relax (Arc<W> const &lhs1, Arc<W> const &lhs2, Arc<W> &rhs);
 
 template <typename E, typename W, typename ExtractWeight>
-void makeArrayData (vector<map<int, E>> const &dynamicData, 
-    vector<vector<pair<int, W>>> &arrayData);
+void makeArrayData (vector<map<size_t, E>> const &dynamicData, 
+    vector<vector<pair<size_t, W>>> &arrayData);
 
 template <typename E>
-void makeSymArrayData (vector<map<int, E>> const &dynamicData, 
-    vector<vector<pair<int, E>>> &arrayData);
+void makeSymArrayData (vector<map<size_t, E>> const &dynamicData, 
+    vector<vector<pair<size_t, E>>> &arrayData);
 
 template <typename W>
-void makeMatrixData (vector<vector<pair<int, W>>> const &arrayData, 
+void makeMatrixData (vector<vector<pair<size_t, W>>> const &arrayData, 
     matrix<Arc<W>> &matrixData);
 
 template <typename E>
-void ripEdge (vector<vector<pair<int, E>>> const &arrayData,
-    vector<vector<int>> &ripped);
+void ripEdge (vector<vector<pair<size_t, E>>> const &arrayData,
+    vector<vector<size_t>> &ripped);
 
-void transpose (vector<vector<int>> const &source,
-    vector<vector<int>> &target);
+void transpose (vector<vector<size_t>> const &source,
+    vector<vector<size_t>> &target);
 
 template <typename E>
-void transpose (vector<vector<pair<int, E>>> const &source,
-    vector<vector<pair<int, E>>> &target);
+void transpose (vector<vector<pair<size_t, E>>> const &source,
+    vector<vector<pair<size_t, E>>> &target);
 
 } // end namespace lib_calvin_graph
 
@@ -325,45 +327,45 @@ namespace lib_calvin_graph { // namespace for graph algorithms
 // dfs on this graph, using visitOrder as starting order of vertices
 // ...i.e) starting with vertex visitOrder[0].
 // ...save the result(return order of vertices) through argument.
-void dfs(vector<vector<int>> const &graph, vector<int> const &visitOrder, 
-    vector<int> &returnOrder);
+void dfs(vector<vector<size_t>> const &graph, vector<size_t> const &visitOrder, 
+    vector<size_t> &returnOrder);
 
 // Using priority queue method
-void dfs1(vector<vector<int>> const &graph, vector<int> const &visitOrder, 
-    vector<int> &returnOrder);
+void dfs1(vector<vector<size_t>> const &graph, vector<size_t> const &visitOrder, 
+    vector<size_t> &returnOrder);
 
 // Using simple stack
-void dfs2(vector<vector<int>> const &graph, 
-    vector<int> const &visitOrder, vector<int> &returnOrder);
+void dfs2(vector<vector<size_t>> const &graph, 
+    vector<size_t> const &visitOrder, vector<size_t> &returnOrder);
 
 // Find reachable vertices from a source vertex
 // Predecessor table is stored in result
-void bfs(vector<vector<int>> const &graph, int source, vector<Arc<int>> &result);
+void bfs(vector<vector<size_t>> const &graph, size_t source, vector<Arc<size_t>> &result);
 
 // Find strongly connected components of a directed graph.
 // Each value in result indicates the set to which the vertex belongs 
 // ..value is in range [0 , #sets - 1]
 
 // Solve Scc using dfs method
-void sccByDfs(vector<vector<int>> const &graph, 
-    int numSets, vector<int> &result);
+void sccByDfs(vector<vector<size_t>> const &graph, 
+    size_t numSets, vector<size_t> &result);
 
 // Solve Scc using transitive closure; an inefficient way, for testing
-void sccByTc(vector<vector<int>> const &graph, 
-    int &numSets, vector<int> &result);
+void sccByTc(vector<vector<size_t>> const &graph, 
+    size_t &numSets, vector<size_t> &result);
 
 // arcs in result: stores total weight of paths
 template <typename W>
-void dijkstra(vector<vector<std::pair<int, W>>> const &graph, int source, 
+void dijkstra(vector<vector<std::pair<size_t, W>>> const &graph, size_t source, 
     vector<Arc<W>> &result);
 
 // find n closest paths
 template <typename W>
-void dijkstra2(vector<vector<std::pair<int, W>>> const &graph, int source, 
+void dijkstra2(vector<vector<std::pair<size_t, W>>> const &graph, size_t source, 
     vector<Arc<W>> &result);
 
 template <typename W>
-void vellmanFord(vector<vector<std::pair<int, W>>> const &graph, int source,
+void vellmanFord(vector<vector<std::pair<size_t, W>>> const &graph, size_t source,
     vector<Arc<W>> &result);
 
 template <typename W>
@@ -373,30 +375,30 @@ template <typename W>
 void floydWarshall(matrix<Arc<W>> const &graph, matrix<Arc<W>> &result);
 
 template <typename W>
-void johnson(vector<vector<pair<int, W>>> const &graph, 
+void johnson(vector<vector<pair<size_t, W>>> const &graph, 
     matrix<Arc<W>> &result);
 
 // check the validity of shortest path solution
 // returns true if no error has been detected, false otherwise
 template <typename W>
-bool shortestPathCheck(vector<vector<pair<int, W>>> const &graph, int source,
+bool shortestPathCheck(vector<vector<pair<size_t, W>>> const &graph, size_t source,
     vector<Arc<W>> &solution);
 
 // Getting transitive closure
 // true: edge, false: no edge
 template <typename E>
-void transitiveClosure(vector<vector<int>>const &graph, 
+void transitiveClosure(vector<vector<size_t>>const &graph, 
     matrix<bool> &closure);
 
 // MST algorithms assume that graph is connected and un-directed
 // Result is represented as the set of included edges
 template <typename W>
-void kruskal(vector<vector<pair<int, W>>>const &graph, 
-    set<pair<int, int>> &result);
+void kruskal(vector<vector<pair<size_t, W>>>const &graph, 
+    set<pair<size_t, size_t>> &result);
 
 template <typename W>
-void prim(vector<vector<pair<int, W>>>const &graph,
-    set<pair<int, int>> &result);
+void prim(vector<vector<pair<size_t, W>>>const &graph,
+    set<pair<size_t, size_t>> &result);
       
 } // end namespace lib_calvin_graph
 
@@ -405,11 +407,11 @@ void prim(vector<vector<pair<int, W>>>const &graph,
 namespace lib_calvin_graph { // open for definitions
 
 template <typename W>
-Arc<W>::Arc(): predecessor_(-1), weight_(0) { // must initialize to 0
+Arc<W>::Arc(): predecessor_(UNREACHABLE_VERTEX), weight_(0) { // must initialize to 0
 }
 
 template <typename W>
-Arc<W>::Arc(int predecessor, W weight): predecessor_(predecessor), weight_(weight) { 
+Arc<W>::Arc(size_t predecessor, W weight): predecessor_(predecessor), weight_(weight) { 
 }
 
 template <typename W>
@@ -424,19 +426,20 @@ Arc<W>::operator= (Arc<W> const &rhs) {
 template <typename W>
 Arc<W>
 Arc<W>::operator* (Arc<W> const &rhs) const {
-  if (predecessor_ < 0 || rhs.predecessor_ < 0) {
-    return Arc<W> (); // no path
+  if (isUnreachable() || rhs.isUnreachable()) {
+    return Arc<W>(); // no path
   }
-  return ( Arc<W> (rhs.predecessor_, weight_ + rhs.weight_));
+  return Arc<W> (rhs.predecessor_, weight_ + rhs.weight_);
 }
 
 // take minimum
 template <typename W>
 Arc<W> const & 
 Arc<W>::operator+ (Arc<W> const &rhs) const {
-  if (rhs.predecessor_ < 0) 
+  if (rhs.isUnreachable()) {
     return *this;
-  if (predecessor_ < 0 || weight_ > rhs.weight_) {
+	}
+  if (isUnreachable() || weight_ > rhs.weight_) {
     return rhs;
   }
   return *this; 
@@ -446,9 +449,10 @@ Arc<W>::operator+ (Arc<W> const &rhs) const {
 template <typename W>
 Arc<W> & 
 Arc<W>::operator+= (Arc<W> const &rhs) {
-  if (rhs.predecessor_ < 0) 
+  if (rhs.isUnreachable()) {
     return *this;
-  if (predecessor_ < 0 || weight_ > rhs.weight_) {
+	}
+  if (isUnreachable() || weight_ > rhs.weight_) {
     predecessor_ = rhs.predecessor_;
     weight_    = rhs.weight_;
     return *this;
@@ -459,29 +463,37 @@ Arc<W>::operator+= (Arc<W> const &rhs) {
 // equivalence
 template <typename W>
 bool Arc<W>::operator== (Arc<W> const &rhs) const {
-  if (predecessor_ < 0 && rhs.predecessor_ < 0)
+  if (isUnreachable() && rhs.isUnreachable()) {
     return true;
-  if (predecessor_ == rhs.predecessor_ && weight_ == rhs.weight_)
+	}
+  if (predecessor_ == rhs.predecessor_ && weight_ == rhs.weight_) {
     return true;
+	}
   return false;
 }
 
 template <typename W>
 bool Arc<W>::operator!= (Arc<W> const &rhs) const {
-  if (predecessor_ == rhs.predecessor_ && weight_ == rhs.weight_)
+  if (predecessor_ == rhs.predecessor_ && weight_ == rhs.weight_) {
     return false;
+	}
   return true;
+}
+
+template <typename W>
+bool Arc<W>::isUnreachable() const {
+	return predecessor_ == UNREACHABLE_VERTEX;
 }
 
 template <typename W>
 GeneralArc<W>::GeneralArc(): Arc<W>(), nThClosest_(0) { }
 
 template <typename W>
-GeneralArc<W>::GeneralArc(int predecessor, W weight, int nThClosest): 
+GeneralArc<W>::GeneralArc(size_t predecessor, W weight, size_t nThClosest): 
 	Arc<W>(predecessor, weight), nThClosest_(nThClosest) { }
 
 template <typename W>
-void GeneralArc<W>::print() const {
+void GeneralArc<W>::prsize_t() const {
 	//std::cout << "This arc. predecessor = " << predecessor_ << ", weight: " << weight_ << 
 		//"nThClosest: " << nThClosest_ << "\n";
 }
@@ -535,7 +547,7 @@ template <typename W>
 void Node<W>::relax(GeneralArc<W> const &arc) { // general arcs should be in ascending order always
 	bool isInserted = false;
 	//std::cout << "\nbefore node was:\n\t";
-	print();
+	prsize_t();
 	for (auto iter = arcs_.begin(); iter != arcs_.end(); iter++) {
 		if (arc < *iter) {
 			arcs_.insert(iter, arc);
@@ -553,18 +565,18 @@ void Node<W>::relax(GeneralArc<W> const &arc) { // general arcs should be in asc
 		arcs_.resize(numPathsToFind_);
 	}
 	//std::cout << "node relaxing input arc was:\n\t";
-	//arc.print();
+	//arc.prsize_t();
 	//std::cout << "result node was:\n\t";
-	//print();
+	//prsize_t();
 	//std::cout << "\n\n\n";
 }
 
 template <typename W>
-void Node<W>::print() const {
+void Node<W>::prsize_t() const {
 	//std::cout << "This Node is as below size(" << arcs_.size() << ")\n";
 	//for (auto iter = arcs_.begin(); iter != arcs_.end(); iter++) {
 		//std::cout <<"\t";
-		//iter->print();
+		//iter->prsize_t();
 	//}
 }
 
@@ -610,7 +622,7 @@ WeightedEdge<W>::WeightedEdge():
 }
 
 template <typename W>
-WeightedEdge<W>::WeightedEdge(int src, int dest, W weight):
+WeightedEdge<W>::WeightedEdge(size_t src, size_t dest, W weight):
   src_(src), dest_(dest), weight_(weight) {
 }
 
@@ -657,34 +669,30 @@ graph_base<V, E, K, ExtractKey>::operator= (graph_base<V, E, K, ExtractKey> cons
   return *this;
 }
 template <typename V, typename E, typename K, typename ExtractKey>
-int graph_base<V, E, K, ExtractKey>::size() const { 
+size_t graph_base<V, E, K, ExtractKey>::size() const { 
 	return mapping_.size(); 
 }
 
 template <typename V, typename E, typename K, typename ExtractKey>
-int graph_base<V, E, K, ExtractKey>::number_of_vertex() const { 
+size_t graph_base<V, E, K, ExtractKey>::number_of_vertex() const { 
 	return size(); 
 }
 
 template <typename V, typename E, typename K, typename ExtractKey>
-int graph_base<V, E, K, ExtractKey>::number_of_edge() const { 
+size_t graph_base<V, E, K, ExtractKey>::number_of_edge() const { 
 	return numEdges_; 
 }
 
 template <typename V, typename E, typename K, typename ExtractKey>
 bool graph_base<V, E, K, ExtractKey>::has_vertex(K vertex) const {
-  return mapping_.indexOf(vertex) >= 0;
+  return mapping_.indexOf(vertex).second == true;
 }
 
 template <typename V, typename E, typename K, typename ExtractKey>
 bool graph_base<V, E, K, ExtractKey>::has_edge(K src, K dest) const {
-  int source    = mapping_.indexOf(src);
-  int destination = mapping_.indexOf(dest);
-  // false if either of vertex is not here
-  if (source < 0 || destination < 0) {
-    return false;
-	}
-  return hasEdge(source, destination);
+  auto result1 = mapping_.indexOf(src);
+  auto result2 = mapping_.indexOf(dest);
+  return hasEdge(result1.first, result2.first);
 }
 template <typename V, typename E, typename K, typename ExtractKey>
 V const & 
@@ -699,7 +707,7 @@ graph_base<V, E, K, ExtractKey>::get_vertex(K const &key) {
 }
 
 template <typename V, typename E, typename K, typename ExtractKey>
-bool graph_base<V, E, K, ExtractKey>::hasEdge(int srcId, int destId) const {
+bool graph_base<V, E, K, ExtractKey>::hasEdge(size_t srcId, size_t destId) const {
 	return outLinks_.find(srcId)->second.count(destId) != 0;
 }
 template <typename V, typename E, typename K, typename ExtractKey>
@@ -708,13 +716,13 @@ bool graph_base<V, E, K, ExtractKey>::insert_vertex(V const &src) {
 }
 
 template <typename V, typename E, typename K, typename ExtractKey>
-std::pair<int, bool>
+std::pair<size_t, bool>
 graph_base<V, E, K, ExtractKey>::insertVertex(V const &src) {
   auto result = mapping_.insert(ExtractKey()(src));
 	vertices_.insert(src);
 	if (result.second == true) {
-		outLinks_.insert(std::make_pair(result.first, map<int, E>()));
-		inLinks_.insert(std::make_pair(result.first, set<int>()));
+		outLinks_.insert(std::make_pair(result.first, map<size_t, E>()));
+		inLinks_.insert(std::make_pair(result.first, set<size_t>()));
 	}
 	return result;
 }
@@ -724,8 +732,8 @@ bool graph_base<V, E, K, ExtractKey>::insert_edge(K const &src, K const &dest, E
   if (src == dest) { // No self loop !!!
     return false;
   }
-  int srcId = mapping_.indexOf(src);
-	int destId = mapping_.indexOf(dest);
+  size_t srcId = mapping_.indexOf(src).first;
+	size_t destId = mapping_.indexOf(dest).first;
 	if (hasEdge(srcId, destId)) {
 		return false;
 	} else {
@@ -739,8 +747,8 @@ bool graph_base<V, E, K, ExtractKey>::insert_edge(K const &src, K const &dest, E
 
 template <typename V, typename E, typename K, typename ExtractKey>
 bool graph_base<V, E, K, ExtractKey>::remove_edge(K const &src, K const &dest) {
-  int srcId = mapping_.indexOf(src);
-  int destId = mapping_.indexOf(dest);
+  size_t srcId = mapping_.indexOf(src).first;
+  size_t destId = mapping_.indexOf(dest).first;
   if (srcId < 0 || destId < 0) {
     return false;
 	}
@@ -762,8 +770,8 @@ bool graph_base<V, E, K, ExtractKey>::remove_edge(K const &src, K const &dest) {
 template <typename V, typename E, typename K, typename ExtractKey>
 E const & 
 graph_base<V, E, K, ExtractKey>::get_edge(K const &src, K const &dest) const {
-  int srcId = mapping_.indexOf(src);
-  int destId = mapping_.indexOf(dest);
+  size_t srcId = mapping_.indexOf(src).first;
+  size_t destId = mapping_.indexOf(dest).first;
 	return outLinks_.find(srcId)->second.find(destId)->second;
 }
 
@@ -776,9 +784,9 @@ graph_base<V, E, K, ExtractKey>::get_edge(K const &src, K const &dest) {
 template <typename V, typename E, typename K, typename ExtractKey>
 vector<std::pair<V, E>> 
 graph_base<V, E, K, ExtractKey>::get_vertex_edge_pairs_from(K const &src) const {
-	int srcId = mapping_.indexOf(src);
+	size_t srcId = mapping_.indexOf(src).first;
 	vector<std::pair<V, E>> result;
-	map<int, E> const & edges = outLinks_.find(srcId)->second;
+	map<size_t, E> const & edges = outLinks_.find(srcId)->second;
 	result.reserve(edges.size());
 	for (auto iter = edges.begin(); iter != edges.end(); ++iter) {
 		result.push_back(std::make_pair(*vertices_.find(mapping_[iter->first]), iter->second));
@@ -789,7 +797,7 @@ graph_base<V, E, K, ExtractKey>::get_vertex_edge_pairs_from(K const &src) const 
 template <typename V, typename E, typename K, typename ExtractKey>
 vector<V> 
 graph_base<V, E, K, ExtractKey>::get_vertices_to(K const &dest) const {
-	int destId = mapping_.indexOf(dest);
+	size_t destId = mapping_.indexOf(dest).first;
 	vector<V> result;
 	result.reserve(inLinks_[destId].size());
 	for (auto iter = inLinks_[destId].begin(); iter != inLinks_[destId].end(); ++iter) {
@@ -798,15 +806,15 @@ graph_base<V, E, K, ExtractKey>::get_vertices_to(K const &dest) const {
 	return result;
 }
 
-/*------------- print -------------*/  /*
-// assuming the V and E can be printed with cout
+/*------------- prsize_t -------------*/  /*
+// assuming the V and E can be prsize_ted with cout
 template <typename V, typename E, typename K, typename ExtractKey, typename W, typename ExtractWeight>
-void graph<V, E, ExtractWeight>::print() const {
-  for (int i = 0; i < numV_; ++i) { // for each source vertex
+void graph<V, E, ExtractWeight>::prsize_t() const {
+  for (size_t i = 0; i < numV_; ++i) { // for each source vertex
     cout <<  mapping_[i] << ": ";
-    // print all edges
-    map<int, E> const &temp = dynamicData_[i];
-    typename map<int, E>::const_iterator iter;
+    // prsize_t all edges
+    map<size_t, E> const &temp = dynamicData_[i];
+    typename map<size_t, E>::const_iterator iter;
     for (iter = temp.begin(); iter != temp.end(); ++iter) {
       cout << mapping_[iter->first]; // target vertex
       cout << "(" << iter->second << ")  "; // weight
@@ -832,16 +840,16 @@ graph_base<V, E, K, ExtractKey>::get_closest_path(K const &src, K const &target)
 		std::cout << "get_closest_path input error\n";
 		exit(0);
 	}
-	int srcVertex = mapping_.indexOf(src);
-	int targetVertex = mapping_.indexOf(target);
-	vector<vector<int>> graph;
+	size_t srcVertex = mapping_.indexOf(src).first;
+	size_t targetVertex = mapping_.indexOf(target).first;
+	vector<vector<size_t>> graph;
 	ripEdge(arrayData_, graph);
-	vector<Arc<int>> result;
+	vector<Arc<size_t>> result;
 	bfs(graph, srcVertex, result);	
 	//std::cout << "after bfs\n";
-	if (result[targetVertex].predecessor_ < 0) { // not reachable
+	if (result[targetVertex].isUnreachable()) { // not reachable
 	} else {
-		paths.push_back(getPathAfterAlgorithm<int>(result, srcVertex, targetVertex));
+		paths.push_back(getPathAfterAlgorithm<size_t>(result, srcVertex, targetVertex));
 	}
 	return paths;
 }
@@ -872,12 +880,12 @@ weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::get_shortest_path(K 
 		std::cout << "get_shortest_path input error\n";
 		exit(0);
 	}
-	int srcVertex = mapping_.indexOf(src);
-	int targetVertex = mapping_.indexOf(target);
+	size_t srcVertex = mapping_.indexOf(src).first;
+	size_t targetVertex = mapping_.indexOf(target).first;
 	vector<Arc<W>> result;
 	dijkstra(arrayData_, srcVertex, result);	
 	//std::cout << "after dijkstra\n";
-	if (result[targetVertex].predecessor_ < 0) { // not reachable
+	if (result[targetVertex].isUnreachable()) { // not reachable
 	} else {
 		paths.push_back(getPathAfterAlgorithm<W>(result, srcVertex, targetVertex));
 	}
@@ -893,8 +901,8 @@ weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::
 		std::cout << "get_n_shortest_paths input error\n";
 		exit(0);
 	}
-	int srcVertex = mapping_.indexOf(src);
-	int targetVertex = mapping_.indexOf(target);
+	size_t srcVertex = mapping_.indexOf(src).first;
+	size_t targetVertex = mapping_.indexOf(target).first;
 	vector<vector<GeneralArc<W>>> result;
 	dijkstra2(arrayData_, srcVertex, result, num);	
 	//std::cout << "after dijkstra2\n";
@@ -910,9 +918,9 @@ template <typename V, typename E, typename K, typename ExtractKey>
 template <typename T>
 typename graph_base<V, E, K, ExtractKey>::path
 graph_base<V, E, K, ExtractKey>::getPathAfterAlgorithm(
-			vector<Arc<T>> result, int srcVertex, int targetVertex) const {
-	vector<int> reversedPath;
-	for (int curVertex = targetVertex; curVertex != srcVertex; ) {
+			vector<Arc<T>> result, size_t srcVertex, size_t targetVertex) const {
+	vector<size_t> reversedPath;
+	for (size_t curVertex = targetVertex; curVertex != srcVertex; ) {
 		//std::cout << "following predeccsor array\n";
 		reversedPath.push_back(curVertex);
 		curVertex = result[curVertex].predecessor_;
@@ -924,12 +932,12 @@ template <typename V, typename E, typename K, typename ExtractKey, typename W, t
 template <typename T>
 vector<typename weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_path>
 weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::getPathsAfterAlgorithm(
-			vector<vector<GeneralArc<T>>> result, int srcVertex, int targetVertex) const {
+			vector<vector<GeneralArc<T>>> result, size_t srcVertex, size_t targetVertex) const {
 	size_t numPaths = result[targetVertex].size();
-	vector<vector<int>> reversedPaths(numPaths);
-	for (int nThCloest = 0; nThCloest < numPaths; nThCloest++){
-		int curNThClosest = nThCloest; // path to curVertex is n'th closest path
-		for (int curVertex = targetVertex; curVertex != srcVertex; ) {
+	vector<vector<size_t>> reversedPaths(numPaths);
+	for (size_t nThCloest = 0; nThCloest < numPaths; nThCloest++){
+		size_t curNThClosest = nThCloest; // path to curVertex is n'th closest path
+		for (size_t curVertex = targetVertex; curVertex != srcVertex; ) {
 			//std::cout << "following predeccsor array\n";
 			reversedPaths[nThCloest].push_back(curVertex);
 			GeneralArc<T> arc = result[curVertex][curNThClosest];
@@ -946,10 +954,10 @@ weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::getPathsAfterAlgorit
 
 template <typename V, typename E, typename K, typename ExtractKey>
 typename graph_base<V, E, K, ExtractKey>::path
-graph_base<V, E, K, ExtractKey>::getPathFromReversedPath(int srcVertex, vector<int> const &reversedPath) const {
+graph_base<V, E, K, ExtractKey>::getPathFromReversedPath(size_t srcVertex, vector<size_t> const &reversedPath) const {
 	vector<std::pair<V, E>> realPath;
-	int previousVertex = srcVertex;
-	int curVertex;
+	size_t previousVertex = srcVertex;
+	size_t curVertex;
 	for (size_t i = 0; i < reversedPath.size(); ++i) {
 		//std::cout << "making final result\n";
 		curVertex = reversedPath[reversedPath.size() - 1 - i];
@@ -1079,9 +1087,10 @@ namespace lib_calvin_graph { // open for definitions
 // return whether the relaxation took place or not
 template <typename E>
 bool relax (Arc<E> const &lhs1, Arc<E> const &lhs2, Arc<E> &rhs) {
-  if (lhs1.predecessor_ < 0 || lhs2.predecessor_ < 0)
+  if (lhs1.isUnreachable() || lhs2.isUnreachable()) {
     return false;
-  if (rhs.predecessor_ < 0 || rhs.weight_ > lhs1.weight_ + lhs2.weight_) {
+	}
+  if (rhs.isUnreachable() || rhs.weight_ > lhs1.weight_ + lhs2.weight_) {
     rhs.predecessor_ = lhs2.predecessor_;
     rhs.weight_ = lhs1.weight_ + lhs2.weight_;
     return true;
@@ -1090,15 +1099,15 @@ bool relax (Arc<E> const &lhs1, Arc<E> const &lhs2, Arc<E> &rhs) {
 }
 
 template <typename E, typename W, typename ExtractWeight>
-void makeArrayData (map<int, map<int, E>> const &dynamicData, 
-    vector<vector<pair<int, W>>> &arrayData) {
+void makeArrayData (map<size_t, map<size_t, E>> const &dynamicData, 
+    vector<vector<pair<size_t, W>>> &arrayData) {
   size_t numV = dynamicData.size();
   arrayData.clear();
   arrayData.resize(numV);
 	size_t i = 0;
   for (auto iter = dynamicData.begin(); iter != dynamicData.end(); iter++, i++) {
-    map<int, E> const &original = iter->second;
-    vector<pair<int, W>> &copy = arrayData[i];
+    map<size_t, E> const &original = iter->second;
+    vector<pair<size_t, W>> &copy = arrayData[i];
 		copy.reserve(original.size());
     for (auto iter = original.begin(); iter != original.end(); ++iter) {
       copy.push_back(std::make_pair(iter->first, ExtractWeight()(iter->second)));
@@ -1107,34 +1116,34 @@ void makeArrayData (map<int, map<int, E>> const &dynamicData,
 }
 
 template <typename E>
-void makeSymArrayData (vector<map<int, E>> const &dynamicData, 
-    vector<vector<pair<int, E>>> &arrayData) {
+void makeSymArrayData (vector<map<size_t, E>> const &dynamicData, 
+    vector<vector<pair<size_t, E>>> &arrayData) {
   // dynamicData has edges only for src < dest now.  
-  int numV = dynamicData.size();
+  size_t numV = dynamicData.size();
   arrayData.clear();
   arrayData.resize(numV);
-  for (int i = 0; i < numV; ++i) { // for each source vertex
-    map<int, E> const &original = dynamicData[i];
-    typename map<int, E>::const_iterator iter;
+  for (size_t i = 0; i < numV; ++i) { // for each source vertex
+    map<size_t, E> const &original = dynamicData[i];
+    typename map<size_t, E>::const_iterator iter;
     for (iter = original.begin(); iter != original.end(); ++iter) {
-      int src = i;
-      int dest = iter->first;
+      size_t src = i;
+      size_t dest = iter->first;
       E const &edge = iter->second;
-      arrayData[src].push_back(pair<int, E>(dest, edge));
-      arrayData[dest].push_back(pair<int, E>(src, edge));
+      arrayData[src].push_back(pair<size_t, E>(dest, edge));
+      arrayData[dest].push_back(pair<size_t, E>(src, edge));
     }
   }
 }
 
 template <typename W>
-void makeMatrixData (vector<vector<pair<int, W>>> const &arrayData, 
+void makeMatrixData (vector<vector<pair<size_t, W>>> const &arrayData, 
     matrix<Arc<W>> &matrixData) {    
-  int numV = static_cast<int>(arrayData.size());
-  // remake matrix (initialization done here: predecessor_ = -1)
+  size_t numV = static_cast<size_t>(arrayData.size());
+  // remake matrix (initialization done here: predecessor_ = UNREACHABLE_VERTEX)
   matrixData.reset(numV);
-  for (int i = 0; i < numV; ++i) { // for each source vertex
-    vector<pair<int, W>> const &original = arrayData[i];
-    typename vector<pair<int, W>>::const_iterator iter;
+  for (size_t i = 0; i < numV; ++i) { // for each source vertex
+    vector<pair<size_t, W>> const &original = arrayData[i];
+    typename vector<pair<size_t, W>>::const_iterator iter;
     for (iter = original.begin(); iter != original.end(); ++iter) {
       // setval return a reference to matrix element.
       matrixData.setval(i, iter->first)= Arc<W> (i, iter->second);
@@ -1146,15 +1155,15 @@ void makeMatrixData (vector<vector<pair<int, W>>> const &arrayData,
 }
 
 template <typename E>
-void ripEdge (vector<vector<pair<int, E>>> const &arrayData,
-    vector<vector<int>> &unweighted) {  
-  int numV = static_cast<int>(arrayData.size());
+void ripEdge (vector<vector<pair<size_t, E>>> const &arrayData,
+    vector<vector<size_t>> &unweighted) {  
+  size_t numV = static_cast<size_t>(arrayData.size());
   unweighted.clear();
   unweighted.resize(numV);
-  for (int i = 0; i < numV; ++i) { // for each source vertex
-    vector<pair<int, E>> const &original = arrayData[i];
-    vector<int> &copy = unweighted[i];
-    typename vector<pair<int, E>>::const_iterator iter;
+  for (size_t i = 0; i < numV; ++i) { // for each source vertex
+    vector<pair<size_t, E>> const &original = arrayData[i];
+    vector<size_t> &copy = unweighted[i];
+    typename vector<pair<size_t, E>>::const_iterator iter;
     for (iter = original.begin(); iter != original.end(); ++iter) {
       copy.push_back(iter->first);
     }
@@ -1162,16 +1171,16 @@ void ripEdge (vector<vector<pair<int, E>>> const &arrayData,
 }
 
 template <typename E>
-void transpose (vector<vector<pair<int, E>>> const &source,
-    vector<vector<pair<int, E>>> &target) {
-  int numV = source.size();
+void transpose (vector<vector<pair<size_t, E>>> const &source,
+    vector<vector<pair<size_t, E>>> &target) {
+  size_t numV = source.size();
   target.clear();
   target.resize(numV);
-  for (int i = 0; i < numV; ++i) { // for each source vertex
-    vector<pair<int, E>> const &original = source[i];
-    typename vector<pair<int, E>>::const_iterator iter;
+  for (size_t i = 0; i < numV; ++i) { // for each source vertex
+    vector<pair<size_t, E>> const &original = source[i];
+    typename vector<pair<size_t, E>>::const_iterator iter;
     for (iter = original.begin(); iter != original.end(); ++iter) {
-      target[iter->first].push_back (pair<int, E> (i, iter->second));
+      target[iter->first].push_back (pair<size_t, E> (i, iter->second));
     }
   }
 }
@@ -1183,27 +1192,27 @@ using lib_calvin_adt::IntPq;
 
 // arcs in result: stores total weight of paths
 template <typename W>
-void dijkstra(vector<vector<pair<int, W>>> const &graph, int source, 
+void dijkstra(vector<vector<pair<size_t, W>>> const &graph, size_t source, 
     vector<Arc<W>> &result) {  
-  int numV = static_cast<int>(graph.size()); 
+  size_t numV = static_cast<size_t>(graph.size()); 
   IntPq<W> pq(numV);
   vector<bool> isFinished(numV); // mark finished vertices
   result.clear();
-  result.resize(numV, Arc<W>()); // predecessor_ = -1 for default
+  result.resize(numV, Arc<W>()); // predecessor_ = UNREACHABLE_VERTEX for default
   result[source].predecessor_ = source; // my convention
   // push source vertex with priority 0.
   W zero = W(); // W() must represent 0 value (true for built-in type)
   pq.insert (source, zero); 
   while (pq.size() != 0) {
     // record current top element
-    pair<int, W> const &topElem = pq.pop();
-    int top = topElem.first;
+    pair<size_t, W> const &topElem = pq.pop();
+    size_t top = topElem.first;
     isFinished[top] = true; // mark for finished !!
     W weight = topElem.second;
     result[top].weight_ = weight;
     // relaxation
 		for (size_t i = 0; i < graph[top].size(); ++i) {
-      pair<int, W> const &iter = graph[top][i];
+      pair<size_t, W> const &iter = graph[top][i];
       if (isFinished[iter.first]) // do nothing if already finished
         continue;
       if (pq.insert (iter.first, iter.second + weight) == true) {
@@ -1214,22 +1223,22 @@ void dijkstra(vector<vector<pair<int, W>>> const &graph, int source,
 }
 
 template <typename W>
-void dijkstra2(vector<vector<pair<int, W>>> const &graph, int source, 
+void dijkstra2(vector<vector<pair<size_t, W>>> const &graph, size_t source, 
 							 vector<vector<GeneralArc<W>>> &result, size_t num) {  
 	size_t const numPathsToFind = 20;
-  int numV = static_cast<int>(graph.size()); 
+  size_t numV = static_cast<size_t>(graph.size()); 
 	typedef Node<W> Node;
 	Node emptyNode(num);
   IntPq<Node> pq(numV, emptyNode);
   result.clear();
   result.resize(numV);
-	vector<int> numFinishedPath(numV, 0);
+	vector<size_t> numFinishedPath(numV, 0);
 	Node zero = emptyNode;
 	zero.relax(GeneralArc<W>(source, 0, 0)); // 0'th closest path for itself
   pq.insert(source, zero); 
   while (pq.size() != 0) {
-    pair<int, Node> const &topElem = pq.pop();
-    int curVertex = topElem.first;  
+    pair<size_t, Node> const &topElem = pq.pop();
+    size_t curVertex = topElem.first;  
     Node curNode = topElem.second;
 		W const & curWeight = curNode.getGeneralArc().weight_;
 		result[curVertex].push_back(curNode.getGeneralArc());
@@ -1240,19 +1249,19 @@ void dijkstra2(vector<vector<pair<int, W>>> const &graph, int source,
 			exit(0);
 		}
 		for (size_t i = 0; i < graph[curVertex].size(); ++i) {
-      pair<int, W> const &iter = graph[curVertex][i];
-			int targetVertext = iter.first;
+      pair<size_t, W> const &iter = graph[curVertex][i];
+			size_t targetVertex = iter.first;
 			W const & targetWeight = iter.second;
-			if (numFinishedPath[targetVertext] == numPathsToFind) { // this vertex is finished
+			if (numFinishedPath[targetVertex] == numPathsToFind) { // this vertex is finished
 				continue;
 			}
 			Node targetNode = emptyNode;
-			if (pq.hasKey(targetVertext)) {
-				targetNode = pq.getPriority(targetVertext);
+			if (pq.hasKey(targetVertex)) {
+				targetNode = pq.getPriority(targetVertex);
 			}
-			GeneralArc<W> arc(curVertex, curWeight + targetWeight, static_cast<int>(curNode.getNumPathFoundUntilNow()));
+			GeneralArc<W> arc(curVertex, curWeight + targetWeight, static_cast<size_t>(curNode.getNumPathFoundUntilNow()));
 			targetNode.relax(arc);
-      if (pq.insert(targetVertext, targetNode) == true) {
+      if (pq.insert(targetVertex, targetNode) == true) {
       } else {
 				std::cout << "dijkstra2 error: relaxing error\n";
 				exit(0);
@@ -1267,9 +1276,9 @@ void dijkstra2(vector<vector<pair<int, W>>> const &graph, int source,
 }
   
 template <typename W>
-void vellmanFord(vector<vector<pair<int, W>>> const &graph, 
-    int source, vector<Arc<W>> &result) {
-  int numV = static_cast<int>(graph.size());
+void vellmanFord(vector<vector<pair<size_t, W>>> const &graph, 
+    size_t source, vector<Arc<W>> &result) {
+  size_t numV = static_cast<size_t>(graph.size());
   result.clear();
   result.resize (numV, Arc<W>());
   result[source].predecessor_ = source; // my convention
@@ -1277,12 +1286,12 @@ void vellmanFord(vector<vector<pair<int, W>>> const &graph,
   result[source].weight_ = zero;
   // longest path can take numV -1 vertices
 	bool finished = false;
-  for (int i = 0; i < numV - 1; ++i) {
+  for (size_t i = 0; i < numV - 1; ++i) {
 		finished = true;
     // relaxation for every edges  
-    for (int src = 0; src < numV; src++) {
+    for (size_t src = 0; src < numV; src++) {
 			for (size_t j = 0; j < graph[src].size(); j++) {
-        pair<int, W> const &iter = graph[src][j];
+        pair<size_t, W> const &iter = graph[src][j];
         Arc<W> edge (src, iter.second);
         if (relax(result[src], edge, result[iter.first])) {
           finished = false;
@@ -1296,9 +1305,9 @@ void vellmanFord(vector<vector<pair<int, W>>> const &graph,
   }
   // negative weighted cycle detection
   vector<Arc<W>> temp = result;
-  for (int src = 0; src < numV; src++) {
-    for (int i = 0; i < static_cast<int>(graph[src].size()); ++i) {
-      pair<int, W> const &iter = graph[src][i];
+  for (size_t src = 0; src < numV; src++) {
+    for (size_t i = 0; i < static_cast<size_t>(graph[src].size()); ++i) {
+      pair<size_t, W> const &iter = graph[src][i];
       Arc<W> edge (src, iter.second);
       relax(result[src], edge, result[iter.first]);
     }
@@ -1319,13 +1328,13 @@ void vellmanFord(vector<vector<pair<int, W>>> const &graph,
 template <typename W>
 void matrixApsp (matrix<Arc<W>> const &graph, 
     matrix<Arc<W>> &result) {
-  int numV = graph.height();
+  size_t numV = graph.height();
   result.reset(graph); // optimal solution of path length 1 (base case)
   // get ceiling of lg(numV)
-  int lg_V = lib_calvin_util::log<int> (numV - 1);
+  size_t lg_V = lib_calvin_util::log<size_t> (numV - 1);
   cout << "matrixApsp iteration: " << lg_V << endl;
   // matrix multiplication lg_V times
-  for (int i = 0; i < lg_V + 1; ++i) {
+  for (size_t i = 0; i < lg_V + 1; ++i) {
     matrix<Arc<W>> temp = result;
     result = result + result * result;
     //lib_calvin_matrix::blockedMultiAdd(result, result, result);
@@ -1338,7 +1347,7 @@ void matrixApsp (matrix<Arc<W>> const &graph,
   }
   
   // negative weighted cycle detection
-  for (int i = 0 ; i < numV; ++i) {
+  for (size_t i = 0 ; i < numV; ++i) {
     Arc<W> temp = result.getval(i, i);
     if (temp.weight_ < W()) {
       cout << "matrixApsp negative weighted cycle detected!!\n";
@@ -1357,11 +1366,11 @@ void matrixApsp (matrix<Arc<W>> const &graph,
 template <typename W>
 void floydWarshall (matrix<Arc<W>> const &graph, 
     matrix<Arc<W>> &result) {  
-  int numV = graph.height();
+  size_t numV = graph.height();
   result.reset(graph); // copy
-  for (int m = 0; m < numV; m++) { // m is the vertex that is being added
-    for (int i = 0; i < numV; ++i) {
-      for (int j = 0; j < numV; j++) {
+  for (size_t m = 0; m < numV; m++) { // m is the vertex that is being added
+    for (size_t i = 0; i < numV; ++i) {
+      for (size_t j = 0; j < numV; j++) {
         result.setval(i, j) += result.getval(i, m) * result.getval(m, j); 
       }
     }
@@ -1373,28 +1382,28 @@ void floydWarshall (matrix<Arc<W>> const &graph,
 // value of source vertex added, value of destination vertest subtracted.
 // So that the transformed edges are all positive weighted.
 template <typename W>
-void johnson (vector<vector<pair<int, W>>> const &graph, 
+void johnson (vector<vector<pair<size_t, W>>> const &graph, 
     matrix<Arc<W>> &result) {
-  int numV = static_cast<int>(graph.size());
+  size_t numV = static_cast<size_t>(graph.size());
   W zero = W();
   result.reset(numV);
   // Use vellmanFord to calculate offsets 
   vector<W> offsets(numV); // offset for each vertex
-  vector<vector<pair<int, W>>> tempGraph = graph;
-  tempGraph.push_back(vector<pair<int, W>> (numV)); // artificial vertex
-  for (int i = 0; i < numV; ++i) { 
-    tempGraph[numV][i] = pair<int, W> (i, zero); 
+  vector<vector<pair<size_t, W>>> tempGraph = graph;
+  tempGraph.push_back(vector<pair<size_t, W>> (numV)); // artificial vertex
+  for (size_t i = 0; i < numV; ++i) { 
+    tempGraph[numV][i] = pair<size_t, W> (i, zero); 
   }
   vector<Arc<W>> tempArcs;
   vellmanFord (tempGraph, numV, tempArcs);
-  for (int i = 0; i < numV; ++i) {
+  for (size_t i = 0; i < numV; ++i) {
     offsets[i] = tempArcs[i].weight_;
   }
   // Use offsets to adjust graph to a positive weighted one 
-  vector<vector<pair<int, W>>> &positiveGraph = tempGraph;
+  vector<vector<pair<size_t, W>>> &positiveGraph = tempGraph;
   positiveGraph.pop_back(); // remove artificial vertex
-  for (int i = 0; i < numV; ++i) {
-    typename vector<pair<int, W>>::iterator iter;
+  for (size_t i = 0; i < numV; ++i) {
+    typename vector<pair<size_t, W>>::iterator iter;
     for (iter = positiveGraph[i].begin(); 
         iter != positiveGraph[i].end(); ++iter) {
       // + source offset, - dest offset to edges
@@ -1403,10 +1412,10 @@ void johnson (vector<vector<pair<int, W>>> const &graph,
   }
   // Use dijkstra on transformed graph for every source vertex 
   vector<Arc<W>> SSSP_result; // SSSP result
-  for (int i = 0; i < numV; ++i) {
+  for (size_t i = 0; i < numV; ++i) {
     dijkstra (positiveGraph, i, SSSP_result);
-    // copy SSSP result into matrix row
-    for (int j = 0; j < numV; j++) {
+    // copy SSSP result size_to matrix row
+    for (size_t j = 0; j < numV; j++) {
       result.setval(i, j) = SSSP_result[j];
       // - source offset, + dest offset to edges
       result.setval(i, j).weight_ -= (offsets[i] - offsets[j]);
@@ -1415,22 +1424,22 @@ void johnson (vector<vector<pair<int, W>>> const &graph,
 }
 
 template <typename W>
-bool shortestPathCheck (vector<vector<pair<int, W>>> const &graph, 
-    int source, vector<Arc<W>> &solution) {  
-  int numV = static_cast<int>(graph.size());
-  if (solution[source].predecessor_ < 0 || solution[source].weight_ != W()) {
+bool shortestPathCheck (vector<vector<pair<size_t, W>>> const &graph, 
+    size_t source, vector<Arc<W>> &solution) {  
+  size_t numV = static_cast<size_t>(graph.size());
+  if (solution[source].isUnreachable() || solution[source].weight_ != W()) {
 		cout << "input error\n";
     return false;
   }
-  typename vector<pair<int, W>>::const_iterator iter;
-  for (int i = 0; i < numV; ++i) { // i: source vertex
+  typename vector<pair<size_t, W>>::const_iterator iter;
+  for (size_t i = 0; i < numV; ++i) { // i: source vertex
     for (iter = graph[i].begin(); iter != graph[i].end(); ++iter) {
-      int src = i;
-      int dest = iter->first;
+      size_t src = i;
+      size_t dest = iter->first;
       W weight = iter->second;
       if (solution[src].predecessor_ != -1 && 
           (solution[src].weight_ + weight < solution[dest].weight_
-           || solution[dest].predecessor_ == -1)) {
+           || solution[dest].predecessor_ == UNREACHABLE_VERTEX)) {
         cout << "source weight: " << solution[src].weight_ << " ";
         cout << "edge weight: " << weight << " ";
         cout << "dest weight: " << solution[dest].weight_ << "\n";
@@ -1444,18 +1453,18 @@ bool shortestPathCheck (vector<vector<pair<int, W>>> const &graph,
 // MST algorithms assume that graph is connected and un-directed
 // Result is represented as the set of included edges
 template <typename W>
-void kruskal(vector<vector<pair<int, W>>> const &graph,
-    set<pair<int, int>> &result) {  
-  int numV = static_cast<int>(graph.size());
-  int numE, curE; // curE: current num of edges in temporary MST
+void kruskal(vector<vector<pair<size_t, W>>> const &graph,
+    set<pair<size_t, size_t>> &result) {  
+  size_t numV = static_cast<size_t>(graph.size());
+  size_t numE, curE; // curE: current num of edges in temporary MST
   W total = W(); // for debugging
   vector<WeightedEdge<W>> edges;
 	lib_calvin_adt::DisjointSet sets(numV);
   result.clear();
-  // Insert all edges into an array
-	for (int src = 0; src < numV; src++) {
-		for (int i = 0; i < static_cast<int>(graph[src].size()); ++i) {
-      pair<int, W> const &iter = graph[src][i];
+  // Insert all edges size_to an array
+	for (size_t src = 0; src < numV; src++) {
+		for (size_t i = 0; i < static_cast<size_t>(graph[src].size()); ++i) {
+      pair<size_t, W> const &iter = graph[src][i];
       // Take only half of the entire vertices.
       if (src < iter.first) {
         WeightedEdge<W> temp(src, iter.first, iter.second);
@@ -1463,16 +1472,16 @@ void kruskal(vector<vector<pair<int, W>>> const &graph,
       }
     }
   }
-  numE = static_cast<int>(edges.size());
+  numE = static_cast<size_t>(edges.size());
   curE = 0;
   // Sorting
 	lib_calvin::introSort(edges.begin(), edges.end());
   // Growing MST
-  for (int i = 0; i < numE; ++i) {
+  for (size_t i = 0; i < numE; ++i) {
     // Insert edge if it connects two sets
     if (!sets.isSameSet(edges[i].src_, edges[i].dest_)) {
       sets.unite(edges[i].src_, edges[i].dest_);
-      result.insert(pair<int, int>(edges[i].src_, edges[i].dest_));
+      result.insert(pair<size_t, size_t>(edges[i].src_, edges[i].dest_));
       total += edges[i].weight_;
       ++curE;
       if (curE == numV - 1) // MST is completed
@@ -1480,7 +1489,7 @@ void kruskal(vector<vector<pair<int, W>>> const &graph,
     }
   }
   cout << "kruskal: total weight is " << total << endl;
-  for (int i = 0; i < numV - 1; ++i) {
+  for (size_t i = 0; i < numV - 1; ++i) {
 		if (sets.isSameSet(i, i + 1) == false) {
       cout << "kruskal fatal error!! (not connected)\n";
 			exit(0);
@@ -1489,9 +1498,9 @@ void kruskal(vector<vector<pair<int, W>>> const &graph,
 }
     
 template <typename W>
-void prim(vector<vector<pair<int, W>>>const &graph, set<pair<int, int>> &result) {  
-  int numV = static_cast<int>(graph.size()); 
-  vector<int> predecessor (numV, -1); // to save predecessor vertices
+void prim(vector<vector<pair<size_t, W>>>const &graph, set<pair<size_t, size_t>> &result) {  
+  size_t numV = static_cast<size_t>(graph.size()); 
+  vector<size_t> predecessor (numV, -1); // to save predecessor vertices
 	std::cout << "prim size = " << numV << "\n";
   IntPq<W> pq(numV);
   vector<bool> connected(numV); // mark connected vertices
@@ -1504,21 +1513,21 @@ void prim(vector<vector<pair<int, W>>>const &graph, set<pair<int, int>> &result)
   predecessor[0] = 0; // my convention
   while (pq.size() != 0) {
     // record current top element
-    pair<int, W> const &topElem = pq.pop();
-    int top = topElem.first;
+    pair<size_t, W> const &topElem = pq.pop();
+    size_t top = topElem.first;
     connected[top] = true;
     // insert in order
     if (predecessor[top] < top)
-      result.insert(pair<int, int>(predecessor[top], top));
+      result.insert(pair<size_t, size_t>(predecessor[top], top));
     else if (predecessor[top] > top)
-      result.insert(pair<int, int>(top, predecessor[top]));
+      result.insert(pair<size_t, size_t>(top, predecessor[top]));
     else { // do nothing for the starting vertex
     }
     total += topElem.second;
     // relaxation
-		int src = top; // rename
-		for (int i = 0; i < static_cast<int>(graph[src].size()); ++i) {
-      pair<int, W> const &iter = graph[src][i];
+		size_t src = top; // rename
+		for (size_t i = 0; i < static_cast<size_t>(graph[src].size()); ++i) {
+      pair<size_t, W> const &iter = graph[src][i];
       if (connected[iter.first]) // do nothing for already connected one
         continue;
       if (pq.insert (iter.first, iter.second) == true) {

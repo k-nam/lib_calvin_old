@@ -15,38 +15,38 @@ using std::endl;
 // For graph algorithms (priority queue)
 using namespace lib_calvin_adt;
 
-void lib_calvin_graph::dfs(vector<vector<int>> const &graph, 
-    vector<int> const &visitOrder, vector<int> &returnOrder) {
+void lib_calvin_graph::dfs(vector<vector<size_t>> const &graph, 
+    vector<size_t> const &visitOrder, vector<size_t> &returnOrder) {
    dfs2(graph, visitOrder, returnOrder);
 }
 
 // dfs1 is useless. I implemented IntStack for this algorithm, but it is a waste of time.
 // only left for hindsight
-void lib_calvin_graph::dfs1(vector<vector<int>> const &graph, 
-															vector<int> const &visitOrder, vector<int> &returnOrder) {
-  int numV = static_cast<int>(graph.size()); 
+void lib_calvin_graph::dfs1(vector<vector<size_t>> const &graph, 
+															vector<size_t> const &visitOrder, vector<size_t> &returnOrder) {
+  size_t numV = graph.size(); 
   IntStack stack(numV);
   // stores whether the vertex has been visited or not
   vector<bool> isVisited(numV, false); 
   // push all vertices in reverse order (this is a stack)
-  vector<int>::const_reverse_iterator iter;
+  vector<size_t>::const_reverse_iterator iter;
   for (iter = visitOrder.rbegin(); iter != visitOrder.rend(); ++iter) {
     stack.push (*iter);
   }
-  // If I cleared returnOrder before this point, it is a bug (consider when 
+  // If I cleared returnOrder before this posize_t, it is a bug (consider when 
   // ..visitOrder and returnOrder are the same object!!)
   returnOrder.clear();
   while (stack.size() != 0) {
-    int top = stack.peek(); 
+    size_t top = stack.peek(); 
     if (isVisited[top] == true) { // already visited, need pop
       stack.pop();
       returnOrder.push_back(top); // save return record
     } else { // visiting now
       isVisited[top] = true;
-			int src = top;
+			size_t src = top;
       // push every unvisited adjacent vertices
-			for (size_t i = 0; i < graph[src].size(); ++i) {
-        int dest = graph[src][i];
+			for (intmax_t i = graph[src].size() - 1; i >= 0 ; i--) {
+        size_t dest = graph[src][static_cast<size_t>(i)];
 				if (isVisited[dest]) { // do nothing for already visited vertex
           continue;
 				}
@@ -59,18 +59,15 @@ void lib_calvin_graph::dfs1(vector<vector<int>> const &graph,
 }
 
 // Using simple stack method; much faster than dfs using priority queue
-void lib_calvin_graph::dfs2(vector<vector<int>> const &graph, 
-															vector<int> const &visitOrder, vector<int> &returnOrder) {
-  int numV = static_cast<int>(graph.size());
-  int index   = 0; // indicates a point of visitOrder to visit
-  int curVertex; // current operation vertex
-  Stack<int> stack;
-  vector<int> edgeSelector(numV, 0); // Edge to choose next (for each vertex)
-  for (int src = 0; src < numV; src++) {
-    edgeSelector[src] = static_cast<int>(graph[src].size()) - 1;
-  }
+void lib_calvin_graph::dfs2(vector<vector<size_t>> const &graph, 
+															vector<size_t> const &visitOrder, vector<size_t> &returnOrder) {
+  size_t numV = static_cast<size_t>(graph.size());
+  size_t index   = 0; // indicates a posize_t of visitOrder to visit
+  size_t curVertex; // current operation vertex
+  Stack<size_t> stack;
+  vector<size_t> edgeSelector(numV, 0); // Edge to choose next (for each vertex)
   vector<bool> isVisited(numV, false);
-  vector<int> visitOrderCopy(visitOrder); // Check for aliasing
+  vector<size_t> visitOrderCopy(visitOrder); // Check for aliasing
   returnOrder.clear(); // Now safe to clear
    
   while (true) {
@@ -83,11 +80,11 @@ void lib_calvin_graph::dfs2(vector<vector<int>> const &graph,
     curVertex = visitOrder[index]; // initialize
     while (true) { // execute dfs starting from given vertex
       isVisited[curVertex] = true; // mark as visited
-      while (edgeSelector[curVertex] >= 0 &&
+      while (edgeSelector[curVertex] < graph[curVertex].size() &&
           isVisited[graph[curVertex][edgeSelector[curVertex]]] == true) {
-        edgeSelector[curVertex]--;
+        edgeSelector[curVertex]++;
       }
-      if (edgeSelector[curVertex] < 0) { // this vertex is to return
+      if (edgeSelector[curVertex] == graph[curVertex].size()) { // this vertex is to return
         returnOrder.push_back(curVertex);
         if (stack.size() == 0) {
           break; // done for this source vertex
@@ -104,7 +101,7 @@ void lib_calvin_graph::dfs2(vector<vector<int>> const &graph,
   }
 }
 
-void lib_calvin_graph::bfs(vector<vector<int>> const &graph, int source, vector<Arc<int>> &result) {
+void lib_calvin_graph::bfs(vector<vector<size_t>> const &graph, size_t source, vector<Arc<size_t>> &result) {
   result.clear();
   result.resize(graph.size());
 	for (size_t i = 0; i < graph.size(); ++i) {
@@ -114,7 +111,7 @@ void lib_calvin_graph::bfs(vector<vector<int>> const &graph, int source, vector<
   result[source].predecessor_ = source; 
   result[source].weight_ = 0;
   // Queue for bfs
-  deque<int> queue(graph.size());
+  deque<size_t> queue(graph.size());
   // black (undiscovered), grey (frontier), white (finished)
 	// Only black vertices are not yet visited.
   vector<bool> isVisited(graph.size(), false);
@@ -122,11 +119,11 @@ void lib_calvin_graph::bfs(vector<vector<int>> const &graph, int source, vector<
   queue.push_back(source);
   isVisited[source] = true;
   while (!queue.empty()) {
-    int front = queue.front();
-    int distance = result[front].weight_;
-		int src = front; // rename
+    size_t front = queue.front();
+    size_t distance = result[front].weight_;
+		size_t src = front; // rename
     for (size_t i = 0; i < graph[src].size(); ++i) {
-			int target = graph[src][i];
+			size_t target = graph[src][i];
       if (isVisited[target] == false) { // if newly discovered, relax it
         isVisited[target] = true;
         result[target].predecessor_ = front;
