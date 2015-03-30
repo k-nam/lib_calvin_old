@@ -30,12 +30,12 @@ void lib_calvin_container::setTest() {
 	setRvalueTest<BPlusTree<HeavyObjectWithMessage>>("BPlusTree / HeavyObject");
 
 	int const testSize = 1000;
-	//setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
-	//setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
+	setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
+	setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
 	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
 	setFunctionTest<BTree<HeavyObject>>(testSize, "lib_calvin_container::BTree");
 	setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
-	//setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
+	setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
 	/* not completed */
 	//setFunctionTest(PtrSet<int>(), testSize, "lib_calvin_container::PtrSet");
 	/* Hash table cannot iterate in order */
@@ -51,19 +51,18 @@ void lib_calvin_container::setTest() {
 	int const mediumSize = 10000;
 	int const largeSize = 1000000;	
 	setPerformanceTest<std::set<int>>(largeSize, "std::set / int");
-	//setPerformanceTest<boost::container::set<int>>(largeSize, "boost::set / int");
+	setPerformanceTest<boost::container::set<int>>(largeSize, "boost::set / int");
 	//setPerformanceTest<BinTree<int>>(largeSize, "RbTree / int");
-	//setPerformanceTest<RbTree<int>>(largeSize, "RbTree / int");
+	setPerformanceTest<RbTree<int>>(largeSize, "RbTree / int");
 	//setPerformanceTest<BTree<int>>(largeSize, "BTree / int");
 	setPerformanceTest<BPlusTree<int>>(largeSize, "BPlusTree / int");
-	
 	//setPerformanceTest<OrderedArray<int>>(largeSize, "OrderedArray / int");
 	//setPerformanceTest<std::unordered_set<int>>(largeSize, "std::unordered_set / int");
-  //setPerformanceTest<boost::unordered_set<int>>(largeSize, "boost::unordered_set / int");
+  setPerformanceTest<boost::unordered_set<int>>(largeSize, "boost::unordered_set / int");
 	setPerformanceTest<HashTable<int>>(largeSize, "HashTable / int");
 
 	setPerformanceTest<std::set<LightObject>>(largeSize, "std::set / LightObject");
-	//setPerformanceTest<boost::container::set<LightObject>>(largeSize, "boost::set / LightObject");
+	setPerformanceTest<boost::container::set<LightObject>>(largeSize, "boost::set / LightObject");
 	setPerformanceTest<RbTree<LightObject>>(largeSize, "RbTree / LightObject");
 	//setPerformanceTest<BTree<LightObject>>(largeSize, "BTree / LightObject");
 	setPerformanceTest<BPlusTree<LightObject>>(largeSize, "BPlusTree / LightObject");
@@ -77,7 +76,7 @@ void lib_calvin_container::setTest() {
 	//setPerformanceTest<OrderedArray<LightObject>>(mediumSize, "OrderedArray / HeavyObject");
 	//setPerformanceTest<HashTable<HeavyObject, GenericHash<HeavyObject>>>(mediumSize, "HashTable / HeavyObject");
 	//setPerformanceTest<boost::unordered_set<HeavyObject, GenericHash<HeavyObject>>>(
-	//mediumSize, "boost::unordered_set / HeavyObject");
+	//	mediumSize, "boost::unordered_set / HeavyObject");
 	//setPerformanceTest<std::unordered_set<HeavyObject>>(mediumSize, "std::unordered_set / HeavyObject");
 	//setPerformanceTest<PtrSet<HeavyObject>>(mediumSize, "PtrSet / HeavyObject");
 	
@@ -87,6 +86,8 @@ void lib_calvin_container::setTest() {
 	//setIntegratedSpeedTest<BTree<HeavyObject>>(smallSize, "BTree");
 	setIntegratedSpeedTest<BPlusTree<HeavyObject>>(smallSize, "BPlusTree");
 	//setIntegratedSpeedTest<OrderedArray<HeavyObject>>(smallSize, "OrderedArray");
+	//setIntegratedSpeedTest<boost::unordered_set<int>>(smallSize, "boost::unordered_set");
+	//setIntegratedSpeedTest<HashTable<int>>(smallSize, "boost::unordered_set");
 
 	//setMemoryTest<std::set<std::set<HeavyObject>>>("std::set");
 	//setMemoryTest<BinTree<BinTree<HeavyObject>>>("BinTree");
@@ -177,7 +178,7 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 		}
 	}
 
-	if (title != "lib_calvin_container::HashTable") {
+	if (title != "lib_calvin_container::HashTable") { // hash table does not iterate in order
 		size_t index = 0;
 		cout << "iterating!\n";
 		auto stdIter = stdSet.begin();
@@ -197,18 +198,17 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 			++stdIter;
 			index++;
 		}
-	}
-	/*
-	cout << "reverse iterating!\n";
-	auto stdReverseIter = stdSet.rbegin();
-	for (auto implReverseIter = impl.rbegin(); implReverseIter != impl.rend(); ++implReverseIter) {
-		if (*implReverseIter != *stdReverseIter) {
-			cout << "reverse iterating error\n";
-			exit(0);
+		cout << "reverse iterating!\n";
+		auto stdReverseIter = stdSet.rbegin();
+		for (auto implReverseIter = impl.rbegin(); implReverseIter != impl.rend(); ++implReverseIter) {
+			if (*implReverseIter != *stdReverseIter) {
+				cout << "reverse iterating error\n";
+				exit(0);
+			}
+			++stdReverseIter;
 		}
-		++stdReverseIter;
 	}
-	*/
+		
 	cout << "copying!\n"; 
 	Impl copy;
 	copy = impl;
@@ -402,7 +402,7 @@ void lib_calvin_container::setPerformanceTest(int n, std::string title) {
 	setPerformanceTest_(testVector2, n, "<Sorted data test>");
 	*/
 	/*
-	// Test case 2: sorted sequence. Not a good standard for performance test because of temporal locality. 
+	// Test case 2: reverse sorted sequence. Not a good standard for performance test because of temporal locality. 
 	for (int i = 0; i < n; ++i) {
 		testVector2[i] = T(-i);
 	}	

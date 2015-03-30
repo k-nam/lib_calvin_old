@@ -7,6 +7,9 @@
 #include "bin_tree.h"
 #include "rb_tree.h"
 #include "hash_table.h"
+#include "boost/container/map.hpp"
+#include "boost/unordered_map.hpp"
+#include <unordered_map>
 
 namespace lib_calvin_container
 {
@@ -23,10 +26,11 @@ namespace lib_calvin
 	// We use another class for test wrapping purpose: SetAdaptor, as 
 	// insert method's return type contains iterator, which can not be included
 	// in the base class. 
+
 template <typename K, typename V, typename Comp = std::less<K>,
 	typename SetImpl = lib_calvin_container::BPlusTree<std::pair<K, V>, K, Comp, 
 											lib_calvin_container::TakeFirstOfPair<K, V>>>
-class map {
+class map2 {
 public:
 	typedef K key_type;
 	typedef typename SetImpl::value_type value_type;
@@ -39,12 +43,12 @@ public:
 	typedef typename SetImpl::reverse_iterator reverse_iterator;
 	typedef typename SetImpl::const_reverse_iterator const_reverse_iterator;
 
-	map<K, V, Comp, SetImpl>(): setImpl_() { }
-	map(map<K, V, Comp, SetImpl> const &rhs): setImpl_(rhs.setImpl_) { }
-	map(map<K, V, Comp, SetImpl> &&rhs): setImpl_(std::move(rhs.setImpl_)) { }
-	map<K, V, Comp, SetImpl> & operator= (map<K, V, Comp, SetImpl> const &rhs) 
+	map2<K, V, Comp, SetImpl>(): setImpl_() { }
+	map2(map2<K, V, Comp, SetImpl> const &rhs): setImpl_(rhs.setImpl_) { }
+	map2(map2<K, V, Comp, SetImpl> &&rhs): setImpl_(std::move(rhs.setImpl_)) { }
+	map2<K, V, Comp, SetImpl> & operator= (map2<K, V, Comp, SetImpl> const &rhs) 
 		{ setImpl_ = rhs.setImpl_; return *this; }
-	map<K, V, Comp, SetImpl> & operator= (map<K, V, Comp, SetImpl> &&rhs) 
+	map2<K, V, Comp, SetImpl> & operator= (map2<K, V, Comp, SetImpl> &&rhs) 
 		{ setImpl_ = std::move(rhs.setImpl_); return *this; }
 
 	size_t size() const { return setImpl_.size(); }
@@ -68,22 +72,22 @@ public:
 	void clear() { setImpl_.clear(); }
 	bool empty() const { return setImpl_.empty(); }
 
-	friend bool operator==(map const &lhs, map const &rhs)
+	friend bool operator==(map2 const &lhs, map2 const &rhs)
 	{ return lhs.setImpl_ == rhs.setImpl_; }
 		
-	friend bool operator!=(map const &lhs, map const &rhs)
+	friend bool operator!=(map2 const &lhs, map2 const &rhs)
 	{ return lhs.setImpl_ != rhs.setImpl_; }
 		
-	friend bool operator< (map const &lhs, map const &rhs)
+	friend bool operator< (map2 const &lhs, map2 const &rhs)
 	{ return lhs.setImpl_ < rhs.setImpl_; }
 		
-	friend bool operator<= (map const &lhs, map const &rhs)
+	friend bool operator<= (map2 const &lhs, map2 const &rhs)
 	{ return lhs.setImpl_ <= rhs.setImpl_; }
 		
-	friend bool operator> (map const &lhs, map const &rhs)
+	friend bool operator> (map2 const &lhs, map2 const &rhs)
 	{ return lhs.setImpl_ > rhs.setImpl_; }
 		
-	friend bool operator>= (map const &lhs, map const &rhs)
+	friend bool operator>= (map2 const &lhs, map2 const &rhs)
 	{ return lhs.setImpl_ >= rhs.setImpl_; }
 
 	const_iterator begin() const { return setImpl_.begin(); }
@@ -100,11 +104,43 @@ private:
 	SetImpl setImpl_;
 };
 
+/*
 template <typename K, typename V>
-class hash_map: public map<K, V, std::less<K>, 
+class map: public lib_calvin::map2<K, V> {
+
+};
+*/
+/*
+template <typename K, typename V>
+class map: public boost::container::map<K, V> {
+
+};
+*/
+/*
+template <typename K, typename V>
+class map: public boost::unordered_map<K, V> {
+
+};
+*/
+/*
+template <typename K, typename V>
+class map: public std::unordered_map<K, V> {
+
+};
+*/
+
+template <typename K, typename V>
+class hash_map: public map2<K, V, std::less<K>, 
 	lib_calvin_container::HashTable<std::pair<K, V>, K, lib_calvin_container::TakeFirstOfPair<K, V>>> {
 
 };
+
+
+template <typename K, typename V>
+class map: public lib_calvin::hash_map<K, V> {
+
+};
+
 
 } // end namespace lib_calvin
 

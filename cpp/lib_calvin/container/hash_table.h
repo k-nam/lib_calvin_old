@@ -25,6 +25,7 @@ public:
 private:
 	struct Node {
 		Node(T const &elem, Node *next): elem_(elem), next_(next) { }
+		Node(T &&elem, Node *next): elem_(std::forward<T>(elem)), next_(next) { }
 		T elem_;
 		Node *next_; // empty bucket points to nullptr, and the last Node points to the fist Node
 	};
@@ -75,14 +76,18 @@ public:
 public:
 	HashTable();
 	HashTable(HashTable const &rhs); // copy ctor
+	HashTable(HashTable &&rhs);
 	HashTable &operator=(HashTable const &hrs); // assignment
+	HashTable &operator=(HashTable &&hrs);
+	void swap(HashTable &&rhs);
 	~HashTable();
 public:
 	size_t size() const { return size_; }
 	const_iterator find(K const &) const;
 	iterator find(K const &);
 	size_t count(K const &elem) const;
-	std::pair<iterator, bool> insert(T const &elem);
+	template <typename T1>
+	std::pair<iterator, bool> insert(T1 &&elem);
 	size_t erase(K const &elem);
 	void clear();
 	bool empty() const { return size_ == 0; }
@@ -94,7 +99,7 @@ private:
 	void initTable(size_t);
 	void deleteTable(Node *, size_t);
 private: // insert given elem or Node into the bucket without checking (only used in rehasing)
-	void addToFirst(T const &elem);
+	void addToFirst(T &elem);
 	void addToFirst(Node *Node);
 private:
 	IteratorImpl getBeginIterator() const;
@@ -225,7 +230,14 @@ HashTable<T, K, ExtractKey, HashFunc>::~HashTable() {
 // copy con
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
 HashTable<T, K, ExtractKey, HashFunc>::HashTable(HashTable const &rhs) {
+	init();
 	operator=(rhs);
+}
+
+template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+HashTable<T, K, ExtractKey, HashFunc>::HashTable(HashTable &&rhs) {
+	init();
+	swap(rhs);
 }
 
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
@@ -262,6 +274,31 @@ HashTable<T, K, ExtractKey, HashFunc>::operator=(HashTable const &rhs) {
 		}
 	}
 	return *this;
+}
+
+template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+HashTable<T, K, ExtractKey, HashFunc> &
+HashTable<T, K, ExtractKey, HashFunc>::operator=(HashTable &&rhs) {
+	if (this != &rhs) {
+		swap(rhs);
+	}
+	return *this;
+}
+
+template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+void HashTable<T, K, ExtractKey, HashFunc>::swap(HashTable &&rhs) {
+	Node *temp1 = table_;
+	size_t temp2 = size_;
+	size_t temp3 = tableSize_;
+	size_t temp4 = hashSetSizeIndex_;
+	table_ = rhs.table_;
+	size_ = rhs.size_;
+	tableSize_ = rhs.tableSize_;
+	hashSetSizeIndex_ = rhs.hashSetSizeIndex_;
+	rhs.table_ = temp1;
+	rhs.size_ = temp2;
+	rhs.tableSize_ = temp3;
+	rhs.hashSetSizeIndex_ = temp4;
 }
 
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
@@ -330,13 +367,14 @@ HashTable<T, K, ExtractKey, HashFunc>::findIterator(K const &key) const {
 }
 
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T1>
 std::pair<typename HashTable<T, K, ExtractKey, HashFunc>::iterator, bool> 
-HashTable<T, K, ExtractKey, HashFunc>::insert(T const &elem) {
+HashTable<T, K, ExtractKey, HashFunc>::insert(T1 &&elem) {
 	Node *bucket = getBucket(ExtractKey()(elem));
 	Node *thisNode = bucket;
 	int count = 0;
 	if (bucket->next_ == nullptr) { // empty bucket, just insert
-		new (&bucket->elem_) T(elem);
+		new (&bucket->elem_) T(std::forward<T1>(elem));
 		bucket->next_ = bucket;
 	} else {
 		while (true) {
@@ -351,7 +389,7 @@ HashTable<T, K, ExtractKey, HashFunc>::insert(T const &elem) {
 				}
 			}
 		}
-		Node *newNode = new Node(elem, bucket->next_);
+		Node *newNode = new Node(std::forward<T1>(elem), bucket->next_);
 		bucket->next_ = newNode;
 	}
 	size_++;
@@ -409,6 +447,10 @@ void HashTable<T, K, ExtractKey, HashFunc>::rehash() {
 	Node *oldTable = table_;
 	size_t oldTableSize = tableSize_;
 	hashSetSizeIndex_++;
+	if (hashSetSizeIndex_ >= 26) {
+		std::cout << "HashTable rehash too big\n";
+		exit(0);
+	}
 	tableSize_ = HASH_SET_SIZES[hashSetSizeIndex_];
 	initTable(tableSize_ + 1);
 	for (size_t i = 0; i < oldTableSize; ++i) {
@@ -431,13 +473,13 @@ void HashTable<T, K, ExtractKey, HashFunc>::rehash() {
 }
 
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
-void HashTable<T, K, ExtractKey, HashFunc>::addToFirst(T const &elem) {
+void HashTable<T, K, ExtractKey, HashFunc>::addToFirst(T &elem) {
 	HashTable<T, K, ExtractKey, HashFunc>::Node *bucket = getBucket(ExtractKey()(elem));
 	if (bucket->next_ == nullptr) {
-		new (&bucket->elem_) T(elem);
+		new (&bucket->elem_) T(std::move(elem));
 		bucket->next_ = bucket;
 	} else {
-		Node *newNode = new Node(elem, bucket->next_);
+		Node *newNode = new Node(std::move(elem), bucket->next_);
 		bucket->next_ = newNode;
 	}
 }
@@ -446,7 +488,7 @@ template <typename T, typename K, typename typename ExtractKey, typename HashFun
 void HashTable<T, K, ExtractKey, HashFunc>::addToFirst(Node *Node) {
 	HashTable<T, K, ExtractKey, HashFunc>::Node *bucket = getBucket(ExtractKey()(Node->elem_));
 	if (bucket->next_ == nullptr) {
-		new (&bucket->elem_) T(Node->elem_);
+		new (&bucket->elem_) T(std::move(Node->elem_));
 		bucket->next_ = bucket;
 		delete Node;
 	} else {
@@ -481,6 +523,7 @@ template <typename T, typename K, typename typename ExtractKey, typename HashFun
 void HashTable<T, K, ExtractKey, HashFunc>::deleteTable(Node *table, size_t tableSize) {
 	//std::cout << "Destruct buckets called on tableSize: " << tableSize << 
 	//	" size: " << this->size_ << "\n" ; 
+
 	for (size_t i = 0; i < tableSize; ++i) {
 		Node *bucket = &table[i];
 		if (bucket->next_ == nullptr) { // empty bucket

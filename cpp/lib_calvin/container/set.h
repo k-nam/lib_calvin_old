@@ -7,12 +7,15 @@
 #include "b_plus_tree.h"
 #include "rb_tree.h"
 #include "ordered_array.h"
+#include "boost/container/set.hpp"
 #include <set>
 
 namespace lib_calvin
 {
 template <typename T, typename Comp = std::less<T>,
 	typename Impl = lib_calvin_container::BPlusTree<T, T, Comp, std::identity<T>>>
+	//typename Impl = std::set<T>>
+	//typename Impl = boost::container::set<T>>
 class set 
 {
 public:

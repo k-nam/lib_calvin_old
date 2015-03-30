@@ -4,7 +4,6 @@
 /*
  * 2008-03-08
  */
-
   
 #include <iterator>
 #include "stopwatch.h"
@@ -341,8 +340,6 @@ void Factory<Argument, Operation>::work() {
 		}
 	}
 }
-
-
 
 /****************** Thread functions *****************/
 
