@@ -293,6 +293,7 @@
     <ClInclude Include="b_tree_base.h" />
     <ClInclude Include="container_test.h" />
     <ClInclude Include="blocked_array.h" />
+    <ClInclude Include="hash_table2.h" />
     <ClInclude Include="ordered_array.h" />
     <ClInclude Include="ptr_set.h" />
     <ClInclude Include="b_tree.h" />

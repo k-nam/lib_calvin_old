@@ -10,7 +10,7 @@
 #include "boost/container/set.hpp"
 #include <set>
 
-namespace lib_calvin
+namespace lib_calvin_container
 {
 template <typename T, typename Comp = std::less<T>,
 	typename Impl = lib_calvin_container::BPlusTree<T, T, Comp, std::identity<T>>>
@@ -77,6 +77,12 @@ public:
 private:		
 	Impl impl_;
 };
-} // end namespace lib_calvin
+} // end namespace lib_calvin_container
 
+namespace lib_calvin
+{
+	template <typename T>
+	class set: public lib_calvin_container::set<T> { };
+
+} // end namespace lib_calvin
 #endif

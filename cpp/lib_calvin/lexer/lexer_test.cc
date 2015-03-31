@@ -210,7 +210,7 @@ void lexerTest(std::string const &inputText) {
   Token myToken;
   int index = 0, lineNum = 0; // index: current pointer to buffer
   cout << "Output:\n";
-  while (index < sourceFile.size()) {
+  while (index < static_cast<int>(sourceFile.size())) {
     nfa.getMatch(sourceFile, index, myToken); // get next Token
     //if (myToken.key == 15)
       //cout << "comment\t";

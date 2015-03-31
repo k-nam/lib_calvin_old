@@ -1,5 +1,5 @@
-#ifndef LIB_CALVIN__CONTAINER__HASH_SET_IMPL_H
-#define LIB_CALVIN__CONTAINER__HASH_SET_IMPL_H
+#ifndef LIB_CALVIN__CONTAINER__HASH_TABLE_H
+#define LIB_CALVIN__CONTAINER__HASH_TABLE_H
 
 #include "vector.h"
 #include "boost/functional/hash.hpp"

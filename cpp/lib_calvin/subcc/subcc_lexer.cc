@@ -154,7 +154,7 @@ void Lexer::build() {
 int Lexer::getNextToken() {
   // Start lexicalizing with given source file
   Token myToken;
-  while (index_ < text_.size()) {
+  while (index_ < static_cast<int>(text_.size())) {
     dfa.getMatch(text_, index_, myToken); // get next Token
     for (int i = index_; i < index_ + myToken.length; ++i) {
       if (text_[i] == '\n') // count lines
