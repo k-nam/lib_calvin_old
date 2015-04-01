@@ -478,6 +478,9 @@ void HashTable2<T, K, ExtractKey, HashFunc>::addToFirst(Node *node) {
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
 typename HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl
 HashTable2<T, K, ExtractKey, HashFunc>::getBeginIterator() const {
+	if (empty()) {
+		return getEndIterator();
+	}
 	size_t index = 0;
 	while (true) {
 		if (table_[index] == nullptr && index < tableSize_) {
