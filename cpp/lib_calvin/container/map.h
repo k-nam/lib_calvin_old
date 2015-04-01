@@ -108,34 +108,33 @@ private:
 
 namespace lib_calvin
 {
-
+	/*
 template <typename K, typename V>
 class map: public lib_calvin_container::map<K, V> { };
-
+*/
 
 template <typename K, typename V>
 class hash_map: public lib_calvin_container::map<K, V, std::less<K>, 
 	lib_calvin_container::HashTable2<std::pair<K, V>, K, lib_calvin_container::TakeFirstOfPair<K, V>>> {
 };
 
-/*
+
 template <typename K, typename V>
-class map: public boost::container::map<K, V> { };
-*/
+class map: public lib_calvin::hash_map<K, V> { };
+
 /*
 template <typename K, typename V>
 class map: public boost::unordered_map<K, V> { };
 */
+
 /*
 template <typename K, typename V>
 class map: public std::unordered_map<K, V> { };
 */
-
 /*
 template <typename K, typename V>
-class map: public lib_calvin::hash_map<K, V> { };
+class map: public boost::container::map<K, V> { };
 */
-
 } // end namespace lib_calvin
 
 #endif

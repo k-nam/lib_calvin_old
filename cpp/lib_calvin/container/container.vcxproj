@@ -303,7 +303,6 @@
     <ClInclude Include="map.h" />
     <ClInclude Include="map_test.h" />
     <ClInclude Include="rb_tree.h" />
-    <ClInclude Include="rb_tree_base.h" />
     <ClInclude Include="set.h" />
     <ClInclude Include="set_test.h" />
     <ClInclude Include="vector.h" />

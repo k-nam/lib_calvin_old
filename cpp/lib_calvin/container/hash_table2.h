@@ -73,7 +73,7 @@ public:
 	HashTable2(HashTable2 &&rhs);
 	HashTable2 &operator=(HashTable2 const &hrs); // assignment
 	HashTable2 &operator=(HashTable2 &&hrs);
-	void swap(HashTable2 &&rhs);
+	void swap(HashTable2 &rhs);
 	~HashTable2();
 public:
 	size_t size() const { return size_; }
@@ -244,6 +244,10 @@ HashTable2<T, K, ExtractKey, HashFunc>::operator=(HashTable2 const &rhs) {
 	if (this == &rhs) {
 		return *this;
 	}
+	if (rhs.empty()) {
+		clear();
+		return *this;
+	}
 	deleteTable(table_, tableSize_);
 
 	size_ = rhs.size_;
@@ -277,8 +281,8 @@ HashTable2<T, K, ExtractKey, HashFunc>::operator=(HashTable2 &&rhs) {
 }
 
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
-void HashTable2<T, K, ExtractKey, HashFunc>::swap(HashTable2 &&rhs) {
-	Node *temp1 = table_;
+void HashTable2<T, K, ExtractKey, HashFunc>::swap(HashTable2 &rhs) {
+	Node **temp1 = table_;
 	size_t temp2 = size_;
 	size_t temp3 = tableSize_;
 	size_t temp4 = hashSetSizeIndex_;
@@ -296,8 +300,8 @@ template <typename T, typename K, typename typename ExtractKey, typename HashFun
 void HashTable2<T, K, ExtractKey, HashFunc>::init() {
 	size_ = 0;
 	hashSetSizeIndex_ = 0;
-	tableSize_ = HASH_SET_SIZES[hashSetSizeIndex_];
-	initTable(tableSize_ + 1);
+	tableSize_ = 0;
+	table_= nullptr;
 }
 
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
@@ -346,6 +350,9 @@ size_t HashTable2<T, K, ExtractKey, HashFunc>::count(K const &key) const {
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
 typename HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl 
 HashTable2<T, K, ExtractKey, HashFunc>::findIterator(K const &key) const { 
+	if (empty()){
+		return getEndIterator();
+	}
 	size_t index = getIndex(key);
 	Node *thisNode = table_[index];
 	while (true) {
@@ -365,6 +372,10 @@ template <typename T1>
 std::pair<typename HashTable2<T, K, ExtractKey, HashFunc>::iterator, bool> 
 HashTable2<T, K, ExtractKey, HashFunc>::insert(T1 &&elem) {
 	//cout << "insert\n";
+	if (empty()) {
+		tableSize_ = HASH_SET_SIZES[hashSetSizeIndex_];
+		initTable(tableSize_ + 1);
+	}
 	size_t index = getIndex(ExtractKey()(elem));
 	Node *thisNode = table_[index];
 	Node *newNode;
@@ -398,6 +409,9 @@ HashTable2<T, K, ExtractKey, HashFunc>::insert(T1 &&elem) {
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
 size_t
 HashTable2<T, K, ExtractKey, HashFunc>::erase(K const &key) {
+	if (empty()) {
+		return 0;
+	}
 	Node *previous = nullptr;
 	size_t index = getIndex(key);
 	Node *thisNode = table_[index];
@@ -419,6 +433,9 @@ HashTable2<T, K, ExtractKey, HashFunc>::erase(K const &key) {
 		}
 	}
 	size_--;
+	if (empty()) {
+		clear();
+	}
 	return 1;
 }
 

@@ -79,7 +79,7 @@ public:
 	HashTable(HashTable &&rhs);
 	HashTable &operator=(HashTable const &hrs); // assignment
 	HashTable &operator=(HashTable &&hrs);
-	void swap(HashTable &&rhs);
+	void swap(HashTable &rhs);
 	~HashTable();
 public:
 	size_t size() const { return size_; }
@@ -237,7 +237,7 @@ HashTable<T, K, ExtractKey, HashFunc>::HashTable(HashTable const &rhs) {
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
 HashTable<T, K, ExtractKey, HashFunc>::HashTable(HashTable &&rhs) {
 	init();
-	swap(rhs);
+	swap(std::move(rhs));
 }
 
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
@@ -286,7 +286,7 @@ HashTable<T, K, ExtractKey, HashFunc>::operator=(HashTable &&rhs) {
 }
 
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
-void HashTable<T, K, ExtractKey, HashFunc>::swap(HashTable &&rhs) {
+void HashTable<T, K, ExtractKey, HashFunc>::swap(HashTable &rhs) {
 	Node *temp1 = table_;
 	size_t temp2 = size_;
 	size_t temp3 = tableSize_;

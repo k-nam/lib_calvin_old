@@ -52,14 +52,14 @@ void lib_calvin_container::setTest() {
 	int const smallSize = 1000;
 	int const mediumSize = 10000;
 	int const largeSize = 1000000;	
-	setPerformanceTest<std::set<int>>(largeSize, "std::set / int");
+	//setPerformanceTest<std::set<int>>(largeSize, "std::set / int");
 	setPerformanceTest<boost::container::set<int>>(largeSize, "boost::set / int");
 	//setPerformanceTest<BinTree<int>>(largeSize, "RbTree / int");
 	setPerformanceTest<RbTree<int>>(largeSize, "RbTree / int");
 	//setPerformanceTest<BTree<int>>(largeSize, "BTree / int");
 	setPerformanceTest<BPlusTree<int>>(largeSize, "BPlusTree / int");
 	//setPerformanceTest<OrderedArray<int>>(largeSize, "OrderedArray / int");
-	setPerformanceTest<std::unordered_set<int>>(largeSize, "std::unordered_set / int");
+	//setPerformanceTest<std::unordered_set<int>>(largeSize, "std::unordered_set / int");
   setPerformanceTest<boost::unordered_set<int>>(largeSize, "boost::unordered_set / int");
 	setPerformanceTest<HashTable<int>>(largeSize, "HashTable / int");
 	setPerformanceTest<HashTable2<int>>(largeSize, "HashTable2 / int");
@@ -71,11 +71,11 @@ void lib_calvin_container::setTest() {
 	//setPerformanceTest<BPlusTree<LightObject>>(largeSize, "BPlusTree / LightObject");
 	//setPerformanceTest<OrderedArray<LightObject>>(largeSize, "OrderedArray / LightObject");
 
-	setPerformanceTest<std::set<HeavyObject>>(mediumSize, "std::set / HeavyObject");
-	setPerformanceTest<boost::container::set<HeavyObject>>(mediumSize, "boost::set / HeavyObject");
-	setPerformanceTest<RbTree<HeavyObject>>(mediumSize, "RbTree / HeavyObject");
+	//setPerformanceTest<std::set<HeavyObject>>(mediumSize, "std::set / HeavyObject");
+	//setPerformanceTest<boost::container::set<HeavyObject>>(mediumSize, "boost::set / HeavyObject");
+	//setPerformanceTest<RbTree<HeavyObject>>(mediumSize, "RbTree / HeavyObject");
 	//setPerformanceTest<BTree<HeavyObject>>(mediumSize, "BTree / HeavyObject");
-	setPerformanceTest<BPlusTree<HeavyObject>>(mediumSize, "BPlusTree / HeavyObject");
+	//setPerformanceTest<BPlusTree<HeavyObject>>(mediumSize, "BPlusTree / HeavyObject");
 	//setPerformanceTest<OrderedArray<LightObject>>(mediumSize, "OrderedArray / HeavyObject");
 	//setPerformanceTest<HashTable<HeavyObject, GenericHash<HeavyObject>>>(mediumSize, "HashTable / HeavyObject");
 	//setPerformanceTest<boost::unordered_set<HeavyObject, GenericHash<HeavyObject>>>(
@@ -83,14 +83,14 @@ void lib_calvin_container::setTest() {
 	//setPerformanceTest<std::unordered_set<HeavyObject>>(mediumSize, "std::unordered_set / HeavyObject");
 	//setPerformanceTest<PtrSet<HeavyObject>>(mediumSize, "PtrSet / HeavyObject");
 	
-	setIntegratedSpeedTest<std::set<HeavyObject>>(smallSize, "std::set");
+	//setIntegratedSpeedTest<std::set<HeavyObject>>(smallSize, "std::set");
 	setIntegratedSpeedTest<boost::container::set<HeavyObject>>(smallSize, "boost:set");
-	setIntegratedSpeedTest<RbTree<HeavyObject>>(smallSize, "RbTree");
+	//setIntegratedSpeedTest<RbTree<HeavyObject>>(smallSize, "RbTree");
 	//setIntegratedSpeedTest<BTree<HeavyObject>>(smallSize, "BTree");
 	setIntegratedSpeedTest<BPlusTree<HeavyObject>>(smallSize, "BPlusTree");
 	//setIntegratedSpeedTest<OrderedArray<HeavyObject>>(smallSize, "OrderedArray");
-	//setIntegratedSpeedTest<boost::unordered_set<int>>(smallSize, "boost::unordered_set");
-	//setIntegratedSpeedTest<HashTable<int>>(smallSize, "boost::unordered_set");
+	setIntegratedSpeedTest<boost::unordered_set<int>>(smallSize, "boost::unordered_set");
+	setIntegratedSpeedTest<HashTable2<int>>(smallSize, "HashTable2");
 
 	//setMemoryTest<std::set<std::set<HeavyObject>>>("std::set");
 	//setMemoryTest<BinTree<BinTree<HeavyObject>>>("BinTree");
@@ -423,6 +423,7 @@ template <typename Impl>
 void lib_calvin_container::setIntegratedSpeedTest(int n, std::string title) {
 	cout << "Starting set integrated test for " << title << "\n";
 	lib_calvin::stopwatch watch;
+	/*
 	std::set<Impl> hostSet;
 	watch.start();
 	for (int i = 0; i < n; ++i) {
@@ -441,6 +442,7 @@ void lib_calvin_container::setIntegratedSpeedTest(int n, std::string title) {
 	auto anotherHost = hostSet;
 	watch.stop();
 	cout << "copying: " << n / watch.read() << " ops per sec\n";
+	*/
 
 	std::vector<Impl> hostVector;
 	watch.start();
