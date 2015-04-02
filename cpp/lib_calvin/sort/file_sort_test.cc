@@ -51,7 +51,7 @@ void FileSortTest::diskWriteBenchmark(std::string fileName) {
 		exit(0);
 	}
 	watch.start();		
-	for (intmax_t i = 0; i < FILE_SORT_TEST_NUM_BLOCKS; ++i) {
+	for (size_t i = 0; i < FILE_SORT_TEST_NUM_BLOCKS; ++i) {
 		fout.write((char *)dataBlock, FILE_SORT_TEST_BLOCK_SIZE);
 	}
 	fout.flush();
@@ -73,7 +73,7 @@ void FileSortTest::diskReadBenchmark(std::string fileName) {
 	}
 	watch.start();
 	/*
-	for (intmax_t i = 0; i <= totalWords; ++i) {
+	for (size_t i = 0; i <= totalWords; ++i) {
 		if (i % wordsInBlock == 0) {
 			if (fin.eof()) {
 				std::cout << "reading error;\n";

@@ -55,7 +55,7 @@ void Instruction::countObjects() {
 	std::cout << "\n";
 }
 
-intmax_t Instruction::objectCount_ = 0;
+int Instruction::objectCount_ = 0;
 
 /*** FunctionStartInstrucion ***/
 

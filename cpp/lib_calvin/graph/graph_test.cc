@@ -6,7 +6,7 @@ using namespace lib_calvin_graph;
 void lib_calvin_graph::graphTest() {
 	std::cout << "--------------- Beginning graph test ----------------\n\n";
 
-	GraphTest<intmax_t, intmax_t> test(1000, 10000, 0);
+	GraphTest<int, int> test(1000, 10000, 0);
   test.insertionTest();
 	test.insertionTest2();
 	test.dfsTest();

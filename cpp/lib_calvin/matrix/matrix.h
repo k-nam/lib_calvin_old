@@ -559,7 +559,7 @@ void matrix<T>::check() {
 	using std::cout;
 	using std::endl;
 	size_t const GIGA = 1000000000;
-	double const multiProblemSize = (double)height_*height_*height_*2;
+	double const multiProblemSize = static_cast<double>(height_)*height_*height_*2;
   cout << "Testing with matrix dimension: " << height_ << " * " << width_ 
     << endl;
   stopwatch watch;
@@ -593,13 +593,15 @@ void matrix<T>::check() {
   watch.start();
   naiveMultiAdd2(m1, m2, m3);
   watch.stop();
-  cout << "Naive multiply 2 time " << watch.read() << " GFLOPS: " << multiProblemSize / watch.read() / GIGA << "\n";			
+  cout << "Naive multiply 2 time " << watch.read() << " GFLOPS: " << 
+		multiProblemSize / watch.read() / GIGA << "\n";			
 	 // Naive	2
   matrix<T> m8(m1.height(), m2.width());
   watch.start();
   naiveMultiAdd3(m1, m2, m8);
   watch.stop();
-  cout << "Naive multiply3 time " << watch.read() << " GFLOPS: " << multiProblemSize / watch.read() / GIGA << "\n";		
+  cout << "Naive multiply3 time " << watch.read() << " GFLOPS: " << 
+		multiProblemSize / watch.read() / GIGA << "\n";		
 	if (m3 == m8) {
   } else {
     cout << "Naive multiply3 Error!!!\n";
@@ -610,7 +612,8 @@ void matrix<T>::check() {
   watch.start();  
   blockedMultiAdd(m1, m2, m5);
   watch.stop();
-  cout << "Blocked multiply time " << watch.read() << " GFLOPS: " << multiProblemSize / watch.read() / GIGA << "\n";	
+  cout << "Blocked multiply time " << watch.read() << " GFLOPS: " << 
+		multiProblemSize / watch.read() / GIGA << "\n";	
   if (m3 == m5) {
   } else {
     cout << "blockedMulti Error!!!\n";
@@ -621,7 +624,8 @@ void matrix<T>::check() {
   watch.start();
   simpleMultiAdd (m1, m2, m4);
   watch.stop();
-  cout << "Simple multiply time " << watch.read() << " GFLOPS: " << multiProblemSize / watch.read() / GIGA << "\n";		
+  cout << "Simple multiply time " << watch.read() << " GFLOPS: " << 
+		multiProblemSize / watch.read() / GIGA << "\n";		
 	if (m3 == m4) {
   } else {
     cout << "Simple Error!!!\n";
@@ -632,7 +636,8 @@ void matrix<T>::check() {
   watch.start();
   recursiveMultiAdd(m1, m2, m6);
   watch.stop();
-  cout << "Recursive multiply time " << watch.read() << " GFLOPS: " << multiProblemSize / watch.read() / GIGA << "\n";	
+  cout << "Recursive multiply time " << watch.read() << " GFLOPS: " << 
+		multiProblemSize / watch.read() / GIGA << "\n";	
   if (m3 == m6) {
   } else {
     cout << "recursiveMulti Error!!!\n"; 
@@ -646,7 +651,8 @@ void matrix<T>::check() {
 	watch.start();
   recursiveMultiAddParallel(m1, m2, m6);
   watch.stop();
-  cout << "Recursive multiply 2 (parallel) time " << watch.read() << " GFLOPS: " << multiProblemSize / watch.read() / GIGA << "\n";	
+  cout << "Recursive multiply 2 (parallel) time " << watch.read() << " GFLOPS: " << 
+		multiProblemSize / watch.read() / GIGA << "\n";	
 	if (m3 == m6) {
   } else {
     cout << "Recursive multiply 2 (parallel) Error!!!\n";  
@@ -657,7 +663,8 @@ void matrix<T>::check() {
 	watch.start();
 	strassenMultiAdd(m1, m2, m7);
 	watch.stop();
-  cout << "Strassen multiply time " << watch.read() << " GFLOPS: " << multiProblemSize / watch.read() / GIGA << "\n";	
+  cout << "Strassen multiply time " << watch.read() << " GFLOPS: " << 
+		multiProblemSize / watch.read() / GIGA << "\n";	
 	if (m4 == m7) {
   } else {
     cout << "Strassen Error!!!\n";  
@@ -683,7 +690,8 @@ void matrix<T>::check() {
 	watch.start();
 	strassenMultiAddParallel(m1, m2, m7);
 	watch.stop();
-	cout << "Strassen parallel multiply GFLOPS " << multiProblemSize / watch.read() / GIGA << "\n";
+	cout << "Strassen parallel multiply GFLOPS " << 
+		multiProblemSize / watch.read() / GIGA << "\n";
 	if (m4 == m7) {
   } else {
 		cout << "Strassen parallel Error!!!\n"; 

@@ -52,7 +52,7 @@ SyntaxTreeNode::~SyntaxTreeNode() {
 	}
 }
 
-intmax_t SyntaxTreeNode::objectCount_ = 0;
+int SyntaxTreeNode::objectCount_ = 0;
 
 void SyntaxTreeNode::countObjects() {
 	if (objectCount_ != 0) {

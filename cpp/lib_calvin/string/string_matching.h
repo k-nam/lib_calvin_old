@@ -96,8 +96,8 @@ void lib_calvin_string::calculateZ (
         Z[k] = m - k + 1;
       }
     } else { // use previous data
-      intmax_t remainingMatch  = Z[k - l];
-      intmax_t remainingBox  = r - k + 1;
+      size_t remainingMatch  = Z[k - l];
+      size_t remainingBox  = r - k + 1;
       if (remainingMatch < remainingBox) { // match is contained in Z-block
         Z[k] = Z[k - l];
       } else if (remainingMatch == remainingBox) { // possible to have more matching
@@ -146,7 +146,7 @@ void lib_calvin_string::calculateF (
 		if (didReachZero) {
 			f[k] = 0;
 		} else {
-			f[k] = m + 1; // correct because m == -1 if no match
+			f[k] = m + 1;
 		}
   }
 }

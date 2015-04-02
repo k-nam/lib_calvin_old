@@ -46,7 +46,7 @@ public:
 protected:
   SyntaxTreeNode const *parent_;
 private:
-	static intmax_t objectCount_;
+	static int objectCount_;
 };
 
 // Special nodes for storing dimension of an array declaration

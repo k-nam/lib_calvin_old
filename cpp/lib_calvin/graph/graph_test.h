@@ -48,8 +48,8 @@ namespace lib_calvin_graph {
 
 	struct my {
 		my(): value_(0) { }  
-		my(intmax_t value): value_(value) { }
-		operator intmax_t() { return value_; }
+		my(int value): value_(value) { }
+		operator int() { return value_; }
 		bool operator== (const struct my &rhs) const {
 			if (value_ == rhs.value_) return true;
 			return false;
@@ -84,8 +84,8 @@ namespace lib_calvin_graph {
 		struct my const operator+ (struct my const &rhs) const {
 			return my(value_ + rhs.value_);
 		}
-		intmax_t value_;
-		intmax_t dummy1;
+		int value_;
+		int dummy1;
 		//size_t dummy2;
 		//size_t dummy3;
 		//double dummy4;
@@ -400,12 +400,12 @@ void lib_calvin_graph::populateGraph(
 			graph_base<V, E> &graph, size_t numV, size_t numE, size_t numNegativeE) {
 	using namespace lib_calvin;
   for (size_t i = 0; i < numE; ++i) {
-    intmax_t edge = rand() % 100000 + 1000;
+    int edge = rand() % 100000 + 1000;
 		if (i < numNegativeE) {
       edge = -edge / 500 + 5; // negative edge
 		}
-		intmax_t srcV = (rand() * 32768 + rand()) % numV;
-		intmax_t targetV = (rand() * 32768 + rand()) % numV;
+		int srcV = (rand() * 32768 + rand()) % numV;
+		int targetV = (rand() * 32768 + rand()) % numV;
 		graph.insert_vertex(srcV);
 		graph.insert_vertex(targetV);
     graph.insert_edge(srcV, targetV, edge);
@@ -417,8 +417,8 @@ void lib_calvin_graph::populateGraph(
 			graph_base<V, E> &graph, 
 			size_t numV, size_t numE, size_t numNegativeE, E const &defaultEdge) {
   for (size_t i = 0; i < numE; ++i) {
-		intmax_t srcV = (rand() * 32768 + rand()) % numV;
-		intmax_t targetV = (rand() * 32768 + rand()) % numV;
+		int srcV = (rand() * 32768 + rand()) % numV;
+		int targetV = (rand() * 32768 + rand()) % numV;
 		graph.insert_vertex(srcV);
 		graph.insert_vertex(targetV);
     graph.insert_edge(srcV, targetV, defaultEdge);

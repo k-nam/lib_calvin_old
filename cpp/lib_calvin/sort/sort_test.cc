@@ -174,7 +174,7 @@ void lib_calvin_sort::getSamplesTest() {
 	//lib_calvin_util::printContainer(result, "samples");
 }
 
-intmax_t lib_calvin_sort::SimpleStruct::objectCount_ = 0;
+int lib_calvin_sort::SimpleStruct::objectCount_ = 0;
 
 void lib_calvin_sort::SimpleStruct::countObjects() {
 	if (objectCount_ != 0) {

@@ -116,7 +116,7 @@ protected:
   Instruction(enum InstructionType instType);
   enum InstructionType instructionType_;
 private:
-	static intmax_t objectCount_;
+	static int objectCount_;
 };
 
 // foo:

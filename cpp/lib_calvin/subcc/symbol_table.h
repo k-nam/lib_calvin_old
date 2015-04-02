@@ -68,7 +68,7 @@ private:
   shared_ptr<Type const> type_; // type of the object the symbol refers
   int offset_; // offset in the stack frame 
 private:
-	static intmax_t objectCount_;
+	static int objectCount_;
 };
 
 class Constant: public Symbol {
@@ -139,7 +139,7 @@ private:
   int offset_; // current offset (in the stack frame of current function) 
   bool const isEnvironment_; // true if this is an env of record declaration
 private:
-	static intmax_t objectCount_;
+	static int objectCount_;
 };
 
 class GlobalSymbolTable {
@@ -181,7 +181,7 @@ private:
   vector<shared_ptr<Symbol const>> array_;
   int maxStackSize_; // maximum stack size of the current function definition
 private:
-	static intmax_t objectCount_;
+	static int objectCount_;
 };
 } // end namespace
 

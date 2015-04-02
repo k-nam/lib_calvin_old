@@ -45,8 +45,8 @@ void lib_calvin_graph::dfs1(vector<vector<size_t>> const &graph,
       isVisited[top] = true;
 			size_t src = top;
       // push every unvisited adjacent vertices
-			for (intmax_t i = graph[src].size() - 1; i >= 0 ; i--) {
-        size_t dest = graph[src][static_cast<size_t>(i)];
+			for (auto iter = graph[src].rbegin(); iter != graph[src].rend(); ++iter) {
+        size_t dest = *iter;
 				if (isVisited[dest]) { // do nothing for already visited vertex
           continue;
 				}

@@ -35,7 +35,7 @@ public:
 		size_t suffixLink_; // if this node represents ax, points to x. only for internal node.
 		bool operator==(Node const &rhs) const;
 		bool operator<(Node const &rhs) const;
-		static intmax_t objectCount_;
+		static int objectCount_;
 	};
 	struct NodeExtractKey {
 		size_t operator()(Node const &) const;
@@ -303,7 +303,7 @@ void suffix_tree<Alphabet>::Node::countThisObject() {
 }
 
 template <typename Alphabet>
-intmax_t suffix_tree<Alphabet>::Node::objectCount_ = 0;
+int suffix_tree<Alphabet>::Node::objectCount_ = 0;
 
 template <typename Alphabet>
 bool suffix_tree<Alphabet>::Node::operator==(Node const &rhs) const {
