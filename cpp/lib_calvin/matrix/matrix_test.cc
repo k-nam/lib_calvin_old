@@ -10,7 +10,7 @@ void lib_calvin_matrix::matrixTest() {
 	std::cout << "---------- Beginning matrix test -----------\n\n";
 	using boost::numeric::ublas::matrix;
 	lib_calvin::stopwatch watch;
-	int const size = 300;
+	int const size = 500;
 	typedef double TYPE;
 	watch.start();
 	double rtv = doGigaOps();

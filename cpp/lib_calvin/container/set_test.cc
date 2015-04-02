@@ -15,7 +15,6 @@
 #include "rb_tree.h"  
 #include "ptr_set.h"
 #include "hash_table.h"
-#include "hash_table2.h"
 #include "blocked_array.h"
 #include "ordered_array.h"
 #include "random.h"
@@ -41,7 +40,7 @@ void lib_calvin_container::setTest() {
 	//setFunctionTest(PtrSet<int>(), testSize, "lib_calvin_container::PtrSet");
 	/* Hash table cannot iterate in order */
 	setFunctionTest<HashTable<int>>(testSize,	"lib_calvin_container::HashTable");
-	setFunctionTest<HashTable2<int>>(testSize,	"lib_calvin_container::HashTable2");
+	setFunctionTest<HashTable<int>>(testSize,	"lib_calvin_container::HashTable");
 	/* boost hash function does not apply to arbitrary object */
 	//setFunctionTest(HashTable<HeavyObject>(), testSize, "lib_calvin_container::HashTable");
 	
@@ -61,8 +60,8 @@ void lib_calvin_container::setTest() {
 	//setPerformanceTest<OrderedArray<int>>(largeSize, "OrderedArray / int");
 	//setPerformanceTest<std::unordered_set<int>>(largeSize, "std::unordered_set / int");
   setPerformanceTest<boost::unordered_set<int>>(largeSize, "boost::unordered_set / int");
+	//setPerformanceTest<HashTable<int>>(largeSize, "HashTable / int");
 	setPerformanceTest<HashTable<int>>(largeSize, "HashTable / int");
-	setPerformanceTest<HashTable2<int>>(largeSize, "HashTable2 / int");
 
 	//setPerformanceTest<std::set<LightObject>>(largeSize, "std::set / LightObject");
 	//setPerformanceTest<boost::container::set<LightObject>>(largeSize, "boost::set / LightObject");
@@ -90,7 +89,7 @@ void lib_calvin_container::setTest() {
 	setIntegratedSpeedTest<BPlusTree<HeavyObject>>(smallSize, "BPlusTree");
 	//setIntegratedSpeedTest<OrderedArray<HeavyObject>>(smallSize, "OrderedArray");
 	setIntegratedSpeedTest<boost::unordered_set<int>>(smallSize, "boost::unordered_set");
-	setIntegratedSpeedTest<HashTable2<int>>(smallSize, "HashTable2");
+	setIntegratedSpeedTest<HashTable<int>>(smallSize, "HashTable");
 
 	//setMemoryTest<std::set<std::set<HeavyObject>>>("std::set");
 	//setMemoryTest<BinTree<BinTree<HeavyObject>>>("BinTree");
@@ -182,7 +181,7 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 	}
 
 	if (title != "lib_calvin_container::HashTable" &&
-			title != "lib_calvin_container::HashTable2") { // hash table does not iterate in order
+			title != "lib_calvin_container::HashTable") { // hash table does not iterate in order
 		size_t index = 0;
 		cout << "iterating!\n";
 		auto stdIter = stdSet.begin();
@@ -219,7 +218,7 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 	Impl copy2(impl);
 
 	if (title != "lib_calvin_container::HashTable" &&
-			title != "lib_calvin_container::HashTable2") {
+			title != "lib_calvin_container::HashTable") {
 		if (impl != copy) {
 			cout << "assignment error\n";
 			exit(0);

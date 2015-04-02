@@ -8,7 +8,6 @@
 #include "boost/unordered_set.hpp"
 #include "boost/container/set.hpp"
 
-#include "set_test.h"
 #include "utility.h"
 #include "stopwatch.h"
 #include "container_test.h"

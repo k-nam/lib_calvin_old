@@ -11,7 +11,6 @@
 #include "matrix.h"
 #include "adt.h"
 #include "set.h"
-#include "hash_table.h"
 #include "map.h"
 #include "vector.h"
 #include "sort.h"
