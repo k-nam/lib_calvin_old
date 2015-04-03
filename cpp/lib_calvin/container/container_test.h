@@ -35,7 +35,7 @@ struct LinkNodeObject {
 
 struct HeavyObject {
 public:
-	typedef std::vector<int> ContainerType;
+	typedef lib_calvin::vector<int> ContainerType;
 	HeavyObject(): value_() { init(); }
 	HeavyObject(int size);
 	HeavyObject(HeavyObject const &rhs): value_(rhs.value_) { init(); }

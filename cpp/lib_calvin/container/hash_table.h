@@ -177,10 +177,10 @@ HashTable<T, K, ExtractKey, HashFunc>::IteratorImpl::operator++() {
 	if (node_->next_ == nullptr) { // it was pointing to the last Node in the chain
 		index_++; // move to next chain
 		while (true) {
-			// reached the end of table, should return end()
-			// note that actual table size is tableSize_ + 1 (additional 1 slot is for iterator optimizing)
 			if (index_ == tableSize_) { 
-				node_ = nullptr; // to make operator--() faster by reducing index comparison
+				// reached the end of table, should return end()
+				// note that actual table size is tableSize_ + 1 (additional 1 slot is for iterator optimizing)
+				node_ = nullptr; 
 				break;
 			} else if (table_[index_] == nullptr) { // empty bucket
 				index_++;

@@ -5,17 +5,17 @@
 void lib_calvin_container::containerTest()
 {
 	std::cout << "--------------- Beginning container test -----------------\n\n";
-	vectorTest();
+	//vectorTest();
 	setTest();
-	mapTest();
-	bTreeTest();
+	//mapTest();
+	//bTreeTest();
 	std::cout << "-------------- container test finished ------------------\n\n\n";
 }
 
 lib_calvin_container::HeavyObject::HeavyObject(int size) {
 	init(); 
-	int start = size % 300;
-	for (int i = start; i < start + size % 100; ++i) {
+	int start = size % 3000000;
+	for (int i = start; i < start + size % 10; ++i) {
 		value_.push_back(i); 
 	}
 }
