@@ -71,7 +71,10 @@ public:
 public:
 	HashTable2();
 	HashTable2(HashTable2 const &rhs); // copy ctor
+	HashTable2(HashTable2 &&rhs);
 	HashTable2 &operator=(HashTable2 const &hrs); // assignment
+	HashTable2 &operator=(HashTable2 &&hrs);
+	void swap(HashTable2 &rhs);
 	~HashTable2();
 public:
 	size_t size() const { return size_; }
@@ -221,13 +224,24 @@ HashTable2<T, K, ExtractKey, HashFunc>::~HashTable2() {
 // copy con
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
 HashTable2<T, K, ExtractKey, HashFunc>::HashTable2(HashTable2 const &rhs) {
+	init();
 	operator=(rhs);
+}
+
+template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+HashTable2<T, K, ExtractKey, HashFunc>::HashTable2(HashTable2 &&rhs) {
+	init();
+	swap(rhs);
 }
 
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
 HashTable2<T, K, ExtractKey, HashFunc> &
 HashTable2<T, K, ExtractKey, HashFunc>::operator=(HashTable2 const &rhs) {
 	if (this == &rhs) {
+		return *this;
+	}
+	if (rhs.empty()) {
+		clear();
 		return *this;
 	}
 	deleteTable(table_, tableSize_);
@@ -261,11 +275,20 @@ HashTable2<T, K, ExtractKey, HashFunc>::operator=(HashTable2 const &rhs) {
 }
 
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+HashTable2<T, K, ExtractKey, HashFunc> &
+HashTable2<T, K, ExtractKey, HashFunc>::operator=(HashTable2 &&rhs) {
+	if (this != &rhs) {
+		swap(rhs);
+	}
+	return *this;
+}
+
+template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
 void HashTable2<T, K, ExtractKey, HashFunc>::init() {
+	table_ = nullptr;
 	size_ = 0;
 	hashSetSizeIndex_ = 0;
-	tableSize_ = HASH_SET_SIZES[hashSetSizeIndex_];
-	initTable(tableSize_ + 1);
+	tableSize_ = 0;
 }
 
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
@@ -275,6 +298,22 @@ void HashTable2<T, K, ExtractKey, HashFunc>::initTable(size_t size) {
 	for (size_t i = 0; i < size; i++) {
 		table_[i].next_ = nullptr;
 	}
+}
+
+template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+void HashTable2<T, K, ExtractKey, HashFunc>::swap(HashTable2 &rhs) {
+	Node *temp1 = table_;
+	size_t temp2 = size_;
+	size_t temp3 = tableSize_;
+	size_t temp4 = hashSetSizeIndex_;
+	table_ = rhs.table_;
+	size_ = rhs.size_;
+	tableSize_ = rhs.tableSize_;
+	hashSetSizeIndex_ = rhs.hashSetSizeIndex_;
+	rhs.table_ = temp1;
+	rhs.size_ = temp2;
+	rhs.tableSize_ = temp3;
+	rhs.hashSetSizeIndex_ = temp4;
 }
 
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
@@ -308,6 +347,9 @@ size_t HashTable2<T, K, ExtractKey, HashFunc>::count(K const &key) const {
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
 typename HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl 
 HashTable2<T, K, ExtractKey, HashFunc>::findIterator(K const &key) const {
+	if (empty()){
+		return getEndIterator();
+	}
 	Node *bucket = getBucket(key);
 	Node *thisNode = bucket;
 	if (bucket->next_ == nullptr) { // not found
@@ -328,6 +370,10 @@ HashTable2<T, K, ExtractKey, HashFunc>::findIterator(K const &key) const {
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
 std::pair<typename HashTable2<T, K, ExtractKey, HashFunc>::iterator, bool> 
 HashTable2<T, K, ExtractKey, HashFunc>::insert(T const &elem) {
+	if (empty()) {
+		tableSize_ = HASH_SET_SIZES[hashSetSizeIndex_];
+		initTable(tableSize_ + 1);
+	}
 	Node *bucket = getBucket(ExtractKey()(elem));
 	Node *thisNode = bucket;
 	int count = 0;
@@ -364,6 +410,9 @@ HashTable2<T, K, ExtractKey, HashFunc>::insert(T const &elem) {
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
 size_t
 HashTable2<T, K, ExtractKey, HashFunc>::erase(K const &key) {
+	if (empty()) {
+		return 0;
+	}
 	Node *bucket = getBucket(key);
 	if (bucket->next_ == nullptr) { // empty bucket, no delete
 		return 0;
@@ -396,6 +445,9 @@ HashTable2<T, K, ExtractKey, HashFunc>::erase(K const &key) {
 		}
 	}
 	size_--;
+	if (empty()) {
+		clear();
+	}
 	return 1;
 }
 
@@ -454,6 +506,9 @@ void HashTable2<T, K, ExtractKey, HashFunc>::addToFirst(Node *Node) {
 template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
 typename HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl
 HashTable2<T, K, ExtractKey, HashFunc>::getBeginIterator() const {
+	if (empty()) {
+		return getEndIterator();
+	}
 	Node *beginBucket = table_;
 	while (beginBucket->next_ == nullptr && beginBucket - table_ < static_cast<int>(tableSize_)) {
 		beginBucket++;

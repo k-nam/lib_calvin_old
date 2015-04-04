@@ -8,6 +8,7 @@
 #include "rb_tree.h"
 #include "ordered_array.h"
 #include "boost/container/set.hpp"
+#include "hash_table.h"
 #include <set>
 
 namespace lib_calvin_container
@@ -83,6 +84,11 @@ namespace lib_calvin
 {
 	template <typename T>
 	class set: public lib_calvin_container::set<T> { };
+
+	template <typename T, typename HashFunc>
+	class hash_set: 
+		public lib_calvin_container::set<T, std::less<T>, 
+			lib_calvin_container::HashTable<T, T, std::identity<T>, HashFunc>> { };
 
 } // end namespace lib_calvin
 #endif

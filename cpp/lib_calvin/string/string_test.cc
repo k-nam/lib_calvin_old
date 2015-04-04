@@ -32,6 +32,7 @@ void lib_calvin_string::matchingAlgorithmTest() {
   matchingTest(kmp, "KMP");
   matchingTest(boyerMoore, "Boyer-Moore");
 	matchingTest(suffixTreeMatching, "Suffix Tree");
+	
 	std::cout << "--------------- matchingAlgorithmTest finished --------------\n\n";
 }
 

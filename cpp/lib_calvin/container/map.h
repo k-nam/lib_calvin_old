@@ -7,6 +7,7 @@
 #include "bin_tree.h"
 #include "rb_tree.h"
 #include "hash_table.h"
+#include "hash_table2.h"
 #include "boost/container/map.hpp"
 #include "boost/unordered_map.hpp"
 #include <unordered_map>
@@ -114,9 +115,10 @@ class hash_map: public lib_calvin_container::map<K, V, std::less<K>,
 
 template <typename K, typename V>
 class map: public lib_calvin_container::map<K, V> { };
+//class map: public lib_calvin::hash_map<K, V> { };
 //class map: public std::unordered_map<K, V> { };
 //class map: public boost::unordered_map<K, V> { };
-//class map: public lib_calvin::hash_map<K, V> { };
+
 
 } // end namespace lib_calvin
 

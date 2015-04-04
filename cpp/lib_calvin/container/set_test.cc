@@ -39,6 +39,7 @@ void lib_calvin_container::setTest() {
 	setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
 	setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
 	//setFunctionTest(PtrSet<int>(), testSize, "lib_calvin_container::PtrSet"); // unfinished
+	
 	setFunctionTest<HashTable<int>>(testSize,	"lib_calvin_container::HashTable"); // cannot iterate
 	setFunctionTest<HashTable2<int>>(testSize,	"lib_calvin_container::HashTable2"); // cannot iterate
 	
@@ -60,7 +61,7 @@ void lib_calvin_container::setTest() {
   setPerformanceTest<boost::unordered_set<int>>(largeSize, "boost::unordered_set / int");
 	//setPerformanceTest<HashTable<int>>(largeSize, "HashTable / int");
 	setPerformanceTest<HashTable<int>>(largeSize, "HashTable / int");
-	setPerformanceTest<HashTable2<int>>(largeSize, "HashTable2 / int");
+	//setPerformanceTest<HashTable2<int>>(largeSize, "HashTable2 / int");
 
 	//setPerformanceTest<std::set<LightObject>>(largeSize, "std::set / LightObject");
 	setPerformanceTest<boost::container::set<LightObject>>(largeSize, "boost::set / LightObject");
@@ -68,6 +69,7 @@ void lib_calvin_container::setTest() {
 	//setPerformanceTest<BTree<LightObject>>(largeSize, "BTree / LightObject");
 	setPerformanceTest<BPlusTree<LightObject>>(largeSize, "BPlusTree / LightObject");
 	//setPerformanceTest<OrderedArray<LightObject>>(largeSize, "OrderedArray / LightObject");
+	setPerformanceTest<lib_calvin::hash_set<LightObject, GenericHash<LightObject>>>(largeSize, "hash_set / LightObject");
 
 	//setPerformanceTest<std::set<HeavyObject>>(mediumSize, "std::set / HeavyObject");
 	//setPerformanceTest<boost::container::set<HeavyObject>>(mediumSize, "boost::set / HeavyObject");
