@@ -24,7 +24,7 @@ public:
 	operator int() const { return 0; }
 private:
 	int value_;
-	int dummy_[3];
+	int dummy_[10];
 };
 
 struct LinkNodeObject {
@@ -45,6 +45,7 @@ public:
 	HeavyObject &operator=(HeavyObject const &rhs) { value_ = rhs.value_; return *this;}
 	HeavyObject &operator=(HeavyObject &&rhs) 
 		{ value_ = std::forward<ContainerType>(rhs.value_); return *this; }
+	HeavyObject &operator+=(HeavyObject const &rhs) { return *this; }
 	bool operator==(HeavyObject const &rhs) const { return value_ == rhs.value_; }
 	bool operator!=(HeavyObject const &rhs) const { return value_ != rhs.value_; }
 	bool operator<(HeavyObject const &rhs) const { return value_ < rhs.value_; }
@@ -54,7 +55,7 @@ public:
 	static void countThisObject();
 private:
 	ContainerType value_;
-	int *dummy_[2];
+	int dummy_[2];
 	int sanityCheckNumber;
 	static int objectCount;
 	static void objectCreated();

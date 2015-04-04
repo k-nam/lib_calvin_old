@@ -4,6 +4,7 @@
 #include "container.h"
 #include "b_tree.h"
 #include "b_plus_tree.h"
+#include "set.h"
 #include "bin_tree.h"
 #include "rb_tree.h"
 #include "hash_table.h"
@@ -105,7 +106,13 @@ class hash_map: public lib_calvin_container::map<K, V, std::less<K>,
 };
 
 template <typename K, typename V>
+class map2: public lib_calvin_container::map<K, V, std::less<K>, 
+	lib_calvin_container::set2<std::pair<K, V>, K, std::less<K>, lib_calvin_container::TakeFirstOfPair<K, V>>> {
+};
+
+template <typename K, typename V>
 class map: public lib_calvin_container::map<K, V> { };
+//class map: public lib_calvin::map2<K, V> { };
 //class map: public lib_calvin::hash_map<K, V> { };
 //class map: public std::unordered_map<K, V> { };
 //class map: public boost::unordered_map<K, V> { };

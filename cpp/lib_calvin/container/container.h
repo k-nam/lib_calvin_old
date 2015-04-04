@@ -134,11 +134,11 @@ public:
 	difference_type operator-(ConstIterator const &rhs) const { return impl_ - rhs.impl_; }
 
 	bool operator==(ConstIterator const &rhs) const { return impl_ == rhs.impl_; }
-	bool operator!=(ConstIterator const &rhs) { return impl_ != rhs.impl_; }
-	bool operator<(ConstIterator const &rhs) { return impl_ < rhs.impl_; }
-	bool operator<=(ConstIterator const &rhs) { return impl_ <= rhs.impl_; }
-	bool operator>(ConstIterator const &rhs) { return impl_ > rhs.impl_; }
-	bool operator>=(ConstIterator const &rhs) { return impl_ >= rhs.impl_; }
+	bool operator!=(ConstIterator const &rhs) const { return impl_ != rhs.impl_; }
+	bool operator<(ConstIterator const &rhs) const { return impl_ < rhs.impl_; }
+	bool operator<=(ConstIterator const &rhs) const { return impl_ <= rhs.impl_; }
+	bool operator>(ConstIterator const &rhs) const { return impl_ > rhs.impl_; }
+	bool operator>=(ConstIterator const &rhs) const { return impl_ >= rhs.impl_; }
 public:
 	Impl const &getImpl() const { return impl_; }
 protected:
@@ -207,12 +207,12 @@ public:
 
 	difference_type operator-(ConstReverseIterator const &rhs) const { return impl_ - rhs.impl_; }
 
-	bool operator==(ConstReverseIterator const &rhs) { return impl_ == rhs.impl_; }
-	bool operator!=(ConstReverseIterator const &rhs) { return impl_ != rhs.impl_; }
-	bool operator<(ConstReverseIterator const &rhs) { return impl_ > rhs.impl_; }
-	bool operator<=(ConstReverseIterator const &rhs) { return impl_ >= rhs.impl_; }
-	bool operator>(ConstReverseIterator const &rhs) { return impl_ < rhs.impl_; }
-	bool operator>=(ConstReverseIterator const &rhs) { return impl_ <= rhs.impl_; }
+	bool operator==(ConstReverseIterator const &rhs) const { return impl_ == rhs.impl_; }
+	bool operator!=(ConstReverseIterator const &rhs) const { return impl_ != rhs.impl_; }
+	bool operator<(ConstReverseIterator const &rhs) const { return impl_ > rhs.impl_; }
+	bool operator<=(ConstReverseIterator const &rhs) const { return impl_ >= rhs.impl_; }
+	bool operator>(ConstReverseIterator const &rhs) const { return impl_ < rhs.impl_; }
+	bool operator>=(ConstReverseIterator const &rhs) const { return impl_ <= rhs.impl_; }
 public:
 	Impl const &getImpl() const { return impl_; }
 protected:
