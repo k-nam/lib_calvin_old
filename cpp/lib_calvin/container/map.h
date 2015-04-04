@@ -14,15 +14,6 @@
 
 namespace lib_calvin_container
 {
-template <typename T1, typename T2>
-class TakeFirstOfPair {
-public:
-	T1 const & operator()(std::pair<T1, T2> const &pair) const { return pair.first; }
-};
-}
-
-namespace lib_calvin_container
-{
 	// This class makes it easy to switch among various implementations
 	// We use another class for test wrapping purpose: SetAdaptor, as 
 	// insert method's return type contains iterator, which can not be included
@@ -118,7 +109,7 @@ class map: public lib_calvin_container::map<K, V> { };
 //class map: public lib_calvin::hash_map<K, V> { };
 //class map: public std::unordered_map<K, V> { };
 //class map: public boost::unordered_map<K, V> { };
-
+//class map: public boost::container::map<K, V> { };
 
 } // end namespace lib_calvin
 

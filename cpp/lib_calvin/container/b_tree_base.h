@@ -154,7 +154,7 @@ public:
 	typedef size_t size_type;
 	typedef ptrdiff_t difference_type;
 
-private:
+public:
 	// B_TREE_BASE uses bidirectional iterator
 	// This class (const iterator type) forms base to four kinds of real iterator
 	class IteratorImpl

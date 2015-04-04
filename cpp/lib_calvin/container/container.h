@@ -52,6 +52,12 @@ size_t binarySearch(T const *begin, T const *end, K const &key);
 template <typename T, typename K, typename Comp, typename ExtractKey>
 size_t sequentialSearch(T const *begin, T const *end, K const &key); 
 
+template <typename T1, typename T2>
+class TakeFirstOfPair {
+public:
+	T1 const & operator()(std::pair<T1, T2> const &pair) const { return pair.first; }
+};
+
 // Interface for generic iterators
 // Note that deferencing is 'const' in this context! 
 template <typename T>
