@@ -19,11 +19,12 @@ void lib_calvin_container::mapTest()
 	using namespace lib_calvin_container;
 
 	int const testSize = 10000;
-	mapFunctionTest<lib_calvin_container::map<int, int>>(testSize, "lib_calvin::map");
-	mapRvalueTest<lib_calvin_container::map<int, HeavyObjectWithMessage>>("lib_calvin::map");
+	mapFunctionTest<lib_calvin::map<int, int>>(testSize, "lib_calvin::map");
+	mapFunctionTest<lib_calvin::map_ref<int, int>>(testSize, "lib_calvin::map_ref");
+	mapRvalueTest<lib_calvin_container::map<int, HeavyObjectWithMessage>>("mapRvalueTest / lib_calvin::map");
 	
 	int const smallSize = 10000;
-	int const largeSize = 1000000;
+	int const largeSize = 100000;
 	//mapPerformanceTest<boost::unordered_map<int, int>>(performTestSize, "boost::unordered_map");
 	//mapPerformanceTest<std::unordered_map<int, int>>(performTestSize, "std::unordered_map");
 	
@@ -32,7 +33,7 @@ void lib_calvin_container::mapTest()
 	//mapPerformanceTest<lib_calvin_container::map<HeavyObject, int>>(smallSize, "lib_calvin::map / HeavyObject->int");
 	mapPerformanceTest<lib_calvin::map<int, HeavyObject>>(largeSize, "lib_calvin::map / int->HeavyObject");
 	mapPerformanceTest<lib_calvin::hash_map<int, HeavyObject>>(largeSize, "hash_map / int->HeavyObject");
-	mapPerformanceTest<lib_calvin::map2<int, HeavyObject>>(largeSize, "map2 / int->HeavyObject");
+	mapPerformanceTest<lib_calvin::map_ref<int, HeavyObject>>(largeSize, "map_ref / int->HeavyObject");
 	//mapPerformanceTest<std::map<HeavyObject, int>>(largeSize, "std::map / HeavyObject->int");
 	mapPerformanceTest<std::map<int, HeavyObject>>(largeSize, "std::map / int->HeavyObject");
 	

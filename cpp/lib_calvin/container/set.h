@@ -15,8 +15,8 @@ namespace lib_calvin_container
 {
 template <typename T, typename Comp = std::less<T>,
 	typename Impl = lib_calvin_container::BPlusTree<T, T, Comp, std::identity<T>>>
-	//typename Impl = std::set<T>>
-	//typename Impl = boost::container::set<T>>
+	//typename Impl = lib_calvin_container::RbTree<T, T, Comp, std::identity<T>>>
+	//typename Impl = lib_calvin_container::BinTree<T, T, Comp, std::identity<T>>>
 class set 
 {
 public:
@@ -78,10 +78,12 @@ public:
 private:		
 	Impl impl_;
 };
+} // end namespace lib_calvin_container
 
-
+namespace lib_calvin_container
+{
 template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = std::identity<T>>
-class set2 
+class set_ref 
 {
 public:
 	typedef std::pair<K, T *> PairType;
@@ -133,6 +135,8 @@ public:
 	public:
 		bool operator==(iterator const &rhs) const;
 		bool operator!=(iterator const &rhs) const;		
+	public:
+		operator const_iterator() { return const_iterator(impl_); }
 	private:
 		typename TreeImpl::iterator impl_;
 	};
@@ -183,6 +187,8 @@ public:
 	public:
 		bool operator==(reverse_iterator const &rhs) const;
 		bool operator!=(reverse_iterator const &rhs) const;		
+	public:
+		operator const_reverse_iterator() { return const_reverse_iterator(impl_); }
 	private:
 		typename TreeImpl::reverse_iterator impl_;
 	};
@@ -191,12 +197,12 @@ public:
 	typedef typename T & reference;
 
 
-	set2();
-	set2(set2<T, K, Comp, ExtractKey> const &rhs);
-	set2(set2<T, K, Comp, ExtractKey> &&rhs);
-	~set2();
-	set2<T, K, Comp, ExtractKey> & operator= (set2 const &rhs);
-	//set2<T, K, Comp, ExtractKey> & operator= (set2 &&rhs);
+	set_ref();
+	set_ref(set_ref<T, K, Comp, ExtractKey> const &rhs);
+	set_ref(set_ref<T, K, Comp, ExtractKey> &&rhs);
+	~set_ref();
+	set_ref<T, K, Comp, ExtractKey> & operator= (set_ref const &rhs);
+	//set_ref<T, K, Comp, ExtractKey> & operator= (set_ref &&rhs);
 	size_t size() const;
 	iterator find(K const &key);
 	const_iterator find(K const &key) const;
@@ -218,54 +224,57 @@ public:
 	reverse_iterator rbegin() { return impl_.rbegin(); }
 	reverse_iterator rend() { return impl_.rend(); }
 
-	friend bool operator==(set2 const &lhs, set2 const &rhs)
+	friend bool operator==(set_ref const &lhs, set_ref const &rhs)
 	{ return containerEqual(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()); }
 		
-	friend bool operator!=(set2 const &lhs, set2 const &rhs)
+	friend bool operator!=(set_ref const &lhs, set_ref const &rhs)
 	{ return !(lhs == rhs); }
 		
-	friend bool operator< (set2 const &lhs, set2 const &rhs)
+	friend bool operator< (set_ref const &lhs, set_ref const &rhs)
 	{ return containerLess(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()); }
 		
-	friend bool operator<= (set2 const &lhs, set2 const &rhs)
+	friend bool operator<= (set_ref const &lhs, set_ref const &rhs)
 	{ return !(rhs < lhs); }
 		
-	friend bool operator> (set2 const &lhs, set2 const &rhs)
+	friend bool operator> (set_ref const &lhs, set_ref const &rhs)
 	{ return containerEqual(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()); }
 		
-	friend bool operator>= (set2 const &lhs, set2 const &rhs)
+	friend bool operator>= (set_ref const &lhs, set_ref const &rhs)
 	{ return !(lhs < rhs); }
 private:
-	void copyObjectsFrom(set2 const &rhs);
+	void copyObjectsFrom(set_ref const &rhs);
 	void deleteObjects();
 private:		
 	TreeImpl impl_;
-}; // end set2
+}; // end set_ref
+}
 
-
+// set_ref implementation
+namespace lib_calvin_container
+{
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::set2(): impl_() { 
+set_ref<T, K, Comp, ExtractKey>::set_ref(): impl_() { 
 
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::set2(set2<T, K, Comp, ExtractKey> const &rhs): impl_(rhs.impl_) { 
+set_ref<T, K, Comp, ExtractKey>::set_ref(set_ref<T, K, Comp, ExtractKey> const &rhs): impl_(rhs.impl_) { 
 	copyObjectsFrom(rhs);
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::set2(set2<T, K, Comp, ExtractKey> &&rhs): impl_() { 
+set_ref<T, K, Comp, ExtractKey>::set_ref(set_ref<T, K, Comp, ExtractKey> &&rhs): impl_() { 
 	impl_.swap(rhs.impl_);
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::~set2() {
+set_ref<T, K, Comp, ExtractKey>::~set_ref() {
 	deleteObjects();
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey> &
-set2<T, K, Comp, ExtractKey>::operator=(set2 const &rhs) {
+typename set_ref<T, K, Comp, ExtractKey> &
+set_ref<T, K, Comp, ExtractKey>::operator=(set_ref const &rhs) {
 	if (this != &rhs) {
 		deleteObjects();
 		impl_ = rhs.impl_;
@@ -276,8 +285,8 @@ set2<T, K, Comp, ExtractKey>::operator=(set2 const &rhs) {
 
 /*
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey> &
-set2<T, K, Comp, ExtractKey>::operator=(set2 &&rhs) {
+typename set_ref<T, K, Comp, ExtractKey> &
+set_ref<T, K, Comp, ExtractKey>::operator=(set_ref &&rhs) {
 	if (this != &rhs) {
 		impl_.swap(rhs.impl_);
 	}
@@ -287,31 +296,31 @@ set2<T, K, Comp, ExtractKey>::operator=(set2 &&rhs) {
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 size_t
-set2<T, K, Comp, ExtractKey>::size() const {
+set_ref<T, K, Comp, ExtractKey>::size() const {
 	return impl_.size();
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::iterator
-set2<T, K, Comp, ExtractKey>::find(K const &key) {
+typename set_ref<T, K, Comp, ExtractKey>::iterator
+set_ref<T, K, Comp, ExtractKey>::find(K const &key) {
 	return iterator(impl_.find(key));
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_iterator
-set2<T, K, Comp, ExtractKey>::find(K const &key) const {
+typename set_ref<T, K, Comp, ExtractKey>::const_iterator
+set_ref<T, K, Comp, ExtractKey>::find(K const &key) const {
 	return const_iterator(impl_.find(key));
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 size_t
-set2<T, K, Comp, ExtractKey>::count(K const &key) const {
+set_ref<T, K, Comp, ExtractKey>::count(K const &key) const {
 	return impl_.count(key);
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-std::pair<typename set2<T, K, Comp, ExtractKey>::iterator, bool>
-set2<T, K, Comp, ExtractKey>::insert(T const &elem) {
+std::pair<typename set_ref<T, K, Comp, ExtractKey>::iterator, bool>
+set_ref<T, K, Comp, ExtractKey>::insert(T const &elem) {
 	auto result = impl_.insert(std::make_pair(ExtractKey()(elem), nullptr));
 	if (result.second) {
 		result.first->second = new T(elem);
@@ -321,7 +330,7 @@ set2<T, K, Comp, ExtractKey>::insert(T const &elem) {
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 template <typename InputIterator>
-void set2<T, K, Comp, ExtractKey>::insert(InputIterator beg, InputIterator end) { 
+void set_ref<T, K, Comp, ExtractKey>::insert(InputIterator beg, InputIterator end) { 
 	// Insert range [beg, end)
 	for (InputIterator iter = beg; iter != end; ++iter) {
 		insert(*iter);
@@ -330,7 +339,7 @@ void set2<T, K, Comp, ExtractKey>::insert(InputIterator beg, InputIterator end) 
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 size_t
-set2<T, K, Comp, ExtractKey>::erase(K const &key) { 
+set_ref<T, K, Comp, ExtractKey>::erase(K const &key) { 
 	auto result = impl_.find(key); 
 	if (result != impl_.end()) {
 		delete result->second;
@@ -342,20 +351,20 @@ set2<T, K, Comp, ExtractKey>::erase(K const &key) {
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 void
-set2<T, K, Comp, ExtractKey>::clear() { 
+set_ref<T, K, Comp, ExtractKey>::clear() { 
 	deleteObjects();
 	impl_.clear(); 
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 bool
-set2<T, K, Comp, ExtractKey>::empty() const { 
+set_ref<T, K, Comp, ExtractKey>::empty() const { 
 	return impl_.empty(); 
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 void
-set2<T, K, Comp, ExtractKey>::copyObjectsFrom(set2 const &rhs) {
+set_ref<T, K, Comp, ExtractKey>::copyObjectsFrom(set_ref const &rhs) {
 	auto sourceIter = rhs.impl_.begin();
 	auto targetIter = impl_.begin();
 	for ( ; sourceIter != rhs.impl_.end(); ++sourceIter, ++targetIter) {
@@ -365,7 +374,7 @@ set2<T, K, Comp, ExtractKey>::copyObjectsFrom(set2 const &rhs) {
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 void
-set2<T, K, Comp, ExtractKey>::deleteObjects() {
+set_ref<T, K, Comp, ExtractKey>::deleteObjects() {
 	for (auto iter = impl_.begin() ; iter != impl_.end(); ++iter) {
 		delete iter->second;
 	}
@@ -374,63 +383,66 @@ set2<T, K, Comp, ExtractKey>::deleteObjects() {
 
 } // end namespace lib_calvin_container
 
-// set2 iterator
+// set_ref iterator imlementation
 namespace lib_calvin_container
 {
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::const_iterator::const_iterator(): impl_() { }
+set_ref<T, K, Comp, ExtractKey>::const_iterator::const_iterator(): impl_() { }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::const_iterator::const_iterator(const_iterator const &rhs): impl_(rhs.impl_) { }
+set_ref<T, K, Comp, ExtractKey>::const_iterator::const_iterator(const_iterator const &rhs): impl_(rhs.impl_) { }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::const_iterator::const_iterator(typename TreeImpl::const_iterator const &impl): impl_(impl) { }
+set_ref<T, K, Comp, ExtractKey>::const_iterator::const_iterator(typename TreeImpl::const_iterator const &impl): impl_(impl) { }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_iterator &
-set2<T, K, Comp, ExtractKey>::const_iterator::operator=(const_iterator const &rhs) { 
-	impl_ = rhs.impl_;
+typename set_ref<T, K, Comp, ExtractKey>::const_iterator &
+set_ref<T, K, Comp, ExtractKey>::const_iterator::operator=(const_iterator const &rhs) { 
+	if (this != &rhs) {
+		impl_ = rhs.impl_;
+	}
+	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_iterator::reference
-set2<T, K, Comp, ExtractKey>::const_iterator::operator*() const {
+typename set_ref<T, K, Comp, ExtractKey>::const_iterator::reference
+set_ref<T, K, Comp, ExtractKey>::const_iterator::operator*() const {
 	PairType pair = impl_.operator*();
 	return *pair.second;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_iterator::pointer
-set2<T, K, Comp, ExtractKey>::const_iterator::operator->() const {
+typename set_ref<T, K, Comp, ExtractKey>::const_iterator::pointer
+set_ref<T, K, Comp, ExtractKey>::const_iterator::operator->() const {
 	PairType pair = impl_.operator*();
 	return pair.second;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_iterator &
-set2<T, K, Comp, ExtractKey>::const_iterator::operator++() {
+typename set_ref<T, K, Comp, ExtractKey>::const_iterator &
+set_ref<T, K, Comp, ExtractKey>::const_iterator::operator++() {
 	impl_.operator++();
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_iterator &
-set2<T, K, Comp, ExtractKey>::const_iterator::operator--() {
+typename set_ref<T, K, Comp, ExtractKey>::const_iterator &
+set_ref<T, K, Comp, ExtractKey>::const_iterator::operator--() {
 	impl_.operator--();
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_iterator const
-set2<T, K, Comp, ExtractKey>::const_iterator::operator++(int) {
+typename set_ref<T, K, Comp, ExtractKey>::const_iterator const
+set_ref<T, K, Comp, ExtractKey>::const_iterator::operator++(int) {
 	auto copy = *this;
 	operator++();
 	return copy;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_iterator const
-set2<T, K, Comp, ExtractKey>::const_iterator::operator--(int) {
+typename set_ref<T, K, Comp, ExtractKey>::const_iterator const
+set_ref<T, K, Comp, ExtractKey>::const_iterator::operator--(int) {
 	auto copy = *this;
 	operator--();
 	return copy;
@@ -438,233 +450,244 @@ set2<T, K, Comp, ExtractKey>::const_iterator::operator--(int) {
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 bool
-set2<T, K, Comp, ExtractKey>::const_iterator::operator==(const_iterator const &rhs) const {
+set_ref<T, K, Comp, ExtractKey>::const_iterator::operator==(const_iterator const &rhs) const {
 	return impl_ == rhs.impl_;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 bool
-set2<T, K, Comp, ExtractKey>::const_iterator::operator!=(const_iterator const &rhs) const {
+set_ref<T, K, Comp, ExtractKey>::const_iterator::operator!=(const_iterator const &rhs) const {
 	return impl_ != rhs.impl_;
 }
 	
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::iterator::iterator(): impl_() { }
+set_ref<T, K, Comp, ExtractKey>::iterator::iterator(): impl_() { }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::iterator::iterator(iterator const &rhs): impl_(rhs.impl_) { }
+set_ref<T, K, Comp, ExtractKey>::iterator::iterator(iterator const &rhs): impl_(rhs.impl_) { }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::iterator::iterator(typename TreeImpl::iterator const &impl): impl_(impl) { }
+set_ref<T, K, Comp, ExtractKey>::iterator::iterator(typename TreeImpl::iterator const &impl): impl_(impl) { }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::iterator &
-set2<T, K, Comp, ExtractKey>::iterator::operator=(iterator const &rhs) { 
-	impl_ = rhs.impl_;
+typename set_ref<T, K, Comp, ExtractKey>::iterator &
+set_ref<T, K, Comp, ExtractKey>::iterator::operator=(iterator const &rhs) { 
+	if (this != &rhs) {
+		impl_ = rhs.impl_;
+	}
+	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::iterator::reference
-set2<T, K, Comp, ExtractKey>::iterator::operator*() const {
+typename set_ref<T, K, Comp, ExtractKey>::iterator::reference
+set_ref<T, K, Comp, ExtractKey>::iterator::operator*() const {
 	PairType pair = impl_.operator*();
 	return *pair.second;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::iterator::pointer
-set2<T, K, Comp, ExtractKey>::iterator::operator->() const {
+typename set_ref<T, K, Comp, ExtractKey>::iterator::pointer
+set_ref<T, K, Comp, ExtractKey>::iterator::operator->() const {
 	PairType pair = impl_.operator*();
 	return pair.second;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::iterator &
-set2<T, K, Comp, ExtractKey>::iterator::operator++() {
+typename set_ref<T, K, Comp, ExtractKey>::iterator &
+set_ref<T, K, Comp, ExtractKey>::iterator::operator++() {
 	impl_.operator++();
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::iterator &
-set2<T, K, Comp, ExtractKey>::iterator::operator--() {
+typename set_ref<T, K, Comp, ExtractKey>::iterator &
+set_ref<T, K, Comp, ExtractKey>::iterator::operator--() {
 	impl_.operator--();
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::iterator const
-set2<T, K, Comp, ExtractKey>::iterator::operator++(int) {
+typename set_ref<T, K, Comp, ExtractKey>::iterator const
+set_ref<T, K, Comp, ExtractKey>::iterator::operator++(int) {
 	impl_.operator++(int);
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::iterator const
-set2<T, K, Comp, ExtractKey>::iterator::operator--(int) {
+typename set_ref<T, K, Comp, ExtractKey>::iterator const
+set_ref<T, K, Comp, ExtractKey>::iterator::operator--(int) {
 	impl_.operator--(int);
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 bool
-set2<T, K, Comp, ExtractKey>::iterator::operator==(iterator const &rhs) const {
+set_ref<T, K, Comp, ExtractKey>::iterator::operator==(iterator const &rhs) const {
 	return impl_ == rhs.impl_;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 bool
-set2<T, K, Comp, ExtractKey>::iterator::operator!=(iterator const &rhs) const {
+set_ref<T, K, Comp, ExtractKey>::iterator::operator!=(iterator const &rhs) const {
 	return impl_.operator!=(rhs.impl_);
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::const_reverse_iterator::const_reverse_iterator(): impl_() { }
+set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::const_reverse_iterator(): impl_() { }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::const_reverse_iterator::const_reverse_iterator(const_reverse_iterator const &rhs): impl_(rhs.impl_) { }
+set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::const_reverse_iterator(const_reverse_iterator const &rhs): impl_(rhs.impl_) { }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::const_reverse_iterator::const_reverse_iterator(typename TreeImpl::const_reverse_iterator const &impl): impl_(impl) { }
+set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::const_reverse_iterator(typename TreeImpl::const_reverse_iterator const &impl): impl_(impl) { }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_reverse_iterator &
-set2<T, K, Comp, ExtractKey>::const_reverse_iterator::operator=(const_reverse_iterator const &rhs) { 
-	impl_ = rhs.impl_;
+typename set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator &
+set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::operator=(const_reverse_iterator const &rhs) { 
+	if (this != &rhs) {
+		impl_ = rhs.impl_;
+	}
+	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_reverse_iterator::reference
-set2<T, K, Comp, ExtractKey>::const_reverse_iterator::operator*() const {
+typename set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::reference
+set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::operator*() const {
 	PairType pair = impl_.operator*();
 	return *pair.second;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_reverse_iterator::pointer
-set2<T, K, Comp, ExtractKey>::const_reverse_iterator::operator->() const {
+typename set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::pointer
+set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::operator->() const {
 	PairType pair = impl_.operator*();
 	return pair.second;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_reverse_iterator &
-set2<T, K, Comp, ExtractKey>::const_reverse_iterator::operator++() {
+typename set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator &
+set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::operator++() {
 	impl_.operator++();
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_reverse_iterator &
-set2<T, K, Comp, ExtractKey>::const_reverse_iterator::operator--() {
+typename set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator &
+set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::operator--() {
 	impl_.operator--();
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_reverse_iterator const
-set2<T, K, Comp, ExtractKey>::const_reverse_iterator::operator++(int) {
+typename set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator const
+set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::operator++(int) {
 	impl_.operator++(int);
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::const_reverse_iterator const
-set2<T, K, Comp, ExtractKey>::const_reverse_iterator::operator--(int) {
+typename set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator const
+set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::operator--(int) {
 	impl_.operator--(int);
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 bool
-set2<T, K, Comp, ExtractKey>::const_reverse_iterator::operator==(const_reverse_iterator const &rhs) const {
+set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::operator==(const_reverse_iterator const &rhs) const {
 	return impl_ == rhs.impl_;
+	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 bool
-set2<T, K, Comp, ExtractKey>::const_reverse_iterator::operator!=(const_reverse_iterator const &rhs) const {
+set_ref<T, K, Comp, ExtractKey>::const_reverse_iterator::operator!=(const_reverse_iterator const &rhs) const {
 	return impl_ != rhs.impl_;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::reverse_iterator::reverse_iterator(): impl_() { }
+set_ref<T, K, Comp, ExtractKey>::reverse_iterator::reverse_iterator(): impl_() { }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::reverse_iterator::reverse_iterator(reverse_iterator const &rhs): impl_(rhs.impl_) { }
+set_ref<T, K, Comp, ExtractKey>::reverse_iterator::reverse_iterator(reverse_iterator const &rhs): impl_(rhs.impl_) { }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-set2<T, K, Comp, ExtractKey>::reverse_iterator::reverse_iterator(typename TreeImpl::reverse_iterator const &impl): impl_(impl) { }
+set_ref<T, K, Comp, ExtractKey>::reverse_iterator::reverse_iterator(typename TreeImpl::reverse_iterator const &impl): impl_(impl) { }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::reverse_iterator &
-set2<T, K, Comp, ExtractKey>::reverse_iterator::operator=(reverse_iterator const &rhs) { 
-	impl_ = rhs.impl_;
+typename set_ref<T, K, Comp, ExtractKey>::reverse_iterator &
+set_ref<T, K, Comp, ExtractKey>::reverse_iterator::operator=(reverse_iterator const &rhs) { 
+	if (this != &rhs) {
+		impl_ = rhs.impl_;
+	}
+	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::reverse_iterator::reference
-set2<T, K, Comp, ExtractKey>::reverse_iterator::operator*() const {
+typename set_ref<T, K, Comp, ExtractKey>::reverse_iterator::reference
+set_ref<T, K, Comp, ExtractKey>::reverse_iterator::operator*() const {
 	PairType pair = impl_.operator*();
 	return *pair.second;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::reverse_iterator::pointer
-set2<T, K, Comp, ExtractKey>::reverse_iterator::operator->() const {
+typename set_ref<T, K, Comp, ExtractKey>::reverse_iterator::pointer
+set_ref<T, K, Comp, ExtractKey>::reverse_iterator::operator->() const {
 	PairType pair = impl_.operator*();
 	return pair.second;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::reverse_iterator &
-set2<T, K, Comp, ExtractKey>::reverse_iterator::operator++() {
+typename set_ref<T, K, Comp, ExtractKey>::reverse_iterator &
+set_ref<T, K, Comp, ExtractKey>::reverse_iterator::operator++() {
 	impl_.operator++();
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::reverse_iterator &
-set2<T, K, Comp, ExtractKey>::reverse_iterator::operator--() {
+typename set_ref<T, K, Comp, ExtractKey>::reverse_iterator &
+set_ref<T, K, Comp, ExtractKey>::reverse_iterator::operator--() {
 	impl_.operator--();
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::reverse_iterator const
-set2<T, K, Comp, ExtractKey>::reverse_iterator::operator++(int) {
+typename set_ref<T, K, Comp, ExtractKey>::reverse_iterator const
+set_ref<T, K, Comp, ExtractKey>::reverse_iterator::operator++(int) {
 	impl_.operator++(int);
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
-typename set2<T, K, Comp, ExtractKey>::reverse_iterator const
-set2<T, K, Comp, ExtractKey>::reverse_iterator::operator--(int) {
+typename set_ref<T, K, Comp, ExtractKey>::reverse_iterator const
+set_ref<T, K, Comp, ExtractKey>::reverse_iterator::operator--(int) {
 	impl_.operator--(int);
 	return *this;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 bool
-set2<T, K, Comp, ExtractKey>::reverse_iterator::operator==(reverse_iterator const &rhs) const {
+set_ref<T, K, Comp, ExtractKey>::reverse_iterator::operator==(reverse_iterator const &rhs) const {
 	return impl_ == rhs.impl_;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey >
 bool
-set2<T, K, Comp, ExtractKey>::reverse_iterator::operator!=(reverse_iterator const &rhs) const {
+set_ref<T, K, Comp, ExtractKey>::reverse_iterator::operator!=(reverse_iterator const &rhs) const {
 	return impl_ != rhs.impl_;
 }
 }
 
 namespace lib_calvin
 {
-	template <typename T>
-	class set: public lib_calvin_container::set<T> { };
+template <typename T>
+class set: public lib_calvin_container::set<T> { };
+//class set: public boost::container::set<T> { };
+//class set: public std::set<T> { };
 
-	template <typename T, typename HashFunc>
-	class hash_set: 
-		public lib_calvin_container::set<T, std::less<T>, 
-			lib_calvin_container::HashTable<T, T, std::identity<T>, HashFunc>> { };
+template <typename T, typename HashFunc>
+class hash_set: public lib_calvin_container::set<T, std::less<T>, 
+		lib_calvin_container::HashTable<T, T, std::identity<T>, HashFunc>> { };
 
 } // end namespace lib_calvin
 #endif

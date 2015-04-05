@@ -1813,6 +1813,9 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeDeleteElement(Node *node) {
 template <typename T, typename K, typename Comp, typename ExtractKey>
 bool operator==(B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs, 
 		B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs) {
+	if (lhs.size() != rhs.size()) {
+		return false;
+	}
 	return containerEqual(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 

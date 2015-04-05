@@ -702,6 +702,10 @@ bool Lr1ParserGenerator::LR1Item::operator< (LR1Item const &rhs) const {
 		return false;
 	}
 	*/
+	compareCount_++;
+	//if (compareCount_ % 1000000 == 0) {
+		//std::cout << "compareCount_: " << compareCount_  / 1000000 <<"\n";
+	//}
 	if (production_ < rhs.production_) {
     return true;
 	} else if (production_ == rhs.production_) {
@@ -716,6 +720,13 @@ bool Lr1ParserGenerator::LR1Item::operator< (LR1Item const &rhs) const {
 		return false;
 	}
 }
+
+bool Lr1ParserGenerator::LR1Item::operator==(LR1Item const &rhs) const {
+	return production_ == rhs.production_ && dot_ == rhs.dot_&& lookahead_ == rhs.lookahead_;
+
+}
+
+int Lr1ParserGenerator::LR1Item::compareCount_ = 0;
 
 // Same logic as slr, only using LR1Item instead of LR0Item
 void Lr1ParserGenerator::build () {

@@ -242,8 +242,9 @@ class Lr1ParserGenerator: public SlrParserGenerator {
       LR1Item(LR0Item const &inLR0Item, int inLookAhead):
         LR0Item(inLR0Item), lookahead_(inLookAhead) { }
       bool operator< (LR1Item const &rhs) const;
-      //bool operator== (LR1Item const &rhs) const;
+      bool operator== (LR1Item const &rhs) const;
       int lookahead_; // one terminal
+			static int compareCount_;
     };
     Lr1ParserGenerator(ContextFreeLanguage const &inLang):
       SlrParserGenerator(inLang) { }

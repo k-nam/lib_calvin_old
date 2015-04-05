@@ -31,7 +31,7 @@ void lib_calvin_container::setTest() {
 	setRvalueTest<BPlusTree<HeavyObjectWithMessage>>("BPlusTree / HeavyObject");
 	
 	int const testSize = 1000;
-	setFunctionTest<set2<HeavyObject>>(testSize, "lib_calvin_container::set2");
+	setFunctionTest<lib_calvin_container::set_ref<HeavyObject>>(testSize, "lib_calvin_container::set_ref");
 	setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
 	setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
 	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
@@ -76,7 +76,7 @@ void lib_calvin_container::setTest() {
 	//setPerformanceTest<RbTree<HeavyObject>>(mediumSize, "RbTree / HeavyObject");
 	//setPerformanceTest<BTree<HeavyObject>>(mediumSize, "BTree / HeavyObject");
 	setPerformanceTest<BPlusTree<HeavyObject>>(mediumSize, "BPlusTree / HeavyObject");
-	setPerformanceTest<set2<HeavyObject>>(mediumSize, "set2 / HeavyObject");
+	//setPerformanceTest<set_ref<HeavyObject>>(mediumSize, "set_ref / HeavyObject");
 	//setPerformanceTest<HashTable<HeavyObject, GenericHash<HeavyObject>>>(mediumSize, "HashTable / HeavyObject");
 	//setPerformanceTest<boost::unordered_set<HeavyObject, GenericHash<HeavyObject>>>(
 		//mediumSize, "boost::unordered_set / HeavyObject");
@@ -119,10 +119,14 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 		testVector[i] = temp;
 		std::pair<Impl::iterator, bool> a = impl.insert(temp);
 		std::pair<std::set<T>::iterator, bool> b = stdSet.insert(temp);
-		if (a.second != b.second || impl.size() != stdSet.size() || impl.count(temp) != stdSet.count(temp)) {			
+		size_t count1 = impl.count(temp);
+		size_t count2 = stdSet.count(temp);
+		if (a.second != b.second || impl.size() != stdSet.size() || count1 != count2) {			
 			correct = false;
 			cout << "inserting error\n";
 			exit(0); 
+		} else {
+			//cout << "inserting go\n";
 		}
 	}	
 	

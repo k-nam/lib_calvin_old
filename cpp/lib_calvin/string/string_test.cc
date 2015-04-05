@@ -45,7 +45,7 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
   vector<size_t> answer;
 	lib_calvin::stopwatch watch;
 
-  size_t textLen   = 100000;
+  size_t textLen   = 1000000;
   size_t patternLen  = 16;
   char *pText   = new char[textLen];
   char *pPattern  = new char[patternLen];

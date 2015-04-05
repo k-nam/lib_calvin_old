@@ -626,26 +626,59 @@ BinTree<T, K, Comp, ExtractKey>::findNode(K const &key) const {
 		std::cout << "findNode called when empty tree\n";
 		return std::pair<BinTreeNode<T> *, int>(NULL, 0);
 	}
-	BinTreeNode<T> *curNode = root_, *nextNode;
+	BinTreeNode<T> *curNode = root_; 
+	BinTreeNode<T> *nextNode = nullptr;
+	bool isChoosingRightChild = true;
+	BinTreeNode<T> *successor = nullptr;
 	while (true) {		
 		K const &curNodeKey = ExtractKey()(curNode->getKey());
-		if (Comp()(key, curNodeKey)) {
-			nextNode = curNode->getLeftChild();
-			if (nextNode == NULL) {
-				return std::make_pair(curNode, -1);
-			} else {
-				curNode = nextNode;
-			}
-		}	else if (Comp()(curNodeKey, key)) {			
+		
+		if (Comp()(curNodeKey, key)) {
 			nextNode = curNode->getRightChild();
-			if (nextNode == NULL) {
+			if (nextNode == nullptr) {
 				return std::make_pair(curNode, 1);
 			} else {
 				curNode = nextNode;
 			}
-		}	else { // curNodeKey == key
+		} else if (Comp()(key, curNodeKey)) {
+			nextNode = curNode->getLeftChild();
+			if (nextNode == nullptr) {
+				return std::make_pair(curNode, -1);
+			} else {
+				curNode = nextNode;
+			}
+		} else {
 			return std::make_pair(curNode, 0);
 		}
+		
+		/*
+		if (Comp()(curNodeKey, key)) {
+			isChoosingRightChild = true;
+			nextNode = curNode->getRightChild();
+			if (nextNode == NULL) {
+				break;
+			} else {
+				curNode = nextNode;
+			}
+		}	else {	
+			isChoosingRightChild = false;
+			successor = curNode;
+			nextNode = curNode->getLeftChild();
+			if (nextNode == NULL) {
+				break;
+			} else {
+				curNode = nextNode;
+			}
+		} */
+	}
+	if (successor == nullptr || Comp()(key, ExtractKey()(successor->getKey()))) { // not exists, so insert
+		if (isChoosingRightChild) {
+			return std::make_pair(curNode, 1); 
+		} else {
+			return std::make_pair(curNode, -1); 
+		}
+	} else {
+		return std::make_pair(successor, 0); 
 	}
 }
 
@@ -695,6 +728,9 @@ BinTree<T, K, Comp, ExtractKey>::deleteValueInNode(BinTreeNode<T> *node) {
 template <typename T, typename K, typename Comp, typename ExtractKey>
 bool operator==(BinTree<T, K, Comp, ExtractKey> const &lhs, 
 		BinTree<T, K, Comp, ExtractKey> const &rhs) {
+	if (lhs.size() != rhs.size()) {
+		return false;
+	}
 	return containerEqual(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
@@ -786,21 +822,21 @@ BinTree<T, K, Comp, ExtractKey>::makeEndNode() const {
 template <typename T>
 BinTreeNode<T> *
 binTreeSuccessor(BinTreeNode<T> const *node) {
-	if (node->getRightChild() != NULL) { // successor is in this subtree
+	if (node->getRightChild() != nullptr) { // successor is in this subtree
 		BinTreeNode<T> *temp = node->getRightChild();
-		while (temp->getLeftChild() != NULL) {
+		while (temp->getLeftChild() != nullptr) {
 			temp = temp->getLeftChild();
 		}
 		return temp;
 	} else { // we have to go up
-		while (node->getParent() != NULL) {
+		while (node->getParent() != nullptr) {
 			if (node == node->getParent()->getLeftChild()) {
 				return node->getParent();
 			}	else {
 				node = node->getParent();
 			}
 		} 
-		return NULL; // reached the end node; there is no successor
+		return nullptr; // reached the end node; there is no successor
 	}
 }		
 

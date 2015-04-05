@@ -24,7 +24,7 @@ public:
 	operator int() const { return 0; }
 private:
 	int value_;
-	int dummy_[10];
+	size_t dummy_[2];
 };
 
 struct LinkNodeObject {
