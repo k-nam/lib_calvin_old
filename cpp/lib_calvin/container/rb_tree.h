@@ -299,8 +299,7 @@ void RbTree<T, K, Comp, ExtractKey>::rbDeleteFix(RbTreeNode<T> *doubleBlack) {
 	// Symmetric code
 	Direction direction = Direction::Left;
 	Direction oppositeDirection = Direction::Right;
-	if (Comp()(ExtractKey()(doubleBlack->getKey()), 
-				ExtractKey()(parentNode->getKey()))) { // leftChild
+	if (doubleBlack == parentNode->getLeftChild()) { // leftChild
 		//RB_DELETE_FIX_SUBROUTINE(getLeftChild, getRightChild, rotateLeft, 
 			//												rbRotateLeft, rbRotateRight)
 	} else { 

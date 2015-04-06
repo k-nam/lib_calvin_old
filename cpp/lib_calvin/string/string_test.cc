@@ -45,17 +45,17 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
   vector<size_t> answer;
 	lib_calvin::stopwatch watch;
 
-  size_t textLen   = 1000000;
+  size_t textLen   = 100000;
   size_t patternLen  = 16;
   char *pText   = new char[textLen];
   char *pPattern  = new char[patternLen];
   // use only small number of alphabets to make test realistic
   // don't use null character 0 (reserved for algorithms)
   for (size_t i = 0; i < textLen; ++i) {
-    pText[i] = rand() % 2 + 50;
+    pText[i] = rand() % 16 + 50;
   }	
   for (size_t i = 0; i < patternLen; ++i) {
-    pPattern[i] = rand() % 2 + 50;
+    pPattern[i] = rand() % 16 + 50;
   }
 	/*
 	pPattern[0] = 2;

@@ -16,6 +16,7 @@
 #include "sort.h"
 #include "stopwatch.h" 
 #include "utility.h" 
+#include "container.h"
 
 // 2008-03-25
 // Revising the overall class structure to encompass network flow and

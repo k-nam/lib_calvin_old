@@ -58,6 +58,12 @@ public:
 	T1 const & operator()(std::pair<T1, T2> const &pair) const { return pair.first; }
 };
 
+template <typename T, typename ExtractKey>
+class CompareWithKey {
+public:
+	bool operator()(T const &lhs, T const  &rhs) const { ExtractKey()(lhs) < ExtractKey()(rhs); }
+};
+
 // Interface for generic iterators
 // Note that deferencing is 'const' in this context! 
 template <typename T>

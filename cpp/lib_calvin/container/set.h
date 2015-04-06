@@ -680,10 +680,10 @@ set_ref<T, K, Comp, ExtractKey>::reverse_iterator::operator!=(reverse_iterator c
 
 namespace lib_calvin
 {
-template <typename T>
-class set: public lib_calvin_container::set<T> { };
-//class set: public boost::container::set<T> { };
-//class set: public std::set<T> { };
+template <typename T, typename Comp = std::less<T>>
+class set: public lib_calvin_container::set<T, Comp> { };
+//class set: public boost::container::set<T, Comp> { };
+//class set: public std::set<T, Comp> { };
 
 template <typename T, typename HashFunc>
 class hash_set: public lib_calvin_container::set<T, std::less<T>, 

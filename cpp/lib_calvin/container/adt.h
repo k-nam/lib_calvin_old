@@ -193,14 +193,13 @@ void IntIndexer<K>::erase(size_t index) {
 template <typename K>
 K const & 
 IntIndexer<K>::operator[] (size_t index) const {
-  //return const_cast<hash_map<size_t, K> &>(indexToKey_)[index];
-	return const_cast<map<size_t, K> &>(indexToKey_)[index];
+	return indexToKey_.find(index)->second;
 }
 
 template <typename K>
 K & 
 IntIndexer<K>::operator[] (size_t index) {
-  return indexToKey_[index];
+  return indexToKey_.find(index)->second;
 }
 
 /******************* IntPq definitions *******************/

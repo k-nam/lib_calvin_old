@@ -632,7 +632,7 @@ BinTree<T, K, Comp, ExtractKey>::findNode(K const &key) const {
 	BinTreeNode<T> *successor = nullptr;
 	while (true) {		
 		K const &curNodeKey = ExtractKey()(curNode->getKey());
-		
+		/*
 		if (Comp()(curNodeKey, key)) {
 			nextNode = curNode->getRightChild();
 			if (nextNode == nullptr) {
@@ -650,8 +650,7 @@ BinTree<T, K, Comp, ExtractKey>::findNode(K const &key) const {
 		} else {
 			return std::make_pair(curNode, 0);
 		}
-		
-		/*
+		*/		
 		if (Comp()(curNodeKey, key)) {
 			isChoosingRightChild = true;
 			nextNode = curNode->getRightChild();
@@ -669,7 +668,7 @@ BinTree<T, K, Comp, ExtractKey>::findNode(K const &key) const {
 			} else {
 				curNode = nextNode;
 			}
-		} */
+		} 
 	}
 	if (successor == nullptr || Comp()(key, ExtractKey()(successor->getKey()))) { // not exists, so insert
 		if (isChoosingRightChild) {
