@@ -34,7 +34,6 @@ public:
 private:
 	BinTreeNode<T> *parent_;
 	BinTreeNode<T> *children_[2];
-	bool isNil_;
 	T key_; // cannot be const because of 'delete' routine uses setKey method
 };
 
@@ -461,7 +460,7 @@ BinTree<T, K, Comp, ExtractKey>::insert(T const &elem) {
 template <typename T, typename K, typename Comp, typename ExtractKey>
 std::pair<typename BinTree<T, K, Comp, ExtractKey>::iterator, bool> 
 BinTree<T, K, Comp, ExtractKey>::insert(T &&elem) {
-	return insert_(std::forward<T>(elem));
+	return insert_(std::move(elem));
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
