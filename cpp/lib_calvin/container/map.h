@@ -120,7 +120,6 @@ class map: public lib_calvin_container::map<K, V> { };
 //class map: public std::unordered_map<K, V> { };
 //class map: public boost::unordered_map<K, V> { };
 
-
 } // end namespace lib_calvin
 
 #endif
