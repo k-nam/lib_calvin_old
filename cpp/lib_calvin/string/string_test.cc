@@ -45,17 +45,17 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
   vector<size_t> answer;
 	lib_calvin::stopwatch watch;
 
-  size_t textLen   = 100000;
+  size_t textLen   = 300000;
   size_t patternLen  = 16;
   char *pText   = new char[textLen];
   char *pPattern  = new char[patternLen];
   // use only small number of alphabets to make test realistic
   // don't use null character 0 (reserved for algorithms)
   for (size_t i = 0; i < textLen; ++i) {
-    pText[i] = rand() % 4 + 50;
+    pText[i] = rand() % 4 + '0';
   }	
   for (size_t i = 0; i < patternLen; ++i) {
-    pPattern[i] = rand() % 4 + 50;
+    pPattern[i] = rand() % 4 + '0';
   }
 	/*
 	pPattern[0] = 2;
@@ -86,19 +86,19 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
     cout << "Matching is correct.\n";
   else {
     cout << "Matching error!!\n";
-		text.print();
-		pattern.print();
+		//text.print();
+		//pattern.print();
     size_t realsize = answer.size();
     size_t wrongsize = record.size();
     cout << "Real match number : " << realsize << endl;
 		cout << "Real match:\n";
 		for (auto iter = answer.begin(); iter != answer.end(); ++iter) {
-			std::cout << *iter << "\n";
+			//std::cout << *iter << "\n";
 		}
     cout << "Wrong match number : " << wrongsize << endl;
 		cout << "Wrong match:\n";
 		for (auto iter = record.begin(); iter != record.end(); ++iter) {
-			std::cout << *iter << "\n";
+			//std::cout << *iter << "\n";
 		}
 		exit(0);
   }

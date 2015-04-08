@@ -34,7 +34,7 @@ void subcc::compile(string sourceCode) {
 	/***** Step 3: *****/
   CCodeGenerator cCodeGen(threeAddrCode);
 	cout << "--------------- Below is generated subcc code ---------------\n";
-	//cCodeGen.printCCode();
+	cCodeGen.printCCode();
   cout << "--------------- End of generated subcc code ---------------\n\n";
   // Write C source code into a file
   //dup2(writeFd, STDOUT_FILENO);	

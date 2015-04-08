@@ -50,18 +50,16 @@ void lib_calvin_container::setTest() {
 	int const smallSize = 1000;
 	int const mediumSize = 100000;
 	int const largeSize = 100000;	
-	//setPerformanceTest<std::set<size_t>>(largeSize, "std::set / int");
-	//setPerformanceTest<boost::container::set<size_t>>(largeSize, "boost::set / int");
-	//setPerformanceTest<BinTree<size_t>>(largeSize, "RbTree / int");
-	//setPerformanceTest<RbTree<size_t>>(largeSize, "RbTree / int");
-	//setPerformanceTest<BTree<size_t>>(largeSize, "BTree / int");
-	//setPerformanceTest<BPlusTree<size_t>>(largeSize, "BPlusTree / int");
-	//setPerformanceTest<OrderedArray<size_t>>(largeSize, "OrderedArray / int");
-	//setPerformanceTest<std::unordered_set<size_t>>(largeSize, "std::unordered_set / int");
-  //setPerformanceTest<boost::unordered_set<size_t>>(largeSize, "boost::unordered_set / int");
-	//setPerformanceTest<HashTable<size_t>>(largeSize, "HashTable / int");
-	//setPerformanceTest<HashTable<size_t>>(largeSize, "HashTable / int");
-	//setPerformanceTest<HashTable2<size_t>>(largeSize, "HashTable2 / int");
+	//setPerformanceTest<std::set<size_t>>(largeSize, "std::set / size_t");
+	setPerformanceTest<boost::container::set<size_t>>(largeSize, "boost::set / size_t");
+	//setPerformanceTest<BinTree<size_t>>(largeSize, "RbTree / size_t");
+	//setPerformanceTest<RbTree<size_t>>(largeSize, "RbTree / size_t");
+	//setPerformanceTest<BTree<size_t>>(largeSize, "BTree / size_t");
+	setPerformanceTest<BPlusTree<size_t>>(largeSize, "BPlusTree / size_t");
+	//setPerformanceTest<OrderedArray<size_t>>(largeSize, "OrderedArray / size_t");
+	//setPerformanceTest<std::unordered_set<size_t>>(largeSize, "std::unordered_set / size_t");
+  setPerformanceTest<boost::unordered_set<size_t>>(largeSize, "boost::unordered_set / size_t");
+	setPerformanceTest<HashTable<size_t>>(largeSize, "HashTable / size_t");
 
 	//setPerformanceTest<std::set<LightObject>>(largeSize, "std::set / LightObject");
 	setPerformanceTest<boost::container::set<LightObject>>(largeSize, "boost::set / LightObject");
@@ -69,11 +67,11 @@ void lib_calvin_container::setTest() {
 	//setPerformanceTest<BTree<LightObject>>(largeSize, "BTree / LightObject");
 	setPerformanceTest<BPlusTree<LightObject>>(largeSize, "BPlusTree / LightObject");
 	//setPerformanceTest<OrderedArray<LightObject>>(largeSize, "OrderedArray / LightObject");
-	setPerformanceTest<lib_calvin::hash_set<LightObject, GenericHash<LightObject>>>(largeSize, "hash_set / LightObject");
+	//setPerformanceTest<lib_calvin::hash_set<LightObject, GenericHash<LightObject>>>(largeSize, "hash_set / LightObject");
 
 	//setPerformanceTest<std::set<HeavyObject>>(mediumSize, "std::set / HeavyObject");
 	setPerformanceTest<boost::container::set<HeavyObject>>(mediumSize, "boost::set / HeavyObject");
-	//setPerformanceTest<RbTree<HeavyObject>>(mediumSize, "RbTree / HeavyObject");
+	setPerformanceTest<RbTree<HeavyObject>>(mediumSize, "RbTree / HeavyObject");
 	//setPerformanceTest<BTree<HeavyObject>>(mediumSize, "BTree / HeavyObject");
 	setPerformanceTest<BPlusTree<HeavyObject>>(mediumSize, "BPlusTree / HeavyObject");
 	//setPerformanceTest<set_ref<HeavyObject>>(mediumSize, "set_ref / HeavyObject");
