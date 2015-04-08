@@ -116,6 +116,7 @@ public:
 	reverse_iterator rend() { return begin(); }
 
 private: 
+	void init();
 	void init(size_t initSize, size_t initCapacity);
 	void reserve_impl(size_t numElem);
 
@@ -162,19 +163,24 @@ bool operator>= (Array<T> const &lhs, Array<T> const &rhs) {
 
 template <typename T>
 Array<T>::Array() {
-	init(0, VECTOR_INIT_CAPACITY);
+	init();
 }
 
 template <typename T>
 Array<T>::Array(Array<T> const &rhs) {
-	init(rhs.size_, rhs.capacity_);
-	copyConstruct(rhs.array_, array_, size_);
+	if (rhs.empty()) {
+		init();
+		return;
+	} else {
+		init(rhs.size_, rhs.capacity_);
+		copyConstruct(rhs.array_, array_, size_);
+	}
 }
 
 template <typename T>
 Array<T>::Array(Array<T> &&rhs) {
 	//std::cout << "array move ctor\n";
-	init(0, VECTOR_INIT_CAPACITY);
+	init();
 	swap(rhs);
 }
 
@@ -215,6 +221,10 @@ template <typename T>
 Array<T> & 
 Array<T>::operator= (Array<T> const &rhs) {
 	if (this == &rhs) {
+		return *this;
+	}
+	if (rhs.empty()) {
+		clear();
 		return *this;
 	}
 	for (size_t i = 0; i < size_; ++i) {
@@ -270,6 +280,9 @@ template <typename T>
 void Array<T>::pop_back() {		
 	array_[size_ - 1].~T();
 	size_--;
+	if (empty()) {
+		clear();
+	}
 }
 
 template <typename T>
@@ -316,6 +329,9 @@ Array<T>::erase(const_iterator const &pos) {
 	size_t index = pos - begin();
 	eraseSingleElement(array_, size_, index);
 	size_--;
+	if (empty()) {
+		clear();
+	}
 	return begin() + index;
 }
 
@@ -349,8 +365,10 @@ void Array<T>::clear() {
 	for (size_t i = 0; i < size_; ++i) {
 		array_[i].~T();
 	}
+	size_ = 0;
+	capacity_ = 0;
 	operator delete(array_);
-	init(0, VECTOR_INIT_CAPACITY); 
+	array_ = nullptr;
 }
 
 //--------------------------- private methods ------------------------------//
@@ -364,6 +382,13 @@ void Array<T>::reserve_impl(size_t numElem) {
 	moveConstructAndDestruct(array_, newArray, size_);
 	operator delete(array_);
 	array_ = newArray;
+}
+
+template <typename T>
+void Array<T>::init() {
+	size_ = 0;
+	capacity_ = 0;
+	array_ = nullptr;
 }
 
 template <typename T>

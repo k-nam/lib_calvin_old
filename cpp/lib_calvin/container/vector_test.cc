@@ -17,10 +17,7 @@ void lib_calvin_container::vectorTest() {
 	size_t const smallTestSize = 10000;
 	size_t const largeTesetSize = 100000;
 
-	Array<Array<RbTree<int>>> a;
-	a.resize(2);
-	a[1] = Array<RbTree<int>>(2);
-	a.push_back(Array<RbTree<int>>(3));
+	vectorBasicTest();
 
 	//vectorFunctionTest(std::vector<HeavyObject>(), "std::vector");
 	vectorFunctionTest(lib_calvin_container::Array<HeavyObject>(), "lib_calvin_container::Array");
@@ -47,6 +44,13 @@ void lib_calvin_container::vectorTest() {
 	//vectorPerformanceTest3(lib_calvin_container::Array<int>(), "lib_calvin_container::Array", testSize);
 
 	HeavyObject::countThisObject();
+}
+
+void lib_calvin_container::vectorBasicTest() {
+	Array<Array<HeavyObject>> a;
+	a.resize(2);
+	a[1] = Array<HeavyObject>(2);
+	a.push_back(Array<HeavyObject>(3));
 }
 
 template <typename Impl>
@@ -90,15 +94,15 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 	
 	// additional interface
 	// insert single element
-	int numIteration = 10;
+	int numIteration = 100;
 	std::vector<Impl::value_type> stdVector;
-	for (int i = 0; i < numIteration; ++i) {
+	for (int iter = 0; iter < numIteration; ++iter) {
 		int const arraySize = rand() % testSize + 1; // prevent 0
 		resetVectorForSize(impl, arraySize);
 		resetVectorForSize(stdVector, arraySize);
-		int const positionToInsert = rand() % arraySize;
-		Impl::value_type temp(i);
-		for (int i = 0; i < arraySize; ++i) { // force reserving
+		int const positionToInsert = (rand() % arraySize + rand() + 30) % arraySize;
+		Impl::value_type temp(iter);
+		for (int j = 0; j < arraySize; ++j) { // force reserving
 			impl.insert(advanceIteratorBy(impl.begin(), positionToInsert), temp);
 			stdVector.insert(advanceIteratorBy(stdVector.begin(), positionToInsert), temp);
 		}
@@ -380,9 +384,11 @@ bool lib_calvin_container::areSame(T1 const &lhs, T2 const &rhs) {
 	if (lhs.size() != rhs.size()) {
 		return false;
 	}
+	size_t index = 0;
 	auto lhsIter = lhs.begin();
 	auto rhsIter = rhs.begin();
 	for ( ; lhsIter != lhs.end(); ++lhsIter, ++rhsIter) {
+		index++;
 		if (*lhsIter != *rhsIter) {
 			return false;
 		}
