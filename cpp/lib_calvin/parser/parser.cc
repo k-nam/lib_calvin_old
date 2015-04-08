@@ -17,6 +17,12 @@ ContextFreeLanguage::ContextFreeLanguage(int terminalEnd, int nonTerminalEnd):
   terminalEnd_(terminalEnd), nonTerminalEnd_(nonTerminalEnd),
   isFinal_(false) { }
 
+ContextFreeLanguage::Production::Production(Production const &rhs):
+key_(rhs.key_), head_(rhs.head_), body_(rhs.body_) { }
+
+ContextFreeLanguage::Production::Production(Production &&rhs):
+key_(rhs.key_), head_(rhs.head_), body_(std::move(rhs.body_)) { }
+
 bool ContextFreeLanguage::Production::operator== (Production const &rhs) const {
   if (head_ == rhs.head_ && body_ == rhs.body_) {
     return true;
@@ -231,6 +237,12 @@ void ContextFreeLanguage::calculateFollowSets() {
 }
 
 /******************** SlrParserGenerator definitions *******************/
+
+SlrParserGenerator::LR0Item::LR0Item(LR0Item const &rhs):
+production_(rhs.production_), dot_(rhs.dot_) { }
+
+SlrParserGenerator::LR0Item::LR0Item(LR0Item &&rhs):
+production_(std::move(rhs.production_)), dot_(rhs.dot_) { }
 
 bool SlrParserGenerator::LR0Item::operator< (LR0Item const &rhs) const {
   if (production_ < rhs.production_)
@@ -690,18 +702,15 @@ int SlrParserGenerator::getPrecedence (Production inPro) const {
 
 /*********************** Lr1ParserGenerator definitions ******************/
 
+Lr1ParserGenerator::LR1Item::LR1Item(LR1Item const &rhs):
+LR0Item(rhs), lookahead_(rhs.lookahead_) { }
+
+Lr1ParserGenerator::LR1Item::LR1Item(LR1Item &&rhs):
+LR0Item(std::move(rhs)), lookahead_(rhs.lookahead_) { 
+	compareCount_++;
+}
+
 bool Lr1ParserGenerator::LR1Item::operator< (LR1Item const &rhs) const {
-	/*
-  if (production_ < rhs.production_) {
-    return true;
-	} else if (production_ == rhs.production_ && dot_ < rhs.dot_) {
-    return true;
-	} else if (production_ == rhs.production_ && dot_ == rhs.dot_ && lookahead_ < rhs.lookahead_) {
-    return true;
-	} else {
-		return false;
-	}
-	*/
 	compareCount_++;
 	//if (compareCount_ % 1000000 == 0) {
 		//std::cout << "compareCount_: " << compareCount_  / 1000000 <<"\n";
@@ -832,7 +841,7 @@ void Lr1ParserGenerator::getMove(set<LR1Item> const &source, int inSymbol,
     if (iter->production_.body_[iter->dot_] == inSymbol) { // right move
       LR1Item newItem(*iter); // copy
       newItem.dot_++; // move dot by one symbol
-      target.insert(newItem);
+      target.insert(std::move(newItem));
       //cout << "LR1 getMove inserted one\n";
     }
   }
@@ -870,7 +879,7 @@ void Lr1ParserGenerator::getClosure(set<LR1Item> const &kernels,
         for (iter2 = firstSet.begin(); iter2 != firstSet.end(); ++iter2) {
           // Consider lookaheads:  insert tokens in the first set
           LR1Item newItem(targetProductions[i], *iter2);
-          if (closure.insert(newItem).second) { // inserted!
+          if (closure.insert(std::move(newItem)).second) { // inserted!
             finished = false;
 					}
         }
@@ -982,7 +991,7 @@ void LalrParserGenerator::buildFast () {
     // Use dummy lookahead to test ($ can not be included in any body)
     LR1Item srcLR1Item(kernel_iter->second, kDollarMarker);
     set<LR1Item> srcLR1ItemSet, targetLR1Kernel;
-    srcLR1ItemSet.insert(srcLR1Item); // singleton
+    srcLR1ItemSet.insert(std::move(srcLR1Item)); // singleton
     Lr1ParserGenerator::getClosure(srcLR1ItemSet, srcLR1ItemSet);		
     // Calculate for all possible moves
     for (int i = 0; i < language_.nonTerminalEnd_; ++i) {
@@ -1012,7 +1021,7 @@ void LalrParserGenerator::buildFast () {
         LR0Item targetLR0Item(item_iter->production_, item_iter->dot_);
         kernel target(nextState, targetLR0Item);
         if (item_iter->lookahead_ == kDollarMarker) { // lookahead = $
-	        propagates[*kernel_iter].insert(target);
+	        propagates[*kernel_iter].insert(std::move(target));
         }
         else { // real Token lookahead
           lookaheads[target].insert(item_iter->lookahead_);
@@ -1068,7 +1077,7 @@ void LalrParserGenerator::buildFast () {
         la_iter != curLookaheads.end(); ++la_iter) {
       
       LR1Item curItem(LR0Kernel, *la_iter);
-      closure.insert(curItem);
+      closure.insert(std::move(curItem));
     }
     Lr1ParserGenerator::getClosure(closure, closure);
     set<LR1Item>::const_iterator item_iter;

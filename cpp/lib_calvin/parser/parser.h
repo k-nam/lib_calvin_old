@@ -72,6 +72,8 @@ class ContextFreeLanguage {
       bool operator== (Production const &rhs) const;
       bool operator< (Production const &rhs) const;
       Production(int key, int inHead): key_(key), head_(inHead) { }
+			Production(Production const &rhs);
+			Production(Production &&rhs);
       int key_;
       int head_;
       vector<int> body_;
@@ -142,6 +144,8 @@ class SlrParserGenerator {
       LR0Item(Production const &inPro): production_(inPro), dot_(0) { }
       LR0Item(Production const &inPro, int dot):
         production_(inPro), dot_(dot) { }
+			LR0Item(LR0Item const &);
+			LR0Item(LR0Item &&);
       bool operator< (LR0Item const &rhs) const;
       bool operator== (LR0Item const &rhs) const;
       Production production_;
@@ -241,6 +245,8 @@ class Lr1ParserGenerator: public SlrParserGenerator {
         LR0Item(inPro), lookahead_(inLookAhead) { }
       LR1Item(LR0Item const &inLR0Item, int inLookAhead):
         LR0Item(inLR0Item), lookahead_(inLookAhead) { }
+			LR1Item(LR1Item const &);
+			LR1Item(LR1Item &&);
       bool operator< (LR1Item const &rhs) const;
       bool operator== (LR1Item const &rhs) const;
       int lookahead_; // one terminal
