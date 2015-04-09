@@ -29,6 +29,9 @@ namespace lib_calvin_container
 	template <typename Impl>
 	void setFunctionTest(size_t testSize, std::string title);
 
+	template <typename Impl>
+	void setFunctionTest2(size_t testSize, std::string title);
+
 	// Test this ADT impl with N = n 
 	// Assuming that element type T can be constructed with a key value
 	template <typename Impl>

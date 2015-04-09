@@ -26,11 +26,16 @@ using std::endl;
 using std::vector;
 
 void lib_calvin_container::setTest() {	
+
 	setRvalueTest<RbTree<HeavyObjectWithMessage>>("RbTree / HeavyObject");
 	setRvalueTest<BTree<HeavyObjectWithMessage>>("BTree / HeavyObject");
 	setRvalueTest<BPlusTree<HeavyObjectWithMessage>>("BPlusTree / HeavyObject");
 	
 	int const testSize = 1000;
+	int const smallSize = 1000;
+	int const mediumSize = 10000;
+	int const largeSize = 100000;	
+	
 	setFunctionTest<lib_calvin_container::set_ref<HeavyObject>>(testSize, "lib_calvin_container::set_ref");
 	setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
 	setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
@@ -39,17 +44,16 @@ void lib_calvin_container::setTest() {
 	setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
 	setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
 	//setFunctionTest(PtrSet<int>(), testSize, "lib_calvin_container::PtrSet"); // unfinished
-	
 	setFunctionTest<HashTable<int>>(testSize,	"lib_calvin_container::HashTable"); // cannot iterate
 	setFunctionTest<HashTable2<int>>(testSize,	"lib_calvin_container::HashTable2"); // cannot iterate
 	
+	setFunctionTest2<BTree<size_t>>(mediumSize, "lib_calvin_container::BTree");
+	setFunctionTest2<BPlusTree<size_t>>(mediumSize, "lib_calvin_container::BPlusTree");
+
 	setIteratorTest<RbTree<int>>("RbTree iterator");
 	setIteratorTest<BTree<int>>("BTree iterator");
 	setIteratorTest<HashTable<int>>("HashTable iterator");
 
-	int const smallSize = 1000;
-	int const mediumSize = 100000;
-	int const largeSize = 100000;	
 	//setPerformanceTest<std::set<size_t>>(largeSize, "std::set / size_t");
 	setPerformanceTest<boost::container::set<size_t>>(largeSize, "boost::set / size_t");
 	//setPerformanceTest<BinTree<size_t>>(largeSize, "RbTree / size_t");
@@ -283,6 +287,51 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 	*/
 	std::cout << "\n";
 }
+
+template <typename Impl>
+void lib_calvin_container::setFunctionTest2(size_t testSize, std::string title) {
+	typedef Impl::value_type T;
+	cout << "Starting set function test2 for " << title << "\n";
+	Impl impl;
+	bool correct = true;
+	for (unsigned i = 0; i < testSize; ++i) {	
+		T temp = rand() % testSize;
+		impl.insert(temp);
+	}
+	size_t index = 0;
+	for (auto iter = impl.begin(); iter != impl.end(); ++iter) {
+		Impl temp = impl;
+		if (*iter != *temp.at(index)) {
+			cout << "at() method error\n";
+			exit(0);
+		}
+		if (impl.index_of(iter) != index) {
+			cout << "index_of() method error\n";
+			exit(0);
+		}
+		index++;
+	}
+	cout << "at() test part.1 O.K\n";
+	for (unsigned i = 0; i < testSize; ++i) {	
+		T temp = rand() % testSize;
+		impl.erase(temp);
+	}
+	index = 0;
+	for (auto iter = impl.begin(); iter != impl.end(); ++iter) {
+		Impl temp = impl;
+		if (*iter != *temp.at(index)) {
+			cout << "at() method error\n";
+			exit(0);
+		} 
+		if (impl.index_of(iter) != index) {
+			cout << "index_of() method error\n";
+			exit(0);
+		}
+		index++;
+	}		
+	cout << "at() test part.2 O.K\n\n";
+}
+
 
 template <typename Impl>
 void lib_calvin_container::setPerformanceTest(int n, std::string title) {

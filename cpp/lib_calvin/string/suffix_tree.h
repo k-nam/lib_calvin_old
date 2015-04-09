@@ -206,7 +206,9 @@ suffix_tree<Alphabet>::findPatternPoint(abstract_string<Alphabet> const &pattern
 	bool atNode = true;
 	size_t indexInText = 0;
 	for (size_t i = 0; i < pattern.length(); i++) {
+		std::cout << "Pattern point loop\n";
 		if (atNode) {
+			std::cout << "Pattern point at node\n";
 			bool found = false;
 			auto pairs = graph_.get_vertex_edge_pairs_from(destNode);
 			for (auto iter = pairs.begin(); iter != pairs.end(); ++iter) {
@@ -221,6 +223,7 @@ suffix_tree<Alphabet>::findPatternPoint(abstract_string<Alphabet> const &pattern
 			}
 			// no way down
 			if (!found) {
+				std::cout << "Pattern point not found\n";
 				return std::make_pair(dummyPoint_, false); // dummy
 			}
 		}
@@ -232,6 +235,7 @@ suffix_tree<Alphabet>::findPatternPoint(abstract_string<Alphabet> const &pattern
 			}
 			indexInText++;
 		} else {
+			std::cout << "Pattern point not found2\n";
 			return std::make_pair(dummyPoint_, false); // dummy
 		}	
 	}

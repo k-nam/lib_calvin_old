@@ -12,10 +12,9 @@ template <typename T, typename K = T, typename Comp = std::less<K>, typename Ext
 class B_TREE_BASE 
 {
 private:
-	// all internal nodes are full except end() of btree
-	// all leaf nodes are full except leaf root and end() of bplus tree
+	// all leaf nodes are full except leaf root 
 	// only leaf root grows (by reserve())
-	static int const B_TREE_FULL_NODE_CAPACITY = 127;
+	static int const B_TREE_FULL_NODE_CAPACITY = 127; // must be odd
 	static int const B_TREE_ROOT_INIT_CAPACITY = 4;
 	static int const B_TREE_NODE_REALLOC_MULTIPLIER = 2;
 	static bool const USE_BINARY_SEARCH = true;
@@ -27,6 +26,8 @@ private:
 	private:
 		friend B_TREE_BASE;
 	public:
+		Node();
+		virtual ~Node();
 		void reserve(int capacity);
 		int getCapacity() const;
 		int getSize() const;
@@ -34,11 +35,14 @@ private:
 		virtual void refreshTreeSize();
 		virtual void increaseTreeSizeByOne();
 		virtual void decreaseTreeSizeByOne();
+		virtual void increaseTreeSizeByOne2();
+		virtual void decreaseTreeSizeByOne2();
 		void setSize(int size);
 		InternalNode *getParent();
 		void setParent(InternalNode *parent);
+		void setDynamic(bool);
 		bool isLeafNode() const; // used to record type information
-		bool isFullNode() const;
+		bool isDynamic() const;
 	public:
 		// 0 <= index < size_
 		T &getElement(int index);
@@ -89,6 +93,7 @@ private:
 		T *elements_;
 		InternalNode *parent_;
 		int indexInParent_;
+		bool isDynamic_;
 #ifdef BPLUS
 		Node *next_;
 		Node *previous_;
@@ -97,6 +102,8 @@ private:
 
 	class FullNode: public Node
 	{
+	public:
+		virtual ~FullNode();
 	private:
 		friend B_TREE_BASE;
 	private:
@@ -105,14 +112,18 @@ private:
 
 	class InternalNode: public Node
 	{
+	public:
+		virtual ~InternalNode();
 	private:
 		friend B_TREE_BASE;
 	public:
-		size_t getTreeSize() const;
+		size_t getTreeSize() const;	
 		void setTreeSize(size_t);
 		void refreshTreeSize();
 		void increaseTreeSizeByOne();
 		void decreaseTreeSizeByOne();
+		void increaseTreeSizeByOne2(size_t childIndex);
+		void decreaseTreeSizeByOne2(size_t childIndex);
 	public:
 		// 0 <= index <= size_
 		Node *getChild(int index);
@@ -137,9 +148,12 @@ private:
 	private:
 		Node **children_;
 		size_t treeSize_;
+		size_t treeSize2_[B_TREE_FULL_NODE_CAPACITY + 1];
 	};
 
 	class FullInternalNode: public InternalNode {
+	public:
+		virtual ~FullInternalNode();
 	private:
 		friend B_TREE_BASE;
 	private:
@@ -170,6 +184,8 @@ public:
 		pointer operator->() const;
 	private:
 		typedef B_TREE_BASE<T, K, Comp, ExtractKey> TreeType;
+	public:
+		friend class TreeType;
 	public:
 		IteratorImpl();
 		IteratorImpl(TreeType const *tree, Node *node, int index = 0);
@@ -212,6 +228,7 @@ public:
 	// semi-random access methods
 	const_iterator at(size_t) const;
 	iterator at(size_t);
+	size_t index_of(const_iterator) const; // inverse of at()
 	size_t count(K const &key) const;
 	std::pair<iterator, bool> insert(T const &);
 	std::pair<iterator, bool> insert(T &&);
@@ -280,9 +297,9 @@ private:
 	void bTreeNodeCopy(Node const *source, Node *&target);
 	void bTreeNodeCopy(Node const *source, Node *&target, Node *&leftMode, Node *&rightMost);
 	// target node is assumed empty
-	void bTreeNodeElemCopy(Node const *source, Node *target);
-	void bTreeNodeDelete(Node *node);
-	void bTreeNodeDeleteElement(Node *node);
+	void bTreeNodeContentCopy(Node const *source, Node *target);
+	void deleteTree(Node *node);
+	void deleteNode(Node *node);
 private:
 	// for testing
 	void addToNodeTest();
@@ -295,6 +312,10 @@ private:
 	Node *root_;
 public:
 	friend class BTreeTest<T>;
+public:
+	static void countNodes();
+private:
+	static size_t nodeCount_;
 };
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -322,6 +343,16 @@ bool operator>= (B_TREE_BASE<T, K, Comp, ExtractKey> const &lhs,
 	B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs);
 
 //--------------------------  node implementations -------------------------//
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey>::Node::Node() {
+	B_TREE_BASE<T, K, Comp, ExtractKey>::nodeCount_++;
+}
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey>::Node::~Node() {
+	B_TREE_BASE<T, K, Comp, ExtractKey>::nodeCount_--;
+}
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
 void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::reserve(int capacity) {
@@ -375,6 +406,20 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::decreaseTreeSizeByOne() {
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::increaseTreeSizeByOne2() {
+	if (getParent()){
+		getParent()->increaseTreeSizeByOne2(indexInParent_);
+	}
+}
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::decreaseTreeSizeByOne2() {
+	if (getParent()){
+		getParent()->decreaseTreeSizeByOne2(indexInParent_);
+	}
+}
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
 void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setSize(int size) {
 	size_ = size;
 }
@@ -391,6 +436,11 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setParent(InternalNode *parent) 
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setDynamic(bool isDynamic) {
+	isDynamic_ = isDynamic;
+}
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
 int B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getIndexInParent() const {
 	return indexInParent_;
 }
@@ -403,6 +453,11 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setIndexInParent(int index) {
 template <typename T, typename K, typename Comp, typename ExtractKey>
 bool B_TREE_BASE<T, K, Comp, ExtractKey>::Node::isLeafNode() const { 
 	return isLeafNode_; 
+}
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
+bool B_TREE_BASE<T, K, Comp, ExtractKey>::Node::isDynamic() const { 
+	return isDynamic_; 
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -550,6 +605,25 @@ int B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getTargetCapacity(int capacity) c
 	return targetCapacity;
 }
 
+template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey>::FullNode::~FullNode() {
+}
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
+size_t 
+B_TREE_BASE<T, K, Comp, ExtractKey>::nodeCount_ = 0;
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::countNodes() {
+	std::cout << "BTree node current count is: \"" << nodeCount_ << "\": ";
+	if (nodeCount_ == 0) {
+		std::cout << "O.K\n\n";
+	} else {
+		std::cout << "memory leak!!!\n";
+		//exit(0);
+	}
+}
+
 
 #ifdef BPLUS
 template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -578,6 +652,10 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setPrevious(Node *previous) {
 //--------------------------  internal node implementations -------------------------//
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::~InternalNode() { 
+}
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
 size_t B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::getTreeSize() const { 
 	return treeSize_;
 }
@@ -597,6 +675,7 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::refreshTreeSize() {
 	for (int i = 0; i <= size_; i++) {
 		Node *child = getChild(i);
 		treeSize += child->getTreeSize();
+		treeSize2_[i] = child->getTreeSize();
 		//std::cout << "child tree size at: " << i << " was: " << child->getTreeSize();
 	}
 	treeSize_ = treeSize;
@@ -615,6 +694,24 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::decreaseTreeSizeByOne() 
 	treeSize_--;
 	if (getParent()) {
 		getParent()->decreaseTreeSizeByOne();
+	}	
+}
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::increaseTreeSizeByOne2(size_t childIndex) { 
+	treeSize_++;
+	treeSize2_[childIndex]++;
+	if (getParent()) {
+		getParent()->increaseTreeSizeByOne2(indexInParent_);
+	}
+}
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
+void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::decreaseTreeSizeByOne2(size_t childIndex) { 
+	treeSize_--;
+	treeSize2_[childIndex]--;
+	if (getParent()) {
+		getParent()->decreaseTreeSizeByOne2(indexInParent_);
 	}	
 }
 
@@ -714,6 +811,10 @@ template <typename T, typename K, typename Comp, typename ExtractKey>
 void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::eraseElementAndChild(int index) {
 	eraseChild(index + 1);
 	eraseElement(index);	
+}
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
+B_TREE_BASE<T, K, Comp, ExtractKey>::FullInternalNode::~FullInternalNode() {	
 }
 
 //----------------------- iterator implementation ------------------//
@@ -909,7 +1010,8 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::swap(B_TREE_BASE<T, K, Comp, ExtractKe
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
 B_TREE_BASE<T, K, Comp, ExtractKey>::~B_TREE_BASE() {
-	bTreeNodeDelete(root_);
+	deleteTree(root_);
+	//countNodes();
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -951,6 +1053,52 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::at(size_t index) {
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
+size_t
+B_TREE_BASE<T, K, Comp, ExtractKey>::index_of(const_iterator iterator) const {
+	IteratorImpl const &impl = iterator.getImpl();
+	Node *curNode = impl.node_;
+	int curIndex = impl.index_;
+	size_t index = 0;
+#ifndef BPLUS
+	bool startedInInternalNode;
+	if (curNode->isLeafNode()) {
+		startedInInternalNode = false;		
+	} else {
+		curIndex++;
+		startedInInternalNode = true;	
+	}
+#endif
+	while (true) {
+		if (curNode->isLeafNode()) {
+			index += curIndex;
+		} else {
+#ifndef BPLUS
+			index += curIndex; // for elements in internal node
+#endif
+			// add tree sizes of brothers in left of curNode
+			for (size_t i = 0; i < curIndex; i++) {
+				index += static_cast<InternalNode *>(curNode)->treeSize2_[i];
+			}
+		}
+		if (curNode->getParent() == nullptr) {
+			break; 
+		} else {
+			curIndex = curNode->getIndexInParent();
+			curNode = curNode->getParent();	
+		}
+	}
+#ifdef BPLUS
+	return index;
+#else
+	if (startedInInternalNode) {
+		return index - 1;
+	} else {
+		return index;
+	}
+#endif
+}
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
 std::pair<typename B_TREE_BASE<T, K, Comp, ExtractKey>::iterator, bool>
 B_TREE_BASE<T, K, Comp, ExtractKey>::insert(T const &elem) {
 	return insert_(elem);
@@ -984,7 +1132,7 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::erase(K const &key) {
 template <typename T, typename K, typename Comp, typename ExtractKey>
 void B_TREE_BASE<T, K, Comp, ExtractKey>::clear() {
 	size_ = 0;
-	bTreeNodeDelete(root_);
+	deleteTree(root_);
 	root_ = NULL;
 }
 
@@ -1135,25 +1283,26 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::lowerBoundIterator(K const &key) const {
 template <typename T, typename K, typename Comp, typename ExtractKey>
 typename B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl
 B_TREE_BASE<T, K, Comp, ExtractKey>::findIteratorAt(size_t index) const {
-	Node *currentNode = root_;
-	if (root_ == nullptr) { // empty
+	if (empty()) { // empty
 		return makeIterator(nullptr);
 	}
-	if (index >= currentNode->getTreeSize()) {
-		std::cout << "elementAt index error\n";
-		exit(0);
-	}
+	Node *currentNode = root_;
+	//root_->refreshTreeSize();
 	while (true) {
+		if (index >= currentNode->getTreeSize()) {
+			std::cout << "elementAt2 index error\n";
+			//exit(0);
+		}
 		if (currentNode->isLeafNode()) {
 			return makeIterator(currentNode, static_cast<int>(index));
 		} else {
 			InternalNode *currentInternalNode = static_cast<InternalNode *>(currentNode);
-			for (int i = 0; i <= size_; i++) {
-				if (index < currentInternalNode->getChild(i)->getTreeSize()) { 
+			for (int i = 0; i <= currentInternalNode->getSize(); i++) {
+				if (index < currentInternalNode->treeSize2_[i]) { 
 					currentNode = currentInternalNode->getChild(i);
 					break;
 				} else {
-					index -= currentInternalNode->getChild(i)->getTreeSize(); // pass through i'th subtreee
+					index -= currentInternalNode->treeSize2_[i]; // pass through i'th subtreee
 #ifndef BPLUS
 					if (index == 0) {
 						return makeIterator(currentNode, i);
@@ -1276,15 +1425,12 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::deleteFromNode(Node *node, K const &key, in
 			//std::cout << "deleting: key found in leaf node\n";
 			deleteValue(node, result.first);
 			if (empty()) { // now empty
-				operator delete(root_);
+				deleteNode(root_);
 				root_ = NULL;				
 			}
 			returnValue = 1;
 		}
 	}
-	//if (returnValue > 0) {
-	//	size_--;
-	//}
 	return returnValue;
 }
 
@@ -1316,7 +1462,7 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::insertValue(
 		Node *node, T1 &&elem, int indexToInsert) {
 	node->insertElement(indexToInsert, std::forward<T1>(elem));	
 	node->increaseSizeByOne();
-	node->increaseTreeSizeByOne();
+	node->increaseTreeSizeByOne2();
 	size_++;
 }
 
@@ -1325,7 +1471,7 @@ T const
 B_TREE_BASE<T, K, Comp, ExtractKey>::deleteValue(Node *node, int indexToDelete) {
   T const deletedElement = (node->eraseElement(indexToDelete));	
 	node->decreaseSizeByOne();
-	node->decreaseTreeSizeByOne();
+	node->decreaseTreeSizeByOne2();
 	size_--;
 	return deletedElement;
 }
@@ -1357,6 +1503,7 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::splitNode(Node *node, int parentIndex) {
 	Node *newBrotherNode = NULL;
 	if (node->isLeafNode() == false) { // node is internal
 		newBrotherNode = makeNewInternalNode(B_TREE_FULL_NODE_CAPACITY);
+		//static_cast<InternalNode *>(newBrotherNode)->setTreeSize(0);
 		// copy links and change parents
 		for (int i = 0; i < t; ++i) {
 			static_cast<InternalNode *>(newBrotherNode)->
@@ -1398,13 +1545,11 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::splitNode(Node *node, int parentIndex) {
 	parent->insertElementAndChild(parentIndex, std::move(node->getElement(t - 1)), newBrotherNode);
 	node->getElement(t - 1).~T();
 #endif
-
 	parent->increaseSizeByOne();
 	node->refreshTreeSize();
 	newBrotherNode->refreshTreeSize();
-	//if (node->getParent() == root_) {
-		node->getParent()->refreshTreeSize();
-	//}
+	node->getParent()->refreshTreeSize();
+
 	return newBrotherNode;
 }
 
@@ -1496,6 +1641,9 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::addToNode(Node *node, int parentIndex) {
 			addToInternalNodeFromLeft(node, brotherNode, parentIndex);
 		}
 	} 	
+	node->refreshTreeSize();
+	brotherNode->refreshTreeSize();
+	node->getParent()->refreshTreeSize();
 	return true;
 }
 
@@ -1545,20 +1693,24 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::mergeNode(Node *node, int parentIndex) {
 		node->setSize(B_TREE_FULL_NODE_CAPACITY);
 		node->constructElement(node->t - 1, std::move(node->getParent()->getElement(parentIndex)));
 #endif
+		brotherNode->setSize(0);
 	}
 
-	operator delete(brotherNode);
+	deleteNode(brotherNode);
 	// erase one element and one child from the parent
 	static_cast<InternalNode *>(node->getParent())->eraseElementAndChild(parentIndex);
 	node->getParent()->decreaseSizeByOne();
 	// special case for root
 	if (node->getParent() == root_ && root_->getSize() == 0) {
 		//std::cout << "freeing root\n";		
-		operator delete(root_);
+		deleteNode(root_);
 		root_ = node;
 		root_->setParent(NULL);
 	}
 	node->refreshTreeSize();
+	if (node->getParent()) {
+		node->getParent()->refreshTreeSize();
+	}
 	return node;
 }
 
@@ -1623,9 +1775,11 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::makeNewLeafNode(int capacity) {
 		FullNode *fullNode = new FullNode();
 		fullNode->elements_ = reinterpret_cast<T *>(fullNode->elements2_);
 		newNode = fullNode;
+		newNode->setDynamic(false);
 	} else {
 		newNode = new Node();
 		newNode->elements_ = static_cast<T *>(operator new(sizeof(T) * capacity));
+		newNode->setDynamic(true);
 	}
 	newNode->isLeafNode_ = true;
 	newNode->setSize(0);
@@ -1648,6 +1802,7 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::makeNewInternalNode(int capacity) {
 		fullNode->elements_ = reinterpret_cast<T *>(fullNode->elements2_);
 		fullNode->children_ = fullNode->children2_;
 		newNode = fullNode;
+		newNode->setDynamic(false);
 	} else {
 		std::cout << "makeNewInternalNode error\n";
 		exit(0);
@@ -1658,6 +1813,10 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::makeNewInternalNode(int capacity) {
 	newNode->setParent(NULL);
 	newNode->setIndexInParent(-1);
 	newNode->capacity_ = capacity;
+	newNode->treeSize_ = 0;
+	for (size_t i = 0; i <= B_TREE_FULL_NODE_CAPACITY; i++) {
+		newNode->treeSize2_[i] = 0;
+	}
 #ifdef BPLUS
 	newNode->setNext(NULL);
 	newNode->setPrevious(NULL);
@@ -1744,7 +1903,7 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeCopy(
 	bool isLeafNode = source->isLeafNode();
 	if (isLeafNode == false) { // this is internal	
 		InternalNode *realTarget = makeNewInternalNode(source->getCapacity());
-		bTreeNodeElemCopy(source, realTarget);
+		bTreeNodeContentCopy(source, realTarget);
 		InternalNode const *realSource = static_cast<InternalNode const *>(source);
 #ifdef BPLUS
 		Node *previousRightMostOfChild = NULL;
@@ -1774,7 +1933,7 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeCopy(
 		target = realTarget;
 	} else { // leaf node		
 		target = makeNewLeafNode(source->getCapacity());
-		bTreeNodeElemCopy(source, target);
+		bTreeNodeContentCopy(source, target);
 #ifdef BPLUS
 		leftMost = target;
 		rightMost = target;
@@ -1783,31 +1942,42 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeCopy(
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
-void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeElemCopy(Node const *source, Node *target) {
+void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeContentCopy(Node const *source, Node *target) {
 	target->setSize(source->getSize());
 	copyConstruct(source->getElementArray(), target->getElementArray(), source->getSize());
+	if (!source->isLeafNode()) {
+		InternalNode const *src = static_cast<InternalNode const *>(source);
+		InternalNode *tar = static_cast<InternalNode *>(target);
+		tar->treeSize_ = src->treeSize_;
+		for (size_t i = 0; i <= src->getSize(); i++) {
+			tar->treeSize2_[i] = src->treeSize2_[i];
+		}
+	}
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
-void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeDelete(Node *node) {
+void B_TREE_BASE<T, K, Comp, ExtractKey>::deleteTree(Node *node) {
 	if (node == NULL) {
 		return;
 	}
 	bool isLeafNode = node->isLeafNode();
 	if (isLeafNode == false) { // this is internal
 		for (int i = 0; i <= node->getSize(); ++i) {
-			bTreeNodeDelete(static_cast<InternalNode *>(node)->getChild(i));
+			deleteTree(static_cast<InternalNode *>(node)->getChild(i));
 		}
 	} 
-	bTreeNodeDeleteElement(node);
-	operator delete(node);
+	deleteNode(node);
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
-void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeDeleteElement(Node *node) {
+void B_TREE_BASE<T, K, Comp, ExtractKey>::deleteNode(Node *node) {
 	for (int i = 0; i <  node->getSize(); ++i) {
 		node->getElement(i).~T();
 	}
+	if (node->isDynamic()) {
+		operator delete(node->getElementArray());
+	}
+	delete node;
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
