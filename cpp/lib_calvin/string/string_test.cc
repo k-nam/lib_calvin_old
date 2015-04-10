@@ -32,7 +32,7 @@ void lib_calvin_string::matchingAlgorithmTest() {
   // matchingTest(kmp, "KMP");
   //matchingTest(boyerMoore, "Boyer-Moore");
 	//for (size_t i = 300000; i < 300001; i++) {
-		matchingTest(suffixTreeMatching, "Suffix Tree", 10000);
+		matchingTest(suffixTreeMatching, "Suffix Tree", 100000);
 	//}
 	
 	std::cout << "--------------- matchingAlgorithmTest finished --------------\n\n";
@@ -68,7 +68,7 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
 	pPattern[0] = 4;
 	*/
 
-	for (size_t iter = 0; iter < 100; iter++) {
+	for (size_t iter = 0; iter < 1; iter++) {
 		for (size_t i = 0; i < patternLen; ++i) {
 			pPattern[i] = rand() % 4 + '0';
 		}

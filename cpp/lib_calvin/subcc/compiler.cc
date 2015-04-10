@@ -38,5 +38,4 @@ void subcc::compile(string sourceCode) {
   cout << "--------------- End of generated subcc code ---------------\n\n";
   // Write C source code into a file
   //dup2(writeFd, STDOUT_FILENO);	
-
 }
