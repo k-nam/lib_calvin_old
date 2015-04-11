@@ -123,18 +123,18 @@ void suffix_tree<Alphabet>::build() {
 	rootId_ = internalNodeId_++;
 	graph_.insert_vertex(Node(NodeType::Root, rootId_, 0, 0));
 	extension_ = 0;
-	Point workingPoint = dummyPoint_;
+	Point workingPoint = dummyPoint_;	
+
 	// $ char at the tail for convenience
 	for (phase_ = 1; phase_ <= text_.size(); phase_++) { // must add text[phase] to each suffix		
 		wasInternalCreatedInLastExtension = false;
 		Alphabet const &character = text_[phase_ - 1];
 		//std::cout << "phase: " << phase_ << " char: " << character << "\n";
 		for ( ; extension_ < phase_; extension_++) { 
-			//std::cout << " ext: " << extension_  << "\n";
 			if (extension_ + 1 == phase_) { // last one char; deal with root only
 				auto result = rootContinuesWith(character);
 				if (!result.second) {
-					//std::cout << "  Rule A: " << "\ncrea
+					//std::cout << "  Rule A: " << "\n";
 					createBranchAtRoot(character);	
 					leafNodes_.push_back(extension_);
 				} else {
@@ -144,14 +144,14 @@ void suffix_tree<Alphabet>::build() {
 				}
 			} else {			
 				// current suffix: [extension_, phase_)
-				//Point currentPoint = followPathDown(rootId_, extension_, phase_ - 1);
-				if (workingPoint == dummyPoint_){
+			//	Point currentPoint = followPathDown(rootId_, extension_, phase_ - 1);
+			//	if (workingPoint == dummyPoint_){
 					//std::cout << "wowrking point is dummy2\n";
-					exit(0);
-				}
-				//if (!(currentPoint == workingPoint)) {
-					//std::cout << "working point error\n";
-					//exit(0);
+				//	exit(0);
+			//	}
+			//	if (!(currentPoint == workingPoint)) {
+				//	std::cout << "working point error\n";
+				//	exit(0);
 				//}
 				auto result = continuesWith(workingPoint, character);
 				if (!result.second) { // Rule2
@@ -166,7 +166,8 @@ void suffix_tree<Alphabet>::build() {
 					workingPoint = followSuffixLink(branchNode);
 					leafNodes_.push_back(extension_);
 				} else { // Rule3
-					if (isNode(workingPoint) && wasInternalCreatedInLastExtension) { 
+					if (wasInternalCreatedInLastExtension) {
+						// workingPoiont must be a node now
 						getNode(lastCreated).suffixLink_ = workingPoint.dest_;
 					}
 					//std::cout << "  Rule B': " << "\n";
@@ -206,9 +207,7 @@ suffix_tree<Alphabet>::findPatternPoint(abstract_string<Alphabet> const &pattern
 	bool atNode = true;
 	size_t indexInText = 0;
 	for (size_t i = 0; i < pattern.length(); i++) {
-		std::cout << "Pattern point loop\n";
 		if (atNode) {
-			std::cout << "Pattern point at node\n";
 			bool found = false;
 			auto pairs = graph_.get_vertex_edge_pairs_from(destNode);
 			for (auto iter = pairs.begin(); iter != pairs.end(); ++iter) {
@@ -223,19 +222,17 @@ suffix_tree<Alphabet>::findPatternPoint(abstract_string<Alphabet> const &pattern
 			}
 			// no way down
 			if (!found) {
-				std::cout << "Pattern point not found\n";
 				return std::make_pair(dummyPoint_, false); // dummy
 			}
 		}
 		if (text_[indexInText] == pattern[i]) {
-			if (indexInText + 1 < link.endIndex_) {
+			if (link.endIndex_ == 0 || indexInText + 1 < link.endIndex_) {
 				atNode = false;
 			} else {
 				atNode = true;
 			}
 			indexInText++;
 		} else {
-			std::cout << "Pattern point not found2\n";
 			return std::make_pair(dummyPoint_, false); // dummy
 		}	
 	}
@@ -374,13 +371,11 @@ suffix_tree<Alphabet>::followPathDown(size_t src, size_t startIndex, size_t endI
 	//std::cout << "start was: " << startIndex << "end was: " << endIndex << "\n";
 	//std::cout << "num outlink was: " << pairs.size() << "\n";
 	for (auto iter = pairs.begin(); iter != pairs.end(); ++iter) {
-		//std::cout << "head was: " << iter->second.head_ << "\n";
-		//std::cout << "startletter was: " << text_[startIndex] << "\n";
 		if (iter->second.head_ == text_[startIndex]) {
 			size_t linkLength = getLength(iter->second);
 			size_t linkStartIndex = iter->second.startIndex_;
 			//std::cout << "link src was: " << iter->second.startIndex_ << "link dest was: " << iter->second.endIndex_ << "\n";
-			//std::cout << "linkLength was: " << linkLength << "\n";
+			//std::cout << "linkLength was: " << linkLength << "\n";	
 			if (linkLength < endIndex - startIndex) {
 				return followPathDown(iter->first.id_, startIndex + linkLength, endIndex);
 			} else {
@@ -562,8 +557,7 @@ suffix_tree<Alphabet>::createBranch(Point const &point, Alphabet const &characte
 		child.parentId_ = newInternalId;
 		Node newLeaf(NodeType::Leaf, extension_, newInternalId, 0);
 		Link oldLink(getLink(point));
-		Link newLink1(text_[point.endIndex_], 
-											point.endIndex_, oldLink.endIndex_); // internal -> child
+		Link newLink1(text_[point.endIndex_], point.endIndex_, oldLink.endIndex_); // internal -> child
 		Link newLink2(character, phase_ - 1, 0); // internal -> newLeaf
 		//std::cout << "changing old link end to: " << point.endIndex_ <<"\n";
 		oldLink.endIndex_ = point.endIndex_;

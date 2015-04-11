@@ -16,7 +16,7 @@ void abstractStringTest();
 void matchingAlgorithmTest();
 void matchingTest (void (*matchingCharAlg) 
     (abstract_string<> const &text, abstract_string<> const &pattern, 
-     lib_calvin::vector<size_t> &record), std::string title, size_t testSize = 100);
+     lib_calvin::vector<size_t> &record), std::string title, size_t testSize);
 }
 
 #endif

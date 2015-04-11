@@ -125,13 +125,14 @@ private:
 	BinTreeNode<T> *getFirstNode() const; // for begin()
 	BinTreeNode<T> *deleteValueInNode(BinTreeNode<T> *); // erase this node
 	void copyFrom(BinTree const &rhs); // should be called only when empty
-	BinTreeNode<T> *makeNewNode(T const &elem) const;
-	BinTreeNode<T> *makeNewNode(T &&elem) const;
-	BinTreeNode<T> *makeNewNode(BinTreeNode<T> const *rhs) const;
 	BinTreeNode<T> *makeEndNode() const;
 	// Copy nodes recursively. A copy of the tree pointed by 'srcNode' will 
 	// be created, and 'targetNode' shall point to the root of copied tree.
 	void binTreeNodeCopy(BinTreeNode<T> *srcNode, BinTreeNode<T> *&targetNode);
+protected:
+	virtual BinTreeNode<T> *makeNewNode(T const &elem) const;
+	virtual BinTreeNode<T> *makeNewNode(T &&elem) const;
+	virtual BinTreeNode<T> *makeNewNode(BinTreeNode<T> const *rhs) const;
 protected: // member variables
 	size_t size_;
 	BinTreeNode<T> *root_; // root_ is end_'s left child
@@ -665,17 +666,13 @@ template <typename T, typename K, typename Comp, typename ExtractKey>
 BinTreeNode<T> *
 BinTree<T, K, Comp, ExtractKey>::deleteValueInNode(BinTreeNode<T> *node) {
 	BinTreeNode<T> *nodeToDelete = node;
+	BinTreeNode<T> *next = binTreeSuccessor(nodeToDelete);
 	if (node->getLeftChild() && node->getRightChild()) { // both children exist
 		// successor of internal must be a leaf
-		nodeToDelete = binTreeSuccessor<T>(node);	
+		nodeToDelete = next;	
+		node->setKey(std::move(nodeToDelete->getKey()));
 	}
 	// manage iterating link
-	BinTreeNode<T> *next = binTreeSuccessor(nodeToDelete);
-	BinTreeNode<T> *previous = binTreePredecessor(nodeToDelete);
-
-	if (node->getLeftChild() && node->getRightChild()) { // both children exist
-		node->setKey(nodeToDelete->getKey());
-	}
 	if (nodeToDelete->getLeftChild() != nodeToDelete->getRightChild()) { // only one child exist
 		BinTreeNode<T> *child = nodeToDelete->getLeftChild() ? 
 			nodeToDelete->getLeftChild() : nodeToDelete->getRightChild();
@@ -688,7 +685,7 @@ BinTree<T, K, Comp, ExtractKey>::deleteValueInNode(BinTreeNode<T> *node) {
 		}	else {
 			nodeToDelete->getParent()->setRightChild(child);
 		}
-	} else if (!nodeToDelete->getLeftChild() && !nodeToDelete->getRightChild()) { // This is a leaf node
+	} else { // This is a leaf node
 		if (nodeToDelete->getParent() == end_) { // erasing the root
 			root_ = NULL;
 		}	
@@ -697,9 +694,6 @@ BinTree<T, K, Comp, ExtractKey>::deleteValueInNode(BinTreeNode<T> *node) {
 		}	else {
 			nodeToDelete->getParent()->setRightChild(NULL);
 		}
-	} else { 
-		std::cout << "rb tree delete error\n";
-		exit(0);
 	}
 	return nodeToDelete;
 }
@@ -769,21 +763,20 @@ BinTree<T, K, Comp, ExtractKey>::binTreeNodeCopy(BinTreeNode<T> *srcNode, BinTre
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
 BinTreeNode<T> *
-BinTree<T, K, Comp, ExtractKey>::makeNewNode(T &&key) const { 
-	return new RbTreeNode<T>(std::forward<T>(key)); 
+BinTree<T, K, Comp, ExtractKey>::makeNewNode(T const &key) const { 
+	return new BinTreeNode<T>(key); 
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
 BinTreeNode<T> *
-BinTree<T, K, Comp, ExtractKey>::makeNewNode(T const &key) const { 
-	return new RbTreeNode<T>(key); 
+BinTree<T, K, Comp, ExtractKey>::makeNewNode(T &&key) const { 
+	return new BinTreeNode<T>(std::forward<T>(key)); 
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
 BinTreeNode<T> *
 BinTree<T, K, Comp, ExtractKey>::makeNewNode(BinTreeNode<T> const *rhs) const { 
-	return new RbTreeNode<T>(rhs->getKey(), 
-		static_cast<RbTreeNode<T> const *>(rhs)->getColor());
+	return new BinTreeNode<T>(rhs->getKey());
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>

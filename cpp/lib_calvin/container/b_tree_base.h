@@ -35,8 +35,8 @@ private:
 		int getSize() const;
 		virtual size_t getTreeSize() const;
 		virtual void refreshTreeSize();
-		virtual void increaseTreeSizeByOne();
-		virtual void decreaseTreeSizeByOne();
+		void increaseTreeSizeByOne();
+		void decreaseTreeSizeByOne();
 		void setSize(int size);
 		InternalNode *getParent();
 		int getIndexInParent() const;
@@ -628,7 +628,7 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::countNodes() {
 		std::cout << "O.K\n\n";
 	} else {
 		std::cout << "memory leak!!!\n";
-		//exit(0);
+		exit(0);
 	}
 }
 
@@ -1280,11 +1280,10 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::findIteratorAt(size_t index) const {
 		return makeIterator(nullptr);
 	}
 	Node *currentNode = root_;
-	//root_->refreshTreeSize();
 	while (true) {
 		if (index >= currentNode->getTreeSize()) {
 			std::cout << "elementAt2 index error\n";
-			//exit(0);
+			exit(0);
 		}
 		if (currentNode->isLeafNode()) {
 			return makeIterator(currentNode, static_cast<int>(index));

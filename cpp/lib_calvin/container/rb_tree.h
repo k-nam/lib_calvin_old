@@ -15,7 +15,6 @@ public:
 	RbTreeNode(T const &key);
 	RbTreeNode(T &&key);
 	RbTreeNode(T const &key, RbColor color);
-	RbTreeNode(T &&key, RbColor color);
 	~RbTreeNode() { /*std::cout << "rbnode dtored\n";*/ }
 	RbColor getColor() const { return color_; }
 	void setColor(RbColor newColor) { color_ = newColor; }	
@@ -57,12 +56,9 @@ public:
 private: 
 	template <typename T1>
 		std::pair<typename BinTree<T, K, Comp, ExtractKey>::iterator, bool> insert_(T1 &&elem);
-	BinTreeNode<T> *makeNewNode(T const &key) const { 
-		return new RbTreeNode<T>(key); }
-	BinTreeNode<T> *makeNewNode(BinTreeNode<T> const *rhs) const {
-		return new RbTreeNode<T>(rhs->getKey(), 
-			static_cast<RbTreeNode<T> const *>(rhs)->getColor());
-	}
+	BinTreeNode<T> *makeNewNode(T const &elem) const override;
+	BinTreeNode<T> *makeNewNode(T &&elem) const override;
+	BinTreeNode<T> *makeNewNode(BinTreeNode<T> const *rhs) const override;
 	typedef typename BinTreeNode<T>::Direction Direction;
 	RbTreeNode<T> *rotateLeft(RbTreeNode<T> *node);
 	RbTreeNode<T> *rotateRight(RbTreeNode<T> *node);
@@ -89,9 +85,6 @@ RbTreeNode<T>::RbTreeNode(T &&key): BinTreeNode(std::forward<T>(key)), color_(Rb
 
 template <typename T>
 RbTreeNode<T>::RbTreeNode(T const &key, RbColor color): BinTreeNode(key), color_(color) { }
-
-template <typename T>
-RbTreeNode<T>::RbTreeNode(T &&key, RbColor color): BinTreeNode(std::forward<T>(key)), color_(color) { }
 
 //-------------------------- RbTree public methods --------------------------//
 
@@ -162,6 +155,25 @@ void RbTree<T, K, Comp, ExtractKey>::insert(InputIterator beg, InputIterator end
 }
 
 //--------------------------- RbTree private methods --------------------------//
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
+BinTreeNode<T> *
+RbTree<T, K, Comp, ExtractKey>::makeNewNode(T const &key) const { 
+	return new RbTreeNode<T>(key); 
+}
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
+BinTreeNode<T> *
+RbTree<T, K, Comp, ExtractKey>::makeNewNode(T &&key) const { 
+	return new RbTreeNode<T>(std::move(key)); 
+}
+
+template <typename T, typename K, typename Comp, typename ExtractKey>
+BinTreeNode<T> *
+RbTree<T, K, Comp, ExtractKey>::makeNewNode(BinTreeNode<T> const *rhs) const {
+	return new RbTreeNode<T>(rhs->getKey(), 
+		static_cast<RbTreeNode<T> const *>(rhs)->getColor());
+}
 
 // rotate and return new local root
 template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -258,6 +270,7 @@ void RbTree<T, K, Comp, ExtractKey>::rbInsertFix(RbTreeNode<T> *node) {
 	RbTreeNode<T> *uncleNode = NULL;
 	if (grandPaNode == NULL) {
 		std::cout << "grandPa null\n";
+		exit(0);
 	}
 	Direction direction = Direction::Left;
 	Direction oppositeDirection = Direction::Right;
@@ -300,8 +313,6 @@ void RbTree<T, K, Comp, ExtractKey>::rbDeleteFix(RbTreeNode<T> *doubleBlack) {
 	Direction direction = Direction::Left;
 	Direction oppositeDirection = Direction::Right;
 	if (doubleBlack == parentNode->getLeftChild()) { // leftChild
-		//RB_DELETE_FIX_SUBROUTINE(getLeftChild, getRightChild, rotateLeft, 
-			//												rbRotateLeft, rbRotateRight)
 	} else { 
 		direction = Direction::Right;
 		oppositeDirection = Direction::Left;
@@ -324,7 +335,7 @@ void RbTree<T, K, Comp, ExtractKey>::rbDeleteFix(RbTreeNode<T> *doubleBlack) {
 			rbDeleteFix(parentNode); 
 			return; 
 		} else if (brotherNode->getChild(oppositeDirection) != NULL && 
-			brotherNode->getChild(oppositeDirection)->getColor() == RbColor::Red) { /* can end! */ 
+				brotherNode->getChild(oppositeDirection)->getColor() == RbColor::Red) { /* can end! */ 
 			brotherNode->getChild(oppositeDirection)->setColor(RbColor::Black); 
 			brotherNode->setColor(parentNode->getColor()); 
 			parentNode->setColor(RbColor::Black); 

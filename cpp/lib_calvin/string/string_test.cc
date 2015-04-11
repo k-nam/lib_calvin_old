@@ -26,13 +26,14 @@ void lib_calvin_string::abstractStringTest() {
 
 void lib_calvin_string::matchingAlgorithmTest() {
 	using namespace lib_calvin_string;
+	size_t testSize = 1000000;
 	std::cout << "-------------- matchingAlgorithmTest start ----------------\n\n";
   //matchingTest(naiveMatch, "Naive string matching");
   //matchingTest(basicMatch, "Basic string matching(Z-alg)");
   // matchingTest(kmp, "KMP");
-  //matchingTest(boyerMoore, "Boyer-Moore");
+  matchingTest(boyerMoore, "Boyer-Moore", testSize);
 	//for (size_t i = 300000; i < 300001; i++) {
-		matchingTest(suffixTreeMatching, "Suffix Tree", 100000);
+		matchingTest(suffixTreeMatching, "Suffix Tree", testSize);
 	//}
 	
 	std::cout << "--------------- matchingAlgorithmTest finished --------------\n\n";
@@ -48,29 +49,18 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
 	lib_calvin::stopwatch watch;
 
   size_t textLen   = testSize;
-  size_t patternLen  = 4;
+  size_t patternLen  = 32;
   char *pText   = new char[textLen];
   char *pPattern  = new char[patternLen];
   // use only small number of alphabets to make test realistic
   // don't use null character 0 (reserved for algorithms)
   for (size_t i = 0; i < textLen; ++i) {
-    pText[i] = rand() % 4 + '0';
+    pText[i] = rand() % 8 + '0';
   }	
-	abstract_string<> text  (pText, textLen);
-	/*
-	pPattern[0] = 2;
-	pPattern[0] = 3;
-	pPattern[0] = 2;
-	pPattern[0] = 3;
-	pPattern[0] = 4;
-	pPattern[0] = 2;
-	pPattern[0] = 3;
-	pPattern[0] = 4;
-	*/
-
+	abstract_string<> text(pText, textLen);
 	for (size_t iter = 0; iter < 1; iter++) {
 		for (size_t i = 0; i < patternLen; ++i) {
-			pPattern[i] = rand() % 4 + '0';
+			pPattern[i] = rand() % 8 + '0';
 		}
 		abstract_string<> pattern (pPattern, patternLen);
 		// get right answer to compare
@@ -79,7 +69,7 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
 		watch.start();
 		matchingCharAlg(text, pattern, record);
 		watch.stop();
-		cout << title << endl;
+		cout << "Finished running: " << title << endl;
 		cout << "Running time: " << watch.read() << endl;
 		cout << "# of match was: " << record.size() << endl;
 		// sorting is needed as suffix tree's result is not in ascending order
@@ -89,19 +79,22 @@ void lib_calvin_string::matchingTest (void (*matchingCharAlg)
 		else {
 			cout << "Matching error!!\n";
 			//text.print();
-			//pattern.print();
+			cout << "Pattern was:\n"; 
+			pattern.print();
 			size_t realsize = answer.size();
 			size_t wrongsize = record.size();
 			cout << "Real match number : " << realsize << endl;
 			cout << "Real match:\n";
 			for (auto iter = answer.begin(); iter != answer.end(); ++iter) {
-				//std::cout << *iter << "\n";
+				std::cout << *iter << "\n";
 			}
 			cout << "Wrong match number : " << wrongsize << endl;
 			cout << "Wrong match:\n";
 			for (auto iter = record.begin(); iter != record.end(); ++iter) {
-				//std::cout << *iter << "\n";
+				std::cout << *iter << "\n";
 			}
+			cout << "There was:\n";
+			text.substr(*answer.begin(), *answer.begin() + pattern.length() + 2).print();
 			exit(0);
 		}
 	}
