@@ -23,6 +23,9 @@ public:
 	void setLeftChild(BinTreeNode<T> *newLeft);
 	void setRightChild(BinTreeNode<T> *newRight);
 	void setChild(BinTreeNode<T> *newChild, Direction direction);
+	Direction getPositionInParent() const;
+	bool isLeftInParent() const;
+	bool isRightInParent() const;
 	T const &getKey() const;
 	void setKey(T const &newKey);
 public:
@@ -91,7 +94,7 @@ public:
 	BinTree<T, K, Comp, ExtractKey> & operator= (BinTree<T, K, Comp, ExtractKey> &&);
 	void swap(BinTree<T, K, Comp, ExtractKey> & rhs);
 	// disallow instantiation, because log(n) is not guaranteed
-	~BinTree<T, K, Comp, ExtractKey>();
+	virtual ~BinTree<T, K, Comp, ExtractKey>();
 
 	size_t size() const;
 	const_iterator find(K const &) const;
@@ -120,11 +123,11 @@ protected:
 	// returns negative if key is less than return value, 0 if same, 1 if greater
 	template <typename T1> std::pair<BinTreeNode<T> *, bool> insert_impl(T1 &&key);
 	BinTreeNode<T> *erase_impl(K const &);
+	void copyFrom(BinTree const &rhs); // should be called only when empty
 private:
 	std::pair<BinTreeNode<T> *, int> findNode(K const &) const;	
 	BinTreeNode<T> *getFirstNode() const; // for begin()
 	BinTreeNode<T> *deleteValueInNode(BinTreeNode<T> *); // erase this node
-	void copyFrom(BinTree const &rhs); // should be called only when empty
 	BinTreeNode<T> *makeEndNode() const;
 	// Copy nodes recursively. A copy of the tree pointed by 'srcNode' will 
 	// be created, and 'targetNode' shall point to the root of copied tree.
@@ -235,6 +238,26 @@ void BinTreeNode<T>::setRightChild(BinTreeNode<T> *rightChild) {
 template <typename T>	
 void BinTreeNode<T>::setChild(BinTreeNode<T> *child, Direction direction) {
 	children_[static_cast<int>(direction)] = child;
+}
+
+template <typename T>	
+typename BinTreeNode<T>::Direction 
+BinTreeNode<T>::getPositionInParent() const {
+	if (this == parent_->getLeftChild()) {
+		return Direction::Left;
+	} else {
+		return Direction::Right;
+	}
+}
+
+template <typename T>	
+bool BinTreeNode<T>::isLeftInParent() const {
+	return this == parent_->getLeftChild();
+}
+
+template <typename T>	
+bool BinTreeNode<T>::isRightInParent() const {
+	return this == parent_->getRightChild();
 }
 
 template <typename T>	
@@ -349,11 +372,10 @@ template <typename T, typename K, typename Comp, typename ExtractKey>
 BinTree<T, K, Comp, ExtractKey> & 
 BinTree<T, K, Comp, ExtractKey>::operator=(BinTree<T, K, Comp, ExtractKey> const &rhs) {
 	//std::cout << "bintree assign\n";
-	if (&rhs == this) {
-		return *this;
+	if (&rhs != this) {
+		clear();
+		copyFrom(rhs);
 	}
-	clear();
-	copyFrom(rhs);
 	return *this;
 }
 
@@ -374,10 +396,9 @@ template <typename T, typename K, typename Comp, typename ExtractKey>
 BinTree<T, K, Comp, ExtractKey> & 
 BinTree<T, K, Comp, ExtractKey>::operator=(BinTree<T, K, Comp, ExtractKey> &&rhs) {
 	//std::cout << "bintree move assign\n";
-	if (&rhs == this) {
-		return *this;
+	if (&rhs != this) {
+		swap(rhs);
 	}
-	swap(rhs);
 	return *this;
 }
 
@@ -680,7 +701,7 @@ BinTree<T, K, Comp, ExtractKey>::deleteValueInNode(BinTreeNode<T> *node) {
 		if (nodeToDelete->getParent() == end_) { // erasing the root
 			root_ = child;
 		}
-		if (nodeToDelete == nodeToDelete->getParent()->getLeftChild()) {
+		if (nodeToDelete->isLeftInParent()) {
 			nodeToDelete->getParent()->setLeftChild(child);
 		}	else {
 			nodeToDelete->getParent()->setRightChild(child);
@@ -689,7 +710,7 @@ BinTree<T, K, Comp, ExtractKey>::deleteValueInNode(BinTreeNode<T> *node) {
 		if (nodeToDelete->getParent() == end_) { // erasing the root
 			root_ = NULL;
 		}	
-		if (nodeToDelete == nodeToDelete->getParent()->getLeftChild()) {
+		if (nodeToDelete->isLeftInParent()) {
 			nodeToDelete->getParent()->setLeftChild(NULL);
 		}	else {
 			nodeToDelete->getParent()->setRightChild(NULL);
@@ -802,7 +823,7 @@ binTreeSuccessor(BinTreeNode<T> const *node) {
 		return temp;
 	} else { // we have to go up
 		while (node->getParent() != nullptr) {
-			if (node == node->getParent()->getLeftChild()) {
+			if (node->isLeftInParent()) {
 				return node->getParent();
 			}	else {
 				node = node->getParent();
@@ -823,10 +844,11 @@ binTreePredecessor(BinTreeNode<T> const *node) {
 		return temp;
 	} else { // we have to go up
 		while (node->getParent() != NULL) {
-			if (node == node->getParent()->getRightChild())
+			if (node->isRightInParent()) {
 				return node->getParent();
-			else
+			} else {
 				node = node->getParent();
+			}
 		}
 		return NULL; // reached the root node; there is no predecessor
 	}
@@ -845,3 +867,5 @@ void binTreeNodeDelete(BinTreeNode<T> *node) {
 } // close definition; lib_calvin_container
 
 #endif
+
+

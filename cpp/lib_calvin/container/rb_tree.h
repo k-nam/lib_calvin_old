@@ -35,7 +35,8 @@ class RbTree: public BinTree<T, K, Comp, ExtractKey> {
 public:
 	RbTree<T, K, Comp, ExtractKey>(): BinTree<T, K, Comp, ExtractKey>() { }
 	RbTree<T, K, Comp, ExtractKey>(RbTree<T, K, Comp, ExtractKey> const &rhs): 
-		BinTree<T, K, Comp, ExtractKey>(rhs) {
+		BinTree<T, K, Comp, ExtractKey>() {
+			copyFrom(rhs);
 			//std::cout << "copy con: RbTree\n";
 	}
 	RbTree<T, K, Comp, ExtractKey>(RbTree<T, K, Comp, ExtractKey> &&rhs): 
@@ -59,13 +60,8 @@ private:
 	BinTreeNode<T> *makeNewNode(T const &elem) const override;
 	BinTreeNode<T> *makeNewNode(T &&elem) const override;
 	BinTreeNode<T> *makeNewNode(BinTreeNode<T> const *rhs) const override;
-	typedef typename BinTreeNode<T>::Direction Direction;
-	RbTreeNode<T> *rotateLeft(RbTreeNode<T> *node);
-	RbTreeNode<T> *rotateRight(RbTreeNode<T> *node);
+	typedef typename BinTreeNode<T>::Direction Direction;;
 	RbTreeNode<T> *rotate(RbTreeNode<T> *node, Direction direction);
-	// Another abstraction for frequent operation
-	RbTreeNode<T> *rbRotateLeft(RbTreeNode<T> *node);
-	RbTreeNode<T> *rbRotateRight(RbTreeNode<T> *node);
 	RbTreeNode<T> *rbRotate(RbTreeNode<T> *node, Direction direction );
 
 	void rbInsertFix(RbTreeNode<T> *);
@@ -175,20 +171,6 @@ RbTree<T, K, Comp, ExtractKey>::makeNewNode(BinTreeNode<T> const *rhs) const {
 		static_cast<RbTreeNode<T> const *>(rhs)->getColor());
 }
 
-// rotate and return new local root
-template <typename T, typename K, typename Comp, typename ExtractKey>
-RbTreeNode<T> * 
-RbTree<T, K, Comp, ExtractKey>::rotateLeft(RbTreeNode<T> *node) {
-	return rotate(node, typename Direction::Left);
-}
-
-// Duplicate code with rotateLeft
-template <typename T, typename K, typename Comp, typename ExtractKey>
-RbTreeNode<T> * 
-RbTree<T, K, Comp, ExtractKey>::rotateRight(RbTreeNode<T> *node) {
-	return rotate(node, typename Direction::Right);
-}
-
 template <typename T, typename K, typename Comp, typename ExtractKey>
 RbTreeNode<T> * 
 RbTree<T, K, Comp, ExtractKey>::rotate(RbTreeNode<T> *node, Direction direction) {
@@ -201,7 +183,7 @@ RbTree<T, K, Comp, ExtractKey>::rotate(RbTreeNode<T> *node, Direction direction)
 	/* save link */
 	RbTreeNode<T> *grandChild = child->getChild(direction);
 	/* change root */
-	if (node == node->getParent()->getLeftChild()) {
+	if (node->isLeftInParent()) {
 		node->getParent()->setLeftChild(child);
 	} else {
 		node->getParent()->setRightChild(child);
@@ -219,18 +201,6 @@ RbTree<T, K, Comp, ExtractKey>::rotate(RbTreeNode<T> *node, Direction direction)
 		root_ = child; 
 	} 
 	return child;	
-}
-
-template <typename T, typename K, typename Comp, typename ExtractKey>
-RbTreeNode<T> * 
-RbTree<T, K, Comp, ExtractKey>::rbRotateLeft(RbTreeNode<T> *node) {
-	return rbRotate(node, Direction::Left);
-}
-
-template <typename T, typename K, typename Comp, typename ExtractKey>
-RbTreeNode<T> * 
-RbTree<T, K, Comp, ExtractKey>::rbRotateRight(RbTreeNode<T> *node) {
-	return rbRotate(node, Direction::Right);	
 }
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -385,3 +355,4 @@ size_t RbTree<T, K, Comp, ExtractKey>::RbTreeCheck(
 } // lib_calvin_container
 
 #endif
+

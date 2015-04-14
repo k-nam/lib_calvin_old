@@ -24,6 +24,7 @@ template <typename K, typename V, typename Comp = std::less<K>,
 	typename SetImpl = lib_calvin_container::BPlusTree<std::pair<K, V>, K, Comp, 
 	//typename SetImpl = lib_calvin_container::RbTree<std::pair<K, V>, K, Comp, 
 											lib_calvin_container::TakeFirstOfPair<K, V>>>
+		//typename SetImpl = std::map<K, V>>
 class map {
 public:
 	typedef K key_type;
