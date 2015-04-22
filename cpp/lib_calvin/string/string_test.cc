@@ -27,42 +27,46 @@ void lib_calvin_string::abstractStringTest() {
 void lib_calvin_string::matchingAlgorithmTest() {
 	using namespace lib_calvin_string;
 	size_t testSize = 1000000;
+	size_t numIter = 1;
+	typedef char Alphabet;
 	std::cout << "-------------- matchingAlgorithmTest start ----------------\n\n";
-  //matchingTest(naiveMatch, "Naive string matching");
-  //matchingTest(basicMatch, "Basic string matching(Z-alg)");
-  // matchingTest(kmp, "KMP");
-  matchingTest(boyerMoore, "Boyer-Moore", testSize);
-	//for (size_t i = 300000; i < 300001; i++) {
-		matchingTest(suffixTreeMatching, "Suffix Tree", testSize);
-	//}
+  matchingTest<Alphabet>(naiveMatch, "Naive string matching");
+  matchingTest<Alphabet>(basicMatch, "Basic string matching(Z-alg)");
+  matchingTest<Alphabet>(kmp, "KMP");
+  matchingTest<Alphabet>(boyerMoore, "Boyer-Moore");
+	for (size_t i = 0; i < numIter; i++) {
+		matchingTest<Alphabet>(suffixTreeMatching, "Suffix Tree");
+	}
 	
 	std::cout << "--------------- matchingAlgorithmTest finished --------------\n\n";
 }
 
 // string class is generic with alphabet type, but we can not unit-test unless
 // ... Alphabet is of numerical type. So just test with characters.
-void lib_calvin_string::matchingTest (void (*matchingCharAlg) 
-    (abstract_string<> const &text, abstract_string<> const &pattern, 
-     vector<size_t> &record), std::string title, size_t testSize) {
+template <typename Alphabet>
+void lib_calvin_string::matchingTest(void (*matchingCharAlg) 
+    (abstract_string<Alphabet> const &text, abstract_string<Alphabet> const &pattern, 
+     vector<size_t> &record), std::string title) {
   vector<size_t> record;
   vector<size_t> answer;
 	lib_calvin::stopwatch watch;
 
-  size_t textLen   = testSize;
-  size_t patternLen  = 32;
-  char *pText   = new char[textLen];
-  char *pPattern  = new char[patternLen];
+	Alphabet alphabetSize = 16;
+  size_t textLen   = 100000;
+  size_t patternLen  = 16;
+  Alphabet *pText   = new Alphabet[textLen];
+  Alphabet *pPattern  = new Alphabet[patternLen];
   // use only small number of alphabets to make test realistic
   // don't use null character 0 (reserved for algorithms)
   for (size_t i = 0; i < textLen; ++i) {
-    pText[i] = rand() % 8 + '0';
+    pText[i] = rand() % alphabetSize + '0';
   }	
-	abstract_string<> text(pText, textLen);
+	abstract_string<Alphabet> text(pText, textLen);
 	for (size_t iter = 0; iter < 1; iter++) {
 		for (size_t i = 0; i < patternLen; ++i) {
-			pPattern[i] = rand() % 8 + '0';
+			pPattern[i] = rand() % alphabetSize + '0';
 		}
-		abstract_string<> pattern (pPattern, patternLen);
+		abstract_string<Alphabet> pattern(pPattern, patternLen);
 		// get right answer to compare
 		naiveMatch(text, pattern, answer);
 

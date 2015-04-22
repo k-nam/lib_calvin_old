@@ -1,4 +1,3 @@
-
 #include <deque>
 #include <utility>
 #include <exception>
@@ -8,9 +7,6 @@ using std::deque;
 using std::pair;
 using std::cout; 
 using std::endl;
-
-
-/**************************** Algorithms ****************************/
  
 // For graph algorithms (priority queue)
 using namespace lib_calvin_adt;
@@ -105,7 +101,7 @@ void lib_calvin_graph::bfs(vector<vector<size_t>> const &graph, size_t source, v
   result.clear();
   result.resize(graph.size());
 	for (size_t i = 0; i < graph.size(); ++i) {
-    result[i].predecessor_ = -1; // mark as unreachable 
+    result[i].predecessor_ = UNREACHABLE_VERTEX; // mark as unreachable 
 	}
   // My convention for source vertex
   result[source].predecessor_ = source; 

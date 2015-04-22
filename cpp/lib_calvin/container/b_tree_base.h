@@ -109,7 +109,7 @@ private:
 	private:
 		friend B_TREE_BASE;
 	private:
-		char elements2_[sizeof(T) * B_TREE_FULL_NODE_CAPACITY];
+		char elements2_[sizeof(T) * B_TREE_FULL_NODE_CAPACITY / sizeof(char)];
 	};
 
 	class InternalNode: public FullNode

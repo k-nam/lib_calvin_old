@@ -24,9 +24,9 @@ template <typename Alphabet>
 void calculateF(abstract_string<Alphabet> const &pattern, vector<size_t> &record);
 
 // maps each Alphabet to the index in which the Alphabet first appears in the 
-// ...pattern (looking from the right-end of patttern)
+// ..pattern (looking from the right-end of patttern)
 // assumes that Alphabet can be converted to unsigned int type (which is the
-// ...index in record)
+// ..index in record)
 template <typename Alphabet>
 void badChar(abstract_string<Alphabet> const &pattern, vector<size_t> &record);
 
@@ -78,7 +78,7 @@ void lib_calvin_string::calculateZ (
   // ...that spans most to the right and starts at index i <= k 
   size_t l = 0; // stores l(k - 1) 
   size_t r = 0; // stores r(k - 1)
-  Z[0] = -1; // this value will not be used
+  Z[0] = 0; // this value will not be used
 	size_t k, m; // for indices
   for (k = 1; k < len; k++) { // k is current index in the text
     if (r < k) { // start manual matching 
@@ -164,9 +164,9 @@ void lib_calvin_string::badChar (
   // we need to know the size of character set (Alphabet::size)
   // Characters not present in the pattern is marked as len; this will
   // ...make the shift amount appropriate
-	if (sizeof(Alphabet) > 1) { // inappropriate foro this algorithm
-		std::cout << "badChar error\n";
-		exit(0);
+	if (sizeof(Alphabet) > 1) { // inappropriate for this algorithm
+		std::cout << "badChar for large charset\n";
+		//exit(0);
 	}
   record.resize(lib_calvin::getSizeOfCharSet<Alphabet>(), len); 
   for (size_t i = 0; i < len; i++) {
@@ -184,7 +184,7 @@ void lib_calvin_string::strongGoodSuffix (
     abstract_string<Alphabet> const &pattern, vector<size_t> &record) {
   size_t len = pattern.size();
   record.clear();
-  record.resize(len + 1, len); // initialize as -1
+  record.resize(len + 1, len);
   // use Z algorithm in reverse string
   vector<size_t> Z;
   calculateZ (pattern.reverse(), Z);

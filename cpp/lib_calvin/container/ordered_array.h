@@ -24,8 +24,10 @@ public:
 	OrderedArray<T, K, Comp, ExtractKey, VectorImpl>();
 	OrderedArray<T, K, Comp, ExtractKey, VectorImpl>(OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &); 
 	OrderedArray<T, K, Comp, ExtractKey, VectorImpl>(OrderedArray<T, K, Comp, ExtractKey, VectorImpl> &&);
-	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> & operator= (OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &);
-	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> & operator= (OrderedArray<T, K, Comp, ExtractKey, VectorImpl> &&);
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> & operator= (
+		OrderedArray<T, K, Comp, ExtractKey, VectorImpl> const &);
+	OrderedArray<T, K, Comp, ExtractKey, VectorImpl> & operator= (
+		OrderedArray<T, K, Comp, ExtractKey, VectorImpl> &&);
 	void swap(OrderedArray<T, K, Comp, ExtractKey, VectorImpl> & rhs);
 	~OrderedArray<T, K, Comp, ExtractKey, VectorImpl>();
 

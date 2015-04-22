@@ -14,8 +14,6 @@ static int const BLOCKED_ARRAY_BLOCK_SIZE = 1024;
 static int const BLOCKED_ARRAY_BLOCK_INIT_CAPACITY = 4;
 static int const BLOCKED_ARRAY_BLOCK_REALLOC_MULTIPLIER = 2;
 	class Block {
-	private:
-
 	public:
 		Block();
 		Block(int capacity);

@@ -1296,7 +1296,6 @@ void vellmanFord(vector<vector<pair<size_t, W>>> const &graph,
         if (relax(result[src], edge, result[iter.first])) {
           finished = false;
 				}
-        //result[iter->first] += result[src] * edge;
       }
     }
     if (finished) { // no relaxation; finished
@@ -1437,7 +1436,7 @@ bool shortestPathCheck (vector<vector<pair<size_t, W>>> const &graph,
       size_t src = i;
       size_t dest = iter->first;
       W weight = iter->second;
-      if (solution[src].predecessor_ != -1 && 
+      if (solution[src].predecessor_ != UNREACHABLE_VERTEX && 
           (solution[src].weight_ + weight < solution[dest].weight_
            || solution[dest].predecessor_ == UNREACHABLE_VERTEX)) {
         cout << "source weight: " << solution[src].weight_ << " ";
@@ -1500,7 +1499,7 @@ void kruskal(vector<vector<pair<size_t, W>>> const &graph,
 template <typename W>
 void prim(vector<vector<pair<size_t, W>>>const &graph, set<pair<size_t, size_t>> &result) {  
   size_t numV = static_cast<size_t>(graph.size()); 
-  vector<size_t> predecessor (numV, -1); // to save predecessor vertices
+  vector<size_t> predecessor(numV, UNREACHABLE_VERTEX); // to save predecessor vertices
 	std::cout << "prim size = " << numV << "\n";
   IntPq<W> pq(numV);
   vector<bool> connected(numV); // mark connected vertices

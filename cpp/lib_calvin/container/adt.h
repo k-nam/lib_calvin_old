@@ -19,131 +19,123 @@
 
 namespace lib_calvin_adt 
 {
-	using lib_calvin::vector;
-	using lib_calvin::map;
-	using lib_calvin::hash_map;
-	using std::list;
-	using std::pair;
+using lib_calvin::vector;
+using lib_calvin::map;
+using lib_calvin::hash_map;
+using std::list;
+using std::pair;
 
-	// HEAP_D-ary heap for IntPq
-	size_t const HEAP_D = 80;
-	size_t const NULL_INDEX = SIZE_MAX;
+// HEAP_D-ary heap for IntPq
+size_t const HEAP_D = 80;
+size_t const NULL_INDEX = SIZE_MAX;
 
-	/*************************** ADT Classes ***************************/
+/*************************** ADT Classes ***************************/
 
-  // A dictionary for mapping objects to integers (0 ~ numOfObjects)
-  // K: key
-  // No support for erasing!
-  // Maps keys to consecutive integers (starting from 0)
-  template <typename K>
-  class IntIndexer {
-    public:
-      IntIndexer();
-			size_t size() const;
-      // true if found
-      std::pair<size_t, bool> indexOf (K const &key) const;
-      // true if inserted. always return valid index
-      std::pair<size_t, bool> insert(K const &key); 
-			void erase(size_t index);
-      // undefined if index is invalid!
-      K const & operator[] (size_t index) const; // get key from int
-			K & operator[] (size_t index);
-    private:
-      size_t newIndex_;
-      //hash_map<size_t, K> indexToKey_;
-			//hash_map<K, size_t> keyToIndex_;
-			map<size_t, K> indexToKey_; // map indx to key
-      map<K, size_t> keyToIndex_; // map key to index
-  };
+// Maps keys to consecutive integers (starting from 0)
+template <typename K>
+class IntIndexer {
+public:
+  IntIndexer();
+	size_t size() const;
+  // true if found
+  std::pair<size_t, bool> indexOf (K const &key) const;
+  // true if inserted. always return valid index
+  std::pair<size_t, bool> insert(K const &key); 
+	void erase(size_t index);
+  // undefined if index is invalid!
+  K const & operator[] (size_t index) const; // get key from int
+	K & operator[] (size_t index);
+private:
+  size_t newIndex_;
+  //hash_map<size_t, K> indexToKey_;
+	//hash_map<K, size_t> keyToIndex_;
+	map<size_t, K> indexToKey_; // map indx to key
+  map<K, size_t> keyToIndex_; // map key to index
+};
 
-  // P: priority should have < operator
-  // Deals only with non-negative integers (as key)
-  // This is a mean-heap: lowest priority is top element!!
-  template <typename P>
-  class IntPq {
-    public:
-      IntPq(size_t maxsize); // initial capacity
-			IntPq(size_t maxsize, P const &); // initialize with given P
-      void reserve(size_t maxsize);
-      size_t capacity() { return maxsize_; }
-      size_t size() const { return size_; }
-      pair<size_t, P> const & peek() const; // returns the top element 
-      pair<size_t, P> pop(); // pop top element (key, priority)
-      // returns true if actioned performed (insert or decrease-priority)
-      // retuns false if new prioritoy was not lower than before.
-			template <typename P1>
-				bool insert(size_t key, P1 &&priority);
-			P const & getPriority(size_t key) const;
-			bool hasKey(size_t key) const;
-    private:
-      size_t size_; // current num of elements (size of heap)
-      size_t const maxsize_;
-      size_t d_; // d-aray heap: important for performance
-      vector<pair<size_t, P>> heap_; // pair of (key, priority)
-      // NULL_INDEX if not inserted yet, index if in heap
-      mutable vector<size_t> indexArray_; // key(int) -> index(int)
-      
-      void swap_(size_t index1, size_t index2);
-      // heap index starts from 0
-      void percolateUp(size_t index);
-      void percolateDown(size_t index);
-  };
+// P: priority should have < operator
+// Deals only with non-negative integers (as key)
+// This is a mean-heap: lowest priority is top element!!
+template <typename P>
+class IntPq {
+public:
+  IntPq(size_t maxsize); // initial capacity
+	IntPq(size_t maxsize, P const &); // initialize with given P
+  void reserve(size_t maxsize);
+  size_t capacity() { return maxsize_; }
+  size_t size() const { return size_; }
+  pair<size_t, P> const & peek() const; // returns the top element 
+  pair<size_t, P> pop(); // pop top element (key, priority)
+  // returns true if actioned performed (insert or decrease-priority)
+  // retuns false if new prioritoy was not lower than before.
+	template <typename P1>
+		bool insert(size_t key, P1 &&priority);
+	P const & getPriority(size_t key) const;
+	bool hasKey(size_t key) const;
+private:
+  size_t size_; // current num of elements (size of heap)
+  size_t const maxsize_;
+  size_t d_; // d-aray heap: important for performance
+  vector<pair<size_t, P>> heap_; // pair of (key, priority)
+  // NULL_INDEX if not inserted yet, index if in heap
+  vector<size_t> indexArray_; // key(int) -> index(int)
+private:   
+  void swap_(size_t index1, size_t index2);
+  // heap index starts from 0
+  void percolateUp(size_t index);
+  void percolateDown(size_t index);
+};
   
-  // Careful: this is not normal Stack; only for DFS implementation!
-  // Supports decreace-priority function (when push existing number, move it  
-  // ..to the top of the Stack)
-  // Dealing only with integers
-  class IntStack {
-    public:
-      IntStack(size_t maxsize); // deals only with 0 ~ maxsize-1
-      void reserve (size_t maxsize); // increase capacity
-      size_t capacity() { return maxsize_; }
-      size_t size() const { return size_; }
-      // move key to the top
-      void push(size_t key);
-      size_t peek() const;
-      size_t pop();
-    private:
-      size_t size_;
-      size_t maxsize_;
-      list<size_t> stack_; // Stack
-      // pointer to elements in Stack
-      vector<list<size_t>::iterator> intToListIterator_;
-      // stores elements' status
-      vector<bool> isInserted_; 
-  };
-
-  // General priority queue: using IntPq and IntIndexer
-  template <typename K, typename P>
-  class PQ {   
-  };
+// Careful: this is not normal Stack; only for DFS implementation!
+// Supports decreace-priority function (when push existing number, move it  
+// ..to the top of the Stack)
+// Dealing only with integers
+class IntStack {
+public:
+  IntStack(size_t maxsize); // deals only with 0 ~ maxsize-1
+  void reserve (size_t maxsize); // increase capacity
+  size_t capacity() { return maxsize_; }
+  size_t size() const { return size_; }
+  // move key to the top
+  void push(size_t key);
+  size_t peek() const;
+  size_t pop();
+private:
+  size_t size_;
+  size_t maxsize_;
+  list<size_t> stack_; // Stack
+  // pointer to elements in Stack
+  vector<list<size_t>::iterator> intToListIterator_;
+  // stores elements' status
+  vector<bool> isInserted_; 
+};
   
-  // General Stack (no priority, no decrease-priority)
-  // Using IntStack and IntIndexer
-  template <typename T>
-  class Stack {
-    public:
-      Stack();
-      size_t size() const { return stack_.size(); }
-      void push (T const &inObject);
-      T peek() const;
-      T pop();
-      void init() { stack_.clear(); }
-    private:
-      vector<T> stack_;
-  };
+// General Stack (no priority, no decrease-priority)
+// Using IntStack and IntIndexer
+template <typename T>
+class Stack {
+public:
+  Stack();
+  size_t size() const { return stack_.size(); }
+  void push (T const &inObject);
+  T peek() const;
+  T pop();
+  void init() { stack_.clear(); }
+private:
+  vector<T> stack_;
+};
 
-	// Plays with integers from 0 to size-1
-  class DisjointSet {
-    public:
-      DisjointSet(size_t size);
-      bool isSameSet(size_t a, size_t b);
-      size_t findSet(size_t a);
-      void unite(size_t a, size_t b);
-    private:
-      vector<size_t> elems_;
-      Stack<size_t> stack_;
-  };
+// Plays with integers from 0 to size-1
+class DisjointSet {
+public:
+  DisjointSet(size_t size);
+  bool isSameSet(size_t a, size_t b);
+  size_t findSet(size_t a);
+  void unite(size_t a, size_t b);
+private:
+  vector<size_t> elems_;
+  Stack<size_t> stack_;
+};
 } // end namespace lib_calvin_adt
 
 

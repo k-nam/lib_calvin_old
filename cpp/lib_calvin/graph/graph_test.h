@@ -278,15 +278,15 @@ void lib_calvin_graph::GraphTest<V, E>::algorithmTest() {
     vellmanFord(graph.arrayData_, i, row); 
     for (size_t j = 0; j < numV_; j++) {
       if (apspResult.getval(i, j).weight_ != row[j].weight_ && 
-          row[j].predecessor_!= -1) {
+          row[j].predecessor_!= UNREACHABLE_VERTEX) {
         isApspCorrect = false;
       }
       if (floydResult.getval(i, j).weight_ != row[j].weight_ && 
-          row[j].predecessor_!= -1) {
+          row[j].predecessor_!= UNREACHABLE_VERTEX) {
         isFloydCorrect = false;
       }
       if (johnsonResult.getval(i, j).weight_ != row[j].weight_ && 
-          row[j].predecessor_!= -1) {
+          row[j].predecessor_!= UNREACHABLE_VERTEX) {
         isJohnsonCorrect = false;
       }
     }

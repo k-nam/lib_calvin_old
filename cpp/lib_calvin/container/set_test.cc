@@ -29,7 +29,7 @@ void lib_calvin_container::setTest() {
 
 	//setRvalueTest<RbTree<HeavyObjectWithMessage>>("RbTree / HeavyObject");
 	//setRvalueTest<BTree<HeavyObjectWithMessage>>("BTree / HeavyObject");
-///	setRvalueTest<BPlusTree<HeavyObjectWithMessage>>("BPlusTree / HeavyObject");
+	//setRvalueTest<BPlusTree<HeavyObjectWithMessage>>("BPlusTree / HeavyObject");
 	
 	int const testSize = 10000;
 	int const smallSize = 1000;
@@ -45,15 +45,15 @@ void lib_calvin_container::setTest() {
 	setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
 	setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
 	//setFunctionTest(PtrSet<int>(), testSize, "lib_calvin_container::PtrSet"); // unfinished
-	setFunctionTest<HashTable<int>>(testSize,	"lib_calvin_container::HashTable"); // cannot iterate
-	setFunctionTest<HashTable2<int>>(testSize,	"lib_calvin_container::HashTable2"); // cannot iterate
+	setFunctionTest<HashTable<Numeric>>(testSize,	"lib_calvin_container::HashTable"); // cannot iterate
+	setFunctionTest<HashTable2<Numeric>>(testSize,	"lib_calvin_container::HashTable2"); // cannot iterate
 	
-	setFunctionTest2<BTree<size_t>>(testSize, "lib_calvin_container::BTree");
-	setFunctionTest2<BPlusTree<size_t>>(testSize, "lib_calvin_container::BPlusTree");
+	setFunctionTest2<BTree<Numeric>>(testSize, "lib_calvin_container::BTree");
+	setFunctionTest2<BPlusTree<Numeric>>(testSize, "lib_calvin_container::BPlusTree");
 
-	setIteratorTest<RbTree<int>>("RbTree iterator");
-	setIteratorTest<BTree<int>>("BTree iterator");
-	setIteratorTest<HashTable<int>>("HashTable iterator");
+	setIteratorTest<RbTree<Numeric>>("RbTree iterator");
+	setIteratorTest<BTree<Numeric>>("BTree iterator");
+	setIteratorTest<HashTable<Numeric>>("HashTable iterator");
 	
 	//setPerformanceTest<std::set<Numeric>>(largeSize, "std::set / Numeric");
 	setPerformanceTest<boost::container::set<Numeric>>(largeSize, "boost::set / Numeric");
