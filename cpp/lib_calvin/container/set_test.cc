@@ -37,7 +37,6 @@ void lib_calvin_container::setTest() {
 	int const largeSize = 1000000;	
 	typedef size_t Numeric;
 
-	setFunctionTest<set_ref<HeavyObject>>(testSize, "lib_calvin_container::set_ref");
 	setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
 	setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
 	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");

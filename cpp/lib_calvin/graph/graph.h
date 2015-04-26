@@ -269,21 +269,21 @@ public:
 namespace lib_calvin {
 
 template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>>
-class graph: public lib_calvin_graph::graph_base<V, E, K, ExtractKey> { };
+using graph = lib_calvin_graph::graph_base<V, E, K, ExtractKey>;
 
 // Undirected graphs override insertiong and modifying methods to ensure
 // ..symmetry at all times.
 template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>>
-class undirected_graph: public lib_calvin_graph::undirected_graph_base<V, E, K, ExtractKey> { };
-  
-template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>, 
-	typename W = E, typename ExtractWeight = std::identity<E>>
-class weighted_graph: public lib_calvin_graph::weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight> { };
+using undirected_graph = lib_calvin_graph::undirected_graph_base<V, E, K, ExtractKey>;
 
 template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>, 
 	typename W = E, typename ExtractWeight = std::identity<E>>
-class undirected_weighted_graph: 
-	public lib_calvin_graph::undirected_weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight> { };
+using weighted_graph = lib_calvin_graph::weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>;
+
+template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>, 
+	typename W = E, typename ExtractWeight = std::identity<E>>
+using undirected_weighted_graph =
+	lib_calvin_graph::undirected_weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>;
 
 } // end namespace lib_calvin
 

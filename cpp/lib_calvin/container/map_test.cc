@@ -20,8 +20,7 @@ void lib_calvin_container::mapTest()
 
 	int const testSize = 10000;
 	mapFunctionTest<lib_calvin::map<int, int>>(testSize, "lib_calvin::map");
-	mapFunctionTest<lib_calvin::map_ref<int, int>>(testSize, "lib_calvin::map_ref");
-	mapRvalueTest<lib_calvin_container::map<int, HeavyObjectWithMessage>>("mapRvalueTest / lib_calvin::map");
+	mapRvalueTest<lib_calvin_container::Map<int, HeavyObjectWithMessage>>("mapRvalueTest / lib_calvin::map");
 	
 	int const smallSize = 10000;
 	int const largeSize = 100000;
@@ -33,11 +32,10 @@ void lib_calvin_container::mapTest()
 	//mapPerformanceTest<lib_calvin_container::map<HeavyObject, int>>(smallSize, "lib_calvin::map / HeavyObject->int");
 	mapPerformanceTest<lib_calvin::map<int, HeavyObject>>(largeSize, "lib_calvin::map / int->HeavyObject");
 	mapPerformanceTest<lib_calvin::hash_map<int, HeavyObject>>(largeSize, "hash_map / int->HeavyObject");
-	mapPerformanceTest<lib_calvin::map_ref<int, HeavyObject>>(largeSize, "map_ref / int->HeavyObject");
 	//mapPerformanceTest<std::map<HeavyObject, int>>(largeSize, "std::map / HeavyObject->int");
 	mapPerformanceTest<std::map<int, HeavyObject>>(largeSize, "std::map / int->HeavyObject");
 	
-	mapIntegratedSpeedTest<lib_calvin_container::map<int, int>>(smallSize, "lib_calvin::map");
+	mapIntegratedSpeedTest<lib_calvin_container::Map<int, int>>(smallSize, "lib_calvin::map");
 	mapIntegratedSpeedTest<std::map<int, int>>(smallSize, "std::map");
 
 	mapIteratorTest<int, int>();
@@ -242,7 +240,7 @@ void lib_calvin_container::mapIntegratedSpeedTest(int n, std::string title) {
 template <typename K, typename V>
 void lib_calvin_container::mapIteratorTest()
 {
-	using lib_calvin_container::map;
+	using lib_calvin::map;
 	cout << "Starting map iterator test...\n";
 	map<K, V> testMap;
 	testMap.insert(std::pair<K, V>(K(2), V(10)));
