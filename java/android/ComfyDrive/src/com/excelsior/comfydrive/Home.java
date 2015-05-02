@@ -19,7 +19,7 @@ public class Home extends Activity implements SensorEventListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.home);
-		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+		mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 		mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 	}
 
@@ -45,9 +45,9 @@ public class Home extends Activity implements SensorEventListener {
 		float zDelta = xValue - mPreviousZ;
 		if (xDelta > threshold || -xDelta > threshold || yDelta > threshold || -yDelta > threshold || zDelta > threshold
 				|| -zDelta > threshold) {
-			TextView xAxis = (TextView) findViewById(R.id.x_axis_value);
-			TextView yAxis = (TextView) findViewById(R.id.y_axis_value);
-			TextView zAxis = (TextView) findViewById(R.id.z_axis_value);
+			TextView xAxis = (TextView)findViewById(R.id.x_axis_value);
+			TextView yAxis = (TextView)findViewById(R.id.y_axis_value);
+			TextView zAxis = (TextView)findViewById(R.id.z_axis_value);
 			xAxis.setText(String.valueOf(xValue).substring(0, 4));
 			yAxis.setText(String.valueOf(yValue).substring(0, 4));
 			zAxis.setText(String.valueOf(zValue).substring(0, 4));
