@@ -1,6 +1,7 @@
 package com.excelsior.comfydrive;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,6 +16,11 @@ public class Home extends Activity implements SensorEventListener {
 	private float mPreviousY = 0;
 	private float mPreviousZ = 0;
 	private final float threshold = 0.5f;
+	private Analyzer mAnalyzer = null;
+
+	public Home() {
+		mAnalyzer = new Analyzer();
+	}
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,23 +43,27 @@ public class Home extends Activity implements SensorEventListener {
 	}
 
 	public void onSensorChanged(SensorEvent event) {
-		float xValue = event.values[0];
-		float yValue = event.values[1];
-		float zValue = event.values[2];
-		float xDelta = xValue - mPreviousX;
-		float yDelta = xValue - mPreviousY;
-		float zDelta = xValue - mPreviousZ;
-		if (xDelta > threshold || -xDelta > threshold || yDelta > threshold || -yDelta > threshold || zDelta > threshold
-				|| -zDelta > threshold) {
-			TextView xAxis = (TextView)findViewById(R.id.x_axis_value);
-			TextView yAxis = (TextView)findViewById(R.id.y_axis_value);
-			TextView zAxis = (TextView)findViewById(R.id.z_axis_value);
-			xAxis.setText(String.valueOf(xValue).substring(0, 4));
-			yAxis.setText(String.valueOf(yValue).substring(0, 4));
-			zAxis.setText(String.valueOf(zValue).substring(0, 4));
-			mPreviousX = xValue;
-			mPreviousY = yValue;
-			mPreviousZ = zValue;
+		mAnalyzer.refresh(event);
+		TextView forwardAccel = (TextView)findViewById(R.id.forward_accel);
+		TextView updownAccel = (TextView)findViewById(R.id.updown_accel);
+		TextView forwardShock = (TextView)findViewById(R.id.forward_shock);
+		TextView updownShock = (TextView)findViewById(R.id.updown_shock);
+		setValue(forwardAccel, mAnalyzer.getForwardAccel());
+		setValue(updownAccel, mAnalyzer.getUpdownAccel());
+		setValue(forwardShock, mAnalyzer.getForwardShock());
+		setValue(updownShock, mAnalyzer.getUpdownShock());
+	}
+
+	private void setValue(TextView view, float value) {
+		view.setText(String.format("%1$,.2f", value));
+		if (value < 0.3) {
+			view.setBackgroundColor(Color.GREEN);
+		} else if (value < 2) {
+			view.setBackgroundColor(Color.YELLOW);
+		} else if (value < 5) {
+			view.setBackgroundColor(Color.MAGENTA);
+		} else {
+			view.setBackgroundColor(Color.RED);
 		}
 	}
 }

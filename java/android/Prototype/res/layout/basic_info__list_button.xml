@@ -5,7 +5,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 	<Button
-		android:id="@+android:id/basic_info__add_cell_button"
+		android:id="@+id/basic_info__add_cell_button"
 		android:text="@string/basic_info__add_cell_button_text"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"

@@ -5,7 +5,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 	<TextView
-		android:id="@+android:id/photo_selector_grid_item_text"
+		android:id="@+id/photo_selector_grid_item_text"
 		android:text="Grid item"
 		android:textSize="45dp"
 		android:background="#000000"

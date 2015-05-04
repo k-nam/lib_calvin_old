@@ -9,47 +9,55 @@
 	android:paddingTop="@dimen/activity_vertical_margin"
 	android:orientation="vertical"
 	tools:context="com.excelsior.comfydrive.Home">
-	<TextView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/hello_world" />
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="30dp"
 		android:orientation="horizontal">
 		<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="X Axis:" />
+			android:text="Now monitoring" />
+	</LinearLayout>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="30dp"
+		android:orientation="horizontal">
 		<TextView
-			android:id="@+id/x_axis_value"
-			android:layout_width="wrap_content"
+			android:text="Forward accel:"
+			android:layout_width="100dp"
+			android:layout_height="wrap_content" />
+		<TextView
+			android:id="@+id/forward_accel"
+			android:layout_width="50dp"
+			android:layout_height="wrap_content" />
+		<TextView
+			android:text="Forward shock:"
+			android:layout_width="100dp"
+			android:layout_height="wrap_content" />
+		<TextView
+			android:id="@+id/forward_shock"
+			android:layout_width="50dp"
 			android:layout_height="wrap_content" />
 	</LinearLayout>
 	<LinearLayout
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
+		android:layout_height="30dp"
 		android:orientation="horizontal">
 		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Y Axis:" />
-		<TextView
-			android:id="@+id/y_axis_value"
-			android:layout_width="wrap_content"
+			android:text="Updown accel:"
+			android:layout_width="100dp"
 			android:layout_height="wrap_content" />
-	</LinearLayout>
-	<LinearLayout
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
 		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="Z Axis:" />
+			android:id="@+id/updown_accel"
+			android:layout_width="50dp"
+			android:layout_height="wrap_content" />
 		<TextView
-			android:id="@+id/z_axis_value"
-			android:layout_width="wrap_content"
+			android:text="Updown shock:"
+			android:layout_width="100dp"
+			android:layout_height="wrap_content" />
+		<TextView
+			android:id="@+id/updown_shock"
+			android:layout_width="50dp"
 			android:layout_height="wrap_content" />
 	</LinearLayout>
 </LinearLayout>

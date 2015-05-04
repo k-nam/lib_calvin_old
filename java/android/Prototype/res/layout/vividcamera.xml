@@ -14,19 +14,19 @@
 		android:layout_width="wrap_content"
 		android:textSize="20sp"
 		android:text="@string/vivid_camera__test_camera_button_text"
-		android:id="@+android:id/vivid_camera__test_camera_button"
+		android:id="@+id/vivid_camera__test_camera_button"
 		android:layout_gravity="bottom" />
 	<Button
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
 		android:textSize="20sp"
 		android:text="@string/vivid_camera__open_camera_button_text"
-		android:id="@+android:id/vivid_camera__open_camera_button"
+		android:id="@+id/vivid_camera__open_camera_button"
 		android:layout_gravity="bottom" />
 	<TextView
 		android:layout_height="wrap_content"
 		android:layout_width="wrap_content"
 		android:textSize="20sp"
-		android:id="@+android:id/vivid_camera__camera_info"
+		android:id="@+id/vivid_camera__camera_info"
 		android:layout_gravity="bottom" />
 </LinearLayout>

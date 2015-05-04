@@ -2,10 +2,11 @@ package com.excelsior.comfydrive;
 
 import android.hardware.SensorEvent;
 
-public class Anaylizer {
+public class Analyzer {
 	private final float nano = 1000000000.0f;
 	private float interval = 0;
-	private final float gravityConstant = 9.8f;
+	private final float gravityConstant = 10.1f;
+	// private final float stationaryThreshold = f;
 	private Vector gravity = null;
 	private Vector forward = null;
 	private Vector updown = null;
@@ -14,8 +15,9 @@ public class Anaylizer {
 	private Vector previousForward = null;
 	private Vector previousUpdown = null;
 	private Vector previousSideways = null;
+	private Vector velocity = null;
 	private float gravityAlpha = 0.9f;
-	private float forwardAlpha = 0.8f;
+	private float forwardAlpha = 0.7f;
 	private float previousTimestamp = 0;
 
 	private class Vector {
@@ -77,21 +79,20 @@ public class Anaylizer {
 			forward = new Vector(0, 0, 0);
 			updown = new Vector(0, 0, 0);
 			sideways = new Vector(0, 0, 0);
+			velocity = new Vector(0, 0, 0);
 			return;
 		} else {
 			saveToPrevious();
 			// adjust gravity
 			Vector newGravity = add(multiply(gravity, gravityAlpha), multiply(currentAccel, (1 - gravityAlpha)));
 			Vector plane = currentAccel.getNormarlPartTo(newGravity);
-			Vector newUpdown = currentAccel.getParallelPartTo(newGravity);
-			// adjust forward
-			Vector newForward = add(multiply(forward, forwardAlpha), multiply(plane, (1 - forwardAlpha)));
-			Vector newSideways = subtract(plane, newForward);
+			Vector newUpdown = subtract(currentAccel.getParallelPartTo(newGravity), newGravity);
+			// adjust horizontal factors
+			Vector newForward = plane;
 			// refresh current values
 			interval = (event.timestamp - previousTimestamp) / nano;
 			gravity = newGravity;
 			forward = newForward;
-			sideways = newSideways;
 			updown = newUpdown;
 		}
 		normalizeGravity();
@@ -102,7 +103,6 @@ public class Anaylizer {
 		previousGravity = gravity;
 		previousForward = forward;
 		previousUpdown = updown;
-		previousSideways = sideways;
 	}
 
 	private void normalizeGravity() {
@@ -119,7 +119,11 @@ public class Anaylizer {
 	}
 
 	public float getForwardShock() {
-		return (forward.length() - previousForward.length()) / interval;
+		if (previousForward == null) {
+			return 0;
+		} else {
+			return (forward.length() - previousForward.length()) / 1;
+		}
 	}
 
 	public float getUpdownAccel() {
@@ -127,14 +131,10 @@ public class Anaylizer {
 	}
 
 	public float getUpdownShock() {
-		return (updown.length() - previousUpdown.length()) / interval;
-	}
-
-	public float getSidewaysAccel() {
-		return sideways.length();
-	}
-
-	public float getSidewaysShock() {
-		return (sideways.length() - previousSideways.length()) / interval;
+		if (previousUpdown == null) {
+			return 0;
+		} else {
+			return (updown.length() - previousUpdown.length()) / 1;
+		}
 	}
 }
