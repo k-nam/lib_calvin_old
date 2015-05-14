@@ -11,14 +11,14 @@ void lib_calvin_matrix::matrixTest() {
 	using boost::numeric::ublas::matrix;
 	lib_calvin::stopwatch watch;
 	int const size = 1000;
-	typedef double TYPE;
+	typedef double NumericType;
 	watch.start();
 	double rtv = doGigaOps();
 	watch.stop();
 	std::cout << "gigaop GFLOPS: " << 2 / watch.read() << " (" << rtv << ")\n";
 	
-	matrix<TYPE> a(size, size);	
-	matrix<TYPE> b(size, size);
+	matrix<NumericType> a(size, size);	
+	matrix<NumericType> b(size, size);
 	for (int i = 0; i < size; ++i) {
 		for (int j = 0; j < size; j++) {
 			a(i, j) = 1.2;
@@ -27,7 +27,7 @@ void lib_calvin_matrix::matrixTest() {
 	}
 
 	watch.start();
-	matrix<TYPE> c = prod(a, b);
+	matrix<NumericType> c = prod(a, b);
 	watch.stop();
 	std::cout << "mkl time" << watch.read() << "  GFLOPS: " << 
 		(double)size*size*size*2 / watch.read() / 1000000000 << "\n";
@@ -41,7 +41,7 @@ void lib_calvin_matrix::matrixTest() {
 		}
 	}
 
-	lib_calvin::matrix<TYPE> m1(size);
+	lib_calvin::matrix<NumericType> m1(size);
 	m1.check();
 
 	__m128 aa = _mm_set_ps(1, 2, 3, 4);

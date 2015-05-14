@@ -191,37 +191,37 @@ namespace lib_calvin_lexer
 {
 /**** Global functions for convenient(?) regex building */
 
-template <typename Alphabet>
+template <typename Alphabet = char>
 typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
 CAT(typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>, 
   typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>);
 
-template <typename Alphabet>
+template <typename Alphabet = char>
 typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
 OR(typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>, 
   typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>);
 
-template <typename Alphabet>
+template <typename Alphabet = char>
 typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
 STAR(typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>);
 
-template <typename Alphabet>
+template <typename Alphabet = char>
 typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
 PLUS(typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>); 
 
-template <typename Alphabet>
+template <typename Alphabet = char>
 typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
 ONEORZERO(typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>); 
 
-template <typename Alphabet>
+template <typename Alphabet = char>
 typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
 LITERAL(abstract_string<Alphabet> const &);
 
-template <typename Alphabet>
+template <typename Alphabet = char>
 typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
 ONEOF(abstract_string<Alphabet> const &);
 
-template <typename Alphabet>
+template <typename Alphabet = char>
 typename shared_ptr<typename RegularExpression<Alphabet>::ParseTreeNode>
 NOTOF(abstract_string<Alphabet> const &);
 

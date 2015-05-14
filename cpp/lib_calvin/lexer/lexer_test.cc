@@ -1,12 +1,5 @@
 #include "lexer_test.h"
 #include "stopwatch.h"
-#define CAT CAT<char>
-#define OR OR<char>
-#define STAR STAR<char>
-#define PLUS PLUS<char>
-#define ONEORZERO ONEORZERO<char>
-
- 
 
 namespace lib_calvin_lexer { // open for definitions
 using lib_calvin::stopwatch;
@@ -23,19 +16,8 @@ void lexerTest(std::string const &inputText) {
   typedef DfaLexerGenerator<> Dfa;
   typedef lib_calvin::string string;
   typedef NfaLexerGenerator<>::Token Token;   
-  /*
-  typedef CAT<alphabet<char, 128, '\0'>>   CAT;
-  typedef OR<alphabet<char, 128, '\0'>>   OR;
-  typedef STAR<alphabet<char, 128, '\0'>>   STAR;
-  typedef PLUS<alphabet<char, 128, '\0'>>   PLUS;
-  typedef ONEORZERO<alphabet<char, 128, '\0'>>   ONEORZERO;
-  typedef LITERAL<alphabet<char, 128, '\0'>>   LITERAL;
-  typedef ONEOF<alphabet<char, 128, '\0'>>   ONEOF;
-  typedef NOTOF<alphabet<char, 128, '\0'>>   NOTOF;
-  */
-  
-	/*
 
+	/*
 	// 10MB will be enough for a source file
 	int const MAX_FILE_SIZE = 10000000;
 
@@ -63,10 +45,8 @@ void lexerTest(std::string const &inputText) {
 	*/
 
 	string sourceFile(inputText);
-
   
   /******** Configuring Lexer Generator *******/
-
   Nfa nfa; // create an instance of Nfa simulator for regex
   Dfa dfa; 
   // As I don't have regex parser, I need to do some manual setting
@@ -236,11 +216,9 @@ void lexerTest(std::string const &inputText) {
   watch.stop();
   cout << "Lexing : " << watch.read() << endl;
   // job done; clean up 
-	/*
-  close(readFd);
-  close(writeFd);
-  delete buffer;
-	*/
+  // close(readFd);
+  //close(writeFd);
+  //delete buffer;
 	cout << "\n";
 } 
 
@@ -330,9 +308,3 @@ void printToken(NfaLexerGenerator<>::Token const &inToken) {
 }
 
 } // end namespace lib_calvin_lexer definitions
-
-#undef CAT
-#undef OR
-#undef STAR
-#undef PLUS
-#undef ONEORZERO

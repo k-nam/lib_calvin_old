@@ -15,7 +15,7 @@ public:
 	RbTreeNode(T const &key);
 	RbTreeNode(T &&key);
 	RbTreeNode(T const &key, RbColor color);
-	~RbTreeNode() { /*std::cout << "rbnode dtored\n";*/ }
+	~RbTreeNode();
 	RbColor getColor() const { return color_; }
 	void setColor(RbColor newColor) { color_ = newColor; }	
 	RbTreeNode<T> *getParent() const { 
@@ -81,6 +81,12 @@ RbTreeNode<T>::RbTreeNode(T &&key): BinTreeNode(std::forward<T>(key)), color_(Rb
 
 template <typename T>
 RbTreeNode<T>::RbTreeNode(T const &key, RbColor color): BinTreeNode(key), color_(color) { }
+
+template <typename T>
+RbTreeNode<T>::~RbTreeNode() { 
+	// std::cout << "rbnode dtored\n";
+}
+
 
 //-------------------------- RbTree public methods --------------------------//
 

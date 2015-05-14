@@ -7,7 +7,6 @@
 
 namespace lib_calvin_container 
 {
-
 template <typename T> 
 class BinTreeNode {
 public:
