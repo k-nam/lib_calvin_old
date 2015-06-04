@@ -38,7 +38,7 @@ public class LogIn extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+
 		String userId = request.getParameter("userid");
 		String userPassword = request.getParameter("userpassword");
 		System.out.println("In servlet: " + userId + " " + userPassword);
@@ -53,7 +53,7 @@ public class LogIn extends HttpServlet {
 			RequestDispatcher view = request.getRequestDispatcher("main.jsp");
 			view.forward(request, response);
 		} else {
-			
+
 		}
 
 	}

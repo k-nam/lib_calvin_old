@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-	pageEncoding="EUC-KR"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <%@ taglib prefix="common" uri="RandomFunction"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -11,7 +11,7 @@
 <body>
 
 	<form method="POST" action="LogOut.do">
-		<input type="SUBMIT" value="�α׾ƿ�" />
+		<input type="SUBMIT" value="로그아웃" />
 	</form>
 
 	Welcome: ${user.id} ${user.name}
