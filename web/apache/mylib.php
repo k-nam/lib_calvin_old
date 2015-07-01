@@ -17,7 +17,7 @@ function debugLog($string) {
 
 function getMysqlConnection() {
 	$servername = "localhost:3306";
-	$username = "sa";
+	$username = "root";
 	$password = "calvin1729";
 	$conn = new mysqli($servername, $username, $password);
 	if ($conn->connect_error) {

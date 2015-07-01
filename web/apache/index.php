@@ -8,7 +8,7 @@
 
 <script>
 $(document).ready(function() {
-	alert("ready");
+	alert("준비됐어?");
 	function getSuggestion(keyword) {	
 		if (keyword == "") {
 			return ["abc"];
@@ -55,20 +55,21 @@ $(document).ready(function() {
 </head>
 
 <body>
+<h1>남기웅이의 홈페이지에 온 걸 환영해!</h1><br><br>
+<b>여기에 아무 영단어를 입력해봐 (자동완성 사전찾기)</b><br>
+<input type="text" id="dictionary_input" class="textbox" size="20" /><br><br>
 
+아래는 참고만해! <br><br><br><br><br>
 <form action="result.php" method="post">
-Name: <input type="text" name="name"><br>
+이름: <input type="text" name="name"><br>
 E-mail: <input type="text" name="email"><br>
 Website: <input type="text" name="website"><br>
 Comment: <textarea name="comment" rows="5" cols="40"></textarea><br>
-Gender:
+성별:
 <input type="radio" name="gender" value="female">Female
 <input type="radio" name="gender" value="male">Male<br>
 <input type="submit">
 </form>
-
-<input type="text" id="dictionary_input" class="textbox" size="20" />
-<br>
 
 <?php
 require 'mylib.php';

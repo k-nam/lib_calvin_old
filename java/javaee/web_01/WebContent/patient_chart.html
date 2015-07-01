@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<link rel="stylesheet" href="/resources/demos/style.css">
 <script type="text/javascript">
 	google.load("visualization", "1.1", {
 		packages : [ "calendar" ]
@@ -36,51 +40,50 @@
 		chart.draw(dataTable, options);
 	}
 </script>
+<script>
+	$(function() {
+		$("#datepicker").datepicker();
+	});
+</script>
 <title>Patient status report</title>
 </head>
 <body>
 	<div id="calendar_basic" style="width: 1000px; height: 350px;"></div>
+	<p>
+		Date: <input type="text" id="datepicker">
+	</p>
 	<form>
-		Today I felt <input type="radio" name="mood" value="mania" /> mania <input
-			type="radio" name="mood" value="good" /> good<input type="radio"
-			name="mood" value="normal" />normal<input type="radio" name="mood"
-			value="bad" />bad<input type="radio" name="mood" value="depression" />depression
+		Today I felt <input type="radio" name="mood" value="mania" /> manic <input type="radio" name="mood" value="good" />
+		fine<input type="radio" name="mood" value="normal" />so so<input type="radio" name="mood" value="bad" />bad<input
+			type="radio" name="mood" value="depression" />depressed
 	</form>
 	<br>
 	<form>
-		Today I took <input type="radio" name="medication" value="all" />all
-		of<input type="radio" name="medication" value="some" />some of<input
-			type="radio" name="medication" value="none" />none of <br> my
-		medication.
+		Today I took <input type="radio" name="medication" value="all" />all of<input type="radio" name="medication"
+			value="some" />some of<input type="radio" name="medication" value="none" />none of <br> my medication.
 	</form>
 	<br>
 	<form>
-		Today I excesied <input type="radio" name="exercise" value="all" />much <input
-			type="radio" name="exercise" value="some" />some<input type="radio"
-			name="exercise" value="none" />not at all <br>
+		Today I excesied <input type="radio" name="exercise" value="all" />much <input type="radio" name="exercise"
+			value="some" />a little<input type="radio" name="exercise" value="none" />not at all <br>
 	</form>
 	<br>
 	<form>
-		Today I ate<input type="radio" name="food" value="good" />happily<input
-			type="radio" name="food" value="trouble" />with some difficulty<input
-			type="radio" name="food" value="bad" />almost nothing<input
-			type="radio" name="food" value="vomit" />but vomitted<br>
+		Today I ate <input type="radio" name="food" value="good" />happily<input type="radio" name="food" value="trouble" />
+		with difficulty <input type="radio" name="food" value="vomit" />with difficulty and vomitted <br>
 	</form>
 	<br>
 	<form>
-		Last night I slept<input type="radio" name="sleep" value="good" />happily
-		<input type="radio" name="sleep" value="trouble" />with some
-		difficulty <input type="radio" name="sleep" value="bad" />little<input
-			type="radio" name="sleep" value="none" />not a moment<br>
+		Last night I slept<input type="radio" name="sleep" value="good" />happily<input type="radio" name="sleep"
+			value="trouble" />with difficulty <input type="radio" name="sleep" value="none" />not a moment<br>
 	</form>
 	<br>
 	<form>
-		Anything else you want to write <input type="text" name="extra" />
+		For today, I want to say <input type="text" name="extra" />
 	</form>
 	<br>
 	<form>
-		I am being hospitalized now <input type="checkbox" name="hospitalized"
-			value="true" />
+		I am being hospitalized now <input type="checkbox" name="hospitalized" value="true" />
 	</form>
 	<br>
 	<form>

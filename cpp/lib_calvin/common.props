@@ -23,6 +23,7 @@
     <Link>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <AdditionalLibraryDirectories>D:\dev\lib\mkl\intel64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
