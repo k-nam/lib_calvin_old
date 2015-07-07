@@ -1,17 +1,16 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-<meta "charset=utf-8 " />
+<meta charset="UTF-8">
 <title>Untitled Document</title>
 
-<script src="lib/jquery-1.11.2.js"></script>
-<script src="lib/jquery-ui.js"></script>
-<link rel="stylesheet" href="lib/jquery-ui.css" />
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/vader/jquery-ui.css" />
 <link rel="stylesheet" type="text/css" href="blog.css" />
 <script>
 	$(document).ready(function() {
 		var isShowed = true;
-		var url = "Blog";
 		$("#button1").text("Hide");
 		$("#button1").click(function() {
 			if (isShowed == true) {
@@ -24,7 +23,7 @@
 				isShowed = true;
 			}
 			$.ajax({
-				url : "Blogajax?keyword=" + $("#test3").val(),
+				url : "/Blogajax?keyword=" + $("#test3").val(),
 				success : function(result) {
 					alert("Sucess, result was: " + result);
 					$("#test1").text(result);
@@ -39,7 +38,7 @@
 		/*
 		$("#dictionary_button").click(function() {
 			$.ajax({
-				url : "DictionaryAutocomplete?input=" + $("#dictionary_input").val() + "&num=20",
+				url : "/DictionaryAutocomplete?input=" + $("#dictionary_input").val() + "&num=20",
 				async : true,
 				success : function(result) {
 					alert("DictionaryAutocomplete AJAX success");
@@ -58,7 +57,7 @@
 
 			var resultArray = [];
 			$.ajax({
-				url : "DictionaryAutocomplete?input=" + keyword + "&num=20",
+				url : "/DictionaryAutocomplete?input=" + keyword + "&num=20",
 				async : false,
 				success : function(result) {
 					resultArray = result.split(" ");
@@ -95,7 +94,7 @@
 			/*
 			var autocompleteResult = [];
 			$.ajax({
-				url : "DictionaryAutocomplete?input=" + $("#dictionary_input").val() + "&num=20",
+				url : "/DictionaryAutocomplete?input=" + $("#dictionary_input").val() + "&num=20",
 				async : false,
 				success : function(result) {
 					autocompleteResult = result.split(" ");
@@ -112,30 +111,6 @@
 		$("#button").mouseenter(function() {
 			$(this).hide();
 		});
-
-		function getSuggestion(keyword) {
-			alert("Started suggestion");
-			var httpRequest;
-			if (window.XMLHttpRequest) { // Mozilla, Safari, ...
-				httpRequest = new XMLHttpRequest();
-			} else if (window.ActiveXObject) { // IE
-				try {
-					httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
-				} catch (e) {
-					try {
-						httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
-					} catch (e) {
-					}
-				}
-			}
-			if (!httpRequest) {
-				alert("Giving up :( Cannot create an XMLHTTP instance");
-				return false;
-			}
-			httpRequest.onreadystatechange = refreshSuggestion;
-			httpRequest.open('GET', url + "?keyword=" + keyword);
-			httpRequest.send();
-		}
 
 		function refreshSuggestion() {
 			alert("state was:" + httpRequest.readyState);
@@ -159,8 +134,7 @@
 		<div class="header_area">
 			<div class="header">
 				<div class="logoimage">
-					<a href="#"><img src="" alt="Insert Logo Here"
-						name="Insert_logo" width="180" height="90" id="Insert_logo"
+					<a href="#"><img src="" alt="Insert Logo Here" name="Insert_logo" width="180" height="90" id="Insert_logo"
 						style="display: block;" /></a>
 				</div>
 				<div class="menubar">
@@ -212,10 +186,8 @@
 			<!-- end .content -->
 		</div>
 		<div class="footer">
-			<p>This .footer contains the declaration position:relative; to
-				give Internet Explorer 6 hasLayout for the .footer and cause it to
-				clear correctly. If you're not required to support IE6, you may
-				remove it.</p>
+			<p>This .footer contains the declaration position:relative; to give Internet Explorer 6 hasLayout for the .footer
+				and cause it to clear correctly. If you're not required to support IE6, you may remove it.</p>
 			<!-- end .footer -->
 		</div>
 		<!-- end .container -->

@@ -35,8 +35,7 @@ ul, ol, dl {
 
 <body>
 	<h1 align="center">Programming Study Menu</h1>
-	<a href="blog.html" target="_parent"><b>Open blog page</b></a><br>
-	<a href="patient_chart.html" target="_parent"><b>Open patient chart page</b></a><br>
+
 	<h2>Subject selection</h2>
 	<h3>h333</h3>
 	<h4>h4</h4>
