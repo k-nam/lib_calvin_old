@@ -90,43 +90,13 @@
 			},
 			delay : 10
 		});
-		$("#dictionary_input").keyup(function() {
-			/*
-			var autocompleteResult = [];
-			$.ajax({
-				url : "/DictionaryAutocomplete?input=" + $("#dictionary_input").val() + "&num=20",
-				async : false,
-				success : function(result) {
-					autocompleteResult = result.split(" ");
-					$("#dictionary_result").text(result);
-					$("#dictionary_input").autocomplete("option", "source", autocompleteResult);
-				},
-				error : function(xhr) {
-					alert("Error")
-				},
-				timeout : 1000
-			});
-			 */
-		});
+
 		$("#button").mouseenter(function() {
 			$(this).hide();
 		});
 
-		function refreshSuggestion() {
-			alert("state was:" + httpRequest.readyState);
-			if (httpRequest.readyState === 4) {
-				if (httpRequest.status === 200) {
-					$("#test3").text(httpRequest.responseText);
-					alert("Response was " + httpRequest.responseText);
-				} else {
-					alert("There was a problem with the request.");
-				}
-			}
-		}
 	});
 </script>
-
-
 </head>
 
 <body>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:web="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" id="WebApp_ID" version="2.4">
+  <display-name>web_01</display-name>
+  <servlet>
+    <servlet-name>Blog</servlet-name>
+    <servlet-class>servlet.Blog</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>Blog</servlet-name>
+    <url-pattern>/Blogajax</url-pattern>
+  </servlet-mapping>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  <context-param>
+    <param-name>contextParamName</param-name>
+    <param-value>contextParamValue</param-value>
+  </context-param>
+  <context-param>
+    <param-name>dbEntry</param-name>
+    <param-value>sampleEntry</param-value>
+  </context-param>
+</web-app>
