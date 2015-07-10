@@ -7,7 +7,7 @@ import lib.db.connection.SqlServerConnection
 object Main {
 	def main(args: Array[String]): Unit = {
 		//manageFile()
-			hackingTest()
+		hackingTest()
 		//hackingReal()
 	}
 
@@ -25,25 +25,15 @@ object Main {
 	}
 
 	def hackingTest(): Unit = {
-		//new Loader("D:\\dev/data/hacking/data/10K.txt",
-		//	new SqlServerConnection("Hacking").connection, "Password.[10K]").loadPassword()
+		//new Loader("D:\\dev/data/hacking/data/Password_10K.txt",
+			//new SqlServerConnection("Hacking").connection, "RainbowTable.Password_10K").loadPassword()
 
-		new Loader("D:\\dev/data/hacking/data/FirstLast_10K.txt",
-			new SqlServerConnection("Hacking").connection, "RainbowTable.[FirstLast_10K]").loadFirstLast
+		//new Loader("D:\\dev/data/hacking/data/FirstLast_10K.txt",
+		//new SqlServerConnection("Hacking").connection, "RainbowTable.FirstLast_10K").loadFirstLast
 
-		//	new ChainLookup("D:\\dev/data/hacking/test/chain.txt", "D:\\dev/data/hacking/test/first.txt",
-		//new SqlServerConnection("Hacking").connection, "RainbowTable.FirstLast_Md5_20Digit_SimpleReverse_10Iter")
+		new ChainLookup("D:\\dev/data/hacking/test/chain.txt", "D:\\dev/data/hacking/test/first.txt",
+			new SqlServerConnection("Hacking").connection, "RainbowTable.FirstLast_10K")
 
 	}
 
-	def hackingReal() {
-		//new Loader("D:\\dev/data/hacking/data/61M.txt",
-		//	new SqlServerConnection("Hacking").connection, "Password.[61M]").loadPassword()
-
-		new Loader("D:\\dev/data/hacking/data/FirstLast_61M.txt",
-			new SqlServerConnection("Hacking").connection, "RainbowTable.[FirstLast_61M]").loadFirstLast
-
-		//	new ChainLookup("D:\\dev/data/hacking/test/chain.txt", "D:\\dev/data/hacking/test/first.txt",
-		//new SqlServerConnection("Hacking").connection, "RainbowTable.FirstLast_Md5_20Digit_SimpleReverse_10Iter")
-	}
 }

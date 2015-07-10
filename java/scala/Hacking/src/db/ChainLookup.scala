@@ -7,7 +7,7 @@ class ChainLookup(val chainFileName: String, val outputFileName: String,
 		val connection: Connection, val tableName: String) {
 
 	def getSelectQuery(last: String): String = {
-		"SELECT First FROM " + tableName + " WHERE Last = " + "\'" + last + "\'"
+		"SELECT first FROM " + tableName + " WHERE last = " + "\'" + last + "\'"
 	}
 	connection.setAutoCommit(false)
 	val stmt = connection.createStatement
@@ -29,7 +29,7 @@ class ChainLookup(val chainFileName: String, val outputFileName: String,
 				//println(query)
 				val rs = stmt.executeQuery(query)
 				while (rs.next) {
-					writer.write(rs.getString("First"))
+					writer.write(rs.getString("first"))
 					writer.write("\t")
 				}
 			}
