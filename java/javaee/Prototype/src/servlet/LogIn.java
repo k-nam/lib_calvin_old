@@ -50,7 +50,7 @@ public class LogIn extends HttpServlet {
 			String[] hobbies = { "gender", "programming", "reading" };
 			user.setHobbies(hobbies);
 			curSession.setAttribute("user", user);
-			RequestDispatcher view = request.getRequestDispatcher("main.jsp");
+			RequestDispatcher view = request.getRequestDispatcher("/practice/index.jsp");
 			view.forward(request, response);
 		} else {
 

@@ -6,7 +6,7 @@
 
 <html>
 <body>
-	<form method="POST" action="Login.do">
+	<form method="POST" action="/Login.do">
 		ID<input type="text" name="userid" /><br> password<input
 			type="password" name="userpassword" /><br> <input type="SUBMIT"
 			value="Login" />

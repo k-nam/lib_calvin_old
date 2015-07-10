@@ -39,7 +39,7 @@ public class LogOut extends HttpServlet {
 			return;
 		} else {
 			curSession.invalidate();
-			RequestDispatcher mainPage = request.getRequestDispatcher("main.jsp");
+			RequestDispatcher mainPage = request.getRequestDispatcher("/practice/index.jsp");
 			mainPage.forward(request, response);
 		}
 	}

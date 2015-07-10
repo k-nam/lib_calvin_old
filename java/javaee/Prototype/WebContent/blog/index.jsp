@@ -7,7 +7,7 @@
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/vader/jquery-ui.css" />
-<link rel="stylesheet" type="text/css" href="blog.css" />
+
 <script>
 	$(document).ready(function() {
 		var isShowed = true;

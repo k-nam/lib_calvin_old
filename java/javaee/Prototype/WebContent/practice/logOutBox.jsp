@@ -10,7 +10,7 @@
 </head>
 <body>
 
-	<form method="POST" action="LogOut.do">
+	<form method="POST" action="/LogOut.do">
 		<input type="SUBMIT" value="로그아웃" />
 	</form>
 

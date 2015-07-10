@@ -5,8 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
 
 <script>
 	$(document).ready(function() {
@@ -19,37 +18,11 @@
 			$(this).parent().parent().siblings(".btn:first-child").html($(this).text() + ' <span class="caret"></span>');
 			$(this).parent().parent().siblings(".btn:first-child").val($(this).text());
 		});
+		$("#navitem0").addClass("active");
 	});
 </script>
 </head>
 <body>
-	<nav class="navbar navbar-default">
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-xs-0 col-md-3"></div>
-				<div class="col-xs-12 col-md-6">
-					<div class="navbar-header">
-						<div class="navbar-brand">WebSiteName</div>
-					</div>
-					<div>
-						<ul class="nav navbar-nav">
-							<li class="active"><a href="index.html">Home</a></li>
-							<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="">Page 1 <span
-									class="caret"></span></a>
-								<ul class="dropdown-menu">
-									<li><a href="tab1_1.html">Page 1-1</a></li>
-									<li><a href="tab1_2.html">Page 1-2</a></li>
-									<li><a href="tab1_3.html">Page 1-3</a></li>
-								</ul></li>
-							<li><a href="tab2.html">Practice</a></li>
-							<li><a href="tab3.html">Blog</a></li>
-							<li><a href="tab4.html">Patient Chart</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</nav>
 	<div class="container-fluid">
 		<div class="row">
 			<div class="col-xs-0 col-lg-3"></div>

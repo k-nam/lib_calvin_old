@@ -53,7 +53,7 @@ public class SelectSubject extends HttpServlet {
 				getServletConfig().getInitParameter("paramName"));
 		request.setAttribute("dao", getServletContext().getAttribute("dao"));
 
-		RequestDispatcher view = request.getRequestDispatcher("select.jsp");
+		RequestDispatcher view = request.getRequestDispatcher("/practice/select.jsp");
 		view.forward(request, response);
 	}
 
