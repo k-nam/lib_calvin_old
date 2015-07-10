@@ -12,6 +12,8 @@
 </script>
 </head>
 <body>
+	<div class="container">
 	<jsp:include page="/bootstrap/navbar.jsp" />
+	</div>
 </body>
 </html>

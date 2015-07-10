@@ -49,11 +49,16 @@
 		$("#datepicker").datepicker();
 	});
 </script>
-
-<title>Patient status report</title>
+<script>
+	$(document).ready(function() {
+		$("#navitem4").addClass("active");
+	});
+</script>
 </head>
 <body>
-	<div class="container-fluid">
+	<div class="container">
+		<jsp:include page="/bootstrap/navbar.jsp" />
+
 		<div class="row">
 			<div class="col-lg-2">
 				<span></span>

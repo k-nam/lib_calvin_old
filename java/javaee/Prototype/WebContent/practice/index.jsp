@@ -6,17 +6,24 @@
 <html>
 <head>
 <style type="text/css">
-
 </style>
+<script>
+	$(document).ready(function() {
+		$("#navitem3").addClass("active");
+	});
+</script>
+
 </head>
 
 <body>
-	<div class="container-fluid">
+	<div class="container">
+		<%@ include file="/bootstrap/navbar.jsp"%>
+
 		<div class="row">
 			<div class="col-lg-2">
 				<span></span>
 			</div>
-			<div class="col-lg-6">
+			<div class="col-lg-8">
 				<h1 align="center">Programming Study Menu</h1>
 
 				<h2>Subject selection</h2>
@@ -53,7 +60,7 @@
 
 				<hr />
 				<p>
-					<img src="files/ebisu.jpg" width="50%" height="50%" alt="Ebisu Garden Place" />
+					<img src="/files/ebisu.jpg" width="50%" height="50%" alt="Ebisu Garden Place" />
 					<c:choose>
 						<c:when test="${ sessionScope.isLoggedIn eq 'true' }">
 							<jsp:include page="logOutBox.jsp" />

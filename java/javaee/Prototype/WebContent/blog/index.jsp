@@ -101,6 +101,7 @@
 
 <body>
 	<div class="container">
+		<%@ include file="/bootstrap/navbar.jsp"%>
 		<div class="header_area">
 			<div class="header">
 				<div class="logoimage">
