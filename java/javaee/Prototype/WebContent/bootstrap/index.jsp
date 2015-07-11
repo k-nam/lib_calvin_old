@@ -29,11 +29,12 @@
 
 </head>
 <body>
+	<%@ include file="/bootstrap/navbar.jsp"%>
 	<div class="container">
-		<%@ include file="/bootstrap/navbar.jsp"%>
+
 		<div class="row">
-			<div class="col-xs-0 col-lg-3"></div>
-			<div class="col-xs-12 col-lg-6">
+			<div class="col-xs-0 col-lg-1"></div>
+			<div class="col-xs-12 col-lg-10">
 				<h1>
 					<span data-toggle="tooltip" title="Hooray!"> My First Bootstrap Page</span>
 				</h1>

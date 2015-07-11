@@ -9,32 +9,32 @@
 </head>
 <body>
 	<nav class="navbar navbar-default">
-
-	<div class="row">
-		<div class="col-xs-0 col-md-3"></div>
-		<div class="col-xs-12 col-md-6">
-			<div class="navbar-header">
-				<div class="navbar-brand">WebSiteName</div>
-			</div>
-			<div>
-				<ul class="nav navbar-nav">
-					<li id="navitem0" class="navitem"><a href="/bootstrap/index.jsp">Home</a></li>
-					<li id="navitem1" class="dropdown navitem"><a class="dropdown-toggle" data-toggle="dropdown" href="">Page
-							1 <span class="caret"></span>
-					</a>
-						<ul class="dropdown-menu">
-							<li id="navitem1_0" class="navitem"><a href="/bootstrap/tab1_1.jsp">Page 1-1</a></li>
-							<li id="navitem1_1" class="navitem"><a href="/bootstrap/tab1_2.jsp">Page 1-2</a></li>
-							<li id="navitem1_2" class="navitem"><a href="/bootstrap/tab1_3.jsp">Page 1-3</a></li>
-						</ul></li>
-					<li id="navitem2" class="navitem"><a href="/practice/index.jsp">Practice</a></li>
-					<li id="navitem3" class="navitem"><a href="/blog/index.jsp">Blog</a></li>
-					<li id="navitem4" class="navitem"><a href="/patient_chart/index.jsp">Patient Chart</a></li>
-				</ul>
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-0 col-md-1"></div>
+			<div class="col-xs-12 col-md-8">
+				<div class="navbar-header">
+					<div class="navbar-brand">WebSiteName</div>
+				</div>
+				<div>
+					<ul class="nav navbar-nav">
+						<li id="navitem0" class="navitem"><a href="/bootstrap/">Home</a></li>
+						<li id="navitem1" class="dropdown navitem"><a class="dropdown-toggle" data-toggle="dropdown" href="">Page
+								1 <span class="caret"></span>
+						</a>
+							<ul class="dropdown-menu">
+								<li id="navitem1_0" class="navitem"><a href="/bootstrap/tab1_1.jsp">Page 1-1</a></li>
+								<li id="navitem1_1" class="navitem"><a href="/bootstrap/tab1_2.jsp">Page 1-2</a></li>
+								<li id="navitem1_2" class="navitem"><a href="/bootstrap/tab1_3.jsp">Page 1-3</a></li>
+							</ul></li>
+						<li id="navitem2" class="navitem"><a href="/practice/">Practice</a></li>
+						<li id="navitem3" class="navitem"><a href="/blog/">Blog</a></li>
+						<li id="navitem4" class="navitem"><a href="/patient_chart/">Patient Chart</a></li>
+					</ul>
+				</div>
 			</div>
 		</div>
-	</div>
-
+		<hr />
 	</nav>
 </body>
 </html>

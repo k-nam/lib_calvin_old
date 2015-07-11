@@ -3,7 +3,7 @@
 <head>
 <title>Patient Chart</title>
 <meta charset="utf-8">
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -39,6 +39,9 @@
 		var options = {
 			title : "Life chart",
 			height : 350,
+			calendar : {
+				cellSize : 15
+			},
 		};
 
 		chart.draw(dataTable, options);
@@ -52,15 +55,19 @@
 <script>
 	$(document).ready(function() {
 		$("#navitem4").addClass("active");
+		$("#submitbutton").click(function() {
+			var input = $("#sel1").val();
+			alert(input);
+		});
 	});
 </script>
+
 </head>
 <body>
+	<%@ include file="/bootstrap/navbar.jsp"%>
 	<div class="container">
-		<jsp:include page="/bootstrap/navbar.jsp" />
-
 		<div class="row">
-			<div class="col-lg-2">
+			<div class="col-lg-1">
 				<span></span>
 			</div>
 			<div class="col-lg-10">
@@ -70,36 +77,36 @@
 		</div>
 
 		<div class="row">
-			<div class="col-lg-2">
+			<div class="col-lg-1">
 				<span></span>
 			</div>
-			<div class="col-lg-2">
+			<div class="col-lg-3">
 				<p>
 					Date: <input type="text" id="datepicker">
 				</p>
 			</div>
 			<div class="col-lg-8">
-				<div class="row">
-					<form class="form-inline">
-						<label for="sel1">Today I felt:</label> <select class="form-control" id="sel1">
-							<option>manic</option>
-							<option>hypo-manic</option>
-							<option selected="true">normal</option>
-							<option>bad</option>
-							<option>depressed</option>
-						</select>
-					</form>
-				</div>
+
+				<form class="form-inline">
+					<label for="sel1">Today I felt:</label> <select class="form-control" id="sel1">
+						<option>manic</option>
+						<option>hypo-manic</option>
+						<option selected="true">normal</option>
+						<option>bad</option>
+						<option>depressed</option>
+					</select>
+				</form>
+
 				<br>
-				<div class="row">
-					<form class="form-inline">
-						<label for="sel1">Today I took:</label> <select class="form-control" id="sel1">
-							<option>all of</option>
-							<option>some of</option>
-							<option>none of</option>
-						</select> <label>my medication.</label>
-					</form>
-				</div>
+
+				<form class="form-inline">
+					<label for="sel1">Today I took:</label> <select class="form-control" id="sel2">
+						<option>all of</option>
+						<option>some of</option>
+						<option>none of</option>
+					</select> <label>my medication.</label>
+				</form>
+
 				<br>
 
 				<form>
@@ -126,7 +133,7 @@
 				</form>
 				<br>
 
-				<button type="button" class="btn btn-success">Submit</button>
+				<button type="button" class="btn btn-success" id="submitbutton">Submit</button>
 
 			</div>
 		</div>

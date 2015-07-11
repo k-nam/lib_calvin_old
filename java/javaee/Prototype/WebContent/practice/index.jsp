@@ -5,25 +5,23 @@
 
 <html>
 <head>
-<style type="text/css">
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 <script>
 	$(document).ready(function() {
-		$("#navitem3").addClass("active");
+		$("#navitem2").addClass("active");
 	});
 </script>
-
 </head>
 
 <body>
+	<%@ include file="/bootstrap/navbar.jsp"%>
 	<div class="container">
-		<%@ include file="/bootstrap/navbar.jsp"%>
-
 		<div class="row">
-			<div class="col-lg-2">
+			<div class="col-lg-1">
 				<span></span>
 			</div>
-			<div class="col-lg-8">
+			<div class="col-lg-10">
 				<h1 align="center">Programming Study Menu</h1>
 
 				<h2>Subject selection</h2>
