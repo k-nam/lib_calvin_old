@@ -32,7 +32,7 @@
 				<p>
 					This is the first paragraph.<br /> <em>Select what you want!</em>
 				</p>
-				<form method="POST" action="Select.do">
+				<form method="POST" action="/Select.do">
 					<p>
 						Your age is:<input type="text" name="age" />
 					</p>

@@ -2,7 +2,6 @@ package servlet;
 
 import java.io.IOException;
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,19 +18,24 @@ public class DictionaryAutocomplete extends HttpServlet {
 				+ request.getParameter("input"));
 		String input = request.getParameter("input");
 		int num = Integer.valueOf(request.getParameter("num"));
-		response.setContentType("text");
+		response.setContentType("text/html");
 		List<String> list = Dictionary.getAutocompleteSuggestions(input, num);
 		Dictionary.getDictionary();
+
 		boolean first = true;
+		response.getWriter().append("{ \"list\":[");
 		for (String word : list) {
 			if (first) {
 				first = false;
 			} else {
-				response.getWriter().append(" ");
+				response.getWriter().append(", ");
 			}
-			//System.out.println("Adding word: " + word);
+			System.out.println("Adding word: " + word);
+			response.getWriter().append("{\"word\":\"");
 			response.getWriter().append(word);
+			response.getWriter().append("\"}");
 		}
-		//System.out.println("Exit servlet");
+		response.getWriter().append("]}");
+		// System.out.println("Exit servlet");
 	}
 }

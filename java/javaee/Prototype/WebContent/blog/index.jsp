@@ -55,20 +55,21 @@
 			if (keyword == "") {
 				return [ "abc" ];
 			}
-
 			var resultArray = [];
 			$.ajax({
 				url : "/DictionaryAutocomplete?input=" + keyword + "&num=20",
 				async : false,
 				success : function(result) {
-					resultArray = result.split(" ");
+					$("#test2").text(result);
+					JSON.parse(result).list.forEach(function(elem) {
+						resultArray.push(elem.word);
+					});
 				},
 				error : function(xhr) {
-					alert("Error")
+					alert("Error");
 				},
 				timeout : 1000
 			});
-
 			return resultArray;
 			//return ["aaa", "bbb"];
 		}
