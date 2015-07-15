@@ -1,4 +1,4 @@
-package servlet;
+package servlet.blog;
 
 import java.io.IOException;
 import java.util.List;
@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dictionary.*;
+import com.google.gson.*;
 
 public class DictionaryAutocomplete extends HttpServlet {
 	private static final long serialVersionUID = 1962439015362375974L;
@@ -21,8 +22,12 @@ public class DictionaryAutocomplete extends HttpServlet {
 		response.setContentType("text/html");
 		List<String> list = Dictionary.getAutocompleteSuggestions(input, num);
 		Dictionary.getDictionary();
-
+		Gson a = new Gson();
+		String b = a.toJson(list);
+		
 		boolean first = true;
+		response.getWriter().append(b);
+		/*
 		response.getWriter().append("{ \"list\":[");
 		for (String word : list) {
 			if (first) {
@@ -35,7 +40,7 @@ public class DictionaryAutocomplete extends HttpServlet {
 			response.getWriter().append(word);
 			response.getWriter().append("\"}");
 		}
-		response.getWriter().append("]}");
+		response.getWriter().append("]}");*/
 		// System.out.println("Exit servlet");
 	}
 }

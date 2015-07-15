@@ -12,7 +12,7 @@
 
 	<servlet>
 		<servlet-name>WEB main select</servlet-name>
-		<servlet-class>servlet.SelectSubject</servlet-class>
+		<servlet-class>servlet.practice.SelectSubject</servlet-class>
 		<init-param>
 			<param-name>paramName</param-name>
 			<param-value>paramValue</param-value>
@@ -20,27 +20,27 @@
 	</servlet>
 	<servlet>
 		<servlet-name>abc.jar</servlet-name>
-		<servlet-class>servlet.GetFile</servlet-class>
+		<servlet-class>servlet.practice.GetFile</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>Main login</servlet-name>
-		<servlet-class>servlet.LogIn</servlet-class>
+		<servlet-class>servlet.practice.LogIn</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>LogOut</servlet-name>
-		<servlet-class>servlet.LogOut</servlet-class>
+		<servlet-class>servlet.practice.LogOut</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>Me2day user finding</servlet-name>
-		<servlet-class>servlet.Me2dayFindUser</servlet-class>
+		<servlet-class>servlet.practice.Me2dayFindUser</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>Blog</servlet-name>
-		<servlet-class>servlet.Blog</servlet-class>
+		<servlet-class>servlet.blog.Blog</servlet-class>
 	</servlet>
 	<servlet>
 		<servlet-name>DictionaryAutocomplete</servlet-name>
-		<servlet-class>servlet.DictionaryAutocomplete</servlet-class>
+		<servlet-class>servlet.blog.DictionaryAutocomplete</servlet-class>
 	</servlet>
 
 	<servlet-mapping>

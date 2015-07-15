@@ -1,4 +1,4 @@
-package servlet;
+package servlet.practice;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -61,8 +61,8 @@
 				async : false,
 				success : function(result) {
 					$("#test2").text(result);
-					JSON.parse(result).list.forEach(function(elem) {
-						resultArray.push(elem.word);
+					JSON.parse(result).forEach(function(elem) {
+						resultArray.push(elem);
 					});
 				},
 				error : function(xhr) {
