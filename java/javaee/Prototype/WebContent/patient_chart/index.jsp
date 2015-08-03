@@ -12,6 +12,9 @@
 
 
 <script type="text/javascript">
+
+	var dates = [];
+	
 	google.load("visualization", "1.1", {
 		packages : [ "calendar" ]
 	});
@@ -27,13 +30,14 @@
 			type : 'number',
 			id : 'Won/Loss'
 		});
+		/*
 		dataTable.addRows([ [ new Date(2012, 3, 13), 37032 ], [ new Date(2012, 5, 14), 38024 ],
 				[ new Date(2012, 3, 15), 38024 ], [ new Date(2012, 6, 16), 38108 ], [ new Date(2012, 3, 17), 38229 ],
 				// Many rows omitted for brevity.
 				[ new Date(2013, 6, 4), 38177 ], [ new Date(2013, 9, 5), 4 ], [ new Date(2013, 9, 12), 38210 ],
 				[ new Date(2013, 5, 13), 38029 ], [ new Date(2013, 9, 19), 38823 ], [ new Date(2013, 9, 23), 38345 ],
-				[ new Date(2013, 9, 24), 38436 ], [ new Date(2013, 9, 30), 38447 ] ]);
-
+				[ new Date(2013, 9, 24), 38436 ], [ new Date(2013, 9, 30), 38447 ] ]);*/
+		dataTable.addRows(dates);
 		var chart = new google.visualization.Calendar(document.getElementById('calendar_basic'));
 
 		var options = {
@@ -56,8 +60,12 @@
 	$(document).ready(function() {
 		$("#navitem4").addClass("active");
 		$("#submitbutton").click(function() {
-			var input = $("#sel1").val();
-			alert(input);
+			//alert($("#sel1").val());
+			//alert($("#datepicker").val());
+			var date = $("#datepicker").datepicker("getDate");
+			dates.push([date, date.getDate()]);
+			alert(dates);
+			drawChart();
 		});
 	});
 </script>
