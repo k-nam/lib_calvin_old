@@ -19,7 +19,6 @@ public class DictionaryAutocomplete extends HttpServlet {
 				+ request.getParameter("input"));
 		String input = request.getParameter("input");
 		int num = Integer.valueOf(request.getParameter("num"));
-		response.setContentType("text/html");
 		List<String> list = Dictionary.getAutocompleteSuggestions(input, num);
 		Dictionary.getDictionary();
 		Gson a = new Gson();

@@ -42,6 +42,13 @@
 		<servlet-name>DictionaryAutocomplete</servlet-name>
 		<servlet-class>servlet.blog.DictionaryAutocomplete</servlet-class>
 	</servlet>
+	<servlet>
+		<description>
+		</description>
+		<display-name>DailyChart</display-name>
+		<servlet-name>DailyChart</servlet-name>
+		<servlet-class>servlet.patientchart.DailyChart</servlet-class>
+	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>WEB main select</servlet-name>
@@ -70,6 +77,10 @@
 	<servlet-mapping>
 		<servlet-name>DictionaryAutocomplete</servlet-name>
 		<url-pattern>/DictionaryAutocomplete</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DailyChart</servlet-name>
+		<url-pattern>/DailyChart</url-pattern>
 	</servlet-mapping>
 	
 	<welcome-file-list>
