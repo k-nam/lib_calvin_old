@@ -12,9 +12,8 @@
 
 
 <script type="text/javascript">
-
 	var dates = [];
-	
+
 	google.load("visualization", "1.1", {
 		packages : [ "calendar" ]
 	});
@@ -53,6 +52,7 @@
 </script>
 <script>
 	$(function() {
+		$.datepicker.formatDate("yy-mm-dd");
 		$("#datepicker").datepicker();
 	});
 </script>
@@ -63,9 +63,24 @@
 			//alert($("#sel1").val());
 			//alert($("#datepicker").val());
 			var date = $("#datepicker").datepicker("getDate");
-			dates.push([date, date.getDate()]);
+			dates.push([ date, date.getDate() ]);
 			alert(dates);
 			drawChart();
+			var dataObject = {
+				date : date.getTime(), recordedTime : Date.now()
+			};
+			$.ajax({
+				url : "/DailyChart?arg=" + JSON.stringify(dataObject),
+				type : "POST",
+				async : false,
+				success : function(result) {
+
+				},
+				error : function(xhr) {
+					alert("Error");
+				},
+				timeout : 1000
+			});
 		});
 	});
 </script>
