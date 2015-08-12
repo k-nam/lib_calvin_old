@@ -16,15 +16,15 @@ public class DailyChartDao {
 		List<DailyStatus> result = new ArrayList<DailyStatus>();
 		try {
 			Connection connection = SqlServerDbConnector.getConnection();
-			String query = "SELECT (*) FROM PatientChart.DailyStatus;";
+			String query = "SELECT date, recordedtime, mood, medication FROM PatientChart.DailyStatus;";
 			PreparedStatement pstmt = connection.prepareStatement(query);
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
 				Date a = rs.getDate("date");
-				Timestamp b = rs.getTimestamp("recordedTime");
+				Timestamp b = rs.getTimestamp("recordedtime");
 				int mood = rs.getInt("mood");
 				int medication = rs.getInt("medication");
-				//result.add(new DailyStatus(a, b, mood, medication));
+				result.add(new DailyStatus(a.getTime(), b.getTime(), mood, medication));
 			}
 			connection.close();
 			return result;
@@ -44,8 +44,7 @@ public class DailyChartDao {
 			pstmt.setTimestamp(2, recordedTime);
 			pstmt.setInt(3, mood);
 			pstmt.setInt(4, medication);
-			System.out.println(pstmt.toString());
-			pstmt.executeQuery();
+			pstmt.execute();
 			connection.close();
 		} catch (SQLException e) {
 			e.printStackTrace();

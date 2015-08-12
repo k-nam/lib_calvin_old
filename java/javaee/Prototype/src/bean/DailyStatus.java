@@ -4,18 +4,15 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 public class DailyStatus {
-	//public DailyStatus(Date date, Timestamp recordedTime, int mood, int medication) {
-	public DailyStatus(long date, long recordedTime) {
+	public DailyStatus(long date, long recordedTime, int mood, int medication) {
 		this.date = date;
 		this.recordedTime = recordedTime;
-		//this.mood = mood;
-		//this.medication = medication;
-		
+		this.mood = mood;
+		this.medication = medication;
 	}
 
-	
 	public long date;
 	public long recordedTime;
-	//private int mood;
-	//private int medication;
+	public int mood;
+	public int medication;
 }

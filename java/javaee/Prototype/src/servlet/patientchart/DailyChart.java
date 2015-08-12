@@ -3,6 +3,7 @@ package servlet.patientchart;
 import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -34,14 +35,13 @@ public class DailyChart extends HttpServlet {
 	 *      response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		System.out.println("Now in get!");
+		List<DailyStatus> list = DailyChartDao.getChart();
+		Gson gson = new Gson();
+		String json = gson.toJson(list);
+		response.getWriter().append(json);
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	
 	// record new info onto chart
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println("Now in post!");
@@ -49,10 +49,7 @@ public class DailyChart extends HttpServlet {
 		Gson gson = new Gson();
 		DailyStatus bean = gson.fromJson(argument, DailyStatus.class);
 		System.out.println("arg was: <" + argument + ">");
-		DailyChartDao.updatChart(new Date(bean.date), new Timestamp(bean.recordedTime), 0, 0);
-		//String recordedTime = request.getParameter("recordedTime");
-		//String mood = request.getParameter("mood");
-		//String medication = request.getParameter("medication");
+		DailyChartDao.updatChart(new Date(bean.date), new Timestamp(bean.recordedTime), bean.mood, bean.medication);
 	}
 
 }

@@ -12,8 +12,7 @@
 
 
 <script type="text/javascript">
-	var dates = [];
-
+	var mode = "mood"; // or "medication"
 	google.load("visualization", "1.1", {
 		packages : [ "calendar" ]
 	});
@@ -29,14 +28,16 @@
 			type : 'number',
 			id : 'Won/Loss'
 		});
-		/*
-		dataTable.addRows([ [ new Date(2012, 3, 13), 37032 ], [ new Date(2012, 5, 14), 38024 ],
-				[ new Date(2012, 3, 15), 38024 ], [ new Date(2012, 6, 16), 38108 ], [ new Date(2012, 3, 17), 38229 ],
-				// Many rows omitted for brevity.
-				[ new Date(2013, 6, 4), 38177 ], [ new Date(2013, 9, 5), 4 ], [ new Date(2013, 9, 12), 38210 ],
-				[ new Date(2013, 5, 13), 38029 ], [ new Date(2013, 9, 19), 38823 ], [ new Date(2013, 9, 23), 38345 ],
-				[ new Date(2013, 9, 24), 38436 ], [ new Date(2013, 9, 30), 38447 ] ]);*/
-		dataTable.addRows(dates);
+		var chartData = fetchChartData();
+		var dataToShow = [];
+		chartData.forEach(function(elem) {
+			if (mode == "mood") {
+				dataToShow.push([ new Date(elem.date), elem.mood ]);
+			} else {
+				dataToShow.push([ new Date(elem.date), elem.medication ]);
+			}
+		});
+		dataTable.addRows(dataToShow);
 		var chart = new google.visualization.Calendar(document.getElementById('calendar_basic'));
 
 		var options = {
@@ -49,38 +50,58 @@
 
 		chart.draw(dataTable, options);
 	}
-</script>
-<script>
 	$(function() {
-		$.datepicker.formatDate("yy-mm-dd");
 		$("#datepicker").datepicker();
 	});
-</script>
-<script>
+	function fetchChartData() {
+		var returnData = [];
+		$.ajax({
+			url : "/DailyChart",
+			type : "GET",
+			async : false,
+			success : function(result) {			
+				// result is an array of DailyStatus
+				returnData = JSON.parse(result);
+			},
+			error : function(xhr) {
+				alert("Error");
+			},
+			timeout : 1000
+		});
+		return returnData;
+	}
 	$(document).ready(function() {
 		$("#navitem4").addClass("active");
 		$("#submitbutton").click(function() {
-			//alert($("#sel1").val());
-			//alert($("#datepicker").val());
 			var date = $("#datepicker").datepicker("getDate");
-			dates.push([ date, date.getDate() ]);
-			alert(dates);
-			drawChart();
 			var dataObject = {
-				date : date.getTime(), recordedTime : Date.now()
+				date : date.getTime(),
+				recordedTime : Date.now(),
+				mood : parseInt($('#q1').val()),
+				medication : parseInt($('#q2').val())
 			};
 			$.ajax({
 				url : "/DailyChart?arg=" + JSON.stringify(dataObject),
 				type : "POST",
 				async : false,
 				success : function(result) {
-
 				},
 				error : function(xhr) {
 					alert("Error");
 				},
 				timeout : 1000
 			});
+			drawChart();
+		});
+		$('#moodbutton').click(function() {
+			$('#moodbutton').addClass("active");
+			mode = "mood";
+			drawChart();
+		});
+		$('#medicationbutton').click(function() {
+			$('#medicationbutton').addClass("active");
+			mode = "medication";
+			drawChart();
 		});
 	});
 </script>
@@ -122,19 +143,25 @@
 						</div>
 					</div>
 				</form>
+
 			</div>
 		</div>
-		<br>
-
-
-
+		<br> <br>
 
 		<div class="row">
 			<div class="col-lg-1">
 				<span></span>
 			</div>
 			<div class="col-lg-10">
-				<div id="calendar_basic" style="width: 100%; height: 350px;"></div>
+				<div class="btn-group" data-toggle="buttons">
+					<label class="btn btn-default active" id="moodbutton"> <input type="radio" autocomplete="off" checked>
+						Mood
+					</label> <label class="btn btn-default" id="medicationbutton"> <input type="radio" autocomplete="off">
+						Medication
+					</label>
+				</div>
+				<br> <br>
+				<div id="calendar_basic" style="width: 100%; height: 200px;"></div>
 			</div>
 
 		</div>
@@ -149,29 +176,24 @@
 				</p>
 			</div>
 			<div class="col-lg-8">
-
 				<form class="form-inline">
-					<label for="sel1">Today I felt:</label> <select class="form-control" id="sel1">
-						<option>manic</option>
-						<option>hypo-manic</option>
-						<option selected="true">normal</option>
-						<option>bad</option>
-						<option>depressed</option>
+					<label>Today I felt:</label> <select class="form-control" id="q1">
+						<option value="1">manic</option>
+						<option value="2">hypo-manic</option>
+						<option value="3" selected="true">normal</option>
+						<option value="4">bad</option>
+						<option value="5">depressed</option>
 					</select>
 				</form>
-
 				<br>
-
 				<form class="form-inline">
-					<label for="sel1">Today I took:</label> <select class="form-control" id="sel2">
-						<option>all of</option>
-						<option>some of</option>
-						<option>none of</option>
+					<label>Today I took:</label> <select class="form-control" id="q2">
+						<option value="1" selected="true">all of</option>
+						<option value="2">some of</option>
+						<option value="3">none of</option>
 					</select> <label>my medication.</label>
 				</form>
-
 				<br>
-
 				<form>
 					Today I excesied <input type="radio" name="exercise" value="all" />much <input type="radio" name="exercise"
 						value="some" />a little<input type="radio" name="exercise" value="none" />not at all <br>
