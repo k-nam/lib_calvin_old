@@ -33,7 +33,7 @@
 	<div class="container">
 
 		<div class="row">
-			<div class="col-xs-0 col-lg-1"></div>
+			<div class="emptycol col-xs-0 col-lg-1"></div>
 			<div class="col-xs-12 col-lg-10">
 				<h1>
 					<span data-toggle="tooltip" title="Hooray!"> My First Bootstrap Page</span>

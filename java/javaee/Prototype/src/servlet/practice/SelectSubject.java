@@ -56,5 +56,4 @@ public class SelectSubject extends HttpServlet {
 		RequestDispatcher view = request.getRequestDispatcher("/practice/select.jsp");
 		view.forward(request, response);
 	}
-
 }

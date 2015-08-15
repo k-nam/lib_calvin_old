@@ -6,7 +6,9 @@
 <title>Bootstrap navbar</title>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/css/default.css">
 </head>
+
 <body>
 	<nav class="navbar navbar-default">
 	<div class="container">
@@ -34,7 +36,7 @@
 				</div>
 			</div>
 		</div>
-		<hr />
+	</div>
 	</nav>
 </body>
 </html>

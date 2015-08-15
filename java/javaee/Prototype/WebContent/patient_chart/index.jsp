@@ -8,6 +8,7 @@
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="/css/default.css">
 
 
 
@@ -59,7 +60,7 @@
 			url : "/DailyChart",
 			type : "GET",
 			async : false,
-			success : function(result) {			
+			success : function(result) {
 				// result is an array of DailyStatus
 				returnData = JSON.parse(result);
 			},
@@ -107,19 +108,20 @@
 </script>
 
 </head>
-<body>
+
+<body class="contentbody">
 	<%@ include file="/bootstrap/navbar.jsp"%>
 	<div class="container">
 		<div class="row">
-			<div class="col-lg-1">
-				<span></span>
+			<div class="emptycol col-lg-1 ">
+		
 			</div>
-			<div class="col-lg-2">Please log in to use this service.</div>
-			<div class="col-lg-5">
+			<div class="nonemptycol col-lg-2">Please log in to use this service.</div>
+			<div class="nonemptycol col-lg-5">
 				<form class="form-horizontal">
 					<div class="form-group">
-						<label for="inputEmail3" class="col-sm-2 control-label">Email</label>
-						<div class="col-sm-10">
+						<label for="inputEmail3" class="col-sm-3 control-label">Email (disaligned)</label>
+						<div class="col-sm-9">
 							<input type="email" class="form-control" id="inputEmail3" placeholder="Email">
 						</div>
 					</div>
@@ -146,13 +148,13 @@
 
 			</div>
 		</div>
-		<br> <br>
+
 
 		<div class="row">
-			<div class="col-lg-1">
+			<div class="emptycol col-lg-1">
 				<span></span>
 			</div>
-			<div class="col-lg-10">
+			<div class="nonemptycol col-lg-10">
 				<div class="btn-group" data-toggle="buttons">
 					<label class="btn btn-default active" id="moodbutton"> <input type="radio" autocomplete="off" checked>
 						Mood
@@ -167,15 +169,15 @@
 		</div>
 
 		<div class="row">
-			<div class="col-lg-1">
+			<div class="emptycol col-lg-1">
 				<span></span>
 			</div>
-			<div class="col-lg-3">
+			<div class="nonemptycol col-lg-3">
 				<p>
 					Date: <input type="text" id="datepicker">
 				</p>
 			</div>
-			<div class="col-lg-8">
+			<div class="nonemptycol col-lg-7">
 				<form class="form-inline">
 					<label>Today I felt:</label> <select class="form-control" id="q1">
 						<option value="1">manic</option>
