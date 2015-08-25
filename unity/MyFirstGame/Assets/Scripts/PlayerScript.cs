@@ -5,7 +5,8 @@ using UnityEngine.UI;
 public class PlayerScript : MonoBehaviour {
 	
 	private Rigidbody rb;
-	public float speed;
+	private float speed = 30;
+	private float maxSpeed = 3;
 
 	private int count;
 	public Text countText;
@@ -24,10 +25,29 @@ public class PlayerScript : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
+
 		float moveHorizontal = Input.GetAxis ("Horizontal");
 		float moveVertical = Input.GetAxis ("Vertical");
 		
 		rb.AddForce (new Vector3(moveHorizontal, 0.0f, moveVertical ) * speed);
+		if (rb.velocity.magnitude > maxSpeed) {
+			rb.velocity = rb.velocity.normalized * maxSpeed;
+		}
+
+	}
+
+	void Update()
+	{
+		if (Input.GetMouseButtonDown(1))
+		{
+			RaycastHit hit;
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			if (Physics.Raycast(ray, out hit))
+			{
+				NavMeshAgent agent = GetComponent<NavMeshAgent> ();
+				agent.destination = hit.point;
+			}
+		}
 	}
 
 	// Destroy everything that enters the trigger
