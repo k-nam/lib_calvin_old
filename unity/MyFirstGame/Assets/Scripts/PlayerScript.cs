@@ -12,12 +12,15 @@ public class PlayerScript : MonoBehaviour {
 	public Text countText;
 	public Text winText;
 
+	private bool isSelected; 
+
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody> ();
 		count = 0;
 		refreshCountText ();
 		winText.text = "";
+		isSelected = false;
 	}
 	
 	void refreshCountText() {
@@ -38,14 +41,28 @@ public class PlayerScript : MonoBehaviour {
 
 	void Update()
 	{
-		if (Input.GetMouseButtonDown(1))
+		RaycastHit hit;
+		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		if (Physics.Raycast(ray, out hit))
 		{
-			RaycastHit hit;
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			if (Physics.Raycast(ray, out hit))
-			{
+			if (Input.GetMouseButtonDown (0)) { // select unit
+				//Debug.Log("Left click");
+				bool isClicked = hit.collider == this.GetComponent<Collider>();
+				//Debug.Log("Clicked");
+				if (Input.GetKey(KeyCode.LeftShift)) { // addition, subtraction
+					if (isClicked) {
+						selectSelf(!isSelected);
+					}
+				} else { // reset selection
+					if (isClicked) {
+						selectSelf(true);
+					} else {
+						selectSelf(false);
+					}
+				}
+			} else if (Input.GetMouseButtonDown(1)) { // move unit
 				NavMeshAgent agent = GetComponent<NavMeshAgent> ();
-				agent.destination = hit.point;
+				agent.destination = hit.point;		
 			}
 		}
 	}
@@ -60,6 +77,19 @@ public class PlayerScript : MonoBehaviour {
 				winText.text = "YOU WON!";
 
 			}
+		}
+	}
+	
+	void selectSelf(bool toBeSelected) {
+		isSelected = toBeSelected;
+		if (toBeSelected) {
+			Debug.Log ("Selected");
+			GetComponent<Renderer>().material.SetColor("_Color", Color.blue);
+
+		
+		} else {
+			Debug.Log ("Unselected");
+			GetComponent<Renderer>().material.SetColor("_Color", Color.red);
 		}
 	}
 }
