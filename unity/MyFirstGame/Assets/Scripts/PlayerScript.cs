@@ -9,8 +9,7 @@ public class PlayerScript : MonoBehaviour {
 	private float maxSpeed = 3;
 
 	private int count;
-	public Text countText;
-	public Text winText;
+
 
 	private bool isSelected; 
 
@@ -18,14 +17,9 @@ public class PlayerScript : MonoBehaviour {
 	void Start () {
 		rb = GetComponent<Rigidbody> ();
 		count = 0;
-		refreshCountText ();
-		winText.text = "";
 		isSelected = false;
 	}
-	
-	void refreshCountText() {
-		countText.text = "Count: " + count.ToString ();
-	}
+
 
 	void FixedUpdate() {
 
@@ -61,8 +55,10 @@ public class PlayerScript : MonoBehaviour {
 					}
 				}
 			} else if (Input.GetMouseButtonDown(1)) { // move unit
-				NavMeshAgent agent = GetComponent<NavMeshAgent> ();
-				agent.destination = hit.point;		
+				if (isSelected) {
+					NavMeshAgent agent = GetComponent<NavMeshAgent> ();
+					agent.destination = hit.point;	
+				}
 			}
 		}
 	}
@@ -72,11 +68,7 @@ public class PlayerScript : MonoBehaviour {
 		if (other.gameObject.CompareTag ("Pickup")) {
 			other.gameObject.SetActive(false);
 			count = count + 1;
-			refreshCountText();
-			if (count == 2) {
-				winText.text = "YOU WON!";
 
-			}
 		}
 	}
 	
