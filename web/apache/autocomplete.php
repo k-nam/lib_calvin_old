@@ -68,23 +68,35 @@ function getSuggestionFromFile($input, $num) {
 
 function getSuggestionFromDb($input, $num) {
 	//debugLog("start");
-	$conn = getMysqlConnection();
+	$conn = getDbConnection();
 	$dropQuery = "DROP TABLE IF EXISTS web.temp;";
 	$createQuery = "CREATE TEMPORARY TABLE web.temp AS (
 				SELECT word, rank FROM web.eng_100k
-				WHERE word LIKE '".$input."%' ORDER BY  (CASE WHEN rank IS NULL THEN 1 ELSE 0 END), rank ASC LIMIT ".$num.");";
+				WHERE word LIKE '".$input."%' ORDER BY  (CASE WHEN rank IS NULL THEN 1000000 END), rank ASC LIMIT ".$num.");";
 	$selectQuery = "SELECT word, rank FROM web.temp ORDER BY word;";
 			
+	// this attempt of using only one sql query is difficult. so just omit last sorting phase.
 	$sqlQuery2 = "SELECT word, rank FROM web.eng_100k
-				WHERE word LIKE '".$input."%' ORDER BY  (CASE WHEN rank IS NULL THEN 1 ELSE 0 END), rank ASC LIMIT ".$num;
+				WHERE word LIKE '".$input."%' ORDER BY (CASE WHEN rank IS NULL THEN 100000 END), rank ASC LIMIT ".$num.";";
+	
+	// for mssql
+	$sqlQuery3 = "SELECT TOP ".$num." word FROM Web.Wordlist.Eng_100K
+				WHERE word LIKE '".$input."%' ORDER BY (CASE WHEN rank IS NULL THEN 100000 END), rank ASC;";
 
 	//debugLog("query:<".$sqlQuery.">");
-	$conn->query($dropQuery);
-	$conn->query($createQuery);
-	$result = $conn->query($selectQuery);
+	//$conn->query($dropQuery);
+	//$conn->query($createQuery);
+	//$result = $conn->query($selectQuery);
 	$suggestions = array();
 
+/*
 	while($row = $result->fetch_assoc()) {
+		$suggestions[] = $row["word"];
+	}
+*/
+	$stmt = $conn->prepare($sqlQuery3);
+	$stmt->execute();
+	foreach($stmt->fetchAll() as &$row) {
 		$suggestions[] = $row["word"];
 	}
 	return implode(" ", $suggestions);

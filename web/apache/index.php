@@ -10,11 +10,11 @@
 $(document).ready(function() {
 	alert("준비됐어?");
 	function getSuggestion(keyword) {	
-		if (keyword == "") {
+		if (keyword == "") { 
 			return ["abc"];
-		}
+		} 
 		var resultArray;
-		$.ajax({
+		$.ajax({ 
 			url: "autocomplete.php?input=" + keyword + "&num=20",
 			async: false,
 			success: function(result) {
@@ -75,7 +75,8 @@ Comment: <textarea name="comment" rows="5" cols="40"></textarea><br>
 require 'mylib.php';
 
 echo "Echoing".$_SERVER["PHP_SELF"]."<br>";
-$conn = getMysqlConnection();
+echo "PHP version is: ".phpversion()."\n";
+//getMssqlConnection();
 ?>
 
 </body>
