@@ -58,7 +58,7 @@ $(document).ready(function() {
 <h1>남기웅이의 홈페이지에 온 걸 환영해!</h1><br><br>
 <b>여기에 아무 영단어를 입력해봐 (자동완성 사전찾기)</b><br>
 <input type="text" id="dictionary_input" class="textbox" size="20" /><br><br>
-
+<a href = lecture/lecture_1_1.php>1_1</a><br><br>
 아래는 참고만해! <br><br><br><br><br>
 <form action="result.php" method="post">
 이름: <input type="text" name="name"><br>
@@ -78,6 +78,9 @@ echo "Echoing".$_SERVER["PHP_SELF"]."<br>";
 echo "PHP version is: ".phpversion()."\n";
 //getMssqlConnection();
 ?>
-
+<object data="sample.pdf" type="application/pdf"  width="800px" height="1200px">
+	<embed src="sample.pdf">
+</object>
+<iframe src="web/viewer.html?file=/sample.pdf" width="800px" height="1200px"/>
 </body>
 </html>
