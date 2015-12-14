@@ -18,12 +18,16 @@ void lib_calvin_graph::dfs(vector<vector<size_t>> const &graph,
 
 // dfs1 is useless. I implemented IntStack for this algorithm, but it is a waste of time.
 // only left for hindsight
+// 2015-12-14. Replaced IntStack to Stack. The size of stack will grow to O(E), which is bad, 
+// but this is much faster than using IntStack. Still not preferable over dfs2 due to 
 void lib_calvin_graph::dfs1(vector<vector<size_t>> const &graph, 
 															vector<size_t> const &visitOrder, vector<size_t> &returnOrder) {
   size_t numV = graph.size(); 
-  IntStack stack(numV);
+	// in dfs1, stack stores nodes that haven't been visited yet.
+  Stack<size_t> stack; 
   // stores whether the vertex has been visited or not
   vector<bool> isVisited(numV, false); 
+	vector<bool> hasReturned(numV, false);
   // push all vertices in reverse order (this is a stack)
   vector<size_t>::const_reverse_iterator iter;
   for (iter = visitOrder.rbegin(); iter != visitOrder.rend(); ++iter) {
@@ -36,7 +40,10 @@ void lib_calvin_graph::dfs1(vector<vector<size_t>> const &graph,
     size_t top = stack.peek(); 
     if (isVisited[top] == true) { // already visited, need pop
       stack.pop();
-      returnOrder.push_back(top); // save return record
+			if (hasReturned[top] == false) {
+				returnOrder.push_back(top); // save return record
+				hasReturned[top] = true;
+			}
     } else { // visiting now
       isVisited[top] = true;
 			size_t src = top;
@@ -60,7 +67,7 @@ void lib_calvin_graph::dfs2(vector<vector<size_t>> const &graph,
   size_t numV = static_cast<size_t>(graph.size());
   size_t index   = 0; // indicates a posize_t of visitOrder to visit
   size_t curVertex; // current operation vertex
-  Stack<size_t> stack;
+  Stack<size_t> stack; // in dfs2, stack stores current execution path of the entire algorithm.
   vector<size_t> edgeSelector(numV, 0); // Edge to choose next (for each vertex)
   vector<bool> isVisited(numV, false);
   vector<size_t> visitOrderCopy(visitOrder); // Check for aliasing

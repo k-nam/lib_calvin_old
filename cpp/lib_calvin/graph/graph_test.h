@@ -331,7 +331,7 @@ void lib_calvin_graph::GraphTest<V, E>::undirectedAlgorithmTest() {
   if (result1 != result2) {
 		set<std::pair<size_t, size_t>>::iterator iter;
     cout << "MST algorithms does not match each other: size of kruskal: " << result1.size() << 
-			" size of prim " << result2.size();
+			" size of prim " << result2.size() << "\n";
     /*
     cout << "kruskal result\n";
     for (iter = result1.begin(); iter != result1.end(); ++iter) {
@@ -364,9 +364,11 @@ void lib_calvin_graph::GraphTest<V, E>::getClosestPathTest() {
 	auto paths2 = testGraph.get_shortest_path(1, 5);
 	auto paths3 = testGraph.get_n_shortest_paths(1, 5, 4);
 	std::cout << "Closest path result\n";
-	for (size_t i = 0; i < paths1.size(); ++i) {
-		auto path = paths1[i];
-		std::cout << i << "closest path. total length is: " << path.length() << "\n";
+	if (paths1.empty()) {
+		std::cout << "Closest path does not exist\n";
+	} else {
+		auto path = paths1[0];
+		std::cout << "Closest path total length is: " << path.length() << "\n";
 		for (size_t i = 0; i <= path.length(); ++i) {
 			std::cout << path.get_vertex(i) << "\t";
 		}
@@ -376,7 +378,7 @@ void lib_calvin_graph::GraphTest<V, E>::getClosestPathTest() {
 	std::cout << "Shortest path result\n";
 	for (size_t i = 0; i < paths2.size(); ++i) {
 		auto path = paths2[i];
-		std::cout << i << "shortest path. total weight is: " << path.total_weight() << "\n";
+		std::cout << i << "'th shortest path. total weight is: " << path.total_weight() << "\n";
 		for (size_t i = 0; i <= path.length(); ++i) {
 			std::cout << path.get_vertex(i) << "\t";
 		}

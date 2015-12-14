@@ -1242,8 +1242,9 @@ void dijkstra2(vector<vector<pair<size_t, W>>> const &graph, size_t source,
     Node curNode = topElem.second;
 		W const & curWeight = curNode.getGeneralArc().weight_;
 		result[curVertex].push_back(curNode.getGeneralArc());
-		std::cout << "Node popped curVertex; " << curVertex << ", nTh: " << curNode.getNumPathFoundUntilNow() << 
-			" weight = " << curNode.getWeight() << "\n";
+		//std::cout << "Node popped curVertex; " << curVertex << ", nTh: " << 
+			//curNode.getNumPathFoundUntilNow() << 
+			//" weight = " << curNode.getWeight() << "\n";
 		if (result[curVertex].size() > numPathsToFind) {
 			std::cout << "dijkstra2 error1\n";
 			exit(0);
