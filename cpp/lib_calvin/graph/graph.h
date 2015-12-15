@@ -148,6 +148,7 @@ public:
 public:
   class path {
   public:
+		path(path const &);
 		path(V const &source, vector<std::pair<V, E>> const &path);
     // If path length is zero, it means there is no path from
     // ..the source to the target vertex
@@ -967,6 +968,10 @@ graph_base<V, E, K, ExtractKey>::getPathFromReversedPath(size_t srcVertex, vecto
 	}
 	return graph_base<V, E, K, ExtractKey>::path(mapping_[srcVertex], realPath);
 }
+
+template <typename V, typename E, typename K, typename ExtractKey>
+graph_base<V, E, K, ExtractKey>::path::path(path const &rhs):
+	source_(rhs.source_), path_(rhs.path_) { }
 
 template <typename V, typename E, typename K, typename ExtractKey>
 graph_base<V, E, K, ExtractKey>::path::path(V const &source, vector<std::pair<V, E>> const &path): 

@@ -40,6 +40,7 @@ public:
 	abstract_string(Alphabet const *instring);
   abstract_string(abstract_string<Alphabet> const &);
 	abstract_string(abstract_string<Alphabet> &&);
+	abstract_string & operator=(abstract_string const &);
   abstract_string(std::basic_string<Alphabet> const &); 
 	void swap(abstract_string<Alphabet> &&rhs);
   size_t size() const;
@@ -136,6 +137,15 @@ abstract_string<Alphabet>::abstract_string(abstract_string<Alphabet> const &rhs)
 template <typename Alphabet>
 abstract_string<Alphabet>::abstract_string(abstract_string<Alphabet> &&rhs) {
 	swap(std::move(rhs));
+}
+
+template <typename Alphabet>
+abstract_string<Alphabet> &
+abstract_string<Alphabet>::operator=(abstract_string<Alphabet> const &rhs) {
+	if (this != &rhs) {
+		vector_ = rhs.vector_;
+	}
+	return *this;
 }
 
 template <typename Alphabet>

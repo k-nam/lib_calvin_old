@@ -106,20 +106,20 @@ private:
 	size_t hashSetSizeIndex_;
 };
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 bool operator==(HashTable2<T, K, ExtractKey, HashFunc> const &lhs, 
 								HashTable2<T, K, ExtractKey, HashFunc> const &rhs) {
 	return containerEqual(lhs.begin(), lhs.end(), rhs.begin(), rhs.end());
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 bool operator!=(HashTable2<T, K, ExtractKey, HashFunc> const &lhs, 
 								HashTable2<T, K, ExtractKey, HashFunc> const &rhs) {
 	return !(lhs == rhs);
 }
 
 /*
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 size_t getBucketLength(HashTable2<T, K, ExtractKey, HashFunc>::Node *bucket) { 
 	if (bucket->next_ == nullptr) {
 		return 0;
@@ -136,20 +136,20 @@ size_t getBucketLength(HashTable2<T, K, ExtractKey, HashFunc>::Node *bucket) {
 	return length;
 }*/
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl::IteratorImpl(): 
 	table_(nullptr), tableSize_(0), bucket_(nullptr), node_(nullptr) { }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl::IteratorImpl(
 	Node *table, size_t tableSize, Node *bucket, Node *Node):
 	table_(table), tableSize_(tableSize), bucket_(bucket), node_(Node) { }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl::IteratorImpl(IteratorImpl const &rhs): 
 	table_(rhs.table_), tableSize_(rhs.tableSize_), bucket_(rhs.bucket_), node_(rhs.node_) { }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 typename HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl &
 HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl::operator=(IteratorImpl const &rhs) {
 	table_ = rhs.table_;
@@ -159,12 +159,12 @@ HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl::operator=(IteratorImpl con
 	return *this;
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 bool HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl::operator==(IteratorImpl const &rhs) const {
 	return node_ == rhs.node_;
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 typename HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl & 
 HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl::operator++() {
 	if (node_->next_ == bucket_) { // it was pointing to the last Node in the chain
@@ -185,7 +185,7 @@ HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl::operator++() {
 	}
 	return *this;
 }
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 typename HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl & 
 HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl::operator--() {
 	if (node_ == bucket_) { // we cannot move backward inside this chain
@@ -211,30 +211,30 @@ HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl::operator--() {
 	return *this;
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 HashTable2<T, K, ExtractKey, HashFunc>::HashTable2() {
 	init();
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 HashTable2<T, K, ExtractKey, HashFunc>::~HashTable2() {
 	deleteTable(table_, tableSize_);
 }
 
 // copy con
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 HashTable2<T, K, ExtractKey, HashFunc>::HashTable2(HashTable2 const &rhs) {
 	init();
 	operator=(rhs);
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 HashTable2<T, K, ExtractKey, HashFunc>::HashTable2(HashTable2 &&rhs) {
 	init();
 	swap(rhs);
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 HashTable2<T, K, ExtractKey, HashFunc> &
 HashTable2<T, K, ExtractKey, HashFunc>::operator=(HashTable2 const &rhs) {
 	if (this == &rhs) {
@@ -274,7 +274,7 @@ HashTable2<T, K, ExtractKey, HashFunc>::operator=(HashTable2 const &rhs) {
 	return *this;
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 HashTable2<T, K, ExtractKey, HashFunc> &
 HashTable2<T, K, ExtractKey, HashFunc>::operator=(HashTable2 &&rhs) {
 	if (this != &rhs) {
@@ -283,7 +283,7 @@ HashTable2<T, K, ExtractKey, HashFunc>::operator=(HashTable2 &&rhs) {
 	return *this;
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 void HashTable2<T, K, ExtractKey, HashFunc>::init() {
 	table_ = nullptr;
 	size_ = 0;
@@ -291,7 +291,7 @@ void HashTable2<T, K, ExtractKey, HashFunc>::init() {
 	tableSize_ = 0;
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 void HashTable2<T, K, ExtractKey, HashFunc>::initTable(size_t size) {
 	//std::cout << "inittable size: " << size << "\n";
 	table_ = (Node *)operator new(sizeof(Node) * size);
@@ -300,7 +300,7 @@ void HashTable2<T, K, ExtractKey, HashFunc>::initTable(size_t size) {
 	}
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 void HashTable2<T, K, ExtractKey, HashFunc>::swap(HashTable2 &rhs) {
 	Node *temp1 = table_;
 	size_t temp2 = size_;
@@ -316,26 +316,26 @@ void HashTable2<T, K, ExtractKey, HashFunc>::swap(HashTable2 &rhs) {
 	rhs.hashSetSizeIndex_ = temp4;
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 typename HashTable2<T, K, ExtractKey, HashFunc>::Node * 
 HashTable2<T, K, ExtractKey, HashFunc>::getBucket(K const &key) const {
 	size_t index = HashFunc()(key) % tableSize_;
 	return &table_[index];
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 typename HashTable2<T, K, ExtractKey, HashFunc>::const_iterator
 HashTable2<T, K, ExtractKey, HashFunc>::find(K const &key) const {
 	return findIterator(key);
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 typename HashTable2<T, K, ExtractKey, HashFunc>::iterator
 HashTable2<T, K, ExtractKey, HashFunc>::find(K const &key) {
 	return findIterator(key);
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 size_t HashTable2<T, K, ExtractKey, HashFunc>::count(K const &key) const {
 	if (findIterator(key) == getEndIterator()) {
 		return 0;
@@ -344,7 +344,7 @@ size_t HashTable2<T, K, ExtractKey, HashFunc>::count(K const &key) const {
 	}
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 typename HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl 
 HashTable2<T, K, ExtractKey, HashFunc>::findIterator(K const &key) const {
 	if (empty()){
@@ -367,7 +367,7 @@ HashTable2<T, K, ExtractKey, HashFunc>::findIterator(K const &key) const {
 	}
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 std::pair<typename HashTable2<T, K, ExtractKey, HashFunc>::iterator, bool> 
 HashTable2<T, K, ExtractKey, HashFunc>::insert(T const &elem) {
 	if (empty()) {
@@ -407,7 +407,7 @@ HashTable2<T, K, ExtractKey, HashFunc>::insert(T const &elem) {
 	return std::pair<iterator, bool>(iterator(findIterator(ExtractKey()(elem))), true);
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 size_t
 HashTable2<T, K, ExtractKey, HashFunc>::erase(K const &key) {
 	if (empty()) {
@@ -451,7 +451,7 @@ HashTable2<T, K, ExtractKey, HashFunc>::erase(K const &key) {
 	return 1;
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 void HashTable2<T, K, ExtractKey, HashFunc>::rehash() {
 	//std::cout << "rehashing\n";
 	Node *oldTable = table_;
@@ -478,7 +478,7 @@ void HashTable2<T, K, ExtractKey, HashFunc>::rehash() {
 	deleteTable(oldTable, oldTableSize); 
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 void HashTable2<T, K, ExtractKey, HashFunc>::addToFirst(T const &elem) {
 	HashTable2<T, K, ExtractKey, HashFunc>::Node *bucket = getBucket(ExtractKey()(elem));
 	if (bucket->next_ == nullptr) {
@@ -490,7 +490,7 @@ void HashTable2<T, K, ExtractKey, HashFunc>::addToFirst(T const &elem) {
 	}
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 void HashTable2<T, K, ExtractKey, HashFunc>::addToFirst(Node *Node) {
 	HashTable2<T, K, ExtractKey, HashFunc>::Node *bucket = getBucket(ExtractKey()(Node->elem_));
 	if (bucket->next_ == nullptr) {
@@ -503,7 +503,7 @@ void HashTable2<T, K, ExtractKey, HashFunc>::addToFirst(Node *Node) {
 	}
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 typename HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl
 HashTable2<T, K, ExtractKey, HashFunc>::getBeginIterator() const {
 	if (empty()) {
@@ -516,19 +516,19 @@ HashTable2<T, K, ExtractKey, HashFunc>::getBeginIterator() const {
 	return IteratorImpl(table_, tableSize_, beginBucket, beginBucket);
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 typename HashTable2<T, K, ExtractKey, HashFunc>::IteratorImpl
 HashTable2<T, K, ExtractKey, HashFunc>::getEndIterator() const {
 	return IteratorImpl(table_, tableSize_, table_ + tableSize_, table_ + tableSize_);
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 void HashTable2<T, K, ExtractKey, HashFunc>::clear() {
 	deleteTable(table_, tableSize_);
 	init();
 }
 
-template <typename T, typename K, typename typename ExtractKey, typename HashFunc> 
+template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 void HashTable2<T, K, ExtractKey, HashFunc>::deleteTable(Node *table, size_t tableSize) {
 	//std::cout << "Destruct buckets called on tableSize: " << tableSize << 
 	//	" size: " << this->size_ << "\n" ; 
