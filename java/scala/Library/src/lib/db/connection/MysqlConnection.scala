@@ -3,8 +3,9 @@ package lib.db.connection
 import java.sql.{ DriverManager, Connection };
 
 class MysqlConnection(override val databaseName: String) extends DbConnection(databaseName) {
+	//val hostName = "localhost";
+	val hostName = "calvincaulfield2.ctvx4p1nrdmg.us-west-2.rds.amazonaws.com";
 	override val connection: Connection = getConnection()
-
 	def getConnection(): Connection = {
 		try {
 			Class.forName("com.mysql.jdbc.Driver")
@@ -15,8 +16,9 @@ class MysqlConnection(override val databaseName: String) extends DbConnection(da
 			}
 		}
 		try {
+			println("Host name is: " + hostName)
 			val conn = DriverManager.getConnection(
-				"jdbc:mysql://localhost:3306/" + databaseName + "?" +
+				"jdbc:mysql://" + hostName + ":3306/" + databaseName + "?" +
 					"user=root&password=calvin1729&characterEncoding=UTF-8")
 			println("mysql connection successful")
 			conn.setAutoCommit(false);

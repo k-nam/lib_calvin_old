@@ -33,17 +33,17 @@ object Main {
 			}
 
 			def loadToSqlserver() {
-				new TextFileLoader("D:\\dev/data/wordlist/Eng_5K.txt",
+				new TextFileLoader("D:\\dev/data/dictionary/5k_ansi.txt",
 					new SqlServerConnection("Web").connection, "Wordlist.Eng_100K").loadFile(2, op)
-				new TextFileLoader("D:\\dev/data/wordlist/Eng_100K.txt",
+				new TextFileLoader("D:\\dev/data/dictionary/100k_ansi.txt",
 					new SqlServerConnection("Web").connection, "Wordlist.Eng_100K").loadFile(2, op)
 			}
 
 			def loadToMysql() {
-				new TextFileLoader("D:\\dev/data/wordlist/Eng_5K.txt",
-					new MysqlConnection("web").connection, "eng_100k").loadFile(2, op)
-				new TextFileLoader("D:\\dev/data/wordlist/Eng_100K.txt",
-					new MysqlConnection("web").connection, "eng_100k").loadFile(2, op)
+				new TextFileLoader("D:\\dev/data/dictionary/5k_ansi.txt",
+					new MysqlConnection("web").connection, "eng_5k").loadFile(2, op)
+				//new TextFileLoader("D:\\dev/data/dictionary/100k_ansi.txt",
+					//new MysqlConnection("web").connection, "eng_100k").loadFile(2, op)
 			}
 		//loadToSqlserver()
 		loadToMysql()

@@ -42,7 +42,7 @@ class TextFileLoader(val sourceFileName: String, val connection: Connection, val
 
 		val batchStmt = getPreparedStmt
 		connection.setAutoCommit(false)
-		val batchSize = 10000
+		val batchSize = 1
 		val queries = HashSet[PreparedStatement]()
 		var thisLine = reader.readLine
 		var i = 0
