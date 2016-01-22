@@ -19,6 +19,8 @@ void lib_calvin_string::abstractStringTest() {
 	abstract_string<char> b = "def";
 	abstract_string<char> c = a + b;
 	c.print();
+	c += b;
+	c.print();;
 	abstract_string<char> d  = c.substr(2, 5);
 	d.print();
 	std::cout << "\n";

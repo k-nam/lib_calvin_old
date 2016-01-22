@@ -61,12 +61,12 @@ public:
     operator+<> (abstract_string<Alphabet> const &lhs, abstract_string<Alphabet> const &rhs); 
   friend abstract_string<Alphabet> &&
     operator+<> (abstract_string<Alphabet> &&lhs, abstract_string<Alphabet> const &rhs); 
+	abstract_string & operator+= (abstract_string<Alphabet> const &rhs);
 public:
   void print() const;
 private:
 	abstract_string(vector<Alphabet> &&);
 	void init(Alphabet const *string, size_t len);
-	size_t countLength(Alphabet const *string) const;
 private:
   vector<Alphabet> vector_;
 };
@@ -244,6 +244,12 @@ operator+ (abstract_string<Alphabet> &&lhs, abstract_string<Alphabet> const &rhs
   return std::move(lhs);
 }
 
+template <typename Alphabet>
+abstract_string<Alphabet> &
+abstract_string<Alphabet>::operator+= (abstract_string<Alphabet> const &rhs) {
+	vector_.insert(vector_.end(), rhs.vector_.begin(), rhs.vector_.end());
+	return *this;
+}
 
 } // end lib_calvin for definitions
 

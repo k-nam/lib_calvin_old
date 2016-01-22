@@ -17,6 +17,18 @@ private:
 	int a_;
 };
 
+myclass<int> getmyclass() {
+	return myclass<int>(1);
+}
+
+const int getConstInt() {
+	return 1;
+}
+
+const int getInt() {
+	return 1;
+}
+
 template <typename T>
 void f(T &&a) {
 	myclass<int> object(std::forward<T>(a));

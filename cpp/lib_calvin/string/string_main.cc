@@ -2,6 +2,7 @@
 
 int main(int argc, char* argv[])
 {
+	lib_calvin_string::abstractStringTest();
 	lib_calvin_string::stringTest();
 	return 0;
 }

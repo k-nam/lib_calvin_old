@@ -118,14 +118,15 @@ template <typename Alphabet>
 void suffix_tree<Alphabet>::build() {
 	bool wasInternalCreatedInLastExtension = false;
 	size_t lastCreated = 0;
-	bool wasPhasedEndedExplicitly = true;
+	bool wasPhaseEndedExplicitly = true;
 	// inserting root
 	rootId_ = internalNodeId_++;
 	graph_.insert_vertex(Node(NodeType::Root, rootId_, 0, 0));
 	extension_ = 0;
 	Point workingPoint = dummyPoint_;	
 
-	// $ char at the tail for convenience
+	// we need $ char at the tail for the correctness of the following routine
+	// otherwise, some suffix may not have corresponding leaf node
 	for (phase_ = 1; phase_ <= text_.size(); phase_++) { // must add text[phase] to each suffix		
 		wasInternalCreatedInLastExtension = false;
 		Alphabet const &character = text_[phase_ - 1];

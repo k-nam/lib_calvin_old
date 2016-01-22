@@ -19,7 +19,7 @@ void lib_calvin_graph::dfs(vector<vector<size_t>> const &graph,
 // dfs1 is useless. I implemented IntStack for this algorithm, but it is a waste of time.
 // only left for hindsight
 // 2015-12-14. Replaced IntStack to Stack. The size of stack will grow to O(E), which is bad, 
-// but this is much faster than using IntStack. Still not preferable over dfs2 due to 
+// but this is much faster than using IntStack. Still not preferable over dfs2
 void lib_calvin_graph::dfs1(vector<vector<size_t>> const &graph, 
 															vector<size_t> const &visitOrder, vector<size_t> &returnOrder) {
   size_t numV = graph.size(); 
@@ -33,7 +33,7 @@ void lib_calvin_graph::dfs1(vector<vector<size_t>> const &graph,
   for (iter = visitOrder.rbegin(); iter != visitOrder.rend(); ++iter) {
     stack.push (*iter);
   }
-  // If I cleared returnOrder before this posize_t, it is a bug (consider when 
+  // If I cleared returnOrder before this, it is a bug (consider when 
   // ..visitOrder and returnOrder are the same object!!)
   returnOrder.clear();
   while (stack.size() != 0) {

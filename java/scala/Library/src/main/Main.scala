@@ -41,9 +41,9 @@ object Main {
 
 			def loadToMysql() {
 				new TextFileLoader("D:\\dev/data/dictionary/5k_ansi.txt",
-					new MysqlConnection("web").connection, "eng_5k").loadFile(2, op)
-				//new TextFileLoader("D:\\dev/data/dictionary/100k_ansi.txt",
-					//new MysqlConnection("web").connection, "eng_100k").loadFile(2, op)
+					new MysqlConnection("dictionary").connection, "english").loadFile(2, op)
+			//	new TextFileLoader("D:\\dev/data/dictionary/100k_ansi.txt",
+				//	new MysqlConnection("dictionary").connection, "english").loadFile(2, op)
 			}
 		//loadToSqlserver()
 		loadToMysql()
