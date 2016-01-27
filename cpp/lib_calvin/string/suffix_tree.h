@@ -91,7 +91,7 @@ private:
 	void printPoint(Point const &) const;
 	void printNode(size_t node) const;
 private:
-	abstract_string<Alphabet> text_;
+	vector<abstract_string<Alphabet>> texts_;
 	lib_calvin::graph<Node, Link, size_t, NodeExtractKey> graph_;
 	Point dummyPoint_;
 	//Node nodeOne_; // first node which represents the entire text
