@@ -14,8 +14,13 @@ namespace lib_calvin
 {
 template <typename Alphabet>
 class suffix_tree {
+private:
+	// all negative value integer is only for internal use. 
+	// users of this class should only use positive char or int value of Alphabet
+	Alphabet dollor_ = -1;
 public:
-	suffix_tree(abstract_string<Alphabet> const &text);
+	suffix_tree(abstract_string<Alphabet> const &texts);
+	suffix_tree(vector<abstract_string<Alphabet>> const &texts);
 	vector<size_t> find_pattern(abstract_string<Alphabet> const &pattern) const;
 public:
 	 friend class lib_calvin_string::SuffixTreeTest<Alphabet>;
@@ -103,10 +108,14 @@ private:
 	vector<size_t> leafNodes_;
 };
 
+template <typename Alphabet>
+suffix_tree<Alphabet>::suffix_tree(abstract_string<Alphabet> const &text): dummyPoint_(0, 0, 1) {
+	init(vector<abstract_string<Alphabet>>(text));
+}
 
 template <typename Alphabet>
-suffix_tree<Alphabet>::suffix_tree(abstract_string<Alphabet> const &text): 
-text_(text + abstract_string<Alphabet>(Alphabet('$'))), internalNodeId_(text_.size()), dummyPoint_(0, 0, 1) {
+suffix_tree<Alphabet>::suffix_tree(vector<abstract_string<Alphabet>> const &texts):	dummyPoint_(0, 0, 1) {
+	init(texts);
 	lib_calvin::stopwatch watch;
 	watch.start();
 	build();
@@ -115,7 +124,20 @@ text_(text + abstract_string<Alphabet>(Alphabet('$'))), internalNodeId_(text_.si
 }
 
 template <typename Alphabet>
+void suffix_tree<Alphabet>::init(vector<abstract_string<Alphabet>> const &texts) {
+	texts_ = texts;
+	size_t totalLength = 0;
+	for (int i = 0; i < texts_.size(); i++) {
+		texts_[i] += Alphabet(dollor_); // each string must have unique $
+		dollor_--;
+		totalLength += texts[i].size();
+	}
+	internalNodeId_ = totalLength;
+}
+
+template <typename Alphabet>
 void suffix_tree<Alphabet>::build() {
+	size_t currentTextId = 0;
 	bool wasInternalCreatedInLastExtension = false;
 	size_t lastCreated = 0;
 	bool wasPhaseEndedExplicitly = true;
@@ -125,6 +147,7 @@ void suffix_tree<Alphabet>::build() {
 	extension_ = 0;
 	Point workingPoint = dummyPoint_;	
 
+	for ()
 	// we need $ char at the tail for the correctness of the following routine
 	// otherwise, some suffix may not have corresponding leaf node
 	for (phase_ = 1; phase_ <= text_.size(); phase_++) { // must add text[phase] to each suffix		
