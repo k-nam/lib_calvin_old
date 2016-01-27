@@ -96,8 +96,8 @@ private:
 	Point dummyPoint_;
 	//Node nodeOne_; // first node which represents the entire text
 private:
-	size_t phase_; // length of current substring
-	size_t extension_; // starting index
+	size_t phase_; // length of current prefix
+	size_t extension_; // starting index of operating substring
 	size_t internalNodeId_;
 	size_t rootId_;
 	vector<size_t> leafNodes_;
