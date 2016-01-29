@@ -28,17 +28,24 @@ public:
 	enum class NodeType {
 		Internal = 0, Leaf = 1, Root = 2
 	};
-	typedef std::pair<size_t, size_t> NodeKey;
+
+	struct NodeKey {
+		NodeKey(size_t, size_t);
+		NodeKey();
+		size_t textId_;
+		size_t id_; // identifies unique Node within given textId_; denotes the starting index of a suffix
+		bool operator==(NodeKey const &rhs) const;
+		bool operator<(NodeKey const &rhs) const;
+	};
 
 	struct Node {
 		Node(NodeKey key, NodeType type, NodeKey parent, NodeKey suffixLink);
 		Node(Node const &);
 		~Node();
 		static void countThisObject();
-		NodeKey getKey() const;
+		NodeKey key_ const;
 		// For leaf nodes, id also denotes the starting index of corresponding Point
-		size_t textId_; 
-		size_t id_; // identifies unique Node within given textId_; denotes the starting index of a suffix
+		NodeKey key_;
 		NodeType type_;
 		NodeKey parent_;
 		NodeKey suffixLink_; // if this node represents ax, points to x. only for internal node.
@@ -51,6 +58,7 @@ public:
 	};
 	struct Link {
 		Link(size_t textId, Alphabet head, size_t startIndex, size_t endIndex);
+		Link();
 		size_t textId_;
 		Alphabet head_; // first letter of the substring represented by this link
 		size_t startIndex_;
@@ -58,6 +66,7 @@ public:
 	};
 	// specifies a point in tree. point correspoinds to substring(s) of text.
 	// endIndex is the past-end index of that substring of string represented by the containing link
+	// textId of a Point is determined by the edge between src and dest
 	struct Point {
 		Point(NodeKey src, NodeKey dest, size_t endIndex);
 		Point &operator=(Point const &);
@@ -72,9 +81,8 @@ private:
 	size_t getLength(Link const &link) const;
 	Node makeNewLeaf(NodeKey parentId, NodeKey suffixLink) const;
 	Node makeNewInternal(NodeKey parentId, NodeKey suffixLink) const;
-	Link makeNewLink(Alphabet head, size_t startIndex, size_t endIndex) const;
 	// indices are based on entire text
-	Point followPathDown(size_t src, size_t startIndex, size_t endIndex) const;
+	Point followPathDown(size_t textId, NodeKey src, size_t startIndex, size_t endIndex) const;
 	abstract_string<Alphabet> readToPoint(Point const &) const;
 	Link const & getLink(NodeKey src, NodeKey dest) const;
 	Link const & getLink(Point const &) const;
@@ -82,6 +90,7 @@ private:
 	Node & getNode(NodeKey key);
 	Node const & getNode(NodeKey key)const;
 	Point createPoint(NodeKey dest) const; // when the end of suffix is dest node
+	Point getNullPoint() const; // denotes error value
 	Point followSuffixLink(NodeKey src) const;
 	bool isNode(Point const &) const;
 	bool isLeafNode(Point const &) const;
@@ -104,8 +113,6 @@ private:
 private:
 	vector<abstract_string<Alphabet>> texts_;
 	lib_calvin::graph<Node, Link, std::pair<size_t, size_t>, NodeExtractKey> graph_;
-	Point dummyPoint_;
-	//Node nodeOne_; // first node which represents the entire text
 private:
 	size_t textId_; 
 	size_t phase_; // length of current prefix
@@ -116,12 +123,12 @@ private:
 };
 
 template <typename Alphabet>
-suffix_tree<Alphabet>::suffix_tree(abstract_string<Alphabet> const &text): dummyPoint_(0, 0, 1) {
+suffix_tree<Alphabet>::suffix_tree(abstract_string<Alphabet> const &text) {
 	init(vector<abstract_string<Alphabet>>(text));
 }
 
 template <typename Alphabet>
-suffix_tree<Alphabet>::suffix_tree(vector<abstract_string<Alphabet>> const &texts):	dummyPoint_(0, 0, 1) {
+suffix_tree<Alphabet>::suffix_tree(vector<abstract_string<Alphabet>> const &texts) {
 	init(texts);
 	lib_calvin::stopwatch watch;
 	watch.start();
@@ -133,32 +140,30 @@ suffix_tree<Alphabet>::suffix_tree(vector<abstract_string<Alphabet>> const &text
 template <typename Alphabet>
 void suffix_tree<Alphabet>::init(vector<abstract_string<Alphabet>> const &texts) {
 	texts_ = texts;
-	size_t totalLength = 0;
+	// we need $ char at the tail for the correctness of the following routine
+	// otherwise, some suffix may not have corresponding leaf node
 	for (int i = 0; i < texts_.size(); i++) {
 		texts_[i] += Alphabet(dollor_); // each string must have unique $
 		dollor_--;
-		totalLength += texts[i].size();
 	}
-	internalNodeId_ = totalLength;
+	internalNodeId_ = 0;
 }
 
 template <typename Alphabet>
 void suffix_tree<Alphabet>::build() {
 	bool wasInternalCreatedInLastExtension = false;
-	size_t lastCreated = 0;
+	NodeKey lastCreated;
 	bool wasPhaseEndedExplicitly = true;
 	// inserting root
 	rootKey_ = makeNewInternal(0, 0);
 	graph_.insert_vertex(Node(rootKey_, NodeType::Root, 0, 0));
-	extension_ = 0;
-	Point workingPoint = dummyPoint_;	
+	Point workingPoint = getNullPoint();	
 
 	for (textId_ = 0; textId_ < texts_.size(); textId_++) {
-		// we need $ char at the tail for the correctness of the following routine
-		// otherwise, some suffix may not have corresponding leaf node
-		for (phase_ = 1; phase_ <= text_.size(); phase_++) { // must add text[phase] to each suffix		
+		size_t extension_ = 0;
+		for (phase_ = 1; phase_ <= text_.size(); phase_++) { // must add text[phase - 1] to each suffix		
 			wasInternalCreatedInLastExtension = false;
-			Alphabet const &character = text_[phase_ - 1];
+			Alphabet const &character = texts_[textId_][phase_ - 1];
 			//std::cout << "phase: " << phase_ << " char: " << character << "\n";
 			for (; extension_ < phase_; extension_++) {
 				if (extension_ + 1 == phase_) { // last one char; deal with root only
@@ -175,7 +180,7 @@ void suffix_tree<Alphabet>::build() {
 				} else {
 					// current suffix: [extension_, phase_)
 				//	Point currentPoint = followPathDown(rootKey_, extension_, phase_ - 1);
-				//	if (workingPoint == dummyPoint_){
+				//	if (workingPoint == getNullPoint()){
 						//std::cout << "wowrking point is dummy2\n";
 					//	exit(0);
 				//	}
@@ -208,9 +213,10 @@ void suffix_tree<Alphabet>::build() {
 			}
 			//std::cout << "\n";
 		}
+		// currently, phase is length + 1 (due to the for loop)
+		// because the length of a link is calculated based on phase_, this needs correction
+		phase_ = texts_[textId_].length();
 	}
-	/* ????? */
-	phase_ = text_.length();
 }
 
 template <typename Alphabet>
@@ -236,10 +242,11 @@ suffix_tree<Alphabet>::find_pattern(abstract_string<Alphabet> const &pattern) co
 template <typename Alphabet>
 std::pair<typename suffix_tree<Alphabet>::Point, bool>
 suffix_tree<Alphabet>::findPatternPoint(abstract_string<Alphabet> const &pattern) const {
-	NodeKey srcNode = 0;
+	NodeKey srcNode;
 	NodeKey destNode = rootKey_;
-	Link link(0, text_[0], 0, 0); // dummy
+	Link link;
 	bool atNode = true;
+	size_t textId = 0;
 	size_t indexInText = 0;
 	for (size_t i = 0; i < pattern.length(); i++) {
 		if (atNode) {
@@ -248,8 +255,9 @@ suffix_tree<Alphabet>::findPatternPoint(abstract_string<Alphabet> const &pattern
 			for (auto iter = pairs.begin(); iter != pairs.end(); ++iter) {
 				if (iter->second.head_ == pattern[i]) {
 					srcNode = destNode;
-					destNode = iter->first.getKey();
+					destNode = iter->first.key_;
 					link = getLink(srcNode, destNode);
+					textId = link.textId_;
 					indexInText = link.startIndex_;
 					found = true;
 					break;
@@ -257,10 +265,10 @@ suffix_tree<Alphabet>::findPatternPoint(abstract_string<Alphabet> const &pattern
 			}
 			// no way down
 			if (!found) {
-				return std::make_pair(dummyPoint_, false); // dummy
+				return std::make_pair(getNullPoint(), false); // dummy
 			}
 		}
-		if (text_[indexInText] == pattern[i]) {
+		if (texts_[textId][indexInText] == pattern[i]) {
 			if (link.endIndex_ == 0 || indexInText + 1 < link.endIndex_) {
 				atNode = false;
 			} else {
@@ -268,7 +276,7 @@ suffix_tree<Alphabet>::findPatternPoint(abstract_string<Alphabet> const &pattern
 			}
 			indexInText++;
 		} else {
-			return std::make_pair(dummyPoint_, false); // dummy
+			return std::make_pair(getNullPoint(), false); // dummy
 		}	
 	}
 	return std::make_pair(Point(srcNode, destNode, indexInText), true); 
@@ -289,7 +297,7 @@ suffix_tree<Alphabet>::findReachableLeaves(NodeKey node, vector<NodeKey> &result
 	} else {
 		auto pairs = graph_.get_vertex_edge_pairs_from(node);
 		for (auto iter = pairs.begin(); iter != pairs.end(); ++iter) {
-			findReachableLeaves(iter->first.getKey(), result);
+			findReachableLeaves(iter->first.key_, result);
 		}
 	}
 }
@@ -305,14 +313,37 @@ void suffix_tree<Alphabet>::printNode(NodeKey node) const {
 }
 
 template <typename Alphabet>
+Point suffix_tree<Alphabet>::getNullPoint() const {
+	return Point(NodeKey(0, 0), NodeKey(0, 0), 1);
+}
+
+template <typename Alphabet>
+suffix_tree<Alphabet>::NodeKey::NodeKey(size_t textId, sizt_t id):
+	textId_(textId), id_(id) {}
+
+template <typename Alphabet>
+suffix_tree<Alphabet>::NodeKey::NodeKey(): textId_(0), id_(0) {}
+
+template <typename Alphabet>
+bool suffix_tree<Alphabet>::NodeKey::operator==(NodeKey const &rhs) const {
+	return textId_ == rhs.textId_ && id_ == rhs.id_;
+}
+
+template <typename Alphabet>
+bool suffix_tree<Alphabet>::NodeKey::operator<(NodeKey const &rhs) const {
+	return textId_ < rhs.textId_ || 
+		(textId_ == rhs.textId_ && id_ < rhs.id_);
+}
+
+template <typename Alphabet>
 suffix_tree<Alphabet>::Node::Node(NodeKey key, NodeType type, NodeKey parent, NodeKey suffixLink):
-	textId_(key.first), id_(key.second), type_(type), parent_(parent), suffixLink_(suffixLink) {
+	key_(key), type_(type), parent_(parent), suffixLink_(suffixLink) {
 	objectCount_++; 
 	//std::cout << "objectCount_ is: " << objectCount_ << "\n";
 }
 
 template <typename Alphabet>
-suffix_tree<Alphabet>::Node::Node(Node const &rhs): textId_(rhs.textId_), id_(rhs.id_), type_(rhs.type_),
+suffix_tree<Alphabet>::Node::Node(Node const &rhs): key_(rhs.key_), type_(rhs.type_),
 parent_(rhs.parent_), suffixLink_(rhs.suffixLink_) {
 	objectCount_++; 
 	//std::cout << "objectCount_ is: " << objectCount_ << "\n";
@@ -342,23 +373,18 @@ template <typename Alphabet>
 int suffix_tree<Alphabet>::Node::objectCount_ = 0;
 
 template <typename Alphabet>
-NodeKey suffix_tree<Alphabet>::Node::getKey() const {
-	return std::make_pair(textId_, id_);
-}
-
-template <typename Alphabet>
 bool suffix_tree<Alphabet>::Node::operator==(Node const &rhs) const {
-	return getKey() == rhs.getKey();
+	return key_ == rhs.key_;
 }
 
 template <typename Alphabet>
 bool suffix_tree<Alphabet>::Node::operator<(Node const &rhs) const {
-	return getKey() < rhs.getKey();
+	return key_ < rhs.key_;
 }
 template <typename Alphabet>
 NodeKey
 suffix_tree<Alphabet>::NodeExtractKey::operator()(Node const &node) const {
-	return node.getKey();
+	return node.key_;
 };
 
 template <typename Alphabet>
@@ -369,6 +395,10 @@ suffix_tree<Alphabet>::Link::Link(size_t textId, Alphabet head, size_t startInde
 		exit(0);
 	}
 }
+
+template <typename Alphabet>
+suffix_tree<Alphabet>::Link::Link(): 
+	textId_(0), head_(0), startIndex_(0), endIndex_(0) {}
 
 template <typename Alphabet>
 suffix_tree<Alphabet>::Point::Point(NodeKey src, NodeKey dest, size_t endIndex):
@@ -399,44 +429,44 @@ suffix_tree<Alphabet>::getLength(Link const &link) const {
 	if (link.endIndex_ != 0) {
 		return link.endIndex_ - link.startIndex_;
 	} else {
-		return phase_ - link.startIndex_;
+		if (textId_ == link.textId_) { // still working on the text
+			return phase_ - link.startIndex_;
+		} else { // done with the text
+			return texts_[link.textId].length() - link.startIndex_;
+		}
 	}
 }
 
 template <typename Alphabet>
 Node 
 suffix_tree<Alphabet>::makeNewLeaf(NodeKey parentId, NodeKey suffixLink) const {
-	return Node(std::make_pair(textId_, extension_), NodeType::Leaf, parentId, suffixLink);
+	return Node(NodeKey(textId_, extension_), NodeType::Leaf, parentId, suffixLink);
 }
 
 template <typename Alphabet>
 Node
 suffix_tree<Alphabet>::makeNewInternal(NodeKey parentId, NodeKey suffixLink) const {
-	return Node(std::make_pair(textId_, internalNodeId_--), NodeType::Internal, parentId, suffixLink);
-}
-template <typename Alphabet>
-Link 
-makeNewLink(Alphabet head, size_t startIndex, size_t endIndex) const {
-	return Link(textId_, head, startIndex, endIndex);
+	return Node(NodeKey(textId_, internalNodeId_++), NodeType::Internal, parentId, suffixLink);
 }
 
 template <typename Alphabet>
 typename suffix_tree<Alphabet>::Point 
-suffix_tree<Alphabet>::followPathDown(NodeKey src, size_t startIndex, size_t endIndex) const {
+suffix_tree<Alphabet>::followPathDown(size_t textId, 
+		NodeKey src, size_t startIndex, size_t endIndex) const {
 	vector<std::pair<Node, Link>> pairs = graph_.get_vertex_edge_pairs_from(src);
 	//std::cout << "graph size was: "<< graph_.number_of_vertex() << "numedge was: " << graph_.number_of_edge() << "\n";
 	//std::cout << "start was: " << startIndex << "end was: " << endIndex << "\n";
 	//std::cout << "num outlink was: " << pairs.size() << "\n";
 	for (auto iter = pairs.begin(); iter != pairs.end(); ++iter) {
-		if (iter->second.head_ == text_[startIndex]) {
+		if (iter->second.head_ == texts_[textId][startIndex]) {
 			size_t linkLength = getLength(iter->second);
 			size_t linkStartIndex = iter->second.startIndex_;
 			//std::cout << "link src was: " << iter->second.startIndex_ << "link dest was: " << iter->second.endIndex_ << "\n";
 			//std::cout << "linkLength was: " << linkLength << "\n";	
 			if (linkLength < endIndex - startIndex) {
-				return followPathDown(iter->first.getKey(), startIndex + linkLength, endIndex);
+				return followPathDown(textId, iter->first.key_, startIndex + linkLength, endIndex);
 			} else {
-				return Point(src, iter->first.getKey(), linkStartIndex + endIndex - startIndex);
+				return Point(src, iter->first.key_, linkStartIndex + endIndex - startIndex);
 			}
 		}
 	}
@@ -539,7 +569,7 @@ suffix_tree<Alphabet>::followSuffixLink(NodeKey node) const {
 					return followPathDown(rootKey_, link.startIndex_ + 1, link.endIndex_);
 				} else { // internal node of length 1 cannot have suffix link
 					//std::cout << "follow suffix4\n";
-					return dummyPoint_;
+					return getNullPoint();
 				}				
 			} else {
 				NodeKey grandPa = getNode(parentNode).parent_;
@@ -569,7 +599,7 @@ suffix_tree<Alphabet>::continuesWith(Point const &point, Alphabet const &charact
 		if (text_[point.endIndex_] == character) {
 			return std::make_pair(Point(point.src_, point.dest_, point.endIndex_ + 1), true);
 		}	else {
-			return std::make_pair(dummyPoint_, false);
+			return std::make_pair(getNullPoint(), false);
 		}
 	}
 }
@@ -586,11 +616,11 @@ suffix_tree<Alphabet>::nodeContinuesWith(NodeKey node, Alphabet const &character
 	for (auto iter = outLinks.begin(); iter != outLinks.end(); ++iter) {
 		if (iter->second.head_ == character) {
 			//std::cout << "continue with3 : \n";
-			return std::make_pair(Point(node, iter->first.getKey(), 
-				getLink(node, iter->first.getKey()).startIndex_ + 1), true);
+			return std::make_pair(Point(node, iter->first.key_, 
+				getLink(node, iter->first.key_).startIndex_ + 1), true);
 		}
 	}
-	return std::make_pair(dummyPoint_, false);
+	return std::make_pair(getNullPoint(), false);
 }
 
 template <typename Alphabet>
@@ -603,18 +633,19 @@ template <typename Alphabet>
 NodeKey
 suffix_tree<Alphabet>::createBranch(Point const &point, Alphabet const &character) {
 	if (!isNode(point)) {
-		NodeKey parentKey = getNode(point.src_).getKey();
-		NodeKey childKey = getNode(point.dest_).getKey();
+		NodeKey parentKey = getNode(point.src_).key_;
+		NodeKey childKey = getNode(point.dest_).key_;
 		//std::cout << "point src was: " << point.src_ << " point dest was: " << point.dest_<< "\n";
 		NodeKey newInternalKey = getNewInternalKey();
 		//std::cout << "creating InternalId: " << newInternalId << "\n";
 		Node newInternal = makeNewInternal(parentKey, 0);
-		NodeKey newInternalKey = newInternal.getKey();
+		NodeKey newInternalKey = newInternal.key_;
 		getNode(childKey).parentKey_ = newInternal;
 		Node newLeaf = makeNewLeaf(newInternalKey, 0);
 		Link oldLink(getLink(point));
-		Link newLink1(text_[point.endIndex_], point.endIndex_, oldLink.endIndex_); // internal -> child
-		Link newLink2(character, phase_ - 1, 0); // internal -> newLeaf
+		Link newLink1(oldLink.textId_, texts_[oldLink.textId_][point.endIndex_],
+			point.endIndex_, oldLink.endIndex_); // internal -> child
+		Link newLink2(textId_, character, phase_ - 1, 0); // internal -> newLeaf
 		//std::cout << "changing old link end to: " << point.endIndex_ <<"\n";
 		oldLink.endIndex_ = point.endIndex_;
 		//std::cout << "old link start: " << oldLink.startIndex_ << "end " << oldLink.endIndex_ << "\n";
@@ -623,14 +654,14 @@ suffix_tree<Alphabet>::createBranch(Point const &point, Alphabet const &characte
 		graph_.remove_edge(parentKey, childKey);
 		insertEdge(parentKey, newInternalKey, oldLink);
 		insertEdge(newInternalKey, childKey, newLink1);
-		insertEdge(newInternalKey, newLeaf.getKey(), newLink2);
+		insertEdge(newInternalKey, newLeaf.key_, newLink2);
 		return newInternalKey;
 	} else {
-		NodeKey parentKey = getNode(point.dest_).getKey();
+		NodeKey parentKey = getNode(point.dest_).key_;
 		Node newLeaf = makeNewLeaf(parentKey, 0);
-		Link newLink = makeNewLink(character, phase_ - 1, 0); // internal -> newLeaf
+		Link newLink(textId_, character, phase_ - 1, 0); // internal -> newLeaf
 		graph_.insert_vertex(newLeaf);
-		insertEdge(parentKey, newLeaf.getKey(), newLink);
+		insertEdge(parentKey, newLeaf.key_, newLink);
 		return parentKey;
 	}
 }
@@ -638,9 +669,9 @@ suffix_tree<Alphabet>::createBranch(Point const &point, Alphabet const &characte
 template <typename Alphabet>
 void suffix_tree<Alphabet>::createBranchAtRoot(Alphabet const &character) {
 	Node newLeaf = makeNewLeaf(rootKey_, 0);
-	Link newLink = makeNewLink(character, phase_ - 1, 0); 
+	Link newLink(textId_, character, phase_ - 1, 0); 
 	graph_.insert_vertex(newLeaf);
-	insertEdge(rootKey_, newLeaf.getKey(), newLink);
+	insertEdge(rootKey_, newLeaf.key_, newLink);
 }
 
 template <typename Alphabet>
