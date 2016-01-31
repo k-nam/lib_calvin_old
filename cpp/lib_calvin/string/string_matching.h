@@ -380,13 +380,16 @@ void lib_calvin_string::boyerMoore (
   }
 }
 
-
 template <typename Alphabet>
 void lib_calvin_string::suffixTreeMatching(abstract_string<Alphabet> const &text, 
     abstract_string<Alphabet> const &pattern, vector<size_t> &result) {
-	using namespace lib_calvin;
-	suffix_tree<Alphabet> tree(text);
-	result = tree.find_pattern(pattern);
+	lib_calvin::suffix_tree<Alphabet> tree(text);
+	// return value of find_pattern is (textId, startIndex) pair
+	tree.build();
+	auto temp = tree.find_pattern(pattern);
+	for (auto iter = temp.begin(); iter != temp.end(); ++iter) {
+		result.push_back(iter->second);
+	}
 }
 
 

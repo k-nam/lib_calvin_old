@@ -13,6 +13,7 @@ template <typename Alphabet>
 class SuffixTreeTest {
 public:
 	typedef lib_calvin::suffix_tree<char>::Node Node;
+	typedef lib_calvin::suffix_tree<char>::NodeKey NodeKey;
 	typedef lib_calvin::suffix_tree<char>::Link Link;
 	typedef lib_calvin::suffix_tree<char>::NodeType NodeType;
 	typedef lib_calvin::suffix_tree<char>::Point Point;
@@ -26,7 +27,8 @@ private:
 	void findPatternTest();
 private:
 	void prepareTree();
-	void printMatchResult(abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> const &) const;
+	void printMatchResult(abstract_string<Alphabet> const &pattern, 
+		lib_calvin::vector<std::pair<size_t, size_t>> const &result) const;
 private:
 
 };
