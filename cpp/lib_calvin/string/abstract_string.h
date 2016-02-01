@@ -64,6 +64,7 @@ public:
 	abstract_string & operator+= (abstract_string<Alphabet> const &rhs);
 public:
   void print() const;
+	void println() const;
 private:
 	abstract_string(vector<Alphabet> &&);
 	void init(Alphabet const *string, size_t len);
@@ -220,6 +221,15 @@ void abstract_string<Alphabet>::print() const {
 	std::cout << "<";
   for (size_t i = 0; i < size(); ++i) {
     std::cout << vector_[i];
+	}
+	std::cout << ">";
+}
+
+template <typename Alphabet>
+void abstract_string<Alphabet>::println() const {
+	std::cout << "<";
+	for (size_t i = 0; i < size(); ++i) {
+		std::cout << vector_[i];
 	}
 	std::cout << ">\n";
 }

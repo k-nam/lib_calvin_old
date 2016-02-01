@@ -25,9 +25,10 @@ private:
 	void createBranchTest();
 	void buildTest();
 	void findPatternTest();
+	void findPatternTest2();
 private:
 	void prepareTree();
-	void printMatchResult(abstract_string<Alphabet> const &pattern, 
+	void printMatchResult(abstract_string<Alphabet> const &pattern, std::string rightAnswer,
 		lib_calvin::vector<std::pair<size_t, size_t>> const &result) const;
 private:
 

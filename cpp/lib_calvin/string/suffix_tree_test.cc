@@ -1,5 +1,6 @@
 #include "suffix_tree_test.h"
 #include "suffix_tree.h"
+#include "vector.h"
 
 void lib_calvin_string::suffixTreeTest() {
 	SuffixTreeTest<char> a;
@@ -10,11 +11,12 @@ template <typename Alphabet>
 void lib_calvin_string::SuffixTreeTest<Alphabet>::suffixTreeTest() {
 	std::cout << "------------suffixTreeTest start ----------------\n\n";
 	lib_calvin::suffix_tree<char> a("aa");
-	readSuffixTest();
-	createBranchTest();
-	buildTest();
-	findPatternTest();
-	followPathTest();
+	//readSuffixTest();
+	//createBranchTest();
+	//buildTest();
+	//findPatternTest();
+	findPatternTest2();
+	//followPathTest();
 	std::cout << "------------suffixTreeTest finished ----------------\n\n";
 }
 
@@ -56,18 +58,18 @@ void lib_calvin_string::SuffixTreeTest<Alphabet>::readSuffixTest() {
 	Point s11 = Point(rootKey, internalKey, 2);
 	Point s12 = Point(rootKey, internalKey, 1);
 
-	tree.readToPoint(s1).print();
-	tree.readToPoint(s2).print();
-	tree.readToPoint(s3).print();
-	tree.readToPoint(s4).print();
-	tree.readToPoint(s5).print();
-	tree.readToPoint(s6).print();
-	tree.readToPoint(s7).print();
-	tree.readToPoint(s8).print();
-	tree.readToPoint(s9).print();
-	tree.readToPoint(s10).print();
-	tree.readToPoint(s11).print();
-	tree.readToPoint(s12).print();
+	tree.readToPoint(s1).println();
+	tree.readToPoint(s2).println();
+	tree.readToPoint(s3).println();
+	tree.readToPoint(s4).println();
+	tree.readToPoint(s5).println();
+	tree.readToPoint(s6).println();
+	tree.readToPoint(s7).println();
+	tree.readToPoint(s8).println();
+	tree.readToPoint(s9).println();
+	tree.readToPoint(s10).println();
+	tree.readToPoint(s11).println();
+	tree.readToPoint(s12).println();
 	//std::cout << "\n";
 	
 	Point t1 = tree.followPathDown(0, rootKey, 0, 10);
@@ -81,16 +83,16 @@ void lib_calvin_string::SuffixTreeTest<Alphabet>::readSuffixTest() {
 	Point t9 = tree.followPathDown(0, rootKey, 0, 2);
 	Point t10 = tree.followPathDown(0, rootKey, 0, 1);
 
-	tree.readToPoint(t1).print();
-	tree.readToPoint(t2).print();
-	tree.readToPoint(t3).print();
-	tree.readToPoint(t4).print();
-	tree.readToPoint(t5).print();
-	tree.readToPoint(t6).print();
-	tree.readToPoint(t7).print();
-	tree.readToPoint(t8).print();
-	tree.readToPoint(t9).print();
-	tree.readToPoint(t10).print();
+	tree.readToPoint(t1).println();
+	tree.readToPoint(t2).println();
+	tree.readToPoint(t3).println();
+	tree.readToPoint(t4).println();
+	tree.readToPoint(t5).println();
+	tree.readToPoint(t6).println();
+	tree.readToPoint(t7).println();
+	tree.readToPoint(t8).println();
+	tree.readToPoint(t9).println();
+	tree.readToPoint(t10).println();
 	std::cout << "\n\n";
 }
 
@@ -118,7 +120,7 @@ void lib_calvin_string::SuffixTreeTest<Alphabet>::createBranchTest() {
 	tree.createBranch(tree.followPathDown(0, rootKey, 1, 2), 'b');
 	std::cout << "\n";
 	Point ab = tree.followPathDown(0, rootKey, 1, 3);
-	tree.readToPoint(ab).print();
+	tree.readToPoint(ab).println();
 	std::cout << "\n\n";
 }
 
@@ -144,17 +146,46 @@ void lib_calvin_string::SuffixTreeTest<Alphabet>::findPatternTest() {
 	auto result2 = tree.find_pattern(pattern2);
 	auto result3 = tree.find_pattern(pattern3);
 	auto result4 = tree.find_pattern(pattern4);
-	printMatchResult(pattern1, result1);
-	printMatchResult(pattern2, result2);
-	printMatchResult(pattern3, result3);
-	printMatchResult(pattern4, result4);
+	printMatchResult(pattern1, "2, 6", result1);
+	printMatchResult(pattern2, "0, 4", result2);
+	printMatchResult(pattern3, "1, 5", result3);
+	printMatchResult(pattern4, "3", result4);
 }
+
+template <typename Alphabet>
+void lib_calvin_string::SuffixTreeTest<Alphabet>::findPatternTest2() {
+
+	abstract_string<> text1("abbaabbaa");
+	abstract_string<> text2("baabcbbaab");
+	abstract_string<> text3("babaabb");
+	lib_calvin::vector<decltype(text1)> texts;
+	texts.push_back(text1);
+	texts.push_back(text2);
+	texts.push_back(text3);
+	abstract_string<> pattern1("baa");
+	abstract_string<> pattern2("ab");
+	abstract_string<> pattern3("bb");
+	abstract_string<> pattern4("aab");
+	lib_calvin::suffix_tree<Alphabet> tree(texts);
+	tree.build();
+	tree.printAllSuffix();
+	auto result1 = tree.find_pattern(pattern1);
+	auto result2 = tree.find_pattern(pattern2);
+	auto result3 = tree.find_pattern(pattern3);
+	auto result4 = tree.find_pattern(pattern4);
+	printMatchResult(pattern1, "(0,2),(0,6),(1,0),(1,6),(2,2)", result1);
+	printMatchResult(pattern2, "(0,0),(0,4),(1,2),(1,8),(2,1),(2,4)", result2);
+	printMatchResult(pattern3, "(0,1),(0,5),(1,5),(2,5)", result3);
+	printMatchResult(pattern4, "(0,3),(1,1),(1,7),(2,3)", result4);
+}
+
 template <typename Alphabet>
 void lib_calvin_string::SuffixTreeTest<Alphabet>::printMatchResult(
-		abstract_string<Alphabet> const &pattern, 
+		abstract_string<Alphabet> const &pattern, std::string rightAnswer,
 		lib_calvin::vector<std::pair<size_t, size_t>> const &result) const {
 	std::cout << "Result for: ";
 	pattern.print();
+	std::cout << " rightAnswer: " << rightAnswer << "\n";
 	for (auto iter = result.begin(); iter != result.end(); ++iter) {
 		std::cout << "Match at text: " << iter->first << " position: " << iter->second << "\n";
 	}
