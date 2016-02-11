@@ -16,6 +16,7 @@ void lib_calvin_string::SuffixTreeTest<Alphabet>::suffixTreeTest() {
 	//buildTest();
 	//findPatternTest();
 	findPatternTest2();
+	findCommonSubstringTest();
 	//followPathTest();
 	std::cout << "------------suffixTreeTest finished ----------------\n\n";
 }
@@ -154,7 +155,7 @@ void lib_calvin_string::SuffixTreeTest<Alphabet>::findPatternTest() {
 
 template <typename Alphabet>
 void lib_calvin_string::SuffixTreeTest<Alphabet>::findPatternTest2() {
-
+	std::cout << "------------findPatternTest2 start ----------------\n\n";
 	abstract_string<> text1("abbaabbaa");
 	abstract_string<> text2("baabcbbaab");
 	abstract_string<> text3("babaabb");
@@ -177,6 +178,23 @@ void lib_calvin_string::SuffixTreeTest<Alphabet>::findPatternTest2() {
 	printMatchResult(pattern2, "(0,0),(0,4),(1,2),(1,8),(2,1),(2,4)", result2);
 	printMatchResult(pattern3, "(0,1),(0,5),(1,5),(2,5)", result3);
 	printMatchResult(pattern4, "(0,3),(1,1),(1,7),(2,3)", result4);
+	std::cout << "------------findPatternTest2 finished ----------------\n\n";
+}
+
+template <typename Alphabet>
+void lib_calvin_string::SuffixTreeTest<Alphabet>::findCommonSubstringTest() {
+	std::cout << "------------findCommonSubstringTest start ----------------\n\n";
+	abstract_string<> text1("abbacabbaa");
+	abstract_string<> text2("baabcabbacaab");
+	abstract_string<> text3("babcabbabb");
+	lib_calvin::vector<decltype(text1)> texts;
+	texts.push_back(text1);
+	texts.push_back(text2);
+	texts.push_back(text3);
+	lib_calvin::suffix_tree<Alphabet> tree(texts);
+	tree.build();
+	tree.printAllCommonSubstring();
+	std::cout << "------------findCommonSubstringTest finished ----------------\n\n";
 }
 
 template <typename Alphabet>

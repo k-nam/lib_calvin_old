@@ -24,6 +24,7 @@ public:
 	void build();
 	// return (textId, startIndex) of match
 	vector<std::pair<size_t, size_t>> find_pattern(abstract_string<Alphabet> const &pattern) const;
+	abstract_string<Alphabet> find_longest_common_substring() const;
 public:
 	 friend class lib_calvin_string::SuffixTreeTest<Alphabet>;
 private:
@@ -81,6 +82,8 @@ private:
 	};
 private:
 	void init(vector<abstract_string<Alphabet>> const &);
+	void buildTree();
+	void findAllCommmonSubstring();
 	size_t getLength(Link const &link) const;
 	Node makeNewLeaf(NodeKey parentId);
 	Node makeNewInternal(NodeKey parentId);
@@ -109,6 +112,7 @@ private:
 	void createBranchAtRoot(Alphabet const &character);
 	void printSuffix(NodeKey leaf) const;
 	void printAllSuffix() const;
+	void printAllCommonSubstring() const;
 	void insertEdge(NodeKey src, NodeKey dest, Link const &link);
 	// return false when pattern is not found
 	std::pair<Point, bool> findPatternPoint(abstract_string<Alphabet> const &pattern) const;
@@ -125,6 +129,7 @@ private:
 	size_t extension_; // starting index of operating substring
 	size_t internalNodeId_;
 	vector<NodeKey> leafNodes_;
+	map<NodeKey, set<size_t>> internalNodeToTextId_;
 };
 
 template <typename Alphabet>
@@ -155,6 +160,12 @@ void suffix_tree<Alphabet>::init(vector<abstract_string<Alphabet>> const &texts)
 
 template <typename Alphabet>
 void suffix_tree<Alphabet>::build() {
+	buildTree();
+	findAllCommmonSubstring();
+}
+
+template <typename Alphabet>
+void suffix_tree<Alphabet>::buildTree() {
 	// inserting root
 	auto root = Node(getRootKey(), NodeType::Root, getNullKey(), getNullKey());
 	graph_.insert_vertex(root);
@@ -176,7 +187,6 @@ void suffix_tree<Alphabet>::build() {
 					if (!result.second) {
 						//std::cout << "  Rule A: " << "\n";
 						createBranchAtRoot(character);
-						leafNodes_.push_back(NodeKey(textId_, extension_));
 					} else {
 						//std::cout << "  Rule B: " << "\n";
 						workingPoint = result.first;
@@ -217,7 +227,6 @@ void suffix_tree<Alphabet>::build() {
 					}
 				}
 			}
-			//std::cout << "\n";
 		}
 		// currently, phase is length + 1 (due to the for loop)
 		// because the length of a link is calculated based on phase_, this needs correction
@@ -244,6 +253,38 @@ suffix_tree<Alphabet>::find_pattern(abstract_string<Alphabet> const &pattern) co
 	}
 	lib_calvin::sort(result.begin(), result.end());
 	return result;
+}
+
+template <typename Alphabet>
+abstract_string<Alphabet>
+suffix_tree<Alphabet>::find_longest_common_substring() const {
+
+	return (abstract_string<Alphabet>)(abstract_string<char>("a"));
+}
+
+template <typename Alphabet>
+void
+suffix_tree<Alphabet>::findAllCommmonSubstring() {
+	// for each and all of leaves, mark all ancestors (internal nodes) of it as
+	// substring of a text[i], where i is the textId_ of that leaf node
+	// as internal nodes can be a substring of multiple text, each key of internal node
+	// will be mapped to a set of textIds
+	for (auto iter = leafNodes_.begin(); iter != leafNodes_.end(); ++iter) {
+		size_t textId = iter->textId_;
+		NodeKey key = *iter;
+		while (true) {
+			Node const &node = getNode(key);
+			if (node.type_ == NodeType::Root) {
+				break;
+			}
+			auto result = internalNodeToTextId_[key].insert(textId);
+			// its parent is already marked, so there is no need to go up further
+			if (result.second == false) {
+				break;
+			}
+			key = node.parent_;
+		}
+	}
 }
 
 template <typename Alphabet>
@@ -316,7 +357,7 @@ void suffix_tree<Alphabet>::printPoint(Point const &point) const {
 
 template <typename Alphabet>
 void suffix_tree<Alphabet>::printNode(NodeKey node) const {
-	readToPoint(createPoint(node)).print();
+	readToPoint(createPoint(node)).println();
 }
 
 template <typename Alphabet>
@@ -481,6 +522,7 @@ suffix_tree<Alphabet>::getLength(Link const &link) const {
 template <typename Alphabet>
 typename suffix_tree<Alphabet>::Node
 suffix_tree<Alphabet>::makeNewLeaf(NodeKey parentId) {
+	leafNodes_.push_back(NodeKey(textId_, extension_));
 	return Node(NodeKey(textId_, extension_), NodeType::Leaf, parentId, getNullKey());
 }
 
@@ -733,10 +775,20 @@ void suffix_tree<Alphabet>::printSuffix(NodeKey leaf) const {
 	std::cout << "suffix textId: " << leaf.textId_ << " starting index: " << leaf.id_ << " ";
 	readToPoint(createPoint(leaf)).println();
 }
+
 template <typename Alphabet>
 void suffix_tree<Alphabet>::printAllSuffix() const {
 	for (auto iter = leafNodes_.begin(); iter != leafNodes_.end(); ++iter) {
 		printSuffix(*iter);
+	}
+}
+
+template <typename Alphabet>
+void suffix_tree<Alphabet>::printAllCommonSubstring() const {
+	for (auto iter = internalNodeToTextId_.begin(); iter != internalNodeToTextId_.end(); ++iter) {
+		if (iter->second.size() == texts_.size()) {
+			printNode(iter->first);
+		}
 	}
 }
 
