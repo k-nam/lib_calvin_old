@@ -7,8 +7,8 @@
 void lib_calvin_string::stringTest() { 
 	std::cout << "---------- Beginning string test -----------\n\n";
 	//abstractStringTest();
-	//matchingAlgorithmTest();
-	suffixTreeTest();
+	matchingAlgorithmTest();
+	//suffixTreeTest();
 	SuffixTreeTest<char>::Node::countThisObject();
 	std::cout << "---------- String test finished -----------\n\n\n";
 }
@@ -28,7 +28,7 @@ void lib_calvin_string::abstractStringTest() {
 
 void lib_calvin_string::matchingAlgorithmTest() {
 	using namespace lib_calvin_string;
-	size_t testSize = 1000000;
+	size_t testSize = 100000000;
 	size_t numIter = 1;
 	typedef char Alphabet;
 	std::cout << "-------------- matchingAlgorithmTest start ----------------\n\n";
@@ -38,8 +38,7 @@ void lib_calvin_string::matchingAlgorithmTest() {
   matchingTest<Alphabet>(boyerMoore, "Boyer-Moore");
 	for (size_t i = 0; i < numIter; i++) {
 		matchingTest<Alphabet>(suffixTreeMatching, "Suffix Tree");
-	}
-	
+	}	
 	std::cout << "--------------- matchingAlgorithmTest finished --------------\n\n";
 }
 
@@ -53,8 +52,8 @@ void lib_calvin_string::matchingTest(void (*matchingCharAlg)
   vector<size_t> answer;
 	lib_calvin::stopwatch watch;
 
-	Alphabet alphabetSize = 16;
-  size_t textLen   = 100000;
+	Alphabet alphabetSize = 4;
+  size_t textLen   = 1000000;
   size_t patternLen  = 16;
   Alphabet *pText   = new Alphabet[textLen];
   Alphabet *pPattern  = new Alphabet[patternLen];

@@ -27,6 +27,7 @@ private:
 	void findPatternTest();
 	void findPatternTest2();
 	void findCommonSubstringTest();
+	void findLongestCommonSubstringTest();
 private:
 	void prepareTree();
 	void printMatchResult(abstract_string<Alphabet> const &pattern, std::string rightAnswer,

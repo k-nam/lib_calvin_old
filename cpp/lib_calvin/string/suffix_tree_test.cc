@@ -17,6 +17,7 @@ void lib_calvin_string::SuffixTreeTest<Alphabet>::suffixTreeTest() {
 	//findPatternTest();
 	findPatternTest2();
 	findCommonSubstringTest();
+	findLongestCommonSubstringTest();
 	//followPathTest();
 	std::cout << "------------suffixTreeTest finished ----------------\n\n";
 }
@@ -155,7 +156,7 @@ void lib_calvin_string::SuffixTreeTest<Alphabet>::findPatternTest() {
 
 template <typename Alphabet>
 void lib_calvin_string::SuffixTreeTest<Alphabet>::findPatternTest2() {
-	std::cout << "------------findPatternTest2 start ----------------\n\n";
+	std::cout << "------------findPatternTest2 start ----------------\n";
 	abstract_string<> text1("abbaabbaa");
 	abstract_string<> text2("baabcbbaab");
 	abstract_string<> text3("babaabb");
@@ -183,7 +184,7 @@ void lib_calvin_string::SuffixTreeTest<Alphabet>::findPatternTest2() {
 
 template <typename Alphabet>
 void lib_calvin_string::SuffixTreeTest<Alphabet>::findCommonSubstringTest() {
-	std::cout << "------------findCommonSubstringTest start ----------------\n\n";
+	std::cout << "------------findCommonSubstringTest start ----------------\n";
 	abstract_string<> text1("abbacabbaa");
 	abstract_string<> text2("baabcabbacaab");
 	abstract_string<> text3("babcabbabb");
@@ -195,6 +196,24 @@ void lib_calvin_string::SuffixTreeTest<Alphabet>::findCommonSubstringTest() {
 	tree.build();
 	tree.printAllCommonSubstring();
 	std::cout << "------------findCommonSubstringTest finished ----------------\n\n";
+}
+
+template <typename Alphabet>
+void lib_calvin_string::SuffixTreeTest<Alphabet>::findLongestCommonSubstringTest() {
+	std::cout << "------------findLongestCommonSubstringTest start ----------------\n";
+	abstract_string<> text1("abbacabbaa");
+	abstract_string<> text2("baabcabbacaab");
+	abstract_string<> text3("babcabbabb");
+	lib_calvin::vector<decltype(text1)> texts;
+	texts.push_back(text1);
+	texts.push_back(text2);
+	texts.push_back(text3);
+	lib_calvin::suffix_tree<Alphabet> tree(texts);
+	tree.build();
+	auto result = tree.find_longest_common_substring();
+	std::cout << "longest common substring was: ";
+	result.println();
+	std::cout << "------------findLongestCommonSubstringTest finished ----------------\n\n";
 }
 
 template <typename Alphabet>
