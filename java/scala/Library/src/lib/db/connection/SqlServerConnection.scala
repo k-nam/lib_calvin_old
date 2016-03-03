@@ -16,7 +16,7 @@ class SqlServerConnection(override val databaseName: String) extends DbConnectio
 		try {
 			val conn = DriverManager.getConnection(
 				"jdbc:sqlserver://192.168.0.15:1433;databaseName=" + databaseName,
-				"sa", "calvin1729")
+				"sa", "password")
 			conn.setAutoCommit(false)
 			println("SQL server connection successful")
 			conn

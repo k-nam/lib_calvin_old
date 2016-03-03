@@ -16,7 +16,7 @@ class OracleConnection(override val databaseName: String) extends DbConnection(d
 		}
 		try {
 			val conn = DriverManager.getConnection(
-				"jdbc:oracle:thin:calvin/calvin1729@//localhost:1521/orcl")
+				"jdbc:oracle:thin:id/password@//localhost:1521/orcl")
 			println("Oracle connection successful")
 			//val stmt = conn.prepareStatement("ALTER SESSION set TIME_ZONE = '00:00'")
 			//stmt.executeQuery()
