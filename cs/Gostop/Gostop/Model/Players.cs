@@ -5,11 +5,11 @@ using System.Text;
 
 namespace Gostop.Model
 {
-	public enum Players
+	public enum Player
 	{
-		PlayerA = 0,
-		PlayerB = 1,
-		PlayerC = 2
+		A = 0,
+		B = 1,
+		C = 2
 
 	}
 }

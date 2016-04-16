@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Gostop.Model
 {
-	public enum Actions
+	public enum ActionType
 	{
 		HitCardAction,
 		ChooseAction,
@@ -18,37 +18,46 @@ namespace Gostop.Model
 	// Represents single action which a player can take in game
 	public class Action
 	{
-		protected Actions _actionId;
-		public Actions ActionId
+        protected Player _player;
+		protected ActionType _type;
+
+        public Player Player
+        {
+            get
+            {
+                return _player;
+            }
+        }
+        public ActionType Type
 		{
 			get
 			{
-				return _actionId;
+				return _type;
 			}
 		}
 
-		public static string PrintAction(Actions action)
+		public static string PrintAction(ActionType action)
 		{
 			switch (action)
 			{
-				case Actions.HitCardAction:
+				case ActionType.HitCardAction:
 					return "HitCardAction";
-				case Actions.ChooseAction:
+				case ActionType.ChooseAction:
 					return "ChooseCardAction";
-				case Actions.GoOrStopAction:
+				case ActionType.GoOrStopAction:
 					return "GoStopActions";
-				case Actions.ShakeAction:
+				case ActionType.ShakeAction:
 					return "ShakeAction";
-				case Actions.BombAction:
+				case ActionType.BombAction:
 					return "BombAction";
-				case Actions.FourCardAction:
+				case ActionType.FourCardAction:
 					return "FourCardAction";
 			}
 			return null;
 		}
 		public override string ToString()
 		{
-			return PrintAction(_actionId);
+			return PrintAction(_type);
 		}
 		public static string PrintActionList(List<Action> actions)
 		{
@@ -62,15 +71,15 @@ namespace Gostop.Model
 		}
 	}
 
-	public class HitCardAction : Action
+	public class HitAction : Action
 	{
 		private int _card;
-		public HitCardAction(int card)
+		public HitAction(int card)
 		{
-			_actionId = Actions.HitCardAction;
+			_type = ActionType.HitCardAction;
 			_card = card;
 		}
-		public int CardId
+		public int Card
 		{
 			get
 			{
@@ -79,37 +88,37 @@ namespace Gostop.Model
 		}
 		public override string ToString()
 		{
-			return (base.ToString() + " " + Card.GetCard(_card));
+			return (base.ToString() + ": " + Model.Card.GetCard(_card));
 		}
 	}
 
-	public class ChooseAction : Action
+	public class ChooseCardAction : Action
 	{
-		private HashSet<int> _cards;
-		public ChooseAction(HashSet<int> cards)
-		{
-			_actionId = Actions.ChooseAction;
-			_cards = cards;
-		}
-		public HashSet<int> Cards
-		{
-			get
-			{
-				return _cards;
-			}
-		}
-		public override string ToString()
-		{
-			return (base.ToString() + " " + Card.PrintCardSet(_cards));
-		}
-	}
+        private int _card;
+        public ChooseCardAction(int card)
+        {
+            _type = ActionType.HitCardAction;
+            _card = card;
+        }
+        public int Card
+        {
+            get
+            {
+                return _card;
+            }
+        }
+        public override string ToString()
+        {
+            return (base.ToString() + ": " + Model.Card.GetCard(_card));
+        }
+    }
 
 	public class GoOrStopAction : Action
 	{
 		private bool _isGo;
 		GoOrStopAction(bool isGo)
 		{
-			_actionId = Actions.GoOrStopAction;
+			_type = ActionType.GoOrStopAction;
 			_isGo = isGo;
 		}
 		public bool IsGo
@@ -126,7 +135,7 @@ namespace Gostop.Model
 		private HashSet<int> _cards;
 		public ShakeAction(HashSet<int> cards)
 		{
-			_actionId = Actions.ShakeAction;
+			_type = ActionType.ShakeAction;
 			_cards = cards;
 		}
 		public HashSet<int> Cards
@@ -139,7 +148,7 @@ namespace Gostop.Model
 		}
 		public override string ToString()
 		{
-			return (base.ToString() + " " + Card.PrintCardSet(_cards));
+			return (base.ToString() + ": " + Card.PrintCardSet(_cards));
 		}
 	}
 
@@ -148,7 +157,7 @@ namespace Gostop.Model
 		private HashSet<int> _cards;
 		public BombAction(HashSet<int> cards)
 		{
-			_actionId = Actions.BombAction;
+			_type = ActionType.BombAction;
 			_cards = cards;
 		}
 		public HashSet<int> Cards
@@ -161,19 +170,19 @@ namespace Gostop.Model
 		}
 		public override string ToString()
 		{
-			return (base.ToString() + " " + Card.PrintCardSet(_cards));
+			return (base.ToString() + ": " + Card.PrintCardSet(_cards));
 		}
 	}
 
 	public class FourCardAction : Action
 	{
-		private Months _month;
-		public FourCardAction(Months month)
+		private Month _month;
+		public FourCardAction(Month month)
 		{
-			_actionId = Actions.FourCardAction;
+			_type = ActionType.FourCardAction;
 			_month = month;
 		}
-		public Months Month
+		public Month Month
 		{
 			get
 			{
@@ -182,7 +191,7 @@ namespace Gostop.Model
 		}
 		public override string ToString()
 		{
-			return (base.ToString() + " " + Card.PrintMonth(_month));
+			return (base.ToString() + ": " + Card.PrintMonth(_month));
 		}
 	}
 	

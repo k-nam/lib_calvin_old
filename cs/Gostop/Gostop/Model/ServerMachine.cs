@@ -13,47 +13,40 @@ namespace Gostop.Model
 		// Null will be returned for ShowNextStep if a player's turn has not finished
 		private GameStatus _currentStatus;
 		// Accumulated events to show
-		private List<Event> _eventList;
-		private List<Action> _actionList;
+		private List<Event> _events = new List<Event>();
+		private List<Action> _choices = new List<Action>();
 
-		public void Initialize(GameStatus initialStatus)
+		public GameStep Initialize(GameStatus initialStatus)
 		{
 			if (!initialStatus.isInitialStatus())
 			{
 				Console.WriteLine("ServerMachine::Initialize(), initial status error");
 			}
 			_currentStatus = initialStatus;
-			_eventList = new List<Event>();
-			_actionList = new List<Action>();
 			// First turn is a new turn, so fill it with next turn actions
-			GetNextTurnActions(_currentStatus, _actionList);
+			GetNewTurnActions(_currentStatus, _choices);
+            return new GameStep(_events, _currentStatus, _choices);
 		}
 
-		public GameStep ShowNextStep()
+		public GameStep ProceedWith(int action)
 		{
-			return new GameStep(_eventList, _currentStatus, _actionList);
-		}
-
-		public void ProceedWith(int actionId)
-		{
-			if (actionId >= _actionList.Count) // invalid actionId
+			if (action >= _choices.Count) // invalid actionId
 			{
 				Console.WriteLine("ServerMachine::ProceedWith(), invalid actionId");
-				return;
+				return null;
 			}
 
-			// Initialize previous Eventlist and Actionlist
-			_eventList.Clear();
-			_actionList.Clear();
-			bool isEndOfTurn = true;
+			_events.Clear();
 
-			// Each case statement will fill EventList, modify game status
-			Action chosenAction = _actionList[actionId];
-			switch (chosenAction.ActionId)
+            bool isEndOfTurn = true;
+
+			// Each case statement will create event, and modify game status
+			Action chosenAction = _choices[action];
+			switch (chosenAction.Type)
 			{
-				case Actions.HitCardAction:
+				case ActionType.HitCardAction:
 					{
-						int cardId = ((HitCardAction)chosenAction).CardId;
+						int cardId = ((HitAction)chosenAction).Card;
 						isEndOfTurn = ProcessHitCardAction(cardId);
 						break;
 					}
@@ -61,16 +54,18 @@ namespace Gostop.Model
 					{
 						Console.WriteLine("ServerMachine::ProceedWith(), " +
 							"unhandled case in switch statement");
-						return;
+						return null;
 					}
 			}
 
 			// Fill action list in the case of end of a turn 
 			if (isEndOfTurn == true)
 			{
-				GetNextTurnActions(_currentStatus, _actionList);
+				GetNewTurnActions(_currentStatus, _choices);
 			}
-		}
+
+            return new GameStep(_events, _currentStatus, _choices);
+        }
 
 		// Return values indicates whether this action ends the turn
 		private bool ProcessHitCardAction(int cardId)
@@ -95,7 +90,7 @@ namespace Gostop.Model
 			HashSet<int>.Enumerator intSetIter = shells.GetEnumerator();
 			while (intSetIter.MoveNext())
 			{
-				if (Card.GetCard(intSetIter.Current).CardType == CardTypes.NormalShell)
+				if (Card.GetCard(intSetIter.Current).CardType == CardType.NormalShell)
 				{
 					normalShells.Add(intSetIter.Current);
 				}
@@ -130,8 +125,8 @@ namespace Gostop.Model
 			HashSet<int>.Enumerator i = cardSet.GetEnumerator();
 			while (i.MoveNext())
 			{
-				CardTypes thisType = Card.GetCard(i.Current).CardType;
-				if (thisType != CardTypes.NormalShell && thisType != CardTypes.DoubleShell)
+				CardType thisType = Card.GetCard(i.Current).CardType;
+				if (thisType != CardType.NormalShell && thisType != CardType.DoubleShell)
 				{
 					return false;
 				}
@@ -142,34 +137,34 @@ namespace Gostop.Model
 
 		// 2010-09-26: Should only be used when end of turn has come
 		// e.g., this can not produce ChooseAction nor GoStopAction
-		public static void GetNextTurnActions(GameStatus curStatus,
-			List<Action> nextActions)
+		public static void GetNewTurnActions(GameStatus curStatus,
+			List<Action> choices)
 		{
-			nextActions.Clear();
-			Players currentPlayer = curStatus.CurrentTurn;
+			choices.Clear();
+			Player currentPlayer = curStatus.CurrentPlayer;
 			HashSet<int> currentPlayerHandCards = null;
 			switch (currentPlayer)
 			{
-				case Players.PlayerA:
+				case Player.A:
 					{
 						currentPlayerHandCards = curStatus.PlayerA_HandCards;
 						break;
 					}
-				case Players.PlayerB:
+				case Player.B:
 					{
 						currentPlayerHandCards = curStatus.PlayerB_HandCards;
 						break;
 					}
-				case Players.PlayerC:
+				case Player.C:
 					{
 						currentPlayerHandCards = curStatus.PlayerC_HandCards;
 						break;
 					}
 			}
-			Dictionary<Months, HashSet<int>> sortedCards =
+			Dictionary<Month, HashSet<int>> sortedCards =
 				Card.SortCards(currentPlayerHandCards);
 			HashSet<int> floorCards = curStatus.FloorCards;
-			Dictionary<Months, HashSet<int>>.Enumerator monthEnum =
+			Dictionary<Month, HashSet<int>>.Enumerator monthEnum =
 				sortedCards.GetEnumerator();
 			while (monthEnum.MoveNext())
 			{
@@ -180,7 +175,7 @@ namespace Gostop.Model
 						monthEnum.Current.Value.GetEnumerator();
 					while (cardEnum.MoveNext())
 					{
-						nextActions.Add(new HitCardAction(cardEnum.Current));
+						choices.Add(new HitAction(cardEnum.Current));
 					}
 				}
 				else if (numCards == 3) // Hit, Shake or Bomb
@@ -193,18 +188,18 @@ namespace Gostop.Model
 							monthEnum.Current.Value.GetEnumerator();
 						while (cardEnum.MoveNext())
 						{
-							nextActions.Add(new HitCardAction(cardEnum.Current));
+							choices.Add(new HitAction(cardEnum.Current));
 						}
-						nextActions.Add(new ShakeAction(monthEnum.Current.Value));
+						choices.Add(new ShakeAction(monthEnum.Current.Value));
 					}
 					else // Bomb
 					{
-						nextActions.Add(new BombAction(monthEnum.Current.Value));
+						choices.Add(new BombAction(monthEnum.Current.Value));
 					}
 				}
 				else if (numCards == 4) // Fourcards
 				{
-					nextActions.Add(new FourCardAction(monthEnum.Current.Key));
+					choices.Add(new FourCardAction(monthEnum.Current.Key));
 				}
 				else
 				{
@@ -225,7 +220,7 @@ namespace Gostop.Model
 			stealPoint = 0;
 			fuckPoint = 0;
 			cardsToBeTaken.Clear();
-			Dictionary<Months, HashSet<int>> sortedCards = Card.SortCards(floorCards);
+			Dictionary<Month, HashSet<int>> sortedCards = Card.SortCards(floorCards);
 			bool isSameMonth = Card.IsSameMonth(hitCard, flippedCard);
 			HashSet<int> cardsWithHitCard = sortedCards[Card.GetCard(hitCard).Month];
 			HashSet<int> cardsWithFlippedCard = 

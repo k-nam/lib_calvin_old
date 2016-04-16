@@ -7,51 +7,49 @@ namespace Gostop.Model
 {
 	public class GameStep
 	{
-		private List<Event> _eventList;
-		private GameStatus _gameStatus;
-		private List<Action> _actionList;
+		private List<Event> _events;
+		private GameStatus _finalStatus;
+		private List<Action> _choices;
 		
-		public GameStep(List<Event> eventList, GameStatus gameStatus,
-			List<Action> actionList)
+        // parameters are for getting result
+		public GameStep(List<Event> events, GameStatus finalStatus,
+			List<Action> choices)
 		{
-			_eventList = eventList;
-			_gameStatus = gameStatus;
-			_actionList = actionList;
+			_events = events;
+			_finalStatus = finalStatus;
+			_choices = choices;
 		}
 
-		#region // Getters
-		public GameStatus GameStatus
+        #region // Getters
+        public List<Event> Events
+        {
+            get
+            {
+                return _events;
+            }
+        }
+        public GameStatus FinalStatus
 		{
 			get
 			{
-				return _gameStatus;
+				return _finalStatus;
 			}
 		}
-		public List<Action> ActionList
+		public List<Action> Choices
 		{
 			get
 			{
-				return _actionList;
+				return _choices;
 			}
 		}
-		public List<Event> EventList
-		{
-			get
-			{
-				return _eventList;
-			}
-		}
+
 		#endregion
 	}
 
 	interface IServerMachine
 	{
-		// Default constructor will be used
-		void Initialize(GameStatus initialStatus);
-
-		GameStep ShowNextStep();
-
-		void ProceedWith(int actionId);
-
-	}
+        // Default constructor will be used
+        GameStep Initialize(GameStatus initialStatus);
+        GameStep ProceedWith(int action); // index in actionList parameter in GameStep
+    }
 }

@@ -208,11 +208,12 @@ abstract class DbManager extends Thread {
 		val startTime: Double = System.currentTimeMillis()
 		val testSize = 100000
 		val rowSize = 200
+		val batchSize = 20;
 		for (i <- 1 to testSize) {
 			stmt.setInt(1, i)
 			stmt.setString(2, shortString + i)
 			stmt.addBatch()
-			if (i % 10000 == 0) {
+			if (i % batchSize == 0) {
 				stmt.executeBatch()
 				connection.commit
 			}

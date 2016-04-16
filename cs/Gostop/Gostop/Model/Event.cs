@@ -7,8 +7,8 @@ namespace Gostop.Model
 {
 	public class Event
 	{
-		private Players _player;
-		public Players Player
+		private Player _player;
+		public Player Player
 		{
 			get
 			{
@@ -68,8 +68,8 @@ namespace Gostop.Model
 
 	class FourCardEvent: Event
 	{
-		private Months _month;
-		public Months Month
+		private Month _month;
+		public Month Month
 		{
 			get
 			{

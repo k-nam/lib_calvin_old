@@ -87,11 +87,11 @@ namespace GostopTest
 		public void SortCardsTest()
 		{
 			HashSet<int> cards = new HashSet<int>();
-			Console.WriteLine("1광, 5초단, 7피, 7피_");
+			Console.WriteLine("1광, 5초단, 7피, 7피*");
 			cards.Add(Card.GetCardId("1광"));
 			cards.Add(Card.GetCardId("5초단"));
 			cards.Add(Card.GetCardId("7피"));
-			cards.Add(Card.GetCardId("7피_"));
+			cards.Add(Card.GetCardId("7피*"));
 			Console.WriteLine(Card.PrintSortedCards(Card.SortCards(cards)));
 		}
 

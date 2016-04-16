@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Gostop.Model
 {
-	public enum Months
+	public enum Month
 	{
 		January = 1,
 		February = 2,
@@ -21,7 +21,7 @@ namespace Gostop.Model
 		December = 12
 	}
 
-	public enum CardTypes
+	public enum CardType
 	{
 		TrueLight,
 		RainLight,
@@ -41,7 +41,7 @@ namespace Gostop.Model
 		public const int InitialHandCardsPerPlayer = 7;
 		public const int InitialFloorCardsNum = 6;		
 
-		public Card(Months month, CardTypes cardType, string name)
+		public Card(Month month, CardType cardType, string name)
 		{
 			_month = month;
 			_cardType = cardType;
@@ -53,7 +53,7 @@ namespace Gostop.Model
 		}
 
 		
-		public Months Month
+		public Month Month
 		{
 			get
 			{
@@ -61,7 +61,7 @@ namespace Gostop.Model
 			}
 		}
 
-		public CardTypes CardType
+		public CardType CardType
 		{
 			get
 			{
@@ -77,8 +77,8 @@ namespace Gostop.Model
 			}
 		}
 
-		private Months _month;
-		private CardTypes _cardType;
+		private Month _month;
+		private CardType _cardType;
 		private string _name = null;
 		private static List<Card> _cardSet = null;
 
@@ -90,65 +90,65 @@ namespace Gostop.Model
 				return;
 			}
 			_cardSet = new List<Card>();
-			_cardSet.Add(new Card(Months.January, CardTypes.TrueLight, "1광"));
-			_cardSet.Add(new Card(Months.January, CardTypes.RedFive, "1홍단"));
-			_cardSet.Add(new Card(Months.January, CardTypes.NormalShell, "1피"));
-			_cardSet.Add(new Card(Months.January, CardTypes.NormalShell, "1피_"));
+			_cardSet.Add(new Card(Month.January, CardType.TrueLight, "1광"));
+			_cardSet.Add(new Card(Month.January, CardType.RedFive, "1홍단"));
+			_cardSet.Add(new Card(Month.January, CardType.NormalShell, "1피"));
+			_cardSet.Add(new Card(Month.January, CardType.NormalShell, "1피*"));
 
-			_cardSet.Add(new Card(Months.February, CardTypes.FiveBirdsTen, "2고도리"));
-			_cardSet.Add(new Card(Months.February, CardTypes.RedFive, "2홍단"));
-			_cardSet.Add(new Card(Months.February, CardTypes.NormalShell, "2피"));
-			_cardSet.Add(new Card(Months.February, CardTypes.NormalShell, "2피_"));
+			_cardSet.Add(new Card(Month.February, CardType.FiveBirdsTen, "2고도리"));
+			_cardSet.Add(new Card(Month.February, CardType.RedFive, "2홍단"));
+			_cardSet.Add(new Card(Month.February, CardType.NormalShell, "2피"));
+			_cardSet.Add(new Card(Month.February, CardType.NormalShell, "2피*"));
 
-			_cardSet.Add(new Card(Months.March, CardTypes.TrueLight, "3광"));
-			_cardSet.Add(new Card(Months.March, CardTypes.RedFive, "3홍단"));
-			_cardSet.Add(new Card(Months.March, CardTypes.NormalShell, "3피"));
-			_cardSet.Add(new Card(Months.March, CardTypes.NormalShell, "3피_"));
+			_cardSet.Add(new Card(Month.March, CardType.TrueLight, "3광"));
+			_cardSet.Add(new Card(Month.March, CardType.RedFive, "3홍단"));
+			_cardSet.Add(new Card(Month.March, CardType.NormalShell, "3피"));
+			_cardSet.Add(new Card(Month.March, CardType.NormalShell, "3피*"));
 
-			_cardSet.Add(new Card(Months.April, CardTypes.FiveBirdsTen, "4고도리"));
-			_cardSet.Add(new Card(Months.April, CardTypes.GrassFive, "4초단"));
-			_cardSet.Add(new Card(Months.April, CardTypes.NormalShell, "4피"));
-			_cardSet.Add(new Card(Months.April, CardTypes.NormalShell, "4피_"));
+			_cardSet.Add(new Card(Month.April, CardType.FiveBirdsTen, "4고도리"));
+			_cardSet.Add(new Card(Month.April, CardType.GrassFive, "4초단"));
+			_cardSet.Add(new Card(Month.April, CardType.NormalShell, "4피"));
+			_cardSet.Add(new Card(Month.April, CardType.NormalShell, "4피*"));
 
-			_cardSet.Add(new Card(Months.May, CardTypes.NormalTen, "5열끗"));
-			_cardSet.Add(new Card(Months.May, CardTypes.GrassFive, "5초단"));
-			_cardSet.Add(new Card(Months.May, CardTypes.NormalShell, "5피"));
-			_cardSet.Add(new Card(Months.May, CardTypes.NormalShell, "5피_"));
+			_cardSet.Add(new Card(Month.May, CardType.NormalTen, "5열끗"));
+			_cardSet.Add(new Card(Month.May, CardType.GrassFive, "5초단"));
+			_cardSet.Add(new Card(Month.May, CardType.NormalShell, "5피"));
+			_cardSet.Add(new Card(Month.May, CardType.NormalShell, "5피*"));
 
-			_cardSet.Add(new Card(Months.June, CardTypes.NormalTen, "6열끗"));
-			_cardSet.Add(new Card(Months.June, CardTypes.BlueFive, "6청단"));
-			_cardSet.Add(new Card(Months.June, CardTypes.NormalShell, "6피"));
-			_cardSet.Add(new Card(Months.June, CardTypes.NormalShell, "6피_"));
+			_cardSet.Add(new Card(Month.June, CardType.NormalTen, "6열끗"));
+			_cardSet.Add(new Card(Month.June, CardType.BlueFive, "6청단"));
+			_cardSet.Add(new Card(Month.June, CardType.NormalShell, "6피"));
+			_cardSet.Add(new Card(Month.June, CardType.NormalShell, "6피*"));
 
-			_cardSet.Add(new Card(Months.July, CardTypes.NormalTen, "7열끗"));
-			_cardSet.Add(new Card(Months.July, CardTypes.GrassFive, "7초단"));
-			_cardSet.Add(new Card(Months.July, CardTypes.NormalShell, "7피"));
-			_cardSet.Add(new Card(Months.July, CardTypes.NormalShell, "7피_"));
+			_cardSet.Add(new Card(Month.July, CardType.NormalTen, "7열끗"));
+			_cardSet.Add(new Card(Month.July, CardType.GrassFive, "7초단"));
+			_cardSet.Add(new Card(Month.July, CardType.NormalShell, "7피"));
+			_cardSet.Add(new Card(Month.July, CardType.NormalShell, "7피*"));
 
-			_cardSet.Add(new Card(Months.August, CardTypes.TrueLight, "8광"));
-			_cardSet.Add(new Card(Months.August, CardTypes.FiveBirdsTen, "8고도리"));
-			_cardSet.Add(new Card(Months.August, CardTypes.NormalShell, "8피"));
-			_cardSet.Add(new Card(Months.August, CardTypes.NormalShell, "8피_"));
+			_cardSet.Add(new Card(Month.August, CardType.TrueLight, "8광"));
+			_cardSet.Add(new Card(Month.August, CardType.FiveBirdsTen, "8고도리"));
+			_cardSet.Add(new Card(Month.August, CardType.NormalShell, "8피"));
+			_cardSet.Add(new Card(Month.August, CardType.NormalShell, "8피*"));
 
-			_cardSet.Add(new Card(Months.September, CardTypes.NormalTen, "9열끗"));
-			_cardSet.Add(new Card(Months.September, CardTypes.BlueFive, "9청단"));
-			_cardSet.Add(new Card(Months.September, CardTypes.NormalShell, "9피"));
-			_cardSet.Add(new Card(Months.September, CardTypes.NormalShell, "9피_"));
+			_cardSet.Add(new Card(Month.September, CardType.NormalTen, "9열끗"));
+			_cardSet.Add(new Card(Month.September, CardType.BlueFive, "9청단"));
+			_cardSet.Add(new Card(Month.September, CardType.NormalShell, "9피"));
+			_cardSet.Add(new Card(Month.September, CardType.NormalShell, "9피*"));
 
-			_cardSet.Add(new Card(Months.October, CardTypes.NormalTen, "10열끗"));
-			_cardSet.Add(new Card(Months.October, CardTypes.BlueFive, "10청단"));
-			_cardSet.Add(new Card(Months.October, CardTypes.NormalShell, "10피"));
-			_cardSet.Add(new Card(Months.October, CardTypes.NormalShell, "10피_"));
+			_cardSet.Add(new Card(Month.October, CardType.NormalTen, "10열끗"));
+			_cardSet.Add(new Card(Month.October, CardType.BlueFive, "10청단"));
+			_cardSet.Add(new Card(Month.October, CardType.NormalShell, "10피"));
+			_cardSet.Add(new Card(Month.October, CardType.NormalShell, "10피*"));
 
-			_cardSet.Add(new Card(Months.November, CardTypes.RainLight, "비광"));
-			_cardSet.Add(new Card(Months.November, CardTypes.NormalTen, "비열끗"));
-			_cardSet.Add(new Card(Months.November, CardTypes.NormalFive, "비다섯끗"));
-			_cardSet.Add(new Card(Months.November, CardTypes.DoubleShell, "비쌍피"));
+			_cardSet.Add(new Card(Month.November, CardType.RainLight, "비광"));
+			_cardSet.Add(new Card(Month.November, CardType.NormalTen, "비열끗"));
+			_cardSet.Add(new Card(Month.November, CardType.NormalFive, "비다섯끗"));
+			_cardSet.Add(new Card(Month.November, CardType.DoubleShell, "비쌍피"));
 
-			_cardSet.Add(new Card(Months.December, CardTypes.TrueLight, "똥광"));
-			_cardSet.Add(new Card(Months.December, CardTypes.NormalShell, "똥피"));
-			_cardSet.Add(new Card(Months.December, CardTypes.NormalShell, "똥피_"));
-			_cardSet.Add(new Card(Months.December, CardTypes.DoubleShell, "똥쌍피"));
+			_cardSet.Add(new Card(Month.December, CardType.TrueLight, "똥광"));
+			_cardSet.Add(new Card(Month.December, CardType.NormalShell, "똥피"));
+			_cardSet.Add(new Card(Month.December, CardType.NormalShell, "똥피*"));
+			_cardSet.Add(new Card(Month.December, CardType.DoubleShell, "똥쌍피"));
 		}
 
 		public static Card GetCard(int cardId)
@@ -202,33 +202,33 @@ namespace Gostop.Model
 			return GetCard(cardId).ToString();
 		}
 
-		public static string PrintMonth(Months month)
+		public static string PrintMonth(Month month)
 		{
 			switch (month)
 			{
-				case Months.January:
+				case Month.January:
 					return "1월";
-				case Months.February:
+				case Month.February:
 					return "2월";
-				case Months.March:
+				case Month.March:
 					return "3월";
-				case Months.April:
+				case Month.April:
 					return "4월";
-				case Months.May:
+				case Month.May:
 					return "5월";
-				case Months.June:
+				case Month.June:
 					return "6월";
-				case Months.July:
+				case Month.July:
 					return "7월";
-				case Months.August:
+				case Month.August:
 					return "8월";
-				case Months.September:
+				case Month.September:
 					return "9월";
-				case Months.October:
+				case Month.October:
 					return "10월";
-				case Months.November:
+				case Month.November:
 					return "11월";
-				case Months.December:
+				case Month.December:
 					return "12월";
 			}
 			return null;
@@ -249,10 +249,10 @@ namespace Gostop.Model
 
 		// 2010-09-26
 		public static string PrintSortedCards(
-			Dictionary<Months, HashSet<int>> sortedCards)
+			Dictionary<Month, HashSet<int>> sortedCards)
 		{
 			StringBuilder builder = new StringBuilder();
-			Dictionary<Months, HashSet<int>>.Enumerator monthEnum =
+			Dictionary<Month, HashSet<int>>.Enumerator monthEnum =
 				sortedCards.GetEnumerator();
 			while (monthEnum.MoveNext())
 			{
@@ -275,7 +275,7 @@ namespace Gostop.Model
 		}
 
 		// 2010-09-26
-		public static HashSet<int> CardsWithSameMonth(HashSet<int> cards, Months month)
+		public static HashSet<int> CardsWithSameMonth(HashSet<int> cards, Month month)
 		{
 			HashSet<int> cardsWithSameMonth = new HashSet<int>();
 			HashSet<int>.Enumerator enumerator = cards.GetEnumerator();
@@ -290,14 +290,14 @@ namespace Gostop.Model
 		}
 
 		// 2010-09-26
-		public static Dictionary<Months, HashSet<int>> SortCards(HashSet<int> cards)
+		public static Dictionary<Month, HashSet<int>> SortCards(HashSet<int> cards)
 		{
-			Dictionary<Months, HashSet<int>> sortedCards = 
-				new Dictionary<Months, HashSet<int>>();
+			Dictionary<Month, HashSet<int>> sortedCards = 
+				new Dictionary<Month, HashSet<int>>();
 			// Fill each month with empty HashSet
 			for (int card = 0; card < Card.NumberOfTotalCards; card++)
 			{
-				Months month = GetCard(card).Month;
+				Month month = GetCard(card).Month;
 				if (sortedCards.ContainsKey(month) == false)
 				{
 					sortedCards.Add(month, new HashSet<int>());

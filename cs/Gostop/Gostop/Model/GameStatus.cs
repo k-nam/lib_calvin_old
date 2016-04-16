@@ -8,7 +8,7 @@ namespace Gostop.Model
 	public class GameStatus
 	{
 		#region // Members
-		private Players _currentTurn;
+		private Player _currentTurn;
 
 		private HashSet<int> _playerA_HandCards = null;
 		private HashSet<int> _playerB_HandCards = null;
@@ -43,7 +43,7 @@ namespace Gostop.Model
 		#endregion
 
 		#region // Getters
-		public Players CurrentTurn
+		public Player CurrentPlayer
 		{
 			get
 			{
@@ -224,7 +224,7 @@ namespace Gostop.Model
 		// Create a random initial status
 		public GameStatus()
 		{
-			_currentTurn = Players.PlayerA;
+			_currentTurn = Player.A;
 			_playerA_HandCards = new HashSet<int>();
 			_playerB_HandCards = new HashSet<int>();
 			_playerC_HandCards = new HashSet<int>();
@@ -240,7 +240,7 @@ namespace Gostop.Model
 		public GameStatus(HashSet<int> playerA_HandCards, HashSet<int> playerB_HandCards,
 			HashSet<int> playerC_HandCards, HashSet<int> floorCards)
 		{
-			_currentTurn = Players.PlayerA;
+			_currentTurn = Player.A;
 			_playerA_HandCards = playerA_HandCards;
 			_playerB_HandCards = playerB_HandCards;
 			_playerC_HandCards = playerC_HandCards;

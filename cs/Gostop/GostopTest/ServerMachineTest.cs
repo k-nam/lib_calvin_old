@@ -15,8 +15,8 @@ namespace GostopTest
 		{
 			HashSet<int> shells = new HashSet<int>();
 			shells.Add(Card.GetCardId("1피"));
-			shells.Add(Card.GetCardId("1피_"));
-			Console.WriteLine("1피, 1피_ 에서 1개 추출 ");
+			shells.Add(Card.GetCardId("1피*"));
+			Console.WriteLine("1피, 1피* 에서 1개 추출 ");
 			HashSet<int> shellsToBeStolen = 
 				ServerMachine.GetShellsToBeStolen(shells, 1);
 			Console.WriteLine(Card.PrintCardSet(shellsToBeStolen));
@@ -27,8 +27,8 @@ namespace GostopTest
 		{
 			HashSet<int> shells = new HashSet<int>();
 			shells.Add(Card.GetCardId("1피"));
-			shells.Add(Card.GetCardId("1피_"));
-			Console.WriteLine("1피, 1피_ 에서 2개 추출 ");
+			shells.Add(Card.GetCardId("1피*"));
+			Console.WriteLine("1피, 1피* 에서 2개 추출 ");
 			HashSet<int> shellsToBeStolen =
 				ServerMachine.GetShellsToBeStolen(shells, 2);
 			Console.WriteLine(Card.PrintCardSet(shellsToBeStolen));
@@ -39,8 +39,8 @@ namespace GostopTest
 		{
 			HashSet<int> shells = new HashSet<int>();
 			shells.Add(Card.GetCardId("1피"));
-			shells.Add(Card.GetCardId("1피_"));
-			Console.WriteLine("1피, 1피_ 에서 3개 추출 ");
+			shells.Add(Card.GetCardId("1피*"));
+			Console.WriteLine("1피, 1피* 에서 3개 추출 ");
 			HashSet<int> shellsToBeStolen =
 				ServerMachine.GetShellsToBeStolen(shells, 3);
 			Console.WriteLine(Card.PrintCardSet(shellsToBeStolen));
@@ -103,7 +103,7 @@ namespace GostopTest
 			GameStatus randomStatus = new GameStatus();
 			Console.WriteLine(randomStatus);
 			List<Gostop.Model.Action> actionList = new List<Gostop.Model.Action>();
-			ServerMachine.GetNextTurnActions(randomStatus, actionList);
+			ServerMachine.GetNewTurnActions(randomStatus, actionList);
 			Console.WriteLine(Gostop.Model.Action.PrintActionList(actionList));
 		}
 
@@ -111,15 +111,15 @@ namespace GostopTest
 		public void GetNextTurnActionsTest2()   
 		{
 			HashSet<int> playerA_HandCards = Card.GetCardSet(
-				"1광 1홍단 1피 1피_ 2고도리 2홍단 2피");
+				"1광 1홍단 1피 1피* 2고도리 2홍단 2피");
 			HashSet<int> playerB_HandCards = Card.GetCardSet("3피");
 			HashSet<int> playerC_HandCards = Card.GetCardSet("");
-			HashSet<int> floorCards = Card.GetCardSet("3피_");
+			HashSet<int> floorCards = Card.GetCardSet("3피*");
 			GameStatus status = new GameStatus(playerA_HandCards, playerB_HandCards,
 				playerC_HandCards, floorCards);
 			Console.WriteLine(status);
 			List<Gostop.Model.Action> actionList = new List<Gostop.Model.Action>();
-			ServerMachine.GetNextTurnActions(status, actionList);
+			ServerMachine.GetNewTurnActions(status, actionList);
 			Console.WriteLine(Gostop.Model.Action.PrintActionList(actionList));
 		}
 
@@ -153,10 +153,10 @@ namespace GostopTest
 		public void ManageFloorCardsTest2()
 		{
 			HashSet<int> floorCards = Card.GetCardSet(
-				"1광 1피_ 3홍단 4초단 8피 8고도리");
+				"1광 1피* 3홍단 4초단 8피 8고도리");
 			HashSet<int> cardsToBeTaken = new HashSet<int>();
 			int hitCard = Card.GetCardId("1피");
-			int flippedCard = Card.GetCardId("8피_");
+			int flippedCard = Card.GetCardId("8피*");
 			int stealPoint = 0;
 			int fuckPoint = 0;
 			int firstChoice = Card.GetCardId("1광");
@@ -179,7 +179,7 @@ namespace GostopTest
 		public void ManageFloorCardsTest3()
 		{
 			HashSet<int> floorCards = Card.GetCardSet(
-				"1광 1피 1피_ 4초단 7열끗 8고도리");
+				"1광 1피 1피* 4초단 7열끗 8고도리");
 			HashSet<int> cardsToBeTaken = new HashSet<int>();
 			int hitCard = Card.GetCardId("1홍단");
 			int flippedCard = Card.GetCardId("7피");
@@ -203,7 +203,7 @@ namespace GostopTest
 		public void ManageFloorCardsTest4()
 		{
 			HashSet<int> floorCards = Card.GetCardSet(
-				"1광 2피 2피_ 4초단 7열끗 8고도리");
+				"1광 2피 2피* 4초단 7열끗 8고도리");
 			HashSet<int> cardsToBeTaken = new HashSet<int>();
 			int hitCard = Card.GetCardId("1홍단");
 			int flippedCard = Card.GetCardId("1피");
@@ -227,7 +227,7 @@ namespace GostopTest
 		public void ManageFloorCardsTest5()
 		{
 			HashSet<int> floorCards = Card.GetCardSet(
-				"1광 2피 2피_ 4초단 7열끗 8고도리");
+				"1광 2피 2피* 4초단 7열끗 8고도리");
 			HashSet<int> cardsToBeTaken = new HashSet<int>();
 			int hitCard = Card.GetCardId("똥광");
 			int flippedCard = Card.GetCardId("똥쌍피");
@@ -251,7 +251,7 @@ namespace GostopTest
 		public void ManageFloorCardsTest6()
 		{
 			HashSet<int> floorCards = Card.GetCardSet(
-				"1광 2피 2피_ 4초단 7열끗 8고도리");
+				"1광 2피 2피* 4초단 7열끗 8고도리");
 			HashSet<int> cardsToBeTaken = new HashSet<int>();
 			int hitCard = Card.GetCardId("2홍단");
 			int flippedCard = Card.GetCardId("2고도리");
