@@ -72,11 +72,10 @@
     </Compile>
     <Compile Include="Model\Action.cs" />
     <Compile Include="Model\Card.cs" />
-    <Compile Include="Model\Event.cs" />
     <Compile Include="Model\GameStatus.cs" />
-    <Compile Include="Model\IServerMachine.cs" />
+    <Compile Include="Model\IGostopEngine.cs" />
     <Compile Include="Model\Players.cs" />
-    <Compile Include="Model\ServerMachine.cs" />
+    <Compile Include="Model\GostopEngine.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

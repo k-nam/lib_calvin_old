@@ -7,8 +7,12 @@ namespace Gostop.Model
 {
 	public enum ActionType
 	{
-		HitCardAction,
-		ChooseAction,
+		HitAction,
+        FlipHitAction,
+        FuckAction,
+        UnFuckAction,
+        CleanupAction,
+        ChooseAction,
 		GoOrStopAction,
 		ShakeAction,
 		BombAction,
@@ -16,6 +20,8 @@ namespace Gostop.Model
 	}
 
 	// Represents single action which a player can take in game
+    // Some actions are voluntary (result of a choice), others are inevitable
+    // But from the game engine's point of view, those two need not be distinguished
 	public class Action
 	{
         protected Player _player;
@@ -40,9 +46,17 @@ namespace Gostop.Model
 		{
 			switch (action)
 			{
-				case ActionType.HitCardAction:
-					return "HitCardAction";
-				case ActionType.ChooseAction:
+				case ActionType.HitAction:
+					return "HitAction";
+                case ActionType.FlipHitAction:
+                    return "FlipHitAction";
+                case ActionType.FuckAction:
+                    return "FuckAction";
+                case ActionType.UnFuckAction:
+                    return "UnFuckAction";
+                case ActionType.CleanupAction:
+                    return "CleanupAction";
+                case ActionType.ChooseAction:
 					return "ChooseCardAction";
 				case ActionType.GoOrStopAction:
 					return "GoStopActions";
@@ -71,12 +85,14 @@ namespace Gostop.Model
 		}
 	}
 
+    // hit with hand card
 	public class HitAction : Action
 	{
 		private int _card;
-		public HitAction(int card)
+		public HitAction(Player player, int card)
 		{
-			_type = ActionType.HitCardAction;
+            _player = player;
+			_type = ActionType.HitAction;
 			_card = card;
 		}
 		public int Card
@@ -92,12 +108,89 @@ namespace Gostop.Model
 		}
 	}
 
-	public class ChooseCardAction : Action
+    public class FlipHitAction : Action
+    {
+        private int _card;
+        public FlipHitAction(Player player, int card)
+        {
+            _player = player;
+            _type = ActionType.FlipHitAction;
+            _card = card;
+        }
+        public int Card
+        {
+            get
+            {
+                return _card;
+            }
+        }
+        public override string ToString()
+        {
+            return (base.ToString() + ": " + Model.Card.GetCard(_card));
+        }
+    }
+
+    public class FuckAction : Action
+    {
+        private int _card;
+        public FuckAction(Player player, int card)
+        {
+            _player = player;
+            _type = ActionType.FuckAction;
+            _card = card;
+        }
+        public int Card
+        {
+            get
+            {
+                return _card;
+            }
+        }
+        public override string ToString()
+        {
+            return (base.ToString() + ": " + Model.Card.GetCard(_card));
+        }
+    }
+    public class UnFuckAction : Action
+    {
+        private int _card;
+        public UnFuckAction(Player player, int card)
+        {
+            _player = player;
+            _type = ActionType.UnFuckAction;
+            _card = card;
+        }
+        public int Card
+        {
+            get
+            {
+                return _card;
+            }
+        }
+        public override string ToString()
+        {
+            return (base.ToString() + ": " + Model.Card.GetCard(_card));
+        }
+    }
+    public class CleanupAction : Action
+    {
+        public CleanupAction(Player player)
+        {
+            _player = player;
+            _type = ActionType.CleanupAction;
+        }
+        public override string ToString()
+        {
+            return (base.ToString());
+        }
+    }
+    public class ChooseAction : Action
 	{
         private int _card;
-        public ChooseCardAction(int card)
+        public ChooseAction(Player player, int card)
         {
-            _type = ActionType.HitCardAction;
+            _player = player;
+            _type = ActionType.ChooseAction;
             _card = card;
         }
         public int Card
@@ -116,9 +209,10 @@ namespace Gostop.Model
 	public class GoOrStopAction : Action
 	{
 		private bool _isGo;
-		GoOrStopAction(bool isGo)
+		GoOrStopAction(Player player, bool isGo)
 		{
-			_type = ActionType.GoOrStopAction;
+            _player = player;
+            _type = ActionType.GoOrStopAction;
 			_isGo = isGo;
 		}
 		public bool IsGo
@@ -133,9 +227,10 @@ namespace Gostop.Model
 	public class ShakeAction : Action
 	{
 		private HashSet<int> _cards;
-		public ShakeAction(HashSet<int> cards)
+		public ShakeAction(Player player, HashSet<int> cards)
 		{
-			_type = ActionType.ShakeAction;
+            _player = player;
+            _type = ActionType.ShakeAction;
 			_cards = cards;
 		}
 		public HashSet<int> Cards
@@ -155,9 +250,10 @@ namespace Gostop.Model
 	public class BombAction : Action
 	{
 		private HashSet<int> _cards;
-		public BombAction(HashSet<int> cards)
+		public BombAction(Player player, HashSet<int> cards)
 		{
-			_type = ActionType.BombAction;
+            _player = player;
+            _type = ActionType.BombAction;
 			_cards = cards;
 		}
 		public HashSet<int> Cards
@@ -177,9 +273,10 @@ namespace Gostop.Model
 	public class FourCardAction : Action
 	{
 		private Month _month;
-		public FourCardAction(Month month)
+		public FourCardAction(Player player, Month month)
 		{
-			_type = ActionType.FourCardAction;
+            _player = player;
+            _type = ActionType.FourCardAction;
 			_month = month;
 		}
 		public Month Month

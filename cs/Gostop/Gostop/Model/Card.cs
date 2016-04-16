@@ -236,16 +236,9 @@ namespace Gostop.Model
 
 		public static string PrintCardSet(HashSet<int> cards)
 		{
-			StringBuilder builder = new StringBuilder();
-			builder.Append(" ");
-			for (HashSet<int>.Enumerator i = cards.GetEnumerator(); i.MoveNext(); )
-			{
-				builder.Append(Card.PrintCard(i.Current));
-				builder.Append(" ");
-			}
-			builder.Append(" ");
-			return builder.ToString();
-		}
+            return PrintSortedCards(SortCards(cards));
+
+        }
 
 		// 2010-09-26
 		public static string PrintSortedCards(
@@ -256,13 +249,11 @@ namespace Gostop.Model
 				sortedCards.GetEnumerator();
 			while (monthEnum.MoveNext())
 			{
-				builder.Append(PrintMonth(monthEnum.Current.Key) + ": ");
 				HashSet<int>.Enumerator cardEnum = monthEnum.Current.Value.GetEnumerator();
 				while (cardEnum.MoveNext())
 				{
 					builder.Append(GetCard(cardEnum.Current) + " ");
 				}
-				builder.AppendLine();
 			}
 			return builder.ToString();
 		}

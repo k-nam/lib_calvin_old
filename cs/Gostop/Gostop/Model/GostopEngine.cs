@@ -5,15 +5,15 @@ using System.Text;
 
 namespace Gostop.Model
 {
-	public class ServerMachine: IServerMachine
+	public class GostopEngine: IGostopEngine
 	{
-		public ServerMachine()
+		public GostopEngine()
 		{
 		}
 		// Null will be returned for ShowNextStep if a player's turn has not finished
 		private GameStatus _currentStatus;
 		// Accumulated events to show
-		private List<Event> _events = new List<Event>();
+		private List<Action> _history = new List<Action>();
 		private List<Action> _choices = new List<Action>();
 
 		public GameStep Initialize(GameStatus initialStatus)
@@ -24,8 +24,8 @@ namespace Gostop.Model
 			}
 			_currentStatus = initialStatus;
 			// First turn is a new turn, so fill it with next turn actions
-			GetNewTurnActions(_currentStatus, _choices);
-            return new GameStep(_events, _currentStatus, _choices);
+			GetNewTurnChoices(_currentStatus, _choices);
+            return new GameStep(_history, _currentStatus, _choices);
 		}
 
 		public GameStep ProceedWith(int action)
@@ -36,7 +36,7 @@ namespace Gostop.Model
 				return null;
 			}
 
-			_events.Clear();
+            _history.Clear();
 
             bool isEndOfTurn = true;
 
@@ -44,7 +44,7 @@ namespace Gostop.Model
 			Action chosenAction = _choices[action];
 			switch (chosenAction.Type)
 			{
-				case ActionType.HitCardAction:
+				case ActionType.HitAction:
 					{
 						int cardId = ((HitAction)chosenAction).Card;
 						isEndOfTurn = ProcessHitCardAction(cardId);
@@ -61,10 +61,10 @@ namespace Gostop.Model
 			// Fill action list in the case of end of a turn 
 			if (isEndOfTurn == true)
 			{
-				GetNewTurnActions(_currentStatus, _choices);
+				GetNewTurnChoices(_currentStatus, _choices);
 			}
 
-            return new GameStep(_events, _currentStatus, _choices);
+            return new GameStep(_history, _currentStatus, _choices);
         }
 
 		// Return values indicates whether this action ends the turn
@@ -137,7 +137,7 @@ namespace Gostop.Model
 
 		// 2010-09-26: Should only be used when end of turn has come
 		// e.g., this can not produce ChooseAction nor GoStopAction
-		public static void GetNewTurnActions(GameStatus curStatus,
+		public static void GetNewTurnChoices(GameStatus curStatus,
 			List<Action> choices)
 		{
 			choices.Clear();
@@ -175,7 +175,7 @@ namespace Gostop.Model
 						monthEnum.Current.Value.GetEnumerator();
 					while (cardEnum.MoveNext())
 					{
-						choices.Add(new HitAction(cardEnum.Current));
+						choices.Add(new HitAction(currentPlayer, cardEnum.Current));
 					}
 				}
 				else if (numCards == 3) // Hit, Shake or Bomb
@@ -188,18 +188,18 @@ namespace Gostop.Model
 							monthEnum.Current.Value.GetEnumerator();
 						while (cardEnum.MoveNext())
 						{
-							choices.Add(new HitAction(cardEnum.Current));
+							choices.Add(new HitAction(currentPlayer, cardEnum.Current));
 						}
-						choices.Add(new ShakeAction(monthEnum.Current.Value));
+						choices.Add(new ShakeAction(currentPlayer, monthEnum.Current.Value));
 					}
 					else // Bomb
 					{
-						choices.Add(new BombAction(monthEnum.Current.Value));
+						choices.Add(new BombAction(currentPlayer, monthEnum.Current.Value));
 					}
 				}
 				else if (numCards == 4) // Fourcards
 				{
-					choices.Add(new FourCardAction(monthEnum.Current.Key));
+					choices.Add(new FourCardAction(currentPlayer, monthEnum.Current.Key));
 				}
 				else
 				{

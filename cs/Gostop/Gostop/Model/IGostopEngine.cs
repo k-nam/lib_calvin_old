@@ -7,25 +7,25 @@ namespace Gostop.Model
 {
 	public class GameStep
 	{
-		private List<Event> _events;
-		private GameStatus _finalStatus;
+        private List<Action> _history;
+        private GameStatus _finalStatus;
 		private List<Action> _choices;
 		
         // parameters are for getting result
-		public GameStep(List<Event> events, GameStatus finalStatus,
+		public GameStep(List<Action> history, GameStatus finalStatus,
 			List<Action> choices)
 		{
-			_events = events;
+            _history = history;
 			_finalStatus = finalStatus;
 			_choices = choices;
 		}
 
         #region // Getters
-        public List<Event> Events
+        public List<Action> History
         {
             get
             {
-                return _events;
+                return _history;
             }
         }
         public GameStatus FinalStatus
@@ -46,7 +46,7 @@ namespace Gostop.Model
 		#endregion
 	}
 
-	interface IServerMachine
+	interface IGostopEngine
 	{
         // Default constructor will be used
         GameStep Initialize(GameStatus initialStatus);

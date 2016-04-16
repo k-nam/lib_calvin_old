@@ -18,7 +18,7 @@ namespace GostopTest
 			shells.Add(Card.GetCardId("1피*"));
 			Console.WriteLine("1피, 1피* 에서 1개 추출 ");
 			HashSet<int> shellsToBeStolen = 
-				ServerMachine.GetShellsToBeStolen(shells, 1);
+				GostopEngine.GetShellsToBeStolen(shells, 1);
 			Console.WriteLine(Card.PrintCardSet(shellsToBeStolen));
 		}
 
@@ -30,7 +30,7 @@ namespace GostopTest
 			shells.Add(Card.GetCardId("1피*"));
 			Console.WriteLine("1피, 1피* 에서 2개 추출 ");
 			HashSet<int> shellsToBeStolen =
-				ServerMachine.GetShellsToBeStolen(shells, 2);
+				GostopEngine.GetShellsToBeStolen(shells, 2);
 			Console.WriteLine(Card.PrintCardSet(shellsToBeStolen));
 		}
 
@@ -42,7 +42,7 @@ namespace GostopTest
 			shells.Add(Card.GetCardId("1피*"));
 			Console.WriteLine("1피, 1피* 에서 3개 추출 ");
 			HashSet<int> shellsToBeStolen =
-				ServerMachine.GetShellsToBeStolen(shells, 3);
+				GostopEngine.GetShellsToBeStolen(shells, 3);
 			Console.WriteLine(Card.PrintCardSet(shellsToBeStolen));
 		}
 
@@ -54,7 +54,7 @@ namespace GostopTest
 			shells.Add(Card.GetCardId("똥쌍피"));
 			Console.WriteLine("1피, 똥쌍피 에서 1개 추출 ");
 			HashSet<int> shellsToBeStolen =
-				ServerMachine.GetShellsToBeStolen(shells, 1);
+				GostopEngine.GetShellsToBeStolen(shells, 1);
 			Console.WriteLine(Card.PrintCardSet(shellsToBeStolen));
 		}
 
@@ -66,7 +66,7 @@ namespace GostopTest
 			shells.Add(Card.GetCardId("똥쌍피"));
 			Console.WriteLine("1피, 똥쌍피 에서 2개 추출 ");
 			HashSet<int> shellsToBeStolen =
-				ServerMachine.GetShellsToBeStolen(shells, 2);
+				GostopEngine.GetShellsToBeStolen(shells, 2);
 			Console.WriteLine(Card.PrintCardSet(shellsToBeStolen));
 		}
 
@@ -79,7 +79,7 @@ namespace GostopTest
 			shells.Add(Card.GetCardId("7피"));
 			Console.WriteLine("1피, 똥쌍피, 7피 에서 2개 추출 ");
 			HashSet<int> shellsToBeStolen =
-				ServerMachine.GetShellsToBeStolen(shells, 2);
+				GostopEngine.GetShellsToBeStolen(shells, 2);
 			Console.WriteLine(Card.PrintCardSet(shellsToBeStolen));
 		}
 
@@ -92,19 +92,19 @@ namespace GostopTest
 			shells.Add(Card.GetCardId("7피"));
 			Console.WriteLine("1피, 똥쌍피, 7피 에서 3개 추출 ");
 			HashSet<int> shellsToBeStolen =
-				ServerMachine.GetShellsToBeStolen(shells, 3);
+				GostopEngine.GetShellsToBeStolen(shells, 3);
 			Console.WriteLine(Card.PrintCardSet(shellsToBeStolen));
 		}
 		#endregion
 
 		[TestMethod]
-		public void GetNextTurnActionsTest()
+		public void GetNewTurnChoicesTest()
 		{
 			GameStatus randomStatus = new GameStatus();
 			Console.WriteLine(randomStatus);
-			List<Gostop.Model.Action> actionList = new List<Gostop.Model.Action>();
-			ServerMachine.GetNewTurnActions(randomStatus, actionList);
-			Console.WriteLine(Gostop.Model.Action.PrintActionList(actionList));
+			List<Gostop.Model.Action> choices = new List<Gostop.Model.Action>();
+			GostopEngine.GetNewTurnChoices(randomStatus, choices);
+			Console.WriteLine(Gostop.Model.Action.PrintActionList(choices));
 		}
 
 		[TestMethod]
@@ -119,7 +119,7 @@ namespace GostopTest
 				playerC_HandCards, floorCards);
 			Console.WriteLine(status);
 			List<Gostop.Model.Action> actionList = new List<Gostop.Model.Action>();
-			ServerMachine.GetNewTurnActions(status, actionList);
+			GostopEngine.GetNewTurnChoices(status, actionList);
 			Console.WriteLine(Gostop.Model.Action.PrintActionList(actionList));
 		}
 
@@ -140,7 +140,7 @@ namespace GostopTest
 			Console.WriteLine("FloorCards before: " + Card.PrintCardSet(floorCards));
 			Console.WriteLine("HitCard: " + Card.PrintCard(hitCard));
 			Console.WriteLine("FlippedCard: " + Card.PrintCard(flippedCard));
-			ServerMachine.ManageFloorCards(floorCards, hitCard, flippedCard,
+			GostopEngine.ManageFloorCards(floorCards, hitCard, flippedCard,
 				cardsToBeTaken, ref stealPoint, ref fuckPoint, firstChoice, secondChoice);						
 			Console.WriteLine("FloorCards after: " + Card.PrintCardSet(floorCards));
 			Console.WriteLine("TakenCards: " + Card.PrintCardSet(cardsToBeTaken));
@@ -166,7 +166,7 @@ namespace GostopTest
 			Console.WriteLine("FlippedCard: " + Card.PrintCard(flippedCard));
 			Console.WriteLine("FirstChoice: " + Card.PrintCard(firstChoice));
 			Console.WriteLine("SecondChoice: " + Card.PrintCard(secondChoice));
-			ServerMachine.ManageFloorCards(floorCards, hitCard, flippedCard,
+			GostopEngine.ManageFloorCards(floorCards, hitCard, flippedCard,
 				cardsToBeTaken, ref stealPoint, ref fuckPoint, firstChoice, secondChoice);
 			Console.WriteLine("FloorCards after: " + Card.PrintCardSet(floorCards));
 			Console.WriteLine("TakenCards: " + Card.PrintCardSet(cardsToBeTaken));
@@ -190,7 +190,7 @@ namespace GostopTest
 			Console.WriteLine("FloorCards before: " + Card.PrintCardSet(floorCards));
 			Console.WriteLine("HitCard: " + Card.PrintCard(hitCard));
 			Console.WriteLine("FlippedCard: " + Card.PrintCard(flippedCard));
-			ServerMachine.ManageFloorCards(floorCards, hitCard, flippedCard,
+			GostopEngine.ManageFloorCards(floorCards, hitCard, flippedCard,
 				cardsToBeTaken, ref stealPoint, ref fuckPoint, firstChoice, secondChoice);
 			Console.WriteLine("FloorCards after: " + Card.PrintCardSet(floorCards));
 			Console.WriteLine("TakenCards: " + Card.PrintCardSet(cardsToBeTaken));
@@ -214,7 +214,7 @@ namespace GostopTest
 			Console.WriteLine("FloorCards before: " + Card.PrintCardSet(floorCards));
 			Console.WriteLine("HitCard: " + Card.PrintCard(hitCard));
 			Console.WriteLine("FlippedCard: " + Card.PrintCard(flippedCard));
-			ServerMachine.ManageFloorCards(floorCards, hitCard, flippedCard,
+			GostopEngine.ManageFloorCards(floorCards, hitCard, flippedCard,
 				cardsToBeTaken, ref stealPoint, ref fuckPoint, firstChoice, secondChoice);
 			Console.WriteLine("FloorCards after: " + Card.PrintCardSet(floorCards));
 			Console.WriteLine("TakenCards: " + Card.PrintCardSet(cardsToBeTaken));
@@ -238,7 +238,7 @@ namespace GostopTest
 			Console.WriteLine("FloorCards before: " + Card.PrintCardSet(floorCards));
 			Console.WriteLine("HitCard: " + Card.PrintCard(hitCard));
 			Console.WriteLine("FlippedCard: " + Card.PrintCard(flippedCard));
-			ServerMachine.ManageFloorCards(floorCards, hitCard, flippedCard,
+			GostopEngine.ManageFloorCards(floorCards, hitCard, flippedCard,
 				cardsToBeTaken, ref stealPoint, ref fuckPoint, firstChoice, secondChoice);
 			Console.WriteLine("FloorCards after: " + Card.PrintCardSet(floorCards));
 			Console.WriteLine("TakenCards: " + Card.PrintCardSet(cardsToBeTaken));
@@ -262,7 +262,7 @@ namespace GostopTest
 			Console.WriteLine("FloorCards before: " + Card.PrintCardSet(floorCards));
 			Console.WriteLine("HitCard: " + Card.PrintCard(hitCard));
 			Console.WriteLine("FlippedCard: " + Card.PrintCard(flippedCard));
-			ServerMachine.ManageFloorCards(floorCards, hitCard, flippedCard,
+			GostopEngine.ManageFloorCards(floorCards, hitCard, flippedCard,
 				cardsToBeTaken, ref stealPoint, ref fuckPoint, firstChoice, secondChoice);
 			Console.WriteLine("FloorCards after: " + Card.PrintCardSet(floorCards));
 			Console.WriteLine("TakenCards: " + Card.PrintCardSet(cardsToBeTaken));
