@@ -5,13 +5,13 @@ using System.Text;
 
 namespace Gostop.Model
 {
-	public class GostopEngine: IGostopEngine
+	public class GostopEngine : IGostopEngine
 	{
 		public GostopEngine()
 		{
 		}
 		// Null will be returned for ShowNextStep if a player's turn has not finished
-		private GameStatus _currentStatus;
+		private GameStatus _gameSatus;
 		// Accumulated events to show
 		private List<Action> _history = new List<Action>();
 		private List<Action> _choices = new List<Action>();
@@ -22,11 +22,23 @@ namespace Gostop.Model
 			{
 				Console.WriteLine("ServerMachine::Initialize(), initial status error");
 			}
-			_currentStatus = initialStatus;
+			_gameSatus = initialStatus;
 			// First turn is a new turn, so fill it with next turn actions
-			GetNewTurnChoices(_currentStatus, _choices);
-            return new GameStep(_history, _currentStatus, _choices);
+			GetNewTurnChoices(_gameSatus, _choices);
+			return new GameStep(_history, _gameSatus, _choices);
 		}
+
+		// Below are all possible cases
+		// voluntary actions (which may be options for choices) are marked by <>
+
+		// StartTurn -> <Hit | Shake | Bomb | FourCard>
+		// <FourCard> -> EndGame
+		// <Shake> -> <Hit | Shake | Bomb | FourCard>
+		// <Hit | Bomb> -> (UnFuck) -> FlipHit -> (Fuck, UnFuck, Kiss, Cleanup) -> Steal -> 
+		//					EndTurn | <Choose | GoOrStop>
+		// <Choose> -> <GoOrStop> | EndTurn
+		// <GoOrStop> -> Endturn
+		// EndTurn -> EndGame | StartTurn
 
 		public GameStep ProceedWith(int action)
 		{
@@ -36,18 +48,16 @@ namespace Gostop.Model
 				return null;
 			}
 
-            _history.Clear();
-
-            bool isEndOfTurn = true;
-
-			// Each case statement will create event, and modify game status
 			Action chosenAction = _choices[action];
+			_history.Clear();
+			_history.Add(chosenAction);
+			_choices.Clear();
 			switch (chosenAction.Type)
 			{
 				case ActionType.HitAction:
 					{
 						int cardId = ((HitAction)chosenAction).Card;
-						isEndOfTurn = ProcessHitCardAction(cardId);
+						ProcessHitAction(cardId);
 						break;
 					}
 				default:
@@ -58,22 +68,57 @@ namespace Gostop.Model
 					}
 			}
 
-			// Fill action list in the case of end of a turn 
-			if (isEndOfTurn == true)
-			{
-				GetNewTurnChoices(_currentStatus, _choices);
-			}
+			// Fill choice list in the case of end of a turn 
+			GetNewTurnChoices(_gameSatus, _choices);
 
-            return new GameStep(_history, _currentStatus, _choices);
-        }
+			return new GameStep(_history, _gameSatus, _choices);
+		}
 
 		// Return values indicates whether this action ends the turn
-		private bool ProcessHitCardAction(int cardId)
+		private bool ProcessHitAction(int cardId)
 		{
+			_gameSatus.FloorCards.Add(cardId);
+			Card hitCard = Card.GetCard(cardId);
+			HashSet<int> floorCards = _gameSatus.FloorCards;
+
+			_gameSatus.AHandCards.Remove(cardId);
+			floorCards.Add(cardId);
+			if (Card.CardsWithSameMonth(floorCards, hitCard.Month).Count == 3)
+			{
+				// has to choose
+				var options = Card.CardsWithSameMonth(floorCards, hitCard.Month);
+				options.Remove(cardId);
+				_choices.Add(new ChooseAction(_gameSatus.CurrentPlayer, options));
+				return false;
+			} else if (Card.CardsWithSameMonth(floorCards, hitCard.Month).Count == 4)
+			{
+				_history.Add(new UnFuckAction(_gameSatus.CurrentPlayer, cardId));
+			}
+
+			int flippedCardId = _gameSatus.HiddenCards.Last();
+			Card flippedCard = Card.GetCard(flippedCardId);
+			_gameSatus.HiddenCards.Remove(flippedCardId);
+			floorCards.Add(flippedCardId);
+			_history.Add(new FlipHitAction(_gameSatus.CurrentPlayer, cardId));
+
+			if (hitCard.Month == flippedCard.Month)
+			{
+				if (Card.CardsWithSameMonth(floorCards, flippedCard.Month).Count == 3)
+				{
+					_history.Add(new FuckAction(_gameSatus.CurrentPlayer, flippedCardId));
+				} else if (Card.CardsWithSameMonth(floorCards, flippedCard.Month).Count == 2)
+				{
+					_history.Add(new KissAction(_gameSatus.CurrentPlayer, flippedCardId));
+				}			
+			}
+			if (Card.CardsWithSameMonth(floorCards, flippedCard.Month).Count == 4)
+			{
+				_history.Add(new UnFuckAction(_gameSatus.CurrentPlayer, flippedCardId));
+			}
 			return true;
 		}
 
-		public static HashSet<int> GetShellsToBeStolen(HashSet<int> shells, 
+		public static HashSet<int> GetShellsToBeStolen(HashSet<int> shells,
 			int stealCount)
 		{
 			// Make sure all cards are shells
@@ -99,7 +144,7 @@ namespace Gostop.Model
 					doubleShells.Add(intSetIter.Current);
 				}
 			}
-			List<int> shellsInOrder = new List<int>(); 
+			List<int> shellsInOrder = new List<int>();
 			intSetIter = normalShells.GetEnumerator();
 			while (intSetIter.MoveNext())
 			{
@@ -116,7 +161,7 @@ namespace Gostop.Model
 			{
 				shellToBeStolen.Add(intListIter.Current);
 				stealCount--;
-			}			
+			}
 			return shellToBeStolen;
 		}
 
@@ -147,31 +192,29 @@ namespace Gostop.Model
 			{
 				case Player.A:
 					{
-						currentPlayerHandCards = curStatus.PlayerA_HandCards;
+						currentPlayerHandCards = curStatus.AHandCards;
 						break;
 					}
 				case Player.B:
 					{
-						currentPlayerHandCards = curStatus.PlayerB_HandCards;
+						currentPlayerHandCards = curStatus.BHandCards;
 						break;
 					}
 				case Player.C:
 					{
-						currentPlayerHandCards = curStatus.PlayerC_HandCards;
+						currentPlayerHandCards = curStatus.CHandCards;
 						break;
 					}
 			}
-			Dictionary<Month, HashSet<int>> sortedCards =
-				Card.SortCards(currentPlayerHandCards);
+			Dictionary<Month, HashSet<int>> sortedCards = Card.SortCards(currentPlayerHandCards);
 			HashSet<int> floorCards = curStatus.FloorCards;
-			Dictionary<Month, HashSet<int>>.Enumerator monthEnum =
-				sortedCards.GetEnumerator();
+			Dictionary<Month, HashSet<int>>.Enumerator monthEnum = sortedCards.GetEnumerator();
 			while (monthEnum.MoveNext())
 			{
 				int numCards = monthEnum.Current.Value.Count;
 				if (numCards < 3) // we have 1 or 2 cards in this month
 				{
-					HashSet<int>.Enumerator cardEnum = 
+					HashSet<int>.Enumerator cardEnum =
 						monthEnum.Current.Value.GetEnumerator();
 					while (cardEnum.MoveNext())
 					{
@@ -180,7 +223,7 @@ namespace Gostop.Model
 				}
 				else if (numCards == 3) // Hit, Shake or Bomb
 				{
-					int cardsOnFloor = 
+					int cardsOnFloor =
 						Card.CardsWithSameMonth(floorCards, monthEnum.Current.Key).Count;
 					if (cardsOnFloor == 0) // hit or shake
 					{
@@ -223,13 +266,13 @@ namespace Gostop.Model
 			Dictionary<Month, HashSet<int>> sortedCards = Card.SortCards(floorCards);
 			bool isSameMonth = Card.IsSameMonth(hitCard, flippedCard);
 			HashSet<int> cardsWithHitCard = sortedCards[Card.GetCard(hitCard).Month];
-			HashSet<int> cardsWithFlippedCard = 
+			HashSet<int> cardsWithFlippedCard =
 				sortedCards[Card.GetCard(flippedCard).Month];
 			if (isSameMonth == true) // Kiss, Fuck, Dadak are possible
 			{
 				#region
 				if (cardsWithHitCard.Count != cardsWithFlippedCard.Count ||
-					cardsWithHitCard.Count  > 2)
+					cardsWithHitCard.Count > 2)
 				{
 					Console.WriteLine("ManageFloorCards error");
 					return;

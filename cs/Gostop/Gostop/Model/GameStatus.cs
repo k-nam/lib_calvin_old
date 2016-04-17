@@ -10,36 +10,36 @@ namespace Gostop.Model
 		#region // Members
 		private Player _currentTurn;
 
-		private HashSet<int> _playerA_HandCards = null;
-		private HashSet<int> _playerB_HandCards = null;
-		private HashSet<int> _playerC_HandCards = null;
+		private HashSet<int> _aHandCards = null;
+		private HashSet<int> _bHandCards = null;
+		private HashSet<int> _cHandCards = null;
 
-		private HashSet<int> _playerA_TakenCards = null;
-		private HashSet<int> _playerB_TakenCards = null;
-		private HashSet<int> _playerC_TakenCards = null;
+		private HashSet<int> _aTakenCards = null;
+		private HashSet<int> _bTakenCards = null;
+		private HashSet<int> _cTakenCards = null;
 
 		private HashSet<int> _floorCards = null;
 		private HashSet<int> _hiddenCards = null;		
 
-		private int _playerA_GoCount = 0;
-		private int _playerB_GoCount = 0;
-		private int _playerC_GoCount = 0;
+		private int _aGoCount = 0;
+		private int _bGoCount = 0;
+		private int _cGoCount = 0;
 
-		private int _playerA_Point = 0;
-		private int _playerB_Point = 0;
-		private int _playerC_Point = 0;
+		private int _aPoint = 0;
+		private int _bPoint = 0;
+		private int _cPoint = 0;
 
-		private int _playerA_LastGoPoint = 0;
-		private int _playerB_LastGoPoint = 0;
-		private int _playerC_LastGoPoint = 0;
+		private int _aLastGoPoint = 0;
+		private int _bLastGoPoint = 0;
+		private int _cLastGoPoint = 0;
 
-		private int _playerA_ShakeCount = 0;
-		private int _playerB_ShakeCount = 0;
-		private int _playerC_ShakeCount = 0;			
+		private int _aShakeCount = 0;
+		private int _bShakeCount = 0;
+		private int _cShakeCount = 0;			
 		
-		private int _playerA_FuckCount = 0;
-		private int _playerB_FuckCount = 0;
-		private int _playerC_FuckCount = 0;
+		private int _aFuckCount = 0;
+		private int _bFuckCount = 0;
+		private int _cFuckCount = 0;
 		#endregion
 
 		#region // Getters
@@ -50,47 +50,47 @@ namespace Gostop.Model
 				return _currentTurn;
 			}
 		}
-		public HashSet<int> PlayerA_HandCards
+		public HashSet<int> AHandCards
 		{
 			get
 			{
-				return _playerA_HandCards;
+				return _aHandCards;
 			}
 		}
-		public HashSet<int> PlayerB_HandCards
+		public HashSet<int> BHandCards
 		{
 			get
 			{
-				return _playerB_HandCards;
+				return _bHandCards;
 			}
 		}
-		public HashSet<int> PlayerC_HandCards
+		public HashSet<int> CHandCards
 		{
 			get
 			{
-				return _playerC_HandCards;
+				return _cHandCards;
 			}
 		}
 
-		public HashSet<int> PlayerA_TakenCards
+		public HashSet<int> ATakenCards
 		{
 			get
 			{
-				return _playerA_HandCards;
+				return _aHandCards;
 			}
 		}
-		public HashSet<int> PlayerB_TakenCards
+		public HashSet<int> BTakenCards
 		{
 			get
 			{
-				return _playerB_HandCards;
+				return _bHandCards;
 			}
 		}
-		public HashSet<int> PlayerC_TakenCards
+		public HashSet<int> CTakenCards
 		{
 			get
 			{
-				return _playerC_HandCards;
+				return _cHandCards;
 			}
 		}
 
@@ -109,113 +109,113 @@ namespace Gostop.Model
 			}
 		}
 
-		public int PlayerA_GoCount
+		public int AGoCount
 		{
 			get
 			{
-				return _playerA_GoCount;
+				return _aGoCount;
 			}
 		}
-		public int PlayerB_GoCount
+		public int BGoCount
 		{
 			get
 			{
-				return _playerB_GoCount;
+				return _bGoCount;
 			}
 		}
-		public int PlayerC_GoCount
+		public int CGoCount
 		{
 			get
 			{
-				return _playerB_GoCount;
-			}
-		}
-
-		public int PlayerA_Point
-		{
-			get
-			{
-				return _playerA_Point;
-			}
-		}
-		public int PlayerB_Point
-		{
-			get
-			{
-				return _playerB_Point;
-			}
-		}
-		public int PlayerC_Point
-		{
-			get
-			{
-				return _playerB_Point;
+				return _bGoCount;
 			}
 		}
 
-		public int PlayerA_LastGoPoint
+		public int APoint
 		{
 			get
 			{
-				return _playerA_LastGoPoint;
+				return _aPoint;
 			}
 		}
-		public int PlayerB_LastGoPoint
+		public int BPoint
 		{
 			get
 			{
-				return _playerB_LastGoPoint;
+				return _bPoint;
 			}
 		}
-		public int PlayerC_LastGoPoint
+		public int CPoint
 		{
 			get
 			{
-				return _playerB_LastGoPoint;
-			}
-		}
-
-		public int PlayerA_ShakeCount
-		{
-			get
-			{
-				return _playerA_ShakeCount;
-			}
-		}
-		public int PlayerB_ShakeCount
-		{
-			get
-			{
-				return _playerB_ShakeCount;
-			}
-		}
-		public int PlayerC_ShakeCount
-		{
-			get
-			{
-				return _playerB_ShakeCount;
+				return _bPoint;
 			}
 		}
 
-		public int PlayerA_FuckCount
+		public int ALastGoPoint
 		{
 			get
 			{
-				return _playerA_FuckCount;
+				return _aLastGoPoint;
 			}
 		}
-		public int PlayerB_FuckCount
+		public int BLastGoPoint
 		{
 			get
 			{
-				return _playerB_FuckCount;
+				return _bLastGoPoint;
 			}
 		}
-		public int PlayerC_FuckCount
+		public int CLastGoPoint
 		{
 			get
 			{
-				return _playerB_FuckCount;
+				return _bLastGoPoint;
+			}
+		}
+
+		public int AShakeCount
+		{
+			get
+			{
+				return _aShakeCount;
+			}
+		}
+		public int BShakeCount
+		{
+			get
+			{
+				return _bShakeCount;
+			}
+		}
+		public int CShakeCount
+		{
+			get
+			{
+				return _bShakeCount;
+			}
+		}
+
+		public int AFuckCount
+		{
+			get
+			{
+				return _aFuckCount;
+			}
+		}
+		public int BFuckCount
+		{
+			get
+			{
+				return _bFuckCount;
+			}
+		}
+		public int CFuckCount
+		{
+			get
+			{
+				return _bFuckCount;
 			}
 		}
 		#endregion
@@ -225,15 +225,15 @@ namespace Gostop.Model
 		public GameStatus()
 		{
 			_currentTurn = Player.A;
-			_playerA_HandCards = new HashSet<int>();
-			_playerB_HandCards = new HashSet<int>();
-			_playerC_HandCards = new HashSet<int>();
-			_playerA_TakenCards = new HashSet<int>();
-			_playerB_TakenCards = new HashSet<int>();
-			_playerC_TakenCards = new HashSet<int>();
+			_aHandCards = new HashSet<int>();
+			_bHandCards = new HashSet<int>();
+			_cHandCards = new HashSet<int>();
+			_aTakenCards = new HashSet<int>();
+			_bTakenCards = new HashSet<int>();
+			_cTakenCards = new HashSet<int>();
 			_floorCards = new HashSet<int>();
 			_hiddenCards = new HashSet<int>();
-			ShuffleCards(_playerA_HandCards, _playerB_HandCards, _playerC_HandCards,
+			ShuffleCards(_aHandCards, _bHandCards, _cHandCards,
 				_floorCards, _hiddenCards);
 		}
 
@@ -241,12 +241,12 @@ namespace Gostop.Model
 			HashSet<int> playerC_HandCards, HashSet<int> floorCards)
 		{
 			_currentTurn = Player.A;
-			_playerA_HandCards = playerA_HandCards;
-			_playerB_HandCards = playerB_HandCards;
-			_playerC_HandCards = playerC_HandCards;
-			_playerA_TakenCards = new HashSet<int>();
-			_playerB_TakenCards = new HashSet<int>();
-			_playerC_TakenCards = new HashSet<int>();
+			_aHandCards = playerA_HandCards;
+			_bHandCards = playerB_HandCards;
+			_cHandCards = playerC_HandCards;
+			_aTakenCards = new HashSet<int>();
+			_bTakenCards = new HashSet<int>();
+			_cTakenCards = new HashSet<int>();
 			_floorCards = floorCards;
 			_hiddenCards = new HashSet<int>();
 			// Automatically calculate hidden cards;
@@ -276,15 +276,15 @@ namespace Gostop.Model
 		public bool isInitialStatus()
 		{
 			bool isInitial = true;
-			if (_playerA_HandCards.Count != Card.InitialHandCardsPerPlayer)
+			if (_aHandCards.Count != Card.InitialHandCardsPerPlayer)
 			{
 				isInitial = false;
 			}
-			if (_playerB_HandCards.Count != Card.InitialHandCardsPerPlayer)
+			if (_bHandCards.Count != Card.InitialHandCardsPerPlayer)
 			{
 				isInitial = false;
 			}
-			if (_playerC_HandCards.Count != Card.InitialHandCardsPerPlayer)
+			if (_cHandCards.Count != Card.InitialHandCardsPerPlayer)
 			{
 				isInitial = false;
 			}
@@ -308,20 +308,20 @@ namespace Gostop.Model
 
 			builder.AppendLine("<Hand cards>");
 			builder.Append("Player A: ");
-			builder.AppendLine(Card.PrintCardSet(_playerA_HandCards));
+			builder.AppendLine(Card.PrintCardSet(_aHandCards));
 			builder.Append("Player B: ");
-			builder.AppendLine(Card.PrintCardSet(_playerB_HandCards));
+			builder.AppendLine(Card.PrintCardSet(_bHandCards));
 			builder.Append("Player C: ");
-			builder.AppendLine(Card.PrintCardSet(_playerC_HandCards));
+			builder.AppendLine(Card.PrintCardSet(_cHandCards));
 			builder.AppendLine();
 
 			builder.AppendLine("<Taken cards>");
 			builder.Append("Player A: ");
-			builder.AppendLine(Card.PrintCardSet(_playerA_TakenCards));
+			builder.AppendLine(Card.PrintCardSet(_aTakenCards));
 			builder.Append("Player B: ");
-			builder.AppendLine(Card.PrintCardSet(_playerB_TakenCards));
+			builder.AppendLine(Card.PrintCardSet(_bTakenCards));
 			builder.Append("Player C: ");
-			builder.AppendLine(Card.PrintCardSet(_playerC_TakenCards));
+			builder.AppendLine(Card.PrintCardSet(_cTakenCards));
 			builder.AppendLine();
 
 			builder.AppendLine("<Floor cards>");
@@ -333,34 +333,34 @@ namespace Gostop.Model
 			builder.AppendLine();
 
 			builder.AppendLine("<GoCount>");
-			builder.AppendLine("Player A: " + _playerA_GoCount);
-			builder.AppendLine("Player B: " + _playerB_GoCount);
-			builder.AppendLine("Player C: " + _playerC_GoCount);
+			builder.AppendLine("Player A: " + _aGoCount);
+			builder.AppendLine("Player B: " + _bGoCount);
+			builder.AppendLine("Player C: " + _cGoCount);
 			builder.AppendLine();
 
 			builder.AppendLine("<Point>");
-			builder.AppendLine("Player A: " + _playerA_Point);
-			builder.AppendLine("Player B: " + _playerB_Point);
-			builder.AppendLine("Player C: " + _playerC_Point);
+			builder.AppendLine("Player A: " + _aPoint);
+			builder.AppendLine("Player B: " + _bPoint);
+			builder.AppendLine("Player C: " + _cPoint);
 			builder.AppendLine();
 
 			builder.AppendLine("<ShakeCount>");
-			builder.AppendLine("Player A: " + _playerA_ShakeCount);
-			builder.AppendLine("Player B: " + _playerB_ShakeCount);
-			builder.AppendLine("Player C: " + _playerC_ShakeCount);
+			builder.AppendLine("Player A: " + _aShakeCount);
+			builder.AppendLine("Player B: " + _bShakeCount);
+			builder.AppendLine("Player C: " + _cShakeCount);
 			builder.AppendLine();
 
 			builder.AppendLine("<FuckCount>");
-			builder.AppendLine("Player A: " + _playerA_FuckCount);
-			builder.AppendLine("Player B: " + _playerB_FuckCount);
-			builder.AppendLine("Player C: " + _playerC_FuckCount);
+			builder.AppendLine("Player A: " + _aFuckCount);
+			builder.AppendLine("Player B: " + _bFuckCount);
+			builder.AppendLine("Player C: " + _cFuckCount);
 			builder.AppendLine();
 			return builder.ToString();
 		}		
 
 		// Among integers 0 ~ 47, randomly assigns 7, 7, 7, 6 cards to each set
-		public static void ShuffleCards(HashSet<int> playerA_HandCards,
-			HashSet<int> playerB_HandCards, HashSet<int> playerC_HandCards,
+		public static void ShuffleCards(HashSet<int> aHandCards,
+			HashSet<int> bHandCards, HashSet<int> cHandCards,
 			HashSet<int> floorCards, HashSet<int> hiddenCards)
 		{
 			List<int> cardSet = new List<int>();
@@ -382,15 +382,15 @@ namespace Gostop.Model
 			{
 				if (i < Card.InitialHandCardsPerPlayer)	
 				{
-					playerA_HandCards.Add(cardSet[i]);
+					aHandCards.Add(cardSet[i]);
 				}
 				else if (i < Card.InitialHandCardsPerPlayer*2) 
 				{
-					playerB_HandCards.Add(cardSet[i]);
+					bHandCards.Add(cardSet[i]);
 				}
 				else if (i < Card.InitialHandCardsPerPlayer*3) 
 				{
-					playerC_HandCards.Add(cardSet[i]);
+					cHandCards.Add(cardSet[i]);
 				}
 				else if (i < Card.InitialHandCardsPerPlayer * 3 + Card.InitialFloorCardsNum)
 				{
