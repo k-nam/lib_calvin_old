@@ -87,7 +87,7 @@
     <Compile Include="CardTest.cs" />
     <Compile Include="GameStatusTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerMachineTest.cs" />
+    <Compile Include="GostopEngineTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gostop\Gostop.csproj">

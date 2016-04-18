@@ -7,7 +7,7 @@ using Gostop.Model;
 namespace GostopTest
 {
 	[TestClass]
-	public class ServerMachineTest
+	public class GostopEngineTest
 	{
 		#region // GetShellsToBeStolenTests
 		[TestMethod]
