@@ -148,13 +148,14 @@ namespace Gostop.Model {
 			return isInitial;
 		}
 
-		public int GetPoint(Player player) {
+		public int[] GetPoint(Player player) {
 			var takenCards = TakenCards(player);
 			return CalculatePoint(takenCards);
 
 		}
 
-		private int CalculatePoint(HashSet<int> cards) {
+		// return { totalPoint, lightPoint, shellPoint, numShells }
+		private int[] CalculatePoint(HashSet<int> cards) {
 			var trueLights = Card.GetCardsOfType(cards, CardType.TrueLight);
 			var rainLights = Card.GetCardsOfType(cards, CardType.RainLight);
 			var fiveBirdsTens = Card.GetCardsOfType(cards, CardType.FiveBirdsTen);
@@ -180,7 +181,7 @@ namespace Gostop.Model {
 			int numLights = trueLights.Count + rainLights.Count;
 			int numTens = fiveBirdsTens.Count + normalTens.Count;
 			int numFives = normalFives.Count + redFives.Count + blueFives.Count + grassFives.Count;
-			int shellCount = doubleShells.Count * 2 + normalShells.Count;
+			int numShells = doubleShells.Count * 2 + normalShells.Count;
 
 			if (numLights == 3) {
 				if (rainLights.Count == 1) {
@@ -217,8 +218,8 @@ namespace Gostop.Model {
 				grassFivesPoint = 3;
 			}
 
-			if (shellCount >= 10) {
-				shellsPoint = shellCount - 9;
+			if (numShells >= 10) {
+				shellsPoint = numShells - 9;
 			}
 
 			int totalPoint = lightsPoint + fiveBirdsPoint + tensPoint + fivesPoint +
@@ -227,7 +228,7 @@ namespace Gostop.Model {
 				totalPoint *= 2;
 			}
 
-			return totalPoint;
+			return new int[] { totalPoint, lightsPoint, shellsPoint, numShells };
 		}
 
 		public override string ToString() {

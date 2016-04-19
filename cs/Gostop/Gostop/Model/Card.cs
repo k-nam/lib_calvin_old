@@ -250,6 +250,13 @@ namespace Gostop.Model {
 			return cardsWithSameMonth;
 		}
 
+		public static HashSet<int> GetLightsFrom(HashSet<int> cards) {
+			var trueLights = GetCardsOfType(cards, CardType.TrueLight);
+			var rainLights = GetCardsOfType(cards, CardType.RainLight);
+			trueLights.UnionWith(rainLights);
+			return trueLights;
+		}
+
 		public static HashSet<int> GetShellsFrom(HashSet<int> cards) {
 			var shells = GetCardsOfType(cards, CardType.NormalShell);
 			var doubleShells = GetCardsOfType(cards, CardType.DoubleShell);

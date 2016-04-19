@@ -17,7 +17,10 @@ namespace Gostop.Model {
 		private List<int> _hitCardChooseOption = null;
 		private List<int> _flippedCardChooseOption = null;
 
-		private bool _isGameFinished = false;
+		private bool _isFourCardDeclared = false;
+
+		int _moneyToTakeFromOppnent1 = 0;
+		int _moneyToTakeFromOppnent2 = 0;
 
 		public GameStep Initialize(GameStatus initialStatus) {
 			Debug.Assert(initialStatus.IsInitialStatus());
@@ -50,26 +53,31 @@ namespace Gostop.Model {
 			_history.Clear();
 			_history.Add(chosenAction);
 			_choices.Clear();
-			bool isTurnFinished = false;
+			bool isCardPlayFinished = false;
 
 			switch (chosenAction.Type) {
 				case ActionType.HitAction: {
 						int cardId = ((HitAction)chosenAction).Card;
-						isTurnFinished = ProcessHitAction(cardId);
+						isCardPlayFinished = ProcessHitAction(cardId);
 						break;
 					}
 				case ActionType.VoidHitAction: {
-						isTurnFinished = ProcessVoidHitAction();
+						isCardPlayFinished = ProcessVoidHitAction();
 						break;
 					}
 				case ActionType.ChooseAction: {
 						var cards = ((ChooseAction)chosenAction).Card;
-						isTurnFinished = ProcessChooseAction(cards);
+						isCardPlayFinished = ProcessChooseAction(cards);
 						break;
+					}
+				case ActionType.GoOrStopAction: {
+						bool isGo = ((GoOrStopAction)chosenAction).IsGo;
+						ProcessGoOrStopAction(isGo);
+						return new GameStep(_history, _gameStatus, _choices);
 					}
 				case ActionType.BombAction: {
 						var cards = ((BombAction)chosenAction).Cards;
-						isTurnFinished = ProcessBombAction(cards);
+						isCardPlayFinished = ProcessBombAction(cards);
 						break;
 					}
 				default: {
@@ -79,18 +87,18 @@ namespace Gostop.Model {
 			}
 
 			// Fill choice list in the case of end of a turn 
-			if (isTurnFinished) {
-				var player = _gameStatus.CurrentPlayer;
-				if (_gameStatus.GetPoint(player) > _gameStatus.LastGoPoint[(int)player]) { // earned point
-					if (_isGameFinished) { // Go is not an option
+			var player = _gameStatus.CurrentPlayer;
+			if (isCardPlayFinished) {
+				if (_gameStatus.GetPoint(player)[0] > _gameStatus.LastGoPoint[(int)player]) { // earned point
+					if (IsGameFinished()) { // forced to Stop and win
 
 					} else {
 						_choices.Add(new GoOrStopAction(player, true));
 						_choices.Add(new GoOrStopAction(player, false));
-						_gameStatus.LastGoPoint[(int)player] = _gameStatus.GetPoint(player);
+						_gameStatus.LastGoPoint[(int)player] = _gameStatus.GetPoint(player)[0];
 					}
-				} else {
-					if (_isGameFinished) {
+				} else { // didn't earn point
+					if (IsGameFinished()) { // draw game
 
 					} else {
 						_gameStatus.ChangeTurn();
@@ -99,6 +107,8 @@ namespace Gostop.Model {
 				}
 			} else {
 				// choices should have been filled
+				// Shake ->  StartTurn
+				// Hit, VoidHit, Choose -> Choose
 			}
 
 			return new GameStep(_history, _gameStatus, _choices);
@@ -290,9 +300,65 @@ namespace Gostop.Model {
 			}
 		}
 
-		private bool ProcessGoOrStopAction(bool isGo) {
+		private void ProcessGoOrStopAction(bool isGo) {
+			var player = _gameStatus.CurrentPlayer;
+			_history.Add(new EndTurnAction(player));
+			if (isGo) {
+				_gameStatus.GoCount[(int)player]++;
+				_gameStatus.ChangeTurn();
+				GetNewTurnChoices(_gameStatus, _choices);
+			} else {
+				int[] cardPoint = _gameStatus.GetPoint(player);
+				int goCount = _gameStatus.GoCount[(int)player];
+				int goMultiplier = 1;
+				if (goCount >= 3) {
+					goMultiplier = (int)Math.Pow(2, goCount - 2);
+				}
+				int totalPoint = (cardPoint[0] + goCount) * goMultiplier;
 
-			return true;
+				bool hasLightPoint = cardPoint[1] > 0 ? true : false;
+				bool hasShellPoint = cardPoint[2] > 0 ? true : false;
+				int lightMultiplier1 = 1;
+				int lightMultiplier2 = 1;
+				int shellMultipler1 = 1;
+				int shellMultipler2 = 1;
+
+				var opponent1 = GetOthers(player)[0];
+				var opponent2 = GetOthers(player)[1];
+				var cards1 = _gameStatus.TakenCards(opponent1);
+				var cards2 = _gameStatus.TakenCards(opponent2);
+
+				if (hasLightPoint && Card.GetLightsFrom(cards1).Count == 0) {
+					lightMultiplier1 = 2;
+				}
+				if (hasLightPoint && Card.GetLightsFrom(cards2).Count == 0) {
+					lightMultiplier2 = 2;
+				}
+				if (hasShellPoint && _gameStatus.GetPoint(opponent1)[3] <= 5) {
+					shellMultipler1 = 2;
+				}
+				if (hasShellPoint && _gameStatus.GetPoint(opponent2)[3] <= 5) {
+					shellMultipler2 = 2;
+				}
+
+				var moneyToTake1 = totalPoint * lightMultiplier1 * shellMultipler1;
+				var moneyToTake2 = totalPoint * lightMultiplier2 * shellMultipler2;
+
+				// somebody said Go before now; he has to pay all the money
+				var lastGoPlayer = _gameStatus.LastGoPlayer;
+				if (_gameStatus.GoCount[(int)lastGoPlayer] != 0) {		
+					if (lastGoPlayer == opponent1) {
+						moneyToTake1 += moneyToTake2;
+						moneyToTake2 = 0;
+					} else {
+						moneyToTake2 += moneyToTake1;
+						moneyToTake1 = 0;
+					}
+				}
+
+				_history.Add(new TakeMoneyAction(player, opponent1, opponent2, moneyToTake1, moneyToTake2));
+				_history.Add(new EndGameAction(player));
+			}
 		}
 
 		private bool ProcessShakeAction(HashSet<int> cards) {
@@ -318,6 +384,16 @@ namespace Gostop.Model {
 			SetSubtract(_gameStatus.HandCards(Player.A), cards);
 			_gameStatus.FloorCards.UnionWith(cards);
 			return ProcessHitAction(hitCard);
+		}
+
+		private bool IsGameFinished() {
+			if (_isFourCardDeclared) {
+				return true;
+			} else if (_gameStatus.HiddenCards.Count == 0) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 		private HashSet<int> GetCardsToSteal(Player player, int stealPoint) {
