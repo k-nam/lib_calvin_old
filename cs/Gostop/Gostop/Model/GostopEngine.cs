@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace Gostop.Model {
 	public class GostopEngine : IGostopEngine {
@@ -12,13 +13,14 @@ namespace Gostop.Model {
 		// Accumulated events to show
 		private List<Action> _history = new List<Action>();
 		private List<Action> _choices = new List<Action>();
-		Month _lastHitMonth;
-		Month _lastFlipHitMonth;
+
+		private List<int> _hitCardChooseOption = null;
+		private List<int> _flippedCardChooseOption = null;
+
+		private bool _isGameFinished = false;
 
 		public GameStep Initialize(GameStatus initialStatus) {
-			if (!initialStatus.isInitialStatus()) {
-				Console.WriteLine("ServerMachine::Initialize(), initial status error");
-			}
+			Debug.Assert(initialStatus.isInitialStatus());
 			_gameSatus = initialStatus;
 			// First turn is a new turn, so fill it with next turn actions
 			GetNewTurnChoices(_gameSatus, _choices);
@@ -48,41 +50,60 @@ namespace Gostop.Model {
 			_history.Clear();
 			_history.Add(chosenAction);
 			_choices.Clear();
+			bool isTurnFinished = false; 
+
 			switch (chosenAction.Type) {
 				case ActionType.HitAction: {
 						int cardId = ((HitAction)chosenAction).Card;
-						ProcessHitAction(cardId);
+						isTurnFinished = ProcessHitAction(cardId);
+						break;
+					}
+				case ActionType.VoidHitAction: {
+						isTurnFinished = ProcessVoidHitAction();
+						break;
+					}
+				case ActionType.ChooseAction: {
+						var cards = ((ChooseAction)chosenAction).Card;
+						isTurnFinished = ProcessChooseAction(cards);
+						break;
+					}
+				case ActionType.BombAction: {
+						var cards = ((BombAction)chosenAction).Cards;
+						isTurnFinished = ProcessBombAction(cards);
 						break;
 					}
 				default: {
-						Console.WriteLine("ServerMachine::ProceedWith(), " +
-							"unhandled case in switch statement");
-						return null;
+						Debug.Assert(false);
+						break;
 					}
 			}
 
 			// Fill choice list in the case of end of a turn 
-			GetNewTurnChoices(_gameSatus, _choices);
+			if (isTurnFinished) {
+				if (_isGameFinished) {
+
+				} else {
+					_gameSatus.changeTurn();
+					GetNewTurnChoices(_gameSatus, _choices);
+				}
+			} else {
+				// choices should have been filled
+			}
 
 			return new GameStep(_history, _gameSatus, _choices);
 		}
 
 		// Return values indicates whether this action ends the turn
 		private bool ProcessHitAction(int cardId) {
-			_gameSatus.FloorCards.Add(cardId);
+			var player = _gameSatus.CurrentPlayer;
 			Card hitCard = Card.GetCard(cardId);
 			HashSet<int> floorCards = _gameSatus.FloorCards;
-			bool hasToChoose = false;
-			Action hitCardChooseAction = null;
-			Action flippedCardChooseAction = null;
 			HashSet<int> cardsToBeTaken = new HashSet<int>();
 			int stealPoint = 0;
 
 			// Hit
-			_gameSatus.AHandCards.Remove(cardId);
+			_gameSatus.HandCards(player).Remove(cardId);
 			floorCards.Add(cardId);
-			_history.Add(new HitAction(_gameSatus.CurrentPlayer, cardId));
-			_lastHitMonth = hitCard.Month;
 
 			var hitCardSet = Card.CardsWithSameMonth(floorCards, hitCard.Month);
 
@@ -92,7 +113,7 @@ namespace Gostop.Model {
 				// one more card will be choosed and taken
 				cardsToBeTaken.Add(cardId);
 			} else if (hitCardSet.Count == 4) {
-				_history.Add(new UnFuckAction(_gameSatus.CurrentPlayer, cardId));
+				_history.Add(new UnFuckAction(player, cardId));
 				stealPoint++;
 				cardsToBeTaken.UnionWith(hitCardSet);
 			}
@@ -102,71 +123,208 @@ namespace Gostop.Model {
 			Card flippedCard = Card.GetCard(flippedCardId);
 			_gameSatus.HiddenCards.Remove(flippedCardId);
 			floorCards.Add(flippedCardId);
-			_history.Add(new FlipHitAction(_gameSatus.CurrentPlayer, cardId));
-			_lastFlipHitMonth = flippedCard.Month;
+			_history.Add(new FlipHitAction(player, flippedCardId));
 
 			var flippedCardSet = Card.CardsWithSameMonth(floorCards, flippedCard.Month);
 
 			if (hitCard.Month == flippedCard.Month) {
 				if (flippedCardSet.Count == 2) {
-					_history.Add(new KissAction(_gameSatus.CurrentPlayer, flippedCardId));
+					_history.Add(new KissAction(player, flippedCardId));
 					stealPoint++;
 					cardsToBeTaken.UnionWith(flippedCardSet);
 				} else if (flippedCardSet.Count == 3) {
-					_history.Add(new FuckAction(_gameSatus.CurrentPlayer, flippedCardId));
-					_gameSatus.AFuckCount++;
+					_history.Add(new FuckAction(player, flippedCardId));
+					_gameSatus.FuckCount[(int)Player.A]++;
 					cardsToBeTaken.Clear();
 				} else if (flippedCardSet.Count == 4) {
-					_history.Add(new DadakAction(_gameSatus.CurrentPlayer, flippedCardId));
+					_history.Add(new DadakAction(player, flippedCardId));
 					stealPoint++;
 					cardsToBeTaken.UnionWith(flippedCardSet);
 				}
 			} else // hit and flip card are different month
 				{
 				if (flippedCardSet.Count == 4) {
-					_history.Add(new UnFuckAction(_gameSatus.CurrentPlayer, flippedCardId));
+					_history.Add(new UnFuckAction(player, flippedCardId));
 					stealPoint++;
 					cardsToBeTaken.UnionWith(flippedCardSet);
 				}
 				if (hitCardSet.Count == 3) {
 					// has to choose
-					var options = Card.CardsWithSameMonth(floorCards, flippedCard.Month);
-					options.Remove(cardId);
-					hitCardChooseAction = new ChooseAction(_gameSatus.CurrentPlayer, options);
-					hasToChoose = true;
+					_hitCardChooseOption = hitCardSet.ToList();
+					_hitCardChooseOption.Remove(cardId);
 					cardsToBeTaken.Add(cardId);
 				}
 				if (flippedCardSet.Count == 3) {
 					// has to choose
-					var options = Card.CardsWithSameMonth(floorCards, hitCard.Month);
-					options.Remove(flippedCardId);
-					flippedCardChooseAction = new ChooseAction(_gameSatus.CurrentPlayer, options);
-					hasToChoose = true;
+					_flippedCardChooseOption = flippedCardSet.ToList();
+					_flippedCardChooseOption.Remove(flippedCardId);
 					cardsToBeTaken.Add(flippedCardId);
 				}
 			}
 
 			// Take
-			_history.Add(new TakeAction(_gameSatus.CurrentPlayer, cardsToBeTaken));
+			if (cardsToBeTaken.Count != 0) {
+				floorCards = SetSubtract(floorCards, cardsToBeTaken);
+				_gameSatus.TakenCards(player).UnionWith(cardsToBeTaken);
+				_history.Add(new TakeAction(player, cardsToBeTaken));
+			}
 
+			// Cleanup
+			if (floorCards.Count == 0) {
+				_history.Add(new CleanupAction(player));
+				stealPoint++;
+			}
 
+			// Steal
+			if (stealPoint > 0) { 
+				_history.Add(new StealAction(player, GetCardsToSteal(player, stealPoint)));
+			}
 
-			if (hasToChoose) {
-				_choices.Add(hitCardChooseAction);
+			// Choose
+			if (_hitCardChooseOption != null) {
+				var chooseAction1 = new ChooseAction(player, _hitCardChooseOption[0]);
+				var chooseAction2 = new ChooseAction(player, _hitCardChooseOption[1]);
+				_choices.Add(chooseAction1);
+				_choices.Add(chooseAction2);
+				return false;
+			} else if (_flippedCardChooseOption != null) {
+				var chooseAction1 = new ChooseAction(player, _flippedCardChooseOption[0]);
+				var chooseAction2 = new ChooseAction(player, _flippedCardChooseOption[1]);
+				_choices.Add(chooseAction1);
+				_choices.Add(chooseAction2);
 				return false;
 			} else {
 				return true; // end turn
 			}
 		}
 
-		public static HashSet<int> GetShellsToBeStolen(HashSet<int> shells,
-			int stealCount) {
-			// Make sure all cards are shells
-			if (!AreAllShells(shells)) {
-				Console.WriteLine("ServerMachine::GetShellsToBeStolen(), " +
-					"not all shells");
-				return null;
+		private bool ProcessVoidHitAction() {
+			// Flip
+			int flippedCardId = _gameSatus.HiddenCards.Last();
+			Card flippedCard = Card.GetCard(flippedCardId);
+			var floorCards = _gameSatus.FloorCards;
+			var player = _gameSatus.CurrentPlayer;
+			int stealPoint = 0;
+
+			_gameSatus.HiddenCards.Remove(flippedCardId);
+			floorCards.Add(flippedCardId);
+			_history.Add(new FlipHitAction(player, flippedCardId));
+
+			var cardsToBeTaken = new HashSet<int>();
+			var flippedCardSet = Card.CardsWithSameMonth(floorCards, flippedCard.Month);
+
+			if (flippedCardSet.Count == 2) {
+				cardsToBeTaken.UnionWith(flippedCardSet);
+			} else if (flippedCardSet.Count == 3) {
+				_flippedCardChooseOption = flippedCardSet.ToList();
+				_flippedCardChooseOption.Remove(flippedCardId);
+				cardsToBeTaken.Add(flippedCardId);
+			} else if (flippedCardSet.Count == 4) {
+				_history.Add(new UnFuckAction(player, flippedCardId));
+				stealPoint++;
+				cardsToBeTaken.UnionWith(flippedCardSet);
 			}
+
+			// Take
+			if (cardsToBeTaken.Count != 0) {
+				floorCards = SetSubtract(floorCards, cardsToBeTaken);
+				_gameSatus.TakenCards(player).UnionWith(cardsToBeTaken);
+				_history.Add(new TakeAction(player, cardsToBeTaken));
+			}
+
+			// Cleanup
+			if (floorCards.Count == 0) {
+				_history.Add(new CleanupAction(player));
+				stealPoint++;
+			}
+
+			// Steal
+			if (stealPoint > 0) {
+				_history.Add(new StealAction(player, GetCardsToSteal(player, stealPoint)));
+			}
+
+			// Choose
+			if (_flippedCardChooseOption != null) {
+				var chooseAction1 = new ChooseAction(player, _flippedCardChooseOption[0]);
+				var chooseAction2 = new ChooseAction(player, _flippedCardChooseOption[1]);
+				_choices.Add(chooseAction1);
+				_choices.Add(chooseAction2);
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+		private bool ProcessChooseAction(int cardId) {
+			Debug.Assert(_gameSatus.FloorCards.Contains(cardId));
+			var player = _gameSatus.CurrentPlayer;
+			_gameSatus.FloorCards.Remove(cardId);
+			_gameSatus.HandCards(player).Add(cardId);
+
+			if (_hitCardChooseOption != null) { // we just chose hit card option
+				_hitCardChooseOption = null;
+				if (_flippedCardChooseOption != null) { // we should choose one more time
+					var chooseAction1 = new ChooseAction(player, _flippedCardChooseOption[0]);
+					var chooseAction2 = new ChooseAction(player, _flippedCardChooseOption[1]);
+					_choices.Add(chooseAction1);
+					_choices.Add(chooseAction2);
+					return false;
+				} else {
+					return true;
+				}
+			} else { // we just chose flipped card option
+				Debug.Assert(_flippedCardChooseOption != null);
+				_flippedCardChooseOption = null;
+				return true;
+			}
+		}
+
+		private bool ProcessGoOrStopAction(bool isGo) {
+
+			return true;
+		}
+
+		private bool ProcessShakeAction(HashSet<int> cards) {
+			Debug.Assert(cards.Count == 3);
+			var month = Card.GetCard(cards.First()).Month;
+			Debug.Assert(Card.CardsWithSameMonth(cards, month).Count == 3);
+			var player = _gameSatus.CurrentPlayer;
+
+			_gameSatus.ShakeCount[(int)player]++;
+			_gameSatus.ShakenMonths.Add(month);
+			return false;
+		}
+
+		private bool ProcessBombAction(HashSet<int> cards) {		
+			var month = Card.GetCard(cards.First()).Month;
+			Debug.Assert(Card.CardsWithSameMonth(_gameSatus.FloorCards, month).Count == 1);
+			ProcessShakeAction(cards);
+
+			// Reduce to ProcessHitAction by laying two of three cards to floor
+			// and consider one card as hit card
+			int hitCard = cards.First();
+			cards.Remove(hitCard);
+			SetSubtract(_gameSatus.HandCards(Player.A), cards);
+			_gameSatus.FloorCards.UnionWith(cards);
+			return ProcessHitAction(hitCard);
+		}
+
+		private HashSet<int> GetCardsToSteal(Player player, int stealPoint) {
+			var cardsToBeStolen = new HashSet<int>();
+			var other1 = GetOthers(player)[0];
+			var other2 = GetOthers(player)[1];
+			var shell1 = Card.GetShellsFrom(_gameSatus.TakenCards(other1));
+			var shell2 = Card.GetShellsFrom(_gameSatus.TakenCards(other2));
+			var stolen1 = GetShellsToBeStolen(shell1, stealPoint);
+			var stolen2 = GetShellsToBeStolen(shell2, stealPoint);
+			cardsToBeStolen.UnionWith(stolen1);
+			cardsToBeStolen.UnionWith(stolen2);
+			return cardsToBeStolen;
+		}
+		public static HashSet<int> GetShellsToBeStolen(HashSet<int> shells,
+			int stealPoint) {
+			// Make sure all cards are shells
+			Debug.Assert(AreAllShells(shells));
 			// Strategy: sorts shells into normal shells and double shells, 
 			// and return first 'stealCount' cards
 			HashSet<int> normalShells = new HashSet<int>();
@@ -190,9 +348,9 @@ namespace Gostop.Model {
 			}
 			List<int>.Enumerator intListIter = shellsInOrder.GetEnumerator();
 			HashSet<int> shellToBeStolen = new HashSet<int>();
-			while (intListIter.MoveNext() && stealCount > 0) {
+			while (intListIter.MoveNext() && stealPoint > 0) {
 				shellToBeStolen.Add(intListIter.Current);
-				stealCount--;
+				stealPoint--;
 			}
 			return shellToBeStolen;
 		}
@@ -211,25 +369,10 @@ namespace Gostop.Model {
 
 		// 2010-09-26: Should only be used when end of turn has come
 		// e.g., this can not produce ChooseAction nor GoStopAction
-		public static void GetNewTurnChoices(GameStatus curStatus,
-			List<Action> choices) {
+		public static void GetNewTurnChoices(GameStatus curStatus, List<Action> choices) {
 			choices.Clear();
 			Player currentPlayer = curStatus.CurrentPlayer;
-			HashSet<int> currentPlayerHandCards = null;
-			switch (currentPlayer) {
-				case Player.A: {
-						currentPlayerHandCards = curStatus.AHandCards;
-						break;
-					}
-				case Player.B: {
-						currentPlayerHandCards = curStatus.BHandCards;
-						break;
-					}
-				case Player.C: {
-						currentPlayerHandCards = curStatus.CHandCards;
-						break;
-					}
-			}
+			HashSet<int> currentPlayerHandCards = curStatus.HandCards(currentPlayer);
 			Dictionary<Month, HashSet<int>> sortedCards = Card.SortCards(currentPlayerHandCards);
 			HashSet<int> floorCards = curStatus.FloorCards;
 			Dictionary<Month, HashSet<int>>.Enumerator monthEnum = sortedCards.GetEnumerator();
@@ -391,6 +534,16 @@ namespace Gostop.Model {
 				remain.Remove(enumerator.Current);
 			}
 			return remain;
+		}
+
+		private Player[] GetOthers(Player player) {
+			if (player == Player.A) {
+				return new Player[] { Player.B, Player.C };
+			} else if (player == Player.B) {
+				return new Player[] { Player.C, Player.A };
+			} else { 
+				return new Player[] { Player.A, Player.B };
+			}
 		}
 	}
 }

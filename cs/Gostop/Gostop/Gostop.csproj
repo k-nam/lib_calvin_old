@@ -74,7 +74,7 @@
     <Compile Include="Model\Card.cs" />
     <Compile Include="Model\GameStatus.cs" />
     <Compile Include="Model\IGostopEngine.cs" />
-    <Compile Include="Model\Players.cs" />
+    <Compile Include="Model\Player.cs" />
     <Compile Include="Model\GostopEngine.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

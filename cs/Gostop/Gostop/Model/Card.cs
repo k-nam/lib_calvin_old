@@ -280,6 +280,25 @@ namespace Gostop.Model
 			return cardsWithSameMonth;
 		}
 
+		public static HashSet<int> GetShellsFrom(HashSet<int> cards) {
+			var shells = GetCardsOfType(cards, CardType.NormalShell);
+			var doubleShells = GetCardsOfType(cards, CardType.DoubleShell);
+			shells.UnionWith(doubleShells);
+			return shells;
+		}
+
+		public static HashSet<int> GetCardsOfType(HashSet<int> cards, CardType type) {
+			HashSet<int> result = new HashSet<int>();
+			var iter = cards.GetEnumerator();
+			while (iter.MoveNext()) {
+				var thisType = Card.GetCard(iter.Current).CardType;
+				if (thisType == type) {
+					result.Add(iter.Current);
+				}
+			}
+			return result;
+		}
+
 		// 2010-09-26
 		public static Dictionary<Month, HashSet<int>> SortCards(HashSet<int> cards)
 		{

@@ -9,13 +9,14 @@ namespace Gostop.Model {
 	// But from the game engine's point of view, those two need not be distinguished
 	public enum ActionType {
 		HitAction,
+		VoidHitAction, 
 		FlipHitAction, // automatic
 		FuckAction, // automatic
 		UnFuckAction, // automatic
 		DadakAction, // automatic
 		KissAction, // automatic
-		CleanupAction, // automatic
 		TakeAction, // automatic
+		CleanupAction, // automatic
 		StealAction, // automatic
 		ChooseAction,
 		GoOrStopAction,
@@ -44,14 +45,24 @@ namespace Gostop.Model {
 			switch (action) {
 				case ActionType.HitAction:
 					return "HitAction";
+				case ActionType.VoidHitAction:
+					return "VoidHitAction";
 				case ActionType.FlipHitAction:
 					return "FlipHitAction";
 				case ActionType.FuckAction:
 					return "FuckAction";
 				case ActionType.UnFuckAction:
 					return "UnFuckAction";
+				case ActionType.DadakAction:
+					return "DadakAction";
+				case ActionType.KissAction:
+					return "KissAction";
+				case ActionType.TakeAction:
+					return "TakeAction";
 				case ActionType.CleanupAction:
 					return "CleanupAction";
+				case ActionType.StealAction:
+					return "StealAction";
 				case ActionType.ChooseAction:
 					return "ChooseCardAction";
 				case ActionType.GoOrStopAction:
@@ -62,6 +73,8 @@ namespace Gostop.Model {
 					return "BombAction";
 				case ActionType.FourCardAction:
 					return "FourCardAction";
+				case ActionType.EndTurnAction:
+					return "EndTurnAction";
 			}
 			return null;
 		}
@@ -95,7 +108,14 @@ namespace Gostop.Model {
 			return (base.ToString() + ": " + Model.Card.GetCard(_card));
 		}
 	}
-
+	// just flip (only possible after bomb)
+	public class VoidHitAction : Action {
+		private int _card;
+		public VoidHitAction(Player player) {
+			_player = player;
+			_type = ActionType.VoidHitAction;
+		}
+	}
 	public class FlipHitAction : Action {
 		private int _card;
 		public FlipHitAction(Player player, int card) {
@@ -182,9 +202,6 @@ namespace Gostop.Model {
 			_player = player;
 			_type = ActionType.CleanupAction;
 		}
-		public override string ToString() {
-			return (base.ToString());
-		}
 	}
 	public class TakeAction : Action {
 		private HashSet<int> _cards;
@@ -219,19 +236,19 @@ namespace Gostop.Model {
 		}
 	}
 	public class ChooseAction : Action {
-		private HashSet<int> _cards;
-		public ChooseAction(Player player, HashSet<int> cards) {
+		private int _card;
+		public ChooseAction(Player player, int card) {
 			_player = player;
 			_type = ActionType.ChooseAction;
-			_cards = cards;
+			_card = card;
 		}
-		public HashSet<int> Card {
+		public int Card {
 			get {
-				return _cards;
+				return _card;
 			}
 		}
 		public override string ToString() {
-			return (base.ToString() + ": " + Model.Card.PrintCardSet(_cards));
+			return (base.ToString() + ": " + Model.Card.GetCard(_card));
 		}
 	}
 
@@ -306,9 +323,6 @@ namespace Gostop.Model {
 		public EndTurnAction(Player player) {
 			_player = player;
 			_type = ActionType.EndTurnAction;
-		}
-		public override string ToString() {
-			return (base.ToString());
 		}
 	}
 }
