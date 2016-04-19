@@ -116,7 +116,6 @@ namespace Gostop.Model {
 	}
 	// just flip (only possible after bomb)
 	public class VoidHitAction : Action {
-		private int _card;
 		public VoidHitAction(Player player) {
 			_player = player;
 			_type = ActionType.VoidHitAction;
@@ -270,6 +269,9 @@ namespace Gostop.Model {
 				return _isGo;
 			}
 		}
+		public override string ToString() {
+			return (base.ToString() + ": " +( _isGo ? "GO" : "STOP"));
+		}
 	}
 
 	public class ShakeAction : Action {
@@ -337,15 +339,32 @@ namespace Gostop.Model {
 		Player _opponent2;
 		int _money1;
 		int _money2;
+		bool _lightCritical1;
+		bool _lightCritical2;
+		bool _shellCritical1;
+		bool _shellCritical2;
 
 		public TakeMoneyAction(Player player, Player opponent1, Player opponent2,
-														int money1, int money2) {
+														int money1, int money2,
+														bool lightCritical1, bool lightCritical2,
+														bool shellCritical1, bool shellCritical2) {
 			_player = player;
 			_type = ActionType.TakeMoneyAction;
 			_opponent1 = opponent1;
 			_opponent2 = opponent2;
 			_money1 = money1;
 			_money2 = money2;
+			_lightCritical1 = lightCritical1;
+			_lightCritical2 = lightCritical2;
+			_shellCritical1 = shellCritical1;
+			_shellCritical2 = shellCritical2;
+		}
+		public override string ToString() {
+			return base.ToString() + "\n" +
+				"From " + _opponent1 + ": " + _money1 + " 원. 광박: " +
+				_lightCritical1 + " 피박: " + _shellCritical1 + "\n" +
+				"From " + _opponent2 + ": " + _money2 + " 원. 광박: " +
+				_lightCritical2 + " 피박: " + _shellCritical2;
 		}
 	}
 

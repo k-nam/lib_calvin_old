@@ -36,6 +36,7 @@ namespace Gostop.Model {
 		public const int NumberOfTotalCards = 48;
 		public const int InitialHandCardsPerPlayer = 7;
 		public const int InitialFloorCardsNum = 6;
+		public const int InitialHiddenCardsNum = 21;
 
 		public Card(Month month, CardType cardType, string name) {
 			_month = month;

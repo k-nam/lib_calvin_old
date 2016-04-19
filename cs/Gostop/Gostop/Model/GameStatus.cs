@@ -84,6 +84,11 @@ namespace Gostop.Model {
 			ShakeCount = new int[3];
 			FuckCount = new int[3];
 			ShakenMonths = new HashSet<Month>();
+
+			// at least 3 is needed to GoOrStop
+			LastGoPoint[0] = 2;
+			LastGoPoint[1] = 2;
+			LastGoPoint[2] = 2;
 		}
 
 		public GameStatus() {
@@ -142,7 +147,7 @@ namespace Gostop.Model {
 			if (FloorCards.Count != Card.InitialFloorCardsNum) {
 				isInitial = false;
 			}
-			if (HiddenCards.Count != 0) {
+			if (HiddenCards.Count != Card.InitialHiddenCardsNum) {
 				isInitial = false;
 			}
 			return isInitial;
@@ -234,8 +239,10 @@ namespace Gostop.Model {
 		public override string ToString() {
 			StringBuilder builder = new StringBuilder();
 
-			builder.AppendLine("Current turn: " + CurrentPlayer);
-			builder.AppendLine();
+			//builder.AppendLine("Current turn: " + CurrentPlayer);
+			//builder.AppendLine();
+
+			builder.AppendLine("----------------------------------------------------------------");
 
 			builder.AppendLine("<Hand cards>");
 			builder.Append("Player A: ");
@@ -259,32 +266,34 @@ namespace Gostop.Model {
 			builder.AppendLine(Card.PrintCardSet(FloorCards));
 			builder.AppendLine();
 
+			/*
 			builder.AppendLine("<Hidden cards>");
 			builder.AppendLine(Card.PrintCardSet(HiddenCards));
 			builder.AppendLine();
+			*/
 
 			builder.AppendLine("<GoCount>");
-			builder.AppendLine("Player A: " + GoCount[(int)Player.A]);
-			builder.AppendLine("Player B: " + GoCount[(int)Player.B]);
-			builder.AppendLine("Player C: " + GoCount[(int)Player.C]);
+			builder.Append("Player A: " + GoCount[(int)Player.A] + " ");
+			builder.Append("Player B: " + GoCount[(int)Player.B] + " ");
+			builder.Append("Player C: " + GoCount[(int)Player.C] + " ");
 			builder.AppendLine();
 
 			builder.AppendLine("<Point>");
-			builder.AppendLine("Player A: " + GetPoint(Player.A));
-			builder.AppendLine("Player B: " + GetPoint(Player.B));
-			builder.AppendLine("Player C: " + GetPoint(Player.C));
+			builder.Append("Player A: " + GetPoint(Player.A)[0] + " ");
+			builder.Append("Player B: " + GetPoint(Player.B)[0] + " ");
+			builder.Append("Player C: " + GetPoint(Player.C)[0] + " ");
 			builder.AppendLine();
 
 			builder.AppendLine("<ShakeCount>");
-			builder.AppendLine("Player A: " + ShakeCount[(int)Player.A]);
-			builder.AppendLine("Player B: " + ShakeCount[(int)Player.B]);
-			builder.AppendLine("Player C: " + ShakeCount[(int)Player.C]);
+			builder.Append("Player A: " + ShakeCount[(int)Player.A] + " ");
+			builder.Append("Player B: " + ShakeCount[(int)Player.B] + " ");
+			builder.Append("Player C: " + ShakeCount[(int)Player.C] + " ");
 			builder.AppendLine();
 
 			builder.AppendLine("<FuckCount>");
-			builder.AppendLine("Player A: " + FuckCount[(int)Player.A]);
-			builder.AppendLine("Player B: " + FuckCount[(int)Player.B]);
-			builder.AppendLine("Player C: " + FuckCount[(int)Player.C]);
+			builder.Append("Player A: " + FuckCount[(int)Player.A] + " ");
+			builder.Append("Player B: " + FuckCount[(int)Player.B] + " ");
+			builder.Append("Player C: " + FuckCount[(int)Player.C] + " ");
 			builder.AppendLine();
 			return builder.ToString();
 		}

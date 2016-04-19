@@ -8,6 +8,7 @@ namespace Gostop.Model {
 	public class GostopEngine : IGostopEngine {
 		public GostopEngine() {
 		}
+
 		// Null will be returned for ShowNextStep if a player's turn has not finished
 		private GameStatus _gameStatus;
 		// Accumulated events to show
@@ -19,15 +20,17 @@ namespace Gostop.Model {
 
 		private bool _isFourCardDeclared = false;
 
-		int _moneyToTakeFromOppnent1 = 0;
-		int _moneyToTakeFromOppnent2 = 0;
-
-		public GameStep Initialize(GameStatus initialStatus) {
-			Debug.Assert(initialStatus.IsInitialStatus());
+		public GameStep StartWith(GameStatus initialStatus) {
 			_gameStatus = initialStatus;
 			// First turn is a new turn, so fill it with next turn actions
 			GetNewTurnChoices(_gameStatus, _choices);
 			return new GameStep(_history, _gameStatus, _choices);
+		}
+
+		public GameStep Start() {
+			var initStatus = new GameStatus();
+			Debug.Assert(initStatus.IsInitialStatus());
+			return StartWith(new GameStatus());
 		}
 
 		// Below are all possible cases
@@ -80,6 +83,11 @@ namespace Gostop.Model {
 						isCardPlayFinished = ProcessBombAction(cards);
 						break;
 					}
+				case ActionType.ShakeAction: {
+						var cards = ((ShakeAction)chosenAction).Cards;
+						isCardPlayFinished = ProcessShakeAction(cards);
+						break;
+					}
 				default: {
 						Debug.Assert(false);
 						break;
@@ -90,16 +98,16 @@ namespace Gostop.Model {
 			var player = _gameStatus.CurrentPlayer;
 			if (isCardPlayFinished) {
 				if (_gameStatus.GetPoint(player)[0] > _gameStatus.LastGoPoint[(int)player]) { // earned point
-					if (IsGameFinished()) { // forced to Stop and win
-
+					if (_gameStatus.HiddenCards.Count < 3) { // forced to Stop and win
+						ProcessGoOrStopAction(false);
 					} else {
 						_choices.Add(new GoOrStopAction(player, true));
 						_choices.Add(new GoOrStopAction(player, false));
-						_gameStatus.LastGoPoint[(int)player] = _gameStatus.GetPoint(player)[0];
 					}
 				} else { // didn't earn point
+					_history.Add(new EndTurnAction(player));
 					if (IsGameFinished()) { // draw game
-
+						_history.Add(new EndGameAction(player));
 					} else {
 						_gameStatus.ChangeTurn();
 						GetNewTurnChoices(_gameStatus, _choices);
@@ -110,7 +118,6 @@ namespace Gostop.Model {
 				// Shake ->  StartTurn
 				// Hit, VoidHit, Choose -> Choose
 			}
-
 			return new GameStep(_history, _gameStatus, _choices);
 		}
 
@@ -162,9 +169,10 @@ namespace Gostop.Model {
 					stealPoint++;
 					cardsToBeTaken.UnionWith(flippedCardSet);
 				}
-			} else // hit and flip card are different month
-				{
-				if (flippedCardSet.Count == 4) {
+			} else { // hit and flip card are different month
+				if (flippedCardSet.Count == 2) {
+					cardsToBeTaken.UnionWith(flippedCardSet);
+				} else if (flippedCardSet.Count == 4) {
 					_history.Add(new UnFuckAction(player, flippedCardId));
 					stealPoint++;
 					cardsToBeTaken.UnionWith(flippedCardSet);
@@ -182,41 +190,7 @@ namespace Gostop.Model {
 					cardsToBeTaken.Add(flippedCardId);
 				}
 			}
-
-			// Take
-			if (cardsToBeTaken.Count != 0) {
-				floorCards = SetSubtract(floorCards, cardsToBeTaken);
-				_gameStatus.TakenCards(player).UnionWith(cardsToBeTaken);
-				_history.Add(new TakeAction(player, cardsToBeTaken));
-			}
-
-			// Cleanup
-			if (floorCards.Count == 0) {
-				_history.Add(new CleanupAction(player));
-				stealPoint++;
-			}
-
-			// Steal
-			if (stealPoint > 0) {
-				_history.Add(new StealAction(player, GetCardsToSteal(player, stealPoint)));
-			}
-
-			// Choose
-			if (_hitCardChooseOption != null) {
-				var chooseAction1 = new ChooseAction(player, _hitCardChooseOption[0]);
-				var chooseAction2 = new ChooseAction(player, _hitCardChooseOption[1]);
-				_choices.Add(chooseAction1);
-				_choices.Add(chooseAction2);
-				return false;
-			} else if (_flippedCardChooseOption != null) {
-				var chooseAction1 = new ChooseAction(player, _flippedCardChooseOption[0]);
-				var chooseAction2 = new ChooseAction(player, _flippedCardChooseOption[1]);
-				_choices.Add(chooseAction1);
-				_choices.Add(chooseAction2);
-				return false;
-			} else {
-				return true; // end turn
-			}
+			return ProcessTakeCleanupStealChooose(cardsToBeTaken, stealPoint);
 		}
 
 		private bool ProcessVoidHitAction() {
@@ -246,41 +220,62 @@ namespace Gostop.Model {
 				cardsToBeTaken.UnionWith(flippedCardSet);
 			}
 
+			return ProcessTakeCleanupStealChooose(cardsToBeTaken, stealPoint);
+		}
+
+		private bool ProcessTakeCleanupStealChooose(HashSet<int> cardsToBeTaken, int stealPoint) {
+			var floorCards = _gameStatus.FloorCards;
+			var player = _gameStatus.CurrentPlayer;
+
 			// Take
 			if (cardsToBeTaken.Count != 0) {
-				floorCards = SetSubtract(floorCards, cardsToBeTaken);
+				SetSubtract(floorCards, cardsToBeTaken);
 				_gameStatus.TakenCards(player).UnionWith(cardsToBeTaken);
 				_history.Add(new TakeAction(player, cardsToBeTaken));
 			}
 
 			// Cleanup
-			if (floorCards.Count == 0) {
+			if (floorCards.Count == 0 || _gameStatus.HiddenCards.Count != 0) {
 				_history.Add(new CleanupAction(player));
 				stealPoint++;
 			}
 
 			// Steal
 			if (stealPoint > 0) {
-				_history.Add(new StealAction(player, GetCardsToSteal(player, stealPoint)));
+				ProcessStealAction(GetCardsToSteal(player, stealPoint));
 			}
 
 			// Choose
-			if (_flippedCardChooseOption != null) {
+			if (_hitCardChooseOption != null) {
+				var chooseAction1 = new ChooseAction(player, _hitCardChooseOption[0]);
+				var chooseAction2 = new ChooseAction(player, _hitCardChooseOption[1]);
+				_choices.Add(chooseAction1);
+				_choices.Add(chooseAction2);
+				return false;
+			} else if (_flippedCardChooseOption != null) {
 				var chooseAction1 = new ChooseAction(player, _flippedCardChooseOption[0]);
 				var chooseAction2 = new ChooseAction(player, _flippedCardChooseOption[1]);
 				_choices.Add(chooseAction1);
 				_choices.Add(chooseAction2);
 				return false;
 			} else {
-				return true;
+				return true; // end turn
 			}
+		}
+
+		private void ProcessStealAction(HashSet<int> cardsToSteal) {
+			var player = _gameStatus.CurrentPlayer;
+			_gameStatus.TakenCards(player).UnionWith(cardsToSteal);
+			SetSubtract(_gameStatus.TakenCards(GetOthers(player)[0]), cardsToSteal);
+			SetSubtract(_gameStatus.TakenCards(GetOthers(player)[1]), cardsToSteal);
+			_history.Add(new StealAction(player, cardsToSteal));
 		}
 
 		private bool ProcessChooseAction(int cardId) {
 			Debug.Assert(_gameStatus.FloorCards.Contains(cardId));
 			var player = _gameStatus.CurrentPlayer;
 			_gameStatus.FloorCards.Remove(cardId);
-			_gameStatus.HandCards(player).Add(cardId);
+			_gameStatus.TakenCards(player).Add(cardId);
 
 			if (_hitCardChooseOption != null) { // we just chose hit card option
 				_hitCardChooseOption = null;
@@ -304,6 +299,8 @@ namespace Gostop.Model {
 			var player = _gameStatus.CurrentPlayer;
 			_history.Add(new EndTurnAction(player));
 			if (isGo) {
+				_gameStatus.LastGoPlayer = player;
+				_gameStatus.LastGoPoint[(int)player] = _gameStatus.GetPoint(player)[0];
 				_gameStatus.GoCount[(int)player]++;
 				_gameStatus.ChangeTurn();
 				GetNewTurnChoices(_gameStatus, _choices);
@@ -346,7 +343,7 @@ namespace Gostop.Model {
 
 				// somebody said Go before now; he has to pay all the money
 				var lastGoPlayer = _gameStatus.LastGoPlayer;
-				if (_gameStatus.GoCount[(int)lastGoPlayer] != 0) {		
+				if (_gameStatus.GoCount[(int)lastGoPlayer] > 0) {
 					if (lastGoPlayer == opponent1) {
 						moneyToTake1 += moneyToTake2;
 						moneyToTake2 = 0;
@@ -356,7 +353,9 @@ namespace Gostop.Model {
 					}
 				}
 
-				_history.Add(new TakeMoneyAction(player, opponent1, opponent2, moneyToTake1, moneyToTake2));
+				_history.Add(new TakeMoneyAction(player, opponent1, opponent2, moneyToTake1, moneyToTake2,
+																lightMultiplier1 != 1, lightMultiplier2 != 1,
+																shellMultipler1 != 1, shellMultipler2 != 1));
 				_history.Add(new EndGameAction(player));
 			}
 		}
@@ -456,7 +455,7 @@ namespace Gostop.Model {
 
 		// 2010-09-26: Should only be used when end of turn has come
 		// e.g., this can not produce ChooseAction nor GoStopAction
-		public static void GetNewTurnChoices(GameStatus curStatus, List<Action> choices) {
+		public void GetNewTurnChoices(GameStatus curStatus, List<Action> choices) {
 			choices.Clear();
 			Player currentPlayer = curStatus.CurrentPlayer;
 			HashSet<int> currentPlayerHandCards = curStatus.HandCards(currentPlayer);
@@ -483,7 +482,10 @@ namespace Gostop.Model {
 						while (cardEnum.MoveNext()) {
 							choices.Add(new HitAction(currentPlayer, cardEnum.Current));
 						}
-						choices.Add(new ShakeAction(currentPlayer, monthEnum.Current.Value));
+						if (!_gameStatus.ShakenMonths.Contains(monthEnum.Current.Key)) {
+							choices.Add(new ShakeAction(currentPlayer, monthEnum.Current.Value));
+						}
+
 					} else // Bomb
 						{
 						choices.Add(new BombAction(currentPlayer, monthEnum.Current.Value));
@@ -492,8 +494,7 @@ namespace Gostop.Model {
 					{
 					choices.Add(new FourCardAction(currentPlayer, monthEnum.Current.Key));
 				} else {
-					Console.WriteLine("ServerMachine::GetNextTurnActions error");
-					return;
+					Debug.Assert(false);
 				}
 			}
 		}
@@ -614,13 +615,11 @@ namespace Gostop.Model {
 			}
 		}
 
-		public static HashSet<int> SetSubtract(HashSet<int> setA, HashSet<int> setB) {
-			HashSet<int> remain = new HashSet<int>(setA);
-			HashSet<int>.Enumerator enumerator = setB.GetEnumerator();
+		public void SetSubtract(HashSet<int> setA, HashSet<int> setB) {
+			var enumerator = setB.GetEnumerator();
 			while (enumerator.MoveNext()) {
-				remain.Remove(enumerator.Current);
+				setA.Remove(enumerator.Current);
 			}
-			return remain;
 		}
 
 		private Player[] GetOthers(Player player) {

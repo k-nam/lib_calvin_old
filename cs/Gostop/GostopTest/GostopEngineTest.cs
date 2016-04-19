@@ -103,7 +103,9 @@ namespace GostopTest
 			GameStatus randomStatus = new GameStatus();
 			Console.WriteLine(randomStatus);
 			List<Gostop.Model.Action> choices = new List<Gostop.Model.Action>();
-			GostopEngine.GetNewTurnChoices(randomStatus, choices);
+			GostopEngine engine = new GostopEngine();
+			engine.StartWith(randomStatus);
+			engine.GetNewTurnChoices(randomStatus, choices);
 			Console.WriteLine(Gostop.Model.Action.PrintActionList(choices));
 		}
 
@@ -119,7 +121,9 @@ namespace GostopTest
 				playerC_HandCards, floorCards);
 			Console.WriteLine(status);
 			List<Gostop.Model.Action> actionList = new List<Gostop.Model.Action>();
-			GostopEngine.GetNewTurnChoices(status, actionList);
+			GostopEngine engine = new GostopEngine();
+			engine.StartWith(status);
+			engine.GetNewTurnChoices(status, actionList);
 			Console.WriteLine(Gostop.Model.Action.PrintActionList(actionList));
 		}
 

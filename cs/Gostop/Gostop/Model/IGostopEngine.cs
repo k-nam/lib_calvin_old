@@ -49,7 +49,8 @@ namespace Gostop.Model
 	interface IGostopEngine
 	{
 		// Default constructor will be used
-		GameStep Initialize(GameStatus initialStatus);
+		GameStep StartWith(GameStatus initialStatus);
+		GameStep Start();
 		GameStep ProceedWith(int action); // index in actionList parameter in GameStep
 	}
 }
