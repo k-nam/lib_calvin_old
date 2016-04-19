@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Gostop.Model
-{
-	public enum Month
-	{
+namespace Gostop.Model {
+	public enum Month {
 		January = 1,
 		February = 2,
 		March = 3,
@@ -21,8 +19,7 @@ namespace Gostop.Model
 		December = 12
 	}
 
-	public enum CardType
-	{
+	public enum CardType {
 		TrueLight,
 		RainLight,
 		FiveBirdsTen,
@@ -35,44 +32,38 @@ namespace Gostop.Model
 		NormalShell,
 	}
 
-	public class Card
-	{
+	public class Card {
 		public const int NumberOfTotalCards = 48;
 		public const int InitialHandCardsPerPlayer = 7;
-		public const int InitialFloorCardsNum = 6;		
+		public const int InitialFloorCardsNum = 6;
 
-		public Card(Month month, CardType cardType, string name)
-		{
+		public Card(Month month, CardType cardType, string name) {
 			_month = month;
 			_cardType = cardType;
 			_name = name;
 		}
-		public override string ToString()
-		{
+		public override string ToString() {
 			return _name;
 		}
 
-		
-		public Month Month
-		{
-			get
-			{
+
+		public Month Month {
+			get {
 				return _month;
 			}
 		}
 
-		public CardType CardType
-		{
-			get
-			{
+		public CardType CardType {
+			get {
 				return _cardType;
+			}
+			set {
+				_cardType = value;
 			}
 		}
 
-		public string Name
-		{
-			get
-			{
+		public string Name {
+			get {
 				return _name;
 			}
 		}
@@ -83,8 +74,7 @@ namespace Gostop.Model
 		private static List<Card> _cardSet = null;
 
 
-		public static void CreateCards()
-		{
+		public static void CreateCards() {
 			if (_cardSet != null) // already created
 			{
 				return;
@@ -151,26 +141,20 @@ namespace Gostop.Model
 			_cardSet.Add(new Card(Month.December, CardType.DoubleShell, "똥쌍피"));
 		}
 
-		public static Card GetCard(int cardId)
-		{
-			if (_cardSet == null)
-			{
+		public static Card GetCard(int cardId) {
+			if (_cardSet == null) {
 				CreateCards();
 			}
-			if (!(cardId >= 0 && cardId < 48))
-			{
+			if (!(cardId >= 0 && cardId < 48)) {
 				Console.WriteLine("GetCard called with invalid cardId: " + cardId);
 				return null;
 			}
 			return _cardSet[cardId];
 		}
 
-		public static int GetCardId(string name)
-		{
-			for (int i = 0; i < NumberOfTotalCards; i++)
-			{
-				if (GetCard(i).Name.Equals(name))
-				{
+		public static int GetCardId(string name) {
+			for (int i = 0; i < NumberOfTotalCards; i++) {
+				if (GetCard(i).Name.Equals(name)) {
 					return i;
 				}
 			}
@@ -179,33 +163,27 @@ namespace Gostop.Model
 		}
 
 		// 2010-09-26
-		public static HashSet<int> GetCardSet(string names)
-		{
-			if (names == "")
-			{
+		public static HashSet<int> GetCardSet(string names) {
+			if (names == "") {
 				return new HashSet<int>();
 			}
 			HashSet<int> cardSet = new HashSet<int>();
 			String[] separators = new String[1];
 			separators[0] = " ";
-			String[] nameArray = names.Split(separators, 
+			String[] nameArray = names.Split(separators,
 				Card.InitialHandCardsPerPlayer, StringSplitOptions.None);
-			for (int i = 0; i < nameArray.Count(); i++)
-			{
+			for (int i = 0; i < nameArray.Count(); i++) {
 				cardSet.Add(GetCardId(nameArray[i]));
 			}
 			return cardSet;
 		}
 
-		public static string PrintCard(int cardId)
-		{
+		public static string PrintCard(int cardId) {
 			return GetCard(cardId).ToString();
 		}
 
-		public static string PrintMonth(Month month)
-		{
-			switch (month)
-			{
+		public static string PrintMonth(Month month) {
+			switch (month) {
 				case Month.January:
 					return "1월";
 				case Month.February:
@@ -234,24 +212,20 @@ namespace Gostop.Model
 			return null;
 		}
 
-		public static string PrintCardSet(HashSet<int> cards)
-		{
-            return PrintSortedCards(SortCards(cards));
+		public static string PrintCardSet(HashSet<int> cards) {
+			return PrintSortedCards(SortCards(cards));
 
-        }
+		}
 
 		// 2010-09-26
 		public static string PrintSortedCards(
-			Dictionary<Month, HashSet<int>> sortedCards)
-		{
+			Dictionary<Month, HashSet<int>> sortedCards) {
 			StringBuilder builder = new StringBuilder();
 			Dictionary<Month, HashSet<int>>.Enumerator monthEnum =
 				sortedCards.GetEnumerator();
-			while (monthEnum.MoveNext())
-			{
+			while (monthEnum.MoveNext()) {
 				HashSet<int>.Enumerator cardEnum = monthEnum.Current.Value.GetEnumerator();
-				while (cardEnum.MoveNext())
-				{
+				while (cardEnum.MoveNext()) {
 					builder.Append(GetCard(cardEnum.Current) + " ");
 				}
 			}
@@ -259,21 +233,17 @@ namespace Gostop.Model
 		}
 
 
-		public static bool IsSameMonth(int firstCard, int secondCard)
-		{
+		public static bool IsSameMonth(int firstCard, int secondCard) {
 			Console.WriteLine("issameMonth");
 			return GetCard(firstCard).Month == GetCard(secondCard).Month;
 		}
 
 		// 2010-09-26
-		public static HashSet<int> CardsWithSameMonth(HashSet<int> cards, Month month)
-		{
+		public static HashSet<int> CardsWithSameMonth(HashSet<int> cards, Month month) {
 			HashSet<int> cardsWithSameMonth = new HashSet<int>();
 			HashSet<int>.Enumerator enumerator = cards.GetEnumerator();
-			while (enumerator.MoveNext())
-			{
-				if (GetCard(enumerator.Current).Month == month)
-				{
+			while (enumerator.MoveNext()) {
+				if (GetCard(enumerator.Current).Month == month) {
 					cardsWithSameMonth.Add(enumerator.Current);
 				}
 			}
@@ -285,6 +255,10 @@ namespace Gostop.Model
 			var doubleShells = GetCardsOfType(cards, CardType.DoubleShell);
 			shells.UnionWith(doubleShells);
 			return shells;
+		}
+
+		public void ConvertSeptemberTenToDoubleShell() {
+			GetCard(GetCardId("9열끗")).CardType = CardType.DoubleShell;
 		}
 
 		public static HashSet<int> GetCardsOfType(HashSet<int> cards, CardType type) {
@@ -300,24 +274,20 @@ namespace Gostop.Model
 		}
 
 		// 2010-09-26
-		public static Dictionary<Month, HashSet<int>> SortCards(HashSet<int> cards)
-		{
-			Dictionary<Month, HashSet<int>> sortedCards = 
+		public static Dictionary<Month, HashSet<int>> SortCards(HashSet<int> cards) {
+			Dictionary<Month, HashSet<int>> sortedCards =
 				new Dictionary<Month, HashSet<int>>();
 			// Fill each month with empty HashSet
-			for (int card = 0; card < Card.NumberOfTotalCards; card++)
-			{
+			for (int card = 0; card < Card.NumberOfTotalCards; card++) {
 				Month month = GetCard(card).Month;
-				if (sortedCards.ContainsKey(month) == false)
-				{
+				if (sortedCards.ContainsKey(month) == false) {
 					sortedCards.Add(month, new HashSet<int>());
 				}
 			}
 			HashSet<int>.Enumerator enumerator = cards.GetEnumerator();
-			while (enumerator.MoveNext())
-			{
+			while (enumerator.MoveNext()) {
 				sortedCards[GetCard(enumerator.Current).Month].Add(enumerator.Current);
-			}			
+			}
 			return sortedCards;
 		}
 	}

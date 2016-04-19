@@ -23,7 +23,9 @@ namespace Gostop.Model {
 		ShakeAction,
 		BombAction,
 		FourCardAction,
-		EndTurnAction // automatic
+		EndTurnAction, // automatic
+		TakeMoneyAction, // automatic
+		EndGameAction, // automatic
 	}
 
 	public class Action {
@@ -75,6 +77,10 @@ namespace Gostop.Model {
 					return "FourCardAction";
 				case ActionType.EndTurnAction:
 					return "EndTurnAction";
+				case ActionType.TakeMoneyAction:
+					return "TakeMoneyAction";
+				case ActionType.EndGameAction:
+					return "EndGameAction";
 			}
 			return null;
 		}
@@ -254,7 +260,7 @@ namespace Gostop.Model {
 
 	public class GoOrStopAction : Action {
 		private bool _isGo;
-		GoOrStopAction(Player player, bool isGo) {
+		public GoOrStopAction(Player player, bool isGo) {
 			_player = player;
 			_type = ActionType.GoOrStopAction;
 			_isGo = isGo;
@@ -323,6 +329,30 @@ namespace Gostop.Model {
 		public EndTurnAction(Player player) {
 			_player = player;
 			_type = ActionType.EndTurnAction;
+		}
+	}
+
+	public class TakeMoneyAction : Action {
+		Player _opponent1;
+		Player _opponent2;
+		int _money1;
+		int _money2;
+
+		public TakeMoneyAction(Player player, Player opponent1, Player opponent2,
+														int money1, int money2) {
+			_player = player;
+			_type = ActionType.TakeMoneyAction;
+			_opponent1 = opponent1;
+			_opponent2 = opponent2;
+			_money1 = money1;
+			_money2 = money2;
+		}
+	}
+
+	public class EndGameAction : Action {
+		public EndGameAction(Player player) {
+			_player = player;
+			_type = ActionType.EndGameAction;
 		}
 	}
 }

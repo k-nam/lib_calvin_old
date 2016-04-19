@@ -9,7 +9,7 @@ namespace Gostop.Model {
 		public GostopEngine() {
 		}
 		// Null will be returned for ShowNextStep if a player's turn has not finished
-		private GameStatus _gameSatus;
+		private GameStatus _gameStatus;
 		// Accumulated events to show
 		private List<Action> _history = new List<Action>();
 		private List<Action> _choices = new List<Action>();
@@ -20,11 +20,11 @@ namespace Gostop.Model {
 		private bool _isGameFinished = false;
 
 		public GameStep Initialize(GameStatus initialStatus) {
-			Debug.Assert(initialStatus.isInitialStatus());
-			_gameSatus = initialStatus;
+			Debug.Assert(initialStatus.IsInitialStatus());
+			_gameStatus = initialStatus;
 			// First turn is a new turn, so fill it with next turn actions
-			GetNewTurnChoices(_gameSatus, _choices);
-			return new GameStep(_history, _gameSatus, _choices);
+			GetNewTurnChoices(_gameStatus, _choices);
+			return new GameStep(_history, _gameStatus, _choices);
 		}
 
 		// Below are all possible cases
@@ -35,8 +35,8 @@ namespace Gostop.Model {
 		// <Shake> -> <Hit | Shake | Bomb | FourCard>
 		// <Hit | Bomb> -> (UnFuck) -> FlipHit -> (Fuck, UnFuck, Kiss, Cleanup) -> Steal -> 
 		//					EndTurn | <Choose | GoOrStop>
-		// <Choose> -> <GoOrStop> | EndTurn
-		// <GoOrStop> -> Endturn
+		// <Choose> -> <Choose | GoOrStop> | EndTurn
+		// <GoOrStop> -> EndTurn | EndGame
 		// EndTurn -> EndGame | StartTurn
 
 		public GameStep ProceedWith(int action) {
@@ -50,7 +50,7 @@ namespace Gostop.Model {
 			_history.Clear();
 			_history.Add(chosenAction);
 			_choices.Clear();
-			bool isTurnFinished = false; 
+			bool isTurnFinished = false;
 
 			switch (chosenAction.Type) {
 				case ActionType.HitAction: {
@@ -80,29 +80,40 @@ namespace Gostop.Model {
 
 			// Fill choice list in the case of end of a turn 
 			if (isTurnFinished) {
-				if (_isGameFinished) {
+				var player = _gameStatus.CurrentPlayer;
+				if (_gameStatus.GetPoint(player) > _gameStatus.LastGoPoint[(int)player]) { // earned point
+					if (_isGameFinished) { // Go is not an option
 
+					} else {
+						_choices.Add(new GoOrStopAction(player, true));
+						_choices.Add(new GoOrStopAction(player, false));
+						_gameStatus.LastGoPoint[(int)player] = _gameStatus.GetPoint(player);
+					}
 				} else {
-					_gameSatus.changeTurn();
-					GetNewTurnChoices(_gameSatus, _choices);
+					if (_isGameFinished) {
+
+					} else {
+						_gameStatus.ChangeTurn();
+						GetNewTurnChoices(_gameStatus, _choices);
+					}
 				}
 			} else {
 				// choices should have been filled
 			}
 
-			return new GameStep(_history, _gameSatus, _choices);
+			return new GameStep(_history, _gameStatus, _choices);
 		}
 
 		// Return values indicates whether this action ends the turn
 		private bool ProcessHitAction(int cardId) {
-			var player = _gameSatus.CurrentPlayer;
+			var player = _gameStatus.CurrentPlayer;
 			Card hitCard = Card.GetCard(cardId);
-			HashSet<int> floorCards = _gameSatus.FloorCards;
+			HashSet<int> floorCards = _gameStatus.FloorCards;
 			HashSet<int> cardsToBeTaken = new HashSet<int>();
 			int stealPoint = 0;
 
 			// Hit
-			_gameSatus.HandCards(player).Remove(cardId);
+			_gameStatus.HandCards(player).Remove(cardId);
 			floorCards.Add(cardId);
 
 			var hitCardSet = Card.CardsWithSameMonth(floorCards, hitCard.Month);
@@ -119,9 +130,9 @@ namespace Gostop.Model {
 			}
 
 			// Flip
-			int flippedCardId = _gameSatus.HiddenCards.Last();
+			int flippedCardId = _gameStatus.HiddenCards.Last();
 			Card flippedCard = Card.GetCard(flippedCardId);
-			_gameSatus.HiddenCards.Remove(flippedCardId);
+			_gameStatus.HiddenCards.Remove(flippedCardId);
 			floorCards.Add(flippedCardId);
 			_history.Add(new FlipHitAction(player, flippedCardId));
 
@@ -134,7 +145,7 @@ namespace Gostop.Model {
 					cardsToBeTaken.UnionWith(flippedCardSet);
 				} else if (flippedCardSet.Count == 3) {
 					_history.Add(new FuckAction(player, flippedCardId));
-					_gameSatus.FuckCount[(int)Player.A]++;
+					_gameStatus.FuckCount[(int)Player.A]++;
 					cardsToBeTaken.Clear();
 				} else if (flippedCardSet.Count == 4) {
 					_history.Add(new DadakAction(player, flippedCardId));
@@ -165,7 +176,7 @@ namespace Gostop.Model {
 			// Take
 			if (cardsToBeTaken.Count != 0) {
 				floorCards = SetSubtract(floorCards, cardsToBeTaken);
-				_gameSatus.TakenCards(player).UnionWith(cardsToBeTaken);
+				_gameStatus.TakenCards(player).UnionWith(cardsToBeTaken);
 				_history.Add(new TakeAction(player, cardsToBeTaken));
 			}
 
@@ -176,7 +187,7 @@ namespace Gostop.Model {
 			}
 
 			// Steal
-			if (stealPoint > 0) { 
+			if (stealPoint > 0) {
 				_history.Add(new StealAction(player, GetCardsToSteal(player, stealPoint)));
 			}
 
@@ -200,13 +211,13 @@ namespace Gostop.Model {
 
 		private bool ProcessVoidHitAction() {
 			// Flip
-			int flippedCardId = _gameSatus.HiddenCards.Last();
+			int flippedCardId = _gameStatus.HiddenCards.Last();
 			Card flippedCard = Card.GetCard(flippedCardId);
-			var floorCards = _gameSatus.FloorCards;
-			var player = _gameSatus.CurrentPlayer;
+			var floorCards = _gameStatus.FloorCards;
+			var player = _gameStatus.CurrentPlayer;
 			int stealPoint = 0;
 
-			_gameSatus.HiddenCards.Remove(flippedCardId);
+			_gameStatus.HiddenCards.Remove(flippedCardId);
 			floorCards.Add(flippedCardId);
 			_history.Add(new FlipHitAction(player, flippedCardId));
 
@@ -228,7 +239,7 @@ namespace Gostop.Model {
 			// Take
 			if (cardsToBeTaken.Count != 0) {
 				floorCards = SetSubtract(floorCards, cardsToBeTaken);
-				_gameSatus.TakenCards(player).UnionWith(cardsToBeTaken);
+				_gameStatus.TakenCards(player).UnionWith(cardsToBeTaken);
 				_history.Add(new TakeAction(player, cardsToBeTaken));
 			}
 
@@ -256,10 +267,10 @@ namespace Gostop.Model {
 		}
 
 		private bool ProcessChooseAction(int cardId) {
-			Debug.Assert(_gameSatus.FloorCards.Contains(cardId));
-			var player = _gameSatus.CurrentPlayer;
-			_gameSatus.FloorCards.Remove(cardId);
-			_gameSatus.HandCards(player).Add(cardId);
+			Debug.Assert(_gameStatus.FloorCards.Contains(cardId));
+			var player = _gameStatus.CurrentPlayer;
+			_gameStatus.FloorCards.Remove(cardId);
+			_gameStatus.HandCards(player).Add(cardId);
 
 			if (_hitCardChooseOption != null) { // we just chose hit card option
 				_hitCardChooseOption = null;
@@ -288,24 +299,24 @@ namespace Gostop.Model {
 			Debug.Assert(cards.Count == 3);
 			var month = Card.GetCard(cards.First()).Month;
 			Debug.Assert(Card.CardsWithSameMonth(cards, month).Count == 3);
-			var player = _gameSatus.CurrentPlayer;
+			var player = _gameStatus.CurrentPlayer;
 
-			_gameSatus.ShakeCount[(int)player]++;
-			_gameSatus.ShakenMonths.Add(month);
+			_gameStatus.ShakeCount[(int)player]++;
+			_gameStatus.ShakenMonths.Add(month);
 			return false;
 		}
 
-		private bool ProcessBombAction(HashSet<int> cards) {		
+		private bool ProcessBombAction(HashSet<int> cards) {
 			var month = Card.GetCard(cards.First()).Month;
-			Debug.Assert(Card.CardsWithSameMonth(_gameSatus.FloorCards, month).Count == 1);
+			Debug.Assert(Card.CardsWithSameMonth(_gameStatus.FloorCards, month).Count == 1);
 			ProcessShakeAction(cards);
 
 			// Reduce to ProcessHitAction by laying two of three cards to floor
 			// and consider one card as hit card
 			int hitCard = cards.First();
 			cards.Remove(hitCard);
-			SetSubtract(_gameSatus.HandCards(Player.A), cards);
-			_gameSatus.FloorCards.UnionWith(cards);
+			SetSubtract(_gameStatus.HandCards(Player.A), cards);
+			_gameStatus.FloorCards.UnionWith(cards);
 			return ProcessHitAction(hitCard);
 		}
 
@@ -313,8 +324,8 @@ namespace Gostop.Model {
 			var cardsToBeStolen = new HashSet<int>();
 			var other1 = GetOthers(player)[0];
 			var other2 = GetOthers(player)[1];
-			var shell1 = Card.GetShellsFrom(_gameSatus.TakenCards(other1));
-			var shell2 = Card.GetShellsFrom(_gameSatus.TakenCards(other2));
+			var shell1 = Card.GetShellsFrom(_gameStatus.TakenCards(other1));
+			var shell2 = Card.GetShellsFrom(_gameStatus.TakenCards(other2));
 			var stolen1 = GetShellsToBeStolen(shell1, stealPoint);
 			var stolen2 = GetShellsToBeStolen(shell2, stealPoint);
 			cardsToBeStolen.UnionWith(stolen1);
@@ -541,7 +552,7 @@ namespace Gostop.Model {
 				return new Player[] { Player.B, Player.C };
 			} else if (player == Player.B) {
 				return new Player[] { Player.C, Player.A };
-			} else { 
+			} else {
 				return new Player[] { Player.A, Player.B };
 			}
 		}
