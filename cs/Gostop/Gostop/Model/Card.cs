@@ -215,7 +215,6 @@ namespace Gostop.Model {
 
 		public static string PrintCardSet(HashSet<int> cards) {
 			return PrintSortedCards(SortCards(cards));
-
 		}
 
 		// 2010-09-26

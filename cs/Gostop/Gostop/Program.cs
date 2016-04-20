@@ -27,17 +27,14 @@ namespace Gostop {
 				}
 				Console.WriteLine();
 
-
 				// display choices
 				Console.WriteLine("Choices:");
 				for (int i = 0; i < gameStep.Choices.Count; i++) {
 					Console.WriteLine(i + ": " + gameStep.Choices[i].ToString());
 				}
-				Console.WriteLine("Current player: " + gameStep.FinalStatus.CurrentPlayer);
 				// get input
 				int choice = int.Parse(Console.ReadLine());
 				gameStep = engine.ProceedWith(choice);
-
 			}
 		}
 	}

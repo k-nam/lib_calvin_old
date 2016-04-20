@@ -60,7 +60,7 @@ namespace Gostop.Model {
 
 			switch (chosenAction.Type) {
 				case ActionType.HitAction: {
-						int cardId = ((HitAction)chosenAction).Card;
+						int cardId = chosenAction.PlayCard;
 						isCardPlayFinished = ProcessHitAction(cardId);
 						break;
 					}
@@ -69,22 +69,22 @@ namespace Gostop.Model {
 						break;
 					}
 				case ActionType.ChooseAction: {
-						var cards = ((ChooseAction)chosenAction).Card;
+						var cards = chosenAction.PlayCard;
 						isCardPlayFinished = ProcessChooseAction(cards);
 						break;
 					}
 				case ActionType.GoOrStopAction: {
-						bool isGo = ((GoOrStopAction)chosenAction).IsGo;
+						bool isGo = chosenAction.IsGo;
 						ProcessGoOrStopAction(isGo);
 						return new GameStep(_history, _gameStatus, _choices);
 					}
 				case ActionType.BombAction: {
-						var cards = ((BombAction)chosenAction).Cards;
+						var cards = chosenAction.PlayCards;
 						isCardPlayFinished = ProcessBombAction(cards);
 						break;
 					}
 				case ActionType.ShakeAction: {
-						var cards = ((ShakeAction)chosenAction).Cards;
+						var cards = chosenAction.PlayCards;
 						isCardPlayFinished = ProcessShakeAction(cards);
 						break;
 					}
@@ -130,7 +130,7 @@ namespace Gostop.Model {
 			int stealPoint = 0;
 
 			// Hit
-			_gameStatus.HandCards(player).Remove(cardId);
+			_gameStatus.GetHandCards(player).Remove(cardId);
 			floorCards.Add(cardId);
 
 			var hitCardSet = Card.CardsWithSameMonth(floorCards, hitCard.Month);
@@ -230,12 +230,12 @@ namespace Gostop.Model {
 			// Take
 			if (cardsToBeTaken.Count != 0) {
 				SetSubtract(floorCards, cardsToBeTaken);
-				_gameStatus.TakenCards(player).UnionWith(cardsToBeTaken);
+				_gameStatus.GetTakenCards(player).UnionWith(cardsToBeTaken);
 				_history.Add(new TakeAction(player, cardsToBeTaken));
 			}
 
 			// Cleanup
-			if (floorCards.Count == 0 || _gameStatus.HiddenCards.Count != 0) {
+			if (floorCards.Count == 0 && _gameStatus.HiddenCards.Count != 0) {
 				_history.Add(new CleanupAction(player));
 				stealPoint++;
 			}
@@ -265,9 +265,9 @@ namespace Gostop.Model {
 
 		private void ProcessStealAction(HashSet<int> cardsToSteal) {
 			var player = _gameStatus.CurrentPlayer;
-			_gameStatus.TakenCards(player).UnionWith(cardsToSteal);
-			SetSubtract(_gameStatus.TakenCards(GetOthers(player)[0]), cardsToSteal);
-			SetSubtract(_gameStatus.TakenCards(GetOthers(player)[1]), cardsToSteal);
+			_gameStatus.GetTakenCards(player).UnionWith(cardsToSteal);
+			SetSubtract(_gameStatus.GetTakenCards(GetOthers(player)[0]), cardsToSteal);
+			SetSubtract(_gameStatus.GetTakenCards(GetOthers(player)[1]), cardsToSteal);
 			_history.Add(new StealAction(player, cardsToSteal));
 		}
 
@@ -275,7 +275,7 @@ namespace Gostop.Model {
 			Debug.Assert(_gameStatus.FloorCards.Contains(cardId));
 			var player = _gameStatus.CurrentPlayer;
 			_gameStatus.FloorCards.Remove(cardId);
-			_gameStatus.TakenCards(player).Add(cardId);
+			_gameStatus.GetTakenCards(player).Add(cardId);
 
 			if (_hitCardChooseOption != null) { // we just chose hit card option
 				_hitCardChooseOption = null;
@@ -322,8 +322,8 @@ namespace Gostop.Model {
 
 				var opponent1 = GetOthers(player)[0];
 				var opponent2 = GetOthers(player)[1];
-				var cards1 = _gameStatus.TakenCards(opponent1);
-				var cards2 = _gameStatus.TakenCards(opponent2);
+				var cards1 = _gameStatus.GetTakenCards(opponent1);
+				var cards2 = _gameStatus.GetTakenCards(opponent2);
 
 				if (hasLightPoint && Card.GetLightsFrom(cards1).Count == 0) {
 					lightMultiplier1 = 2;
@@ -368,6 +368,7 @@ namespace Gostop.Model {
 
 			_gameStatus.ShakeCount[(int)player]++;
 			_gameStatus.ShakenMonths.Add(month);
+			GetNewTurnChoices(_gameStatus, _choices);
 			return false;
 		}
 
@@ -380,7 +381,7 @@ namespace Gostop.Model {
 			// and consider one card as hit card
 			int hitCard = cards.First();
 			cards.Remove(hitCard);
-			SetSubtract(_gameStatus.HandCards(Player.A), cards);
+			SetSubtract(_gameStatus.GetHandCards(Player.A), cards);
 			_gameStatus.FloorCards.UnionWith(cards);
 			return ProcessHitAction(hitCard);
 		}
@@ -399,8 +400,8 @@ namespace Gostop.Model {
 			var cardsToBeStolen = new HashSet<int>();
 			var other1 = GetOthers(player)[0];
 			var other2 = GetOthers(player)[1];
-			var shell1 = Card.GetShellsFrom(_gameStatus.TakenCards(other1));
-			var shell2 = Card.GetShellsFrom(_gameStatus.TakenCards(other2));
+			var shell1 = Card.GetShellsFrom(_gameStatus.GetTakenCards(other1));
+			var shell2 = Card.GetShellsFrom(_gameStatus.GetTakenCards(other2));
 			var stolen1 = GetShellsToBeStolen(shell1, stealPoint);
 			var stolen2 = GetShellsToBeStolen(shell2, stealPoint);
 			cardsToBeStolen.UnionWith(stolen1);
@@ -458,7 +459,7 @@ namespace Gostop.Model {
 		public void GetNewTurnChoices(GameStatus curStatus, List<Action> choices) {
 			choices.Clear();
 			Player currentPlayer = curStatus.CurrentPlayer;
-			HashSet<int> currentPlayerHandCards = curStatus.HandCards(currentPlayer);
+			HashSet<int> currentPlayerHandCards = curStatus.GetHandCards(currentPlayer);
 			Dictionary<Month, HashSet<int>> sortedCards = Card.SortCards(currentPlayerHandCards);
 			HashSet<int> floorCards = curStatus.FloorCards;
 			Dictionary<Month, HashSet<int>>.Enumerator monthEnum = sortedCards.GetEnumerator();

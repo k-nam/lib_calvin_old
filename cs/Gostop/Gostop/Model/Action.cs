@@ -29,21 +29,27 @@ namespace Gostop.Model {
 	}
 
 	public class Action {
-		protected Player _player;
-		protected ActionType _type;
+		public Player Player { get; set; }
+		public ActionType Type { get; set; }
+		public int PlayCard { get; set; }
+		public HashSet<int> PlayCards { get; set; }
+		public HashSet<int> TakeCards { get; set; }
+		public HashSet<int> StealCards { get; set; }
+		public bool IsGo { get; set; }
 
-		public Player Player {
-			get {
-				return _player;
-			}
-		}
-		public ActionType Type {
-			get {
-				return _type;
-			}
-		}
+		public Player Opponent1 { get; set; }
+		public Player Opponent2 { get; set; }
+		public int TakeMoney1 { get; set; }
+		public int TakeMoney2 { get; set; }
+		public bool LightCritical1 { get; set; }
+		public bool LightCritical2 { get; set; }
+		public bool ShellCritical1 { get; set; }
+		public bool ShellCritical2 { get; set; }
 
-		public static string PrintAction(ActionType action) {
+		public Month FourCardMonth { get; set; }
+
+
+		public static string PrintActionType(ActionType action) {
 			switch (action) {
 				case ActionType.HitAction:
 					return "HitAction";
@@ -81,12 +87,74 @@ namespace Gostop.Model {
 					return "TakeMoneyAction";
 				case ActionType.EndGameAction:
 					return "EndGameAction";
+				default:
+					return "error";
 			}
-			return null;
 		}
+
 		public override string ToString() {
-			return PrintAction(_type);
+			var actionType = PrintActionType(Type);
+			string aug = ": ";
+			switch (Type) {
+				case ActionType.HitAction: {
+						aug += Card.PrintCard(PlayCard);
+						break;
+					}
+				case ActionType.VoidHitAction:
+					break;				
+				case ActionType.FlipHitAction: 
+				case ActionType.FuckAction: 
+				case ActionType.UnFuckAction: 
+				case ActionType.DadakAction:
+				case ActionType.KissAction: {
+						aug += Card.PrintCard(PlayCard);
+						break;
+					}
+				case ActionType.TakeAction: {
+						aug += Card.PrintCardSet(TakeCards);
+						break;
+					}
+				case ActionType.CleanupAction:
+					break;
+				case ActionType.StealAction: {
+						aug += Card.PrintCardSet(StealCards);
+						break;
+					}
+				case ActionType.ChooseAction: {
+						aug += Card.PrintCard(PlayCard);
+						break;
+					}
+				case ActionType.GoOrStopAction: {
+						aug += IsGo;
+						break;
+					}
+				case ActionType.ShakeAction: 
+				case ActionType.BombAction: {
+						aug += Card.PrintCardSet(PlayCards);
+						break;
+					}
+				case ActionType.FourCardAction: {
+						aug += FourCardMonth;
+						break;
+					}
+				case ActionType.EndTurnAction:
+					break;
+				case ActionType.TakeMoneyAction: {
+						aug += (":\nFrom " + Opponent1 + ": " + TakeMoney1 + " 원. 광박: " +
+							LightCritical1 + " 피박: " + ShellCritical1 + "\n" +
+							"From " + Opponent2 + ": " + TakeMoney2 + " 원. 광박: " +
+							LightCritical2 + " 피박: " + ShellCritical2);
+						break;
+					}
+				case ActionType.EndGameAction:
+					break;
+				default:
+					return "error";
+			}
+
+			return this.Player+ " => " + actionType + aug;
 		}
+
 		public static string PrintActionList(List<Action> actions) {
 			StringBuilder builder = new StringBuilder();
 			List<Action>.Enumerator enumerator = actions.GetEnumerator();
@@ -99,279 +167,153 @@ namespace Gostop.Model {
 
 	// hit with hand card
 	public class HitAction : Action {
-		private int _card;
 		public HitAction(Player player, int card) {
-			_player = player;
-			_type = ActionType.HitAction;
-			_card = card;
-		}
-		public int Card {
-			get {
-				return _card;
-			}
-		}
-		public override string ToString() {
-			return (base.ToString() + ": " + Model.Card.GetCard(_card));
+			Player = player;
+			Type = ActionType.HitAction;
+			PlayCard = card;
 		}
 	}
+
 	// just flip (only possible after bomb)
 	public class VoidHitAction : Action {
 		public VoidHitAction(Player player) {
-			_player = player;
-			_type = ActionType.VoidHitAction;
+			Player = player;
+			Type = ActionType.VoidHitAction;
 		}
 	}
+
 	public class FlipHitAction : Action {
-		private int _card;
 		public FlipHitAction(Player player, int card) {
-			_player = player;
-			_type = ActionType.FlipHitAction;
-			_card = card;
-		}
-		public int Card {
-			get {
-				return _card;
-			}
-		}
-		public override string ToString() {
-			return (base.ToString() + ": " + Model.Card.GetCard(_card));
+			Player = player;
+			Type = ActionType.FlipHitAction;
+			PlayCard = card;
 		}
 	}
 
 	public class FuckAction : Action {
-		private int _card;
 		public FuckAction(Player player, int card) {
-			_player = player;
-			_type = ActionType.FuckAction;
-			_card = card;
-		}
-		public int Card {
-			get {
-				return _card;
-			}
-		}
-		public override string ToString() {
-			return (base.ToString() + ": " + Model.Card.GetCard(_card));
+			Player = player;
+			Type = ActionType.FuckAction;
+			PlayCard = card;
 		}
 	}
+
 	public class UnFuckAction : Action {
-		private int _card;
 		public UnFuckAction(Player player, int card) {
-			_player = player;
-			_type = ActionType.UnFuckAction;
-			_card = card;
-		}
-		public int Card {
-			get {
-				return _card;
-			}
-		}
-		public override string ToString() {
-			return (base.ToString() + ": " + Model.Card.GetCard(_card));
+			Player = player;
+			Type = ActionType.UnFuckAction;
+			PlayCard = card;
 		}
 	}
+
 	public class DadakAction : Action {
-		private int _card;
 		public DadakAction(Player player, int card) {
-			_player = player;
-			_type = ActionType.DadakAction;
-			_card = card;
-		}
-		public int Card {
-			get {
-				return _card;
-			}
-		}
-		public override string ToString() {
-			return (base.ToString() + ": " + Model.Card.GetCard(_card));
+			Player = player;
+			Type = ActionType.DadakAction;
+			PlayCard = card;
 		}
 	}
+
 	public class KissAction : Action {
-		private int _card;
 		public KissAction(Player player, int card) {
-			_player = player;
-			_type = ActionType.KissAction;
-			_card = card;
-		}
-		public int Card {
-			get {
-				return _card;
-			}
-		}
-		public override string ToString() {
-			return (base.ToString() + ": " + Model.Card.GetCard(_card));
+			Player = player;
+			Type = ActionType.KissAction;
+			PlayCard = card;
 		}
 	}
+
 	public class CleanupAction : Action {
 		public CleanupAction(Player player) {
-			_player = player;
-			_type = ActionType.CleanupAction;
+			Player = player;
+			Type = ActionType.CleanupAction;
 		}
 	}
+
 	public class TakeAction : Action {
-		private HashSet<int> _cards;
 		public TakeAction(Player player, HashSet<int> cards) {
-			_player = player;
-			_type = ActionType.TakeAction;
-			_cards = cards;
-		}
-		public HashSet<int> Cards {
-			get {
-				return _cards;
-			}
-		}
-		public override string ToString() {
-			return (base.ToString() + ": " + Card.PrintCardSet(_cards));
+			Player = player;
+			Type = ActionType.TakeAction;
+			TakeCards = cards;
 		}
 	}
+
 	public class StealAction : Action {
-		private HashSet<int> _cards;
 		public StealAction(Player player, HashSet<int> cards) {
-			_player = player;
-			_type = ActionType.StealAction;
-			_cards = cards;
-		}
-		public HashSet<int> Cards {
-			get {
-				return _cards;
-			}
-		}
-		public override string ToString() {
-			return (base.ToString() + ": " + Card.PrintCardSet(_cards));
+			Player = player;
+			Type = ActionType.StealAction;
+			StealCards = cards;
 		}
 	}
+
 	public class ChooseAction : Action {
-		private int _card;
 		public ChooseAction(Player player, int card) {
-			_player = player;
-			_type = ActionType.ChooseAction;
-			_card = card;
-		}
-		public int Card {
-			get {
-				return _card;
-			}
-		}
-		public override string ToString() {
-			return (base.ToString() + ": " + Model.Card.GetCard(_card));
+			Player = player;
+			Type = ActionType.ChooseAction;
+			PlayCard = card;
 		}
 	}
 
 	public class GoOrStopAction : Action {
-		private bool _isGo;
 		public GoOrStopAction(Player player, bool isGo) {
-			_player = player;
-			_type = ActionType.GoOrStopAction;
-			_isGo = isGo;
-		}
-		public bool IsGo {
-			get {
-				return _isGo;
-			}
-		}
-		public override string ToString() {
-			return (base.ToString() + ": " +( _isGo ? "GO" : "STOP"));
+			Player = player;
+			Type = ActionType.GoOrStopAction;
+			IsGo = isGo;
 		}
 	}
 
 	public class ShakeAction : Action {
-		private HashSet<int> _cards;
 		public ShakeAction(Player player, HashSet<int> cards) {
-			_player = player;
-			_type = ActionType.ShakeAction;
-			_cards = cards;
-		}
-		public HashSet<int> Cards {
-			get {
-				return _cards;
-
-			}
-		}
-		public override string ToString() {
-			return (base.ToString() + ": " + Card.PrintCardSet(_cards));
+			Player = player;
+			Type = ActionType.ShakeAction;
+			PlayCards = cards;
 		}
 	}
 
 	public class BombAction : Action {
-		private HashSet<int> _cards;
 		public BombAction(Player player, HashSet<int> cards) {
-			_player = player;
-			_type = ActionType.BombAction;
-			_cards = cards;
-		}
-		public HashSet<int> Cards {
-			get {
-				return _cards;
-
-			}
-		}
-		public override string ToString() {
-			return (base.ToString() + ": " + Card.PrintCardSet(_cards));
+			Player = player;
+			Type = ActionType.BombAction;
+			PlayCards = cards;
 		}
 	}
 
 	public class FourCardAction : Action {
-		private Month _month;
 		public FourCardAction(Player player, Month month) {
-			_player = player;
-			_type = ActionType.FourCardAction;
-			_month = month;
-		}
-		public Month Month {
-			get {
-				return _month;
-			}
-		}
-		public override string ToString() {
-			return (base.ToString() + ": " + Card.PrintMonth(_month));
+			Player = player;
+			Type = ActionType.FourCardAction;
+			FourCardMonth = month;
 		}
 	}
 
 	public class EndTurnAction : Action {
 		public EndTurnAction(Player player) {
-			_player = player;
-			_type = ActionType.EndTurnAction;
+			Player = player;
+			Type = ActionType.EndTurnAction;
 		}
 	}
 
 	public class TakeMoneyAction : Action {
-		Player _opponent1;
-		Player _opponent2;
-		int _money1;
-		int _money2;
-		bool _lightCritical1;
-		bool _lightCritical2;
-		bool _shellCritical1;
-		bool _shellCritical2;
-
 		public TakeMoneyAction(Player player, Player opponent1, Player opponent2,
 														int money1, int money2,
 														bool lightCritical1, bool lightCritical2,
 														bool shellCritical1, bool shellCritical2) {
-			_player = player;
-			_type = ActionType.TakeMoneyAction;
-			_opponent1 = opponent1;
-			_opponent2 = opponent2;
-			_money1 = money1;
-			_money2 = money2;
-			_lightCritical1 = lightCritical1;
-			_lightCritical2 = lightCritical2;
-			_shellCritical1 = shellCritical1;
-			_shellCritical2 = shellCritical2;
-		}
-		public override string ToString() {
-			return base.ToString() + "\n" +
-				"From " + _opponent1 + ": " + _money1 + " 원. 광박: " +
-				_lightCritical1 + " 피박: " + _shellCritical1 + "\n" +
-				"From " + _opponent2 + ": " + _money2 + " 원. 광박: " +
-				_lightCritical2 + " 피박: " + _shellCritical2;
+			Player = player;
+			Type = ActionType.TakeMoneyAction;
+			Opponent1 = opponent1;
+			Opponent2 = opponent2;
+			TakeMoney1 = money1;
+			TakeMoney2 = money2;
+			LightCritical1 = lightCritical1;
+			LightCritical2 = lightCritical2;
+			ShellCritical1 = shellCritical1;
+			ShellCritical2 = shellCritical2;
 		}
 	}
 
 	public class EndGameAction : Action {
 		public EndGameAction(Player player) {
-			_player = player;
-			_type = ActionType.EndGameAction;
+			Player = player;
+			Type = ActionType.EndGameAction;
 		}
 	}
 }

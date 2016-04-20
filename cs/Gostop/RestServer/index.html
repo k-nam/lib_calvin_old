@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta charset="utf-8" />
+</head>
+<body>
+	<h1>hi</h1>
+	<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+	<script>
+    var uri = 'api/gostop';
+
+		/*
+    $(document).ready(function () {
+    	alert("started");
+    	$.ajax({
+    		type: "GET",
+    		dataType: 'json',
+    		url: 'api/sample/123',
+    		success: function (result) {
+    			alert(JSON.stringify(result));
+    			alert("success");
+    		}
+    	});
+    });*/
+		
+    $(document).ready(function () {
+    	alert("started");
+    	$.ajax({
+    		type: "POST",
+    		dataType: 'json',
+    		//data: { Value: 123 },
+    		url: 'api/gostop/postchoice?action=' + 123,
+    		success: function (result) {
+    			alert("result");
+    		},
+    		error: function () {
+    			alert("error");
+    		}
+    	});
+    });
+	</script>
+</body>
+</html>
+

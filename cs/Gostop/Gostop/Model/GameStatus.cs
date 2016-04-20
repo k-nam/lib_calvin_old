@@ -4,64 +4,31 @@ using System.Linq;
 using System.Text;
 
 namespace Gostop.Model {
-	public class GameStatus {
-		#region // Members	
+	public class GameStatus {		
 
-		HashSet<int>[] _handCards;
-		HashSet<int>[] _takenCards;
-		#endregion
+		HashSet<int>[] HandCards { get; set; }
+		HashSet<int>[] TakenCards { get; set; }
 
-		#region // Getters
-		public Player CurrentPlayer {
-			get;
-			set;
-		}
-		public Player LastGoPlayer {
-			get;
-			set;
-		}
-		public HashSet<int> FloorCards {
-			get;
-			set;
-		}
-		public HashSet<int> HiddenCards {
-			get;
-			set;
+		public Player CurrentPlayer { get; set; }
+		public Player LastGoPlayer { get; set; }
+		public HashSet<int> FloorCards { get; set; }
+		public HashSet<int> HiddenCards { get; set; }
+
+		public int[] GoCount { get; set; }
+		public int[] LastGoPoint { get; set; }
+		public int[] ShakeCount { get; set; }
+		public int[] FuckCount { get; set; }
+
+		public HashSet<Month> ShakenMonths { get; set; }
+
+
+		public HashSet<int> GetHandCards(Player player) {
+			return HandCards[(int)player];
 		}
 
-		public HashSet<int> HandCards(Player player) {
-			return _handCards[((int)player)];
+		public HashSet<int> GetTakenCards(Player player) {
+			return TakenCards[(int)player];
 		}
-
-		public HashSet<int> TakenCards(Player player) {
-			return _takenCards[((int)player)];
-		}
-
-		public int[] GoCount {
-			get;
-			set;
-		}
-
-		public int[] LastGoPoint {
-			get;
-			set;
-		}
-
-		public int[] ShakeCount {
-			get;
-			set;
-		}
-
-		public int[] FuckCount {
-			get;
-			set;
-		}
-
-		public HashSet<Month> ShakenMonths {
-			get;
-			set;
-		}
-		#endregion
 
 		// Create a random initial status
 		public void Init() {
@@ -70,14 +37,14 @@ namespace Gostop.Model {
 			FloorCards = new HashSet<int>();
 			HiddenCards = new HashSet<int>();
 
-			_handCards = new HashSet<int>[3];
-			_takenCards = new HashSet<int>[3];
-			_handCards[0] = new HashSet<int>();
-			_handCards[1] = new HashSet<int>();
-			_handCards[2] = new HashSet<int>();
-			_takenCards[0] = new HashSet<int>();
-			_takenCards[1] = new HashSet<int>();
-			_takenCards[2] = new HashSet<int>();
+			HandCards = new HashSet<int>[3];
+			TakenCards = new HashSet<int>[3];
+			HandCards[0] = new HashSet<int>();
+			HandCards[1] = new HashSet<int>();
+			HandCards[2] = new HashSet<int>();
+			TakenCards[0] = new HashSet<int>();
+			TakenCards[1] = new HashSet<int>();
+			TakenCards[2] = new HashSet<int>();
 
 			GoCount = new int[3];
 			LastGoPoint = new int[3];
@@ -93,7 +60,7 @@ namespace Gostop.Model {
 
 		public GameStatus() {
 			Init();
-			ShuffleCards(HandCards(Player.A), HandCards(Player.B), HandCards(Player.C),
+			ShuffleCards(GetHandCards(Player.A), GetHandCards(Player.B), GetHandCards(Player.C),
 				FloorCards, HiddenCards);
 		}
 
@@ -135,13 +102,13 @@ namespace Gostop.Model {
 
 		public bool IsInitialStatus() {
 			bool isInitial = true;
-			if (HandCards(Player.A).Count != Card.InitialHandCardsPerPlayer) {
+			if (GetHandCards(Player.A).Count != Card.InitialHandCardsPerPlayer) {
 				isInitial = false;
 			}
-			if (HandCards(Player.B).Count != Card.InitialHandCardsPerPlayer) {
+			if (GetHandCards(Player.B).Count != Card.InitialHandCardsPerPlayer) {
 				isInitial = false;
 			}
-			if (HandCards(Player.C).Count != Card.InitialHandCardsPerPlayer) {
+			if (GetHandCards(Player.C).Count != Card.InitialHandCardsPerPlayer) {
 				isInitial = false;
 			}
 			if (FloorCards.Count != Card.InitialFloorCardsNum) {
@@ -154,7 +121,7 @@ namespace Gostop.Model {
 		}
 
 		public int[] GetPoint(Player player) {
-			var takenCards = TakenCards(player);
+			var takenCards = GetTakenCards(player);
 			return CalculatePoint(takenCards);
 
 		}
@@ -246,20 +213,20 @@ namespace Gostop.Model {
 
 			builder.AppendLine("<Hand cards>");
 			builder.Append("Player A: ");
-			builder.AppendLine(Card.PrintCardSet(HandCards(Player.A)));
+			builder.AppendLine(Card.PrintCardSet(GetHandCards(Player.A)));
 			builder.Append("Player B: ");
-			builder.AppendLine(Card.PrintCardSet(HandCards(Player.B)));
+			builder.AppendLine(Card.PrintCardSet(GetHandCards(Player.B)));
 			builder.Append("Player C: ");
-			builder.AppendLine(Card.PrintCardSet(HandCards(Player.C)));
+			builder.AppendLine(Card.PrintCardSet(GetHandCards(Player.C)));
 			builder.AppendLine();
 
 			builder.AppendLine("<Taken cards>");
 			builder.Append("Player A: ");
-			builder.AppendLine(Card.PrintCardSet(TakenCards(Player.A)));
+			builder.AppendLine(Card.PrintCardSet(GetTakenCards(Player.A)));
 			builder.Append("Player B: ");
-			builder.AppendLine(Card.PrintCardSet(TakenCards(Player.B)));
+			builder.AppendLine(Card.PrintCardSet(GetTakenCards(Player.B)));
 			builder.Append("Player C: ");
-			builder.AppendLine(Card.PrintCardSet(TakenCards(Player.C)));
+			builder.AppendLine(Card.PrintCardSet(GetTakenCards(Player.C)));
 			builder.AppendLine();
 
 			builder.AppendLine("<Floor cards>");
