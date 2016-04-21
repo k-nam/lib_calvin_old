@@ -277,6 +277,10 @@ namespace Gostop.Model {
 			_gameStatus.FloorCards.Remove(cardId);
 			_gameStatus.GetTakenCards(player).Add(cardId);
 
+			var cardToBeTaken = new HashSet<int>();
+			cardToBeTaken.Add(cardId);
+			_history.Add(new TakeAction(player, cardToBeTaken));
+
 			if (_hitCardChooseOption != null) { // we just chose hit card option
 				_hitCardChooseOption = null;
 				if (_flippedCardChooseOption != null) { // we should choose one more time

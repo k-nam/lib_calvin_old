@@ -23,23 +23,35 @@
     		}
     	});
     });*/
-		
-    $(document).ready(function () {
-    	alert("started");
+
+    function callAjax(choice) {
     	$.ajax({
+    		async: false,
     		type: "POST",
     		dataType: 'json',
-    		//data: { Value: 123 },
-    		url: 'api/gostop/postchoice?action=' + 123,
+    		url: 'api/gostop/postchoice?action=' + choice,
     		success: function (result) {
-    			alert("result");
+    			$('#result').val(JSON.stringify(result));
     		},
     		error: function () {
     			alert("error");
     		}
     	});
+    }
+
+    $(document).ready(function () {
+    	//alert("started");
+    	callAjax(-1);
     });
+
 	</script>
+	<div style="margin:auto; width:600px; height:600px">
+		<input type="text" id="input" />
+		<button id="buton" onclick="callAjax(document.getElementById('input').value);">제출</button>
+		<br /><br /><br /><br />
+		<textarea id="result" rows="40" cols="80"></textarea>
+	</div>
 </body>
 </html>
+
 

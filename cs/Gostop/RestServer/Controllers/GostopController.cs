@@ -26,19 +26,19 @@ namespace RestServer.Controllers {
 		[HttpPost]
 		public HttpResponseMessage PostChoice([FromUri] int action) {
 
-			/*
+			
 			GameStep gameStep = null;
 			if (action < 0) {
 				engine = new GostopEngine();
 				gameStep = engine.Start();
 			} else {
 				gameStep = engine.ProceedWith(action);
-			}*/
+			}
 			
-			var response = new HttpResponseMessage();			
-			//var json = new JavaScriptSerializer().Serialize(gameStep);
-			//response.Content = new StringContent(json, Encoding.UTF8, "application/json");
-			response.Content = new StringContent((action + 1).ToString());
+			var response = new HttpResponseMessage();					
+			var json = new JavaScriptSerializer().Serialize(gameStep);
+			response.Content = new StringContent(json, Encoding.UTF8, "application/json");
+			//response.Content = new StringContent((action + 1).ToString());
 			response.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 			return response;
 		}

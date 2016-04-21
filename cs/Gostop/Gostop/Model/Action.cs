@@ -8,24 +8,24 @@ namespace Gostop.Model {
 	// Some actions are voluntary (result of a choice), others are inevitable
 	// But from the game engine's point of view, those two need not be distinguished
 	public enum ActionType {
-		HitAction,
-		VoidHitAction, 
-		FlipHitAction, // automatic
-		FuckAction, // automatic
-		UnFuckAction, // automatic
-		DadakAction, // automatic
-		KissAction, // automatic
-		TakeAction, // automatic
-		CleanupAction, // automatic
-		StealAction, // automatic
-		ChooseAction,
-		GoOrStopAction,
-		ShakeAction,
-		BombAction,
-		FourCardAction,
-		EndTurnAction, // automatic
-		TakeMoneyAction, // automatic
-		EndGameAction, // automatic
+		HitAction = 0,
+		VoidHitAction = 1, 
+		FlipHitAction = 2, // automatic
+		FuckAction = 3, // automatic
+		UnFuckAction = 4, // automatic
+		DadakAction = 5, // automatic
+		KissAction = 6, // automatic
+		TakeAction = 7, // automatic
+		CleanupAction = 8, // automatic
+		StealAction = 9, // automatic
+		ChooseAction = 10,
+		GoOrStopAction = 11,
+		ShakeAction = 12,
+		BombAction = 13,
+		FourCardAction = 14,
+		EndTurnAction = 15, // automatic
+		TakeMoneyAction = 16, // automatic
+		EndGameAction = 17 // automatic
 	}
 
 	public class Action {
