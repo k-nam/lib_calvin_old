@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 
 namespace Gostop.Model {
-	public class GameStatus {		
+	public class GameStatus {
 
-		HashSet<int>[] HandCards { get; set; }
-		HashSet<int>[] TakenCards { get; set; }
+		public HashSet<int>[] HandCards { get; set; }
+		public HashSet<int>[] TakenCards { get; set; }
 
 		public Player CurrentPlayer { get; set; }
 		public Player LastGoPlayer { get; set; }
 		public HashSet<int> FloorCards { get; set; }
-		public HashSet<int> HiddenCards { get; set; }
+		public List<int> HiddenCards { get; set; }
 
 		public int[] GoCount { get; set; }
 		public int[] LastGoPoint { get; set; }
@@ -35,7 +35,7 @@ namespace Gostop.Model {
 			CurrentPlayer = Player.A;
 			LastGoPlayer = Player.A;
 			FloorCards = new HashSet<int>();
-			HiddenCards = new HashSet<int>();
+			HiddenCards = new List<int>();
 
 			HandCards = new HashSet<int>[3];
 			TakenCards = new HashSet<int>[3];
@@ -268,7 +268,7 @@ namespace Gostop.Model {
 		// Among integers 0 ~ 47, randomly assigns 7, 7, 7, 6 cards to each set
 		public static void ShuffleCards(HashSet<int> aHandCards,
 			HashSet<int> bHandCards, HashSet<int> cHandCards,
-				HashSet<int> floorCards, HashSet<int> hiddenCards) {
+				HashSet<int> floorCards, List<int> hiddenCards) {
 			List<int> cardSet = new List<int>();
 			for (int i = 0; i < Card.NumberOfTotalCards; i++) {
 				cardSet.Add(i);

@@ -109,6 +109,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="gameroom.js" />
+    <Content Include="gamescreen.html" />
     <Content Include="Global.asax" />
     <Content Include="gostop.css" />
     <Content Include="gostop.html" />

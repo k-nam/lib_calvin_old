@@ -84,52 +84,52 @@ namespace Gostop.Model {
 			_cardSet.Add(new Card(Month.January, CardType.TrueLight, "1광"));
 			_cardSet.Add(new Card(Month.January, CardType.RedFive, "1홍단"));
 			_cardSet.Add(new Card(Month.January, CardType.NormalShell, "1피"));
-			_cardSet.Add(new Card(Month.January, CardType.NormalShell, "1피*"));
+			_cardSet.Add(new Card(Month.January, CardType.NormalShell, "1피+"));
 
 			_cardSet.Add(new Card(Month.February, CardType.FiveBirdsTen, "2고도리"));
 			_cardSet.Add(new Card(Month.February, CardType.RedFive, "2홍단"));
 			_cardSet.Add(new Card(Month.February, CardType.NormalShell, "2피"));
-			_cardSet.Add(new Card(Month.February, CardType.NormalShell, "2피*"));
+			_cardSet.Add(new Card(Month.February, CardType.NormalShell, "2피+"));
 
 			_cardSet.Add(new Card(Month.March, CardType.TrueLight, "3광"));
 			_cardSet.Add(new Card(Month.March, CardType.RedFive, "3홍단"));
 			_cardSet.Add(new Card(Month.March, CardType.NormalShell, "3피"));
-			_cardSet.Add(new Card(Month.March, CardType.NormalShell, "3피*"));
+			_cardSet.Add(new Card(Month.March, CardType.NormalShell, "3피+"));
 
 			_cardSet.Add(new Card(Month.April, CardType.FiveBirdsTen, "4고도리"));
 			_cardSet.Add(new Card(Month.April, CardType.GrassFive, "4초단"));
 			_cardSet.Add(new Card(Month.April, CardType.NormalShell, "4피"));
-			_cardSet.Add(new Card(Month.April, CardType.NormalShell, "4피*"));
+			_cardSet.Add(new Card(Month.April, CardType.NormalShell, "4피+"));
 
 			_cardSet.Add(new Card(Month.May, CardType.NormalTen, "5열끗"));
 			_cardSet.Add(new Card(Month.May, CardType.GrassFive, "5초단"));
 			_cardSet.Add(new Card(Month.May, CardType.NormalShell, "5피"));
-			_cardSet.Add(new Card(Month.May, CardType.NormalShell, "5피*"));
+			_cardSet.Add(new Card(Month.May, CardType.NormalShell, "5피+"));
 
 			_cardSet.Add(new Card(Month.June, CardType.NormalTen, "6열끗"));
 			_cardSet.Add(new Card(Month.June, CardType.BlueFive, "6청단"));
 			_cardSet.Add(new Card(Month.June, CardType.NormalShell, "6피"));
-			_cardSet.Add(new Card(Month.June, CardType.NormalShell, "6피*"));
+			_cardSet.Add(new Card(Month.June, CardType.NormalShell, "6피+"));
 
 			_cardSet.Add(new Card(Month.July, CardType.NormalTen, "7열끗"));
 			_cardSet.Add(new Card(Month.July, CardType.GrassFive, "7초단"));
 			_cardSet.Add(new Card(Month.July, CardType.NormalShell, "7피"));
-			_cardSet.Add(new Card(Month.July, CardType.NormalShell, "7피*"));
+			_cardSet.Add(new Card(Month.July, CardType.NormalShell, "7피+"));
 
 			_cardSet.Add(new Card(Month.August, CardType.TrueLight, "8광"));
 			_cardSet.Add(new Card(Month.August, CardType.FiveBirdsTen, "8고도리"));
 			_cardSet.Add(new Card(Month.August, CardType.NormalShell, "8피"));
-			_cardSet.Add(new Card(Month.August, CardType.NormalShell, "8피*"));
+			_cardSet.Add(new Card(Month.August, CardType.NormalShell, "8피+"));
 
 			_cardSet.Add(new Card(Month.September, CardType.NormalTen, "9열끗"));
 			_cardSet.Add(new Card(Month.September, CardType.BlueFive, "9청단"));
 			_cardSet.Add(new Card(Month.September, CardType.NormalShell, "9피"));
-			_cardSet.Add(new Card(Month.September, CardType.NormalShell, "9피*"));
+			_cardSet.Add(new Card(Month.September, CardType.NormalShell, "9피+"));
 
 			_cardSet.Add(new Card(Month.October, CardType.NormalTen, "10열끗"));
 			_cardSet.Add(new Card(Month.October, CardType.BlueFive, "10청단"));
 			_cardSet.Add(new Card(Month.October, CardType.NormalShell, "10피"));
-			_cardSet.Add(new Card(Month.October, CardType.NormalShell, "10피*"));
+			_cardSet.Add(new Card(Month.October, CardType.NormalShell, "10피+"));
 
 			_cardSet.Add(new Card(Month.November, CardType.RainLight, "비광"));
 			_cardSet.Add(new Card(Month.November, CardType.NormalTen, "비열끗"));
@@ -138,7 +138,7 @@ namespace Gostop.Model {
 
 			_cardSet.Add(new Card(Month.December, CardType.TrueLight, "똥광"));
 			_cardSet.Add(new Card(Month.December, CardType.NormalShell, "똥피"));
-			_cardSet.Add(new Card(Month.December, CardType.NormalShell, "똥피*"));
+			_cardSet.Add(new Card(Month.December, CardType.NormalShell, "똥피+"));
 			_cardSet.Add(new Card(Month.December, CardType.DoubleShell, "똥쌍피"));
 		}
 
