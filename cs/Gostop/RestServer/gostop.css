@@ -1,91 +1,84 @@
 ﻿:root {
-  --other-hand-background-color: yellow;
-	--other-hand-top-margin: 70px;
-	--other-hand-side-margin: 10px;
+	--player-height: 220px;
 
-	--other-taken-background-color: yellow;
-	--other-taken-top-margin: 30px;
-	--other-taken-side-margin: 10px;
-
-	--my-hand-background-color: yellow;
-	--my-hand-bottom-margin: 10px;
-
-	--my-taken-background-color: yellow;
-	--my-taken-top-margin: 10px;
-	--my-taken-bottom-margin: 10px;
-	--my-taken-side-margin: 10px;
-
-	--taken-width: 550px;
-	--taken-height: 220px;
 }
 
 body {
 }
 
 
-.other-hand {
-	width: 110px; 
-	height: 400px;
-	margin-top: var(--other-hand-top-margin);
-	background-color: var(--other-hand-background-color);
+.player {
+	width: 450px; 
+	height: 220px;
+	background-color: yellow;
 }
 
-.other-hand-left {
-	float: left;
-	margin-left: var(--other-hand-side-margin);
+.score {
+	width: 450px; 
+	height: 30px;
+	background-color: white;
 }
 
-.other-hand-right {
-	float: right;
-	margin-right: var(--other-hand-side-margin);
+.taken-card {
+	width: 450px; 
+	height: 190px;
 }
 
-.other-taken {
-	width: var(--taken-height);
-	height: var(--taken-width);
-	margin-top: var(--other-taken-top-margin);
-	background-color: var(--other-taken-background-color);
+.taken-card-line {
+	width: 450px; 
+	height: 80px;
+
 }
 
-.other-taken-left {
-	float: left;
-	margin-left: var(--other-taken-side-margin);
+.light-card {
+	width: 120px; 
+	height: 80px;
+	float:left;
+	background-color:peachpuff;
 }
 
-.other-taken-right {
-	float: right;
-	margin-right: var(--other-taken-side-margin);
+.ten-card {
+	width: 150px; 
+	height: 80px;
+	float:left;
+	background-color:rebeccapurple;
 }
 
-.my-hand {
-	width: 400px;
-	height: 130px;
-	margin-left: auto;
-	margin-right: auto;
-	margin-bottom: var(--my-hand-bottom-margin);
-	background-color: var(--my-hand-background-color);
+.shell-card {
+	width: 180px; 
+	height: 80px;
+	float:left;
+	background-color:mediumpurple;
 }
 
-.my-taken {
-	width: var(--taken-width);
-	height: var(--taken-height);
-	margin-top: var(--my-taken-top-margin);
-	margin-bottom: var(--my-taken-bottom-margin);
-	margin-left: var(--my-taken-side-margin);
-	background-color: var(--my-taken-background-color);
-}
-
-.mid-container {
-	float: left;
-	width: 570px;
-	height: 800px;
-	background-color: lightgrey;
-}
-
-.floor {
-	width: 570px;
-	height:400px;
-		margin-left: auto;
-	margin-right: auto;
+.title {
+	width: 380px;
+	height:var(--player-height);
 	background-color: red;
+
 }
+.floor {
+	width: 800px;
+	height:360px;
+	margin:auto;
+	background-color: green;
+}
+
+.info {
+	width: 200px; 
+	height: var(--player-height);
+	background-color: aqua;
+}
+
+.hand {
+	width: 400px; 
+	height: var(--player-height);
+	background-color: lightblue;
+}
+
+.message {
+	width: 220px; 
+	height: var(--player-height);
+	background-color: pink;
+}
+

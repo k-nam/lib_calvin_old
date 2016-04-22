@@ -17,7 +17,7 @@ namespace GostopTest
 		private HashSet<int> playerB_HandCards;
 		private HashSet<int> playerC_HandCards;
 		private HashSet<int> floorCards;
-		private HashSet<int> hiddenCards;
+		private List<int> hiddenCards;
 
 		public GameStatusTest()
 		{
@@ -25,7 +25,7 @@ namespace GostopTest
 			playerB_HandCards = new HashSet<int>();
 			playerC_HandCards = new HashSet<int>();
 			floorCards = new HashSet<int>();
-			hiddenCards = new HashSet<int>();		
+			hiddenCards = new List<int>();		
 		}
 
 		private TestContext testContextInstance;

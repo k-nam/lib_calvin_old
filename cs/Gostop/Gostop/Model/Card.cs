@@ -131,15 +131,15 @@ namespace Gostop.Model {
 			_cardSet.Add(new Card(Month.October, CardType.NormalShell, "10피"));
 			_cardSet.Add(new Card(Month.October, CardType.NormalShell, "10피+"));
 
-			_cardSet.Add(new Card(Month.November, CardType.RainLight, "비광"));
-			_cardSet.Add(new Card(Month.November, CardType.NormalTen, "비열끗"));
-			_cardSet.Add(new Card(Month.November, CardType.NormalFive, "비다섯끗"));
-			_cardSet.Add(new Card(Month.November, CardType.DoubleShell, "비쌍피"));
+			_cardSet.Add(new Card(Month.November, CardType.TrueLight, "똥광"));
+			_cardSet.Add(new Card(Month.November, CardType.NormalShell, "똥피"));
+			_cardSet.Add(new Card(Month.November, CardType.NormalShell, "똥피+"));
+			_cardSet.Add(new Card(Month.November, CardType.DoubleShell, "똥쌍피"));
 
-			_cardSet.Add(new Card(Month.December, CardType.TrueLight, "똥광"));
-			_cardSet.Add(new Card(Month.December, CardType.NormalShell, "똥피"));
-			_cardSet.Add(new Card(Month.December, CardType.NormalShell, "똥피+"));
-			_cardSet.Add(new Card(Month.December, CardType.DoubleShell, "똥쌍피"));
+			_cardSet.Add(new Card(Month.December, CardType.RainLight, "비광"));
+			_cardSet.Add(new Card(Month.December, CardType.NormalTen, "비열끗"));
+			_cardSet.Add(new Card(Month.December, CardType.NormalFive, "비다섯끗"));
+			_cardSet.Add(new Card(Month.December, CardType.DoubleShell, "비쌍피"));
 		}
 
 		public static Card GetCard(int cardId) {

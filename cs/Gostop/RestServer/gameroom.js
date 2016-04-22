@@ -66,15 +66,17 @@ function getAllCards() {
 					new Card(38, '피'),
 					new Card(39, '피'),
 
-					new Card(40, '비광'), // 11
-					new Card(41, '열끗'),
-					new Card(42, '다섯끗'),
+					new Card(40, '광'), // 11 똥
+					new Card(41, '피'),
+					new Card(42, '피'),
 					new Card(43, '쌍피'),
 
-					new Card(44, '광'), // 12
-					new Card(45, '피'),
-					new Card(46, '피'),
+					new Card(44, '비광'), // 12 비
+					new Card(45, '열끗'),
+					new Card(46, '다섯끗'),
 					new Card(47, '쌍피')];
+
+
 }
 
 function printAllCards() {
@@ -85,5 +87,5 @@ function printAllCards() {
 }
 
 function drawGameRoom(gameStatus) {
-
+ 
 }
