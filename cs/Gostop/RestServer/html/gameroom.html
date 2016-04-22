@@ -3,21 +3,36 @@
 <head>
 	<title></title>
 	<meta charset="utf-8" />
-	<link rel="stylesheet" type="text/css" href="/gostop.css">
+	<link rel="stylesheet" type="text/css" href="/css/gostop.css">
+	<script language="javascript" src="/script/card.js"></script>
+	<script language="javascript" src="/script/layout.js"></script>
+
+	<script>
+		function start() {
+			//splitCardsForDisplay([0, 3, 5]);
+			var list = [];
+			for (var i = 0; i < 48; i++) {
+				list.push(i);
+			}
+			var screen = document.getElementById('player2taken');
+			draw(list, screen);
+		}
+	</script>
 </head>
 
-<body >
+<body onload="start();">
 	
 	<div style="width:1280px; height:800px; margin:auto;background-color:lightgrey;">
 		<h1>hi</h1>
+
 		<hr />
 		<div class="player" style="float:left;">
 			<div class="taken-card" style="position:relative;">
 
-					<img src="image/0.png" style="position:absolute; left:20px; width:60px; height:90px;" />
+					<img src="/image/0.png" style="position:absolute; left:20px; width:60px; height:90px;" />
 			
 		
-					<img src="image/1.png" style="position:absolute; left:40px;width:60px; height:90px;"/>
+					<img src="/image/1.png" style="position:absolute; left:40px;width:60px; height:90px;"/>
 			
 			</div>
 			<div class="score">
@@ -27,8 +42,8 @@
 		<div class="title" style="float:left;">
 
 		</div>
-		<div class="player" style="float:right;">
-			<div class="taken-card">
+		<div class="player" style="float:right">
+			<div id="player2taken" class="taken-card" style="position:relative;">
 
 			</div>
 			<div class="score">

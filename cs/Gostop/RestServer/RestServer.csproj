@@ -109,11 +109,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="gameroom.js" />
-    <Content Include="gamescreen.html" />
+    <Content Include="script\card.js" />
     <Content Include="Global.asax" />
-    <Content Include="gostop.css" />
-    <Content Include="gostop.html" />
+    <Content Include="css\gostop.css" />
+    <Content Include="html\gameroom.html" />
     <Content Include="image\0.png" />
     <Content Include="image\1.png" />
     <Content Include="image\10.png" />
@@ -166,6 +165,7 @@
     <Content Include="index.html" />
     <Content Include="scripts\ai.0.15.0-build58334.js" />
     <Content Include="scripts\ai.0.15.0-build58334.min.js" />
+    <Content Include="script\layout.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

@@ -15,6 +15,29 @@ function getCard(id) {
 	return getAllCards()[id];
 }
 
+function splitCardsForDisplay(cards) {
+	function getGeneralTypeFromType(cardType) {
+		if (cardType == '광' || cardType == '비광') {
+			return '광';
+		} else if (cardType == '고도리' || cardType == '열끗') {
+			return '열끗';
+		} else if (cardType == '홍단' || cardType == '청단' ||
+								cardType == '초단' || cardType == '다섯끗') {
+			return '다섯끗';
+		} else {
+			return '피';
+		}
+	}
+	//alert('예');
+	var result = { 광:[], 열끗:[], 다섯끗:[], 피:[] };
+	for (var i = 0; i < cards.length; i++) {
+		var thisType = getGeneralTypeFromType(getCard(cards[i]).type);
+		result[thisType].push(i);
+	}
+	//alert(result['광']);
+	return result;
+}
+
 function getAllCards() {
 	return [new Card(0, '광'), // 1
 					new Card(1, '홍단'),
