@@ -38,6 +38,45 @@ function splitCardsForDisplay(cards) {
 	return result;
 }
 
+function splitShellsForDisplay(shells) {
+	// shells are arranged in 3 lines
+	// first and second line should contain at most 5 shells (double shell counts as 2)
+	var result = [[], [], []];
+	var doubles = [];
+	var normals = [];
+	for (var i = 0; i < shells.length; i++) {
+		//alert(getCard(shells[i]).type);
+		if (getCard(shells[i]).type == '피') {
+			normals.push(shells[i]);
+		} else {
+			doubles.push(shells[i]);
+		}
+	}
+	var totalShellCount = 0;
+	for (i = 0; i < doubles.length; i++) {
+		if (totalShellCount < 5) {
+			result[0].push(doubles[i]);
+		} else if (totalShellCount < 10) {
+			result[1].push(doubles[i]);
+		} else {
+			result[2].push(doubles[i]);
+		}
+		totalShellCount += 2;
+	}
+	
+	for (i = 0; i < normals.length; i++) {
+		if (totalShellCount < 5) {
+			result[0].push(normals[i]);
+		} else if (totalShellCount < 10) {
+			result[1].push(normals[i]);
+		} else {
+			result[2].push(normals[i]);
+		}
+		totalShellCount += 1;
+	}
+	return result;
+}
+
 function getAllCards() {
 	return [new Card(0, '광'), // 1
 					new Card(1, '홍단'),

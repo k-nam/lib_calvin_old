@@ -11,11 +11,11 @@
 		function start() {
 			//splitCardsForDisplay([0, 3, 5]);
 			var list = [];
-			for (var i = 0; i < 48; i++) {
+			for (var i = 0; i < 24; i++) {
 				list.push(i);
 			}
-			var screen = document.getElementById('player2taken');
-			draw(list, screen);
+			draw(list, document.getElementById('player1taken'));
+			draw(list, document.getElementById('player2taken'));
 		}
 	</script>
 </head>
@@ -27,12 +27,7 @@
 
 		<hr />
 		<div class="player" style="float:left;">
-			<div class="taken-card" style="position:relative;">
-
-					<img src="/image/0.png" style="position:absolute; left:20px; width:60px; height:90px;" />
-			
-		
-					<img src="/image/1.png" style="position:absolute; left:40px;width:60px; height:90px;"/>
+			<div id="player1taken" class="taken-card" style="position:relative;">
 			
 			</div>
 			<div class="score">

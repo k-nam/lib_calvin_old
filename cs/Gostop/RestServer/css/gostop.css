@@ -1,6 +1,6 @@
 ﻿:root {
 	--player-height: 220px;
-
+	--player-width:500px
 }
 
 body {
@@ -8,24 +8,25 @@ body {
 
 
 .player {
-	width: 450px; 
+	width: var(--player-width); 
 	height: 220px;
-	background-color: yellow;
+	
 }
 
 .score {
-	width: 450px; 
+	width: var(--player-width);  
 	height: 30px;
-	background-color: white;
+	
 }
 
 .taken-card {
-	width: 450px; 
+	width: var(--player-width); 
 	height: 190px;
+	background-color: white;
 }
 
 .taken-card-line {
-	width: 450px; 
+	width: var(--player-width); 
 	height: 80px;
 
 }
@@ -52,9 +53,8 @@ body {
 }
 
 .title {
-	width: 380px;
+	width: 280px;
 	height:var(--player-height);
-	background-color: red;
 
 }
 .floor {
@@ -77,7 +77,7 @@ body {
 }
 
 .message {
-	width: 220px; 
+	width: 170px; 
 	height: var(--player-height);
 	background-color: pink;
 }
