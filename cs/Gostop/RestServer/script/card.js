@@ -15,6 +15,27 @@ function getCard(id) {
 	return getAllCards()[id];
 }
 
+function sortCards(cards) {
+	var result = {};
+	//alert(cards.length);
+	for (var i = 0; i < cards.length; i++) {
+		var thisMonth = getCard(cards[i]).month().toString();
+		//alert(thisMonth);
+		if (result[thisMonth]) {
+			//alert('u');
+			result[thisMonth].push(cards[i]);
+			//alert(result[thisMonth].length);
+		} else {
+			//alert('v');
+			result[thisMonth] = [cards[i]];
+		}
+		
+
+	}
+	//alert('size: ' + Object.keys(result).length);
+	return result;
+}
+
 function splitCardsForDisplay(cards) {
 	function getGeneralTypeFromType(cardType) {
 		if (cardType == '광' || cardType == '비광') {

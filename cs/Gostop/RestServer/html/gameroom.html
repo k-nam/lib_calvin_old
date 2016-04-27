@@ -14,8 +14,9 @@
 			for (var i = 0; i < 24; i++) {
 				list.push(i);
 			}
-			draw(list, document.getElementById('player1taken'));
-			draw(list, document.getElementById('player2taken'));
+			drawTakenCards(list, document.getElementById('player1taken'));
+			drawTakenCards(list, document.getElementById('player2taken'));
+			drawFloorCards(list, document.getElementById('floor-cards'))
 		}
 	</script>
 </head>
@@ -25,7 +26,7 @@
 	<div style="width:1280px; height:800px; margin:auto;background-color:lightgrey;">
 		<h1>hi</h1>
 
-		<hr />
+
 		<div class="player" style="float:left;">
 			<div id="player1taken" class="taken-card" style="position:relative;">
 			
@@ -49,7 +50,7 @@
 
 		</div>
 		<div>
-			<div class="floor">
+			<div class="floor" id="floor-cards" style="position:relative;">
 
 			</div>
 		</div>
