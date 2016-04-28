@@ -19,7 +19,7 @@ function sortCards(cards) {
 	var result = {};
 	//alert(cards.length);
 	for (var i = 0; i < cards.length; i++) {
-		var thisMonth = getCard(cards[i]).month().toString();
+		var thisMonth = getCard(cards[i]).month();
 		//alert(thisMonth);
 		if (result[thisMonth]) {
 			//alert('u');
@@ -29,8 +29,6 @@ function sortCards(cards) {
 			//alert('v');
 			result[thisMonth] = [cards[i]];
 		}
-		
-
 	}
 	//alert('size: ' + Object.keys(result).length);
 	return result;

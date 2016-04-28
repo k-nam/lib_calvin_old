@@ -21,9 +21,13 @@ var shellEndPoint2 = [440, 60];
 var shellStartPoint3 = [330, 5];
 var shellEndPoint3 = [440, 5];
 
-var floorSlot = [[-150, 100], [-50, 100], [50, 100], [150, 100],
+var floorSlot = [[-150, 110], [-50, 110], [50, 110], [150, 110],
 									[-200, 0], [-100, 0], [100, 0], [200, 0],
-									[-150, -100], [-50, -100], [50, -100], [150, -100]];
+									[-150, -110], [-50, -110], [50, -110], [150, -110]];
+
+var floorSlot2 = [floorSlot[5], floorSlot[6], floorSlot[1], floorSlot[10],
+								floorSlot[2], floorSlot[9], floorSlot[0], floorSlot[3],
+								floorSlot[4], floorSlot[7], floorSlot[8], floorSlot[11]];
 
 function O(i) {
 	if (typeof i == 'object') {
@@ -68,12 +72,15 @@ function drawAtCoordinate(card, coordinate, screen) {
 
 
 	img.onmouseenter = function () {
-		img.style.left = (coordinate[0]) + (-5) + 'px';
+		img.style.left = (coordinate[0]) + (-0) + 'px';
+		img.style['z-index'] = '1';
 	}
-	img.onmouseleave = function () {
+	img.onmouseout = function () {
 		img.style.left = coordinate[0] + 'px';
+		img.style['z-index'] = '0';
 	}
-	//img.style['z-index'] = '-1';
+	return img;
+	
 }
 
 function drawTakenCards(cards, screen) {
@@ -129,14 +136,16 @@ function drawFloorCards(cards, screen) {
 	var floorSlotIndex = 0;
 	for (var month in sortedCards) {
 		var thisMonthCards = sortedCards[month];
+		thisMonthCards.sort(function (a, b) { return b - a;});
 		//alert(thisMonthCards.length);
 		var adjustedCoordinate = [hiddenLeft, hiddenTop];
-		adjustedCoordinate[0] += floorSlot[floorSlotIndex][0] + 20;
-		adjustedCoordinate[1] += floorSlot[floorSlotIndex][1] + 20;
+		adjustedCoordinate[0] += floorSlot2[floorSlotIndex][0] - 0;
+		adjustedCoordinate[1] += floorSlot2[floorSlotIndex][1] - 0;
 		for (var i = 0; i < thisMonthCards.length; i++) {
-			adjustedCoordinate[0] -= 10;
-			adjustedCoordinate[1] -= 10;
-			drawAtCoordinate(thisMonthCards[i], [adjustedCoordinate[0], adjustedCoordinate[1]], screen);
+			var img = drawAtCoordinate(thisMonthCards[i], [adjustedCoordinate[0], adjustedCoordinate[1]], screen);
+			img.style['z-value'] = '' + (-i);
+			adjustedCoordinate[0] += 10;
+			adjustedCoordinate[1] += 10;
 		}
 		floorSlotIndex++;
 	}
