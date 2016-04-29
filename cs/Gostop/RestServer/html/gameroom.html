@@ -23,7 +23,9 @@
 			insertToFloorCards(6, floorCards);
 			removeFromFloorCards(0, floorCards);
 			removeFromFloorCards(6, floorCards);
-			drawFloorCards(floorCards, document.getElementById('floor-cards'))
+			drawFloorCards(floorCards, document.getElementById('floor-cards'));
+
+			drawHandCard([23, 25, 26, 27, 28, 29, 30], document.getElementById('hand-cards'));
 		}
 	</script>
 </head>
@@ -31,7 +33,6 @@
 <body onload="start();">
 	
 	<div style="width:1280px; height:800px; margin:auto;background-color:lightgrey;">
-		<h1>hi</h1>
 
 
 		<div class="player" style="float:left;">
@@ -74,12 +75,13 @@
 				</div>
 
 			</div>
-			<div class="hand" style="float:left;">
+			<div class="message" style="float:right;">
 
 			</div>
-			<div class="message" style="float:left;">
+			<div class="hand" id="hand-cards" style="float:right; position:relative;">
 
 			</div>
+
 			<div style="clear:both;">
 
 			</div>

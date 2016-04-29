@@ -71,7 +71,7 @@ body {
 }
 
 .hand {
-	width: 400px; 
+	width: 320px; 
 	height: var(--player-height);
 	background-color: lightblue;
 }

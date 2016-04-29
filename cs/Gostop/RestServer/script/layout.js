@@ -3,6 +3,10 @@
 var cardWidth = 54;
 var cardHeight = 81;
 
+var handCardWidth =	70;
+var handCardHeight = 105;
+var handCardMargin = 3;
+
 var lightStartPoint = [5, 100];
 var lightEndPoint = [50, 100];
 
@@ -61,15 +65,15 @@ function drawAtCoordinates(cards, coordinates, screen) {
 	}
 }
 
-function drawAtCoordinate(card, coordinate, screen) {
+function drawAtCoordinate(card, coordinate, screen, width = cardWidth, height = cardHeight) {
 	var img = document.createElement('img');
 	screen.appendChild(img);
 	img.src = '/image/' + card + '.png';
 	//alert(coordinate); 
 	img.id = 'card-' + card;
 	img.style.position = 'absolute';
-	img.style.width = cardWidth + 'px';
-	img.style.height = cardHeight + 'px';
+	img.style.width = width + 'px';
+	img.style.height = height + 'px';
 	img.style.left = coordinate[0] + 'px';
 	img.style.top = coordinate[1] + 'px';
 
@@ -173,5 +177,18 @@ function removeFromFloorCards(card, floorCards) {
 		floorCards[month] = floorCards[month].filter(function (x) { return x != card; });
 	} else {
 		alert('removeFromFloorCards error');
+	}
+}
+
+function drawHandCard(cards, screen) {
+	for (var i = 0; i < cards.length; i++) {
+		if (i < 4) { // upper line
+			var left = i * (handCardWidth + handCardMargin);
+			var top = handCardMargin;
+		} else { // lower line
+			var left = (i - 4) * (handCardWidth + handCardMargin);
+			var top = handCardHeight + 2 * handCardMargin;
+		}
+		drawAtCoordinate(cards[i], [left, top], screen, handCardWidth, handCardHeight);
 	}
 }
