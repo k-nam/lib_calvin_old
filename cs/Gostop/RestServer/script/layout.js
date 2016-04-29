@@ -29,6 +29,9 @@ var floorSlot2 = [floorSlot[5], floorSlot[6], floorSlot[1], floorSlot[10],
 								floorSlot[2], floorSlot[9], floorSlot[0], floorSlot[3],
 								floorSlot[4], floorSlot[7], floorSlot[8], floorSlot[11]];
 
+// i'th element contains floor cards at i'th slot
+var floorCards = new Array(12);
+
 function O(i) {
 	if (typeof i == 'object') {
 		return i;
@@ -128,25 +131,47 @@ function drawFloorCards(cards, screen) {
 
 	var hiddenLeft = (screenWidth / 2 - hidden.width / 2);
 	var hiddenTop = (screenHeight / 2 - hidden.height / 2);
-	hidden.style.left = hiddenLeft  + 'px';
+	hidden.style.left = hiddenLeft + 'px';
 	hidden.style.top = hiddenTop + 'px';
 
 	// draw visible cards
-	var sortedCards = sortCards(cards);
 	var floorSlotIndex = 0;
-	for (var month in sortedCards) {
-		var thisMonthCards = sortedCards[month];
-		thisMonthCards.sort(function (a, b) { return b - a;});
+	for (var month in cards) {
+		var thisMonthCards = cards[month];
 		//alert(thisMonthCards.length);
 		var adjustedCoordinate = [hiddenLeft, hiddenTop];
 		adjustedCoordinate[0] += floorSlot2[floorSlotIndex][0] - 0;
 		adjustedCoordinate[1] += floorSlot2[floorSlotIndex][1] - 0;
 		for (var i = 0; i < thisMonthCards.length; i++) {
 			var img = drawAtCoordinate(thisMonthCards[i], [adjustedCoordinate[0], adjustedCoordinate[1]], screen);
-			img.style['z-value'] = '' + (-i);
+			//img.style['z-value'] = '' + (-i);
 			adjustedCoordinate[0] += 10;
 			adjustedCoordinate[1] += 10;
+			if (floorCards[floorSlotIndex]) {
+				floorCards[floorSlotIndex].push(thisMonthCards[i]);
+			} else {
+				floorCards[floorSlotIndex] = [thisMonthCards[i]];
+			}
 		}
 		floorSlotIndex++;
+	}
+}
+
+function insertToFloorCards(card, floorCards) {
+	var month = getCard(card).month();
+	if (floorCards[month]) {
+		
+		floorCards[month].push(card);
+	} else {
+		floorCards[month] = [card];
+	}
+}
+
+function removeFromFloorCards(card, floorCards) {
+	var month = getCard(card).month();
+	if (floorCards[month]) {
+		floorCards[month] = floorCards[month].filter(function (x) { return x != card; });
+	} else {
+		alert('removeFromFloorCards error');
 	}
 }

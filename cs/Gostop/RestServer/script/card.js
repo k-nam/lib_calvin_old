@@ -15,7 +15,7 @@ function getCard(id) {
 	return getAllCards()[id];
 }
 
-function sortCards(cards) {
+function sortCardsForFloorDisplay(cards) {
 	var result = {};
 	//alert(cards.length);
 	for (var i = 0; i < cards.length; i++) {
@@ -31,6 +31,9 @@ function sortCards(cards) {
 		}
 	}
 	//alert('size: ' + Object.keys(result).length);
+	for (var month in result) {
+		result[month].sort(function (a, b) { return b - a; });
+	}
 	return result;
 }
 

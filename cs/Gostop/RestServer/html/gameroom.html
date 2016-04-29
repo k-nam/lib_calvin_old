@@ -16,7 +16,14 @@
 			}
 			drawTakenCards(list, document.getElementById('player1taken'));
 			drawTakenCards(list, document.getElementById('player2taken'));
-			drawFloorCards(list, document.getElementById('floor-cards'))
+
+			var floor = [0, 1, 5, 10, 11, 20];
+			var floorCards = sortCardsForFloorDisplay(floor);
+			insertToFloorCards(15, floorCards);
+			insertToFloorCards(6, floorCards);
+			removeFromFloorCards(0, floorCards);
+			removeFromFloorCards(6, floorCards);
+			drawFloorCards(floorCards, document.getElementById('floor-cards'))
 		}
 	</script>
 </head>
