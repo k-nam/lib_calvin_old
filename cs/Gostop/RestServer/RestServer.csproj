@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="image\back.png" />
+    <Content Include="script\action.js" />
     <Content Include="script\card.js" />
     <Content Include="Global.asax" />
     <Content Include="css\gostop.css" />

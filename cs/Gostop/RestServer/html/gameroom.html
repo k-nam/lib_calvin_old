@@ -14,18 +14,18 @@
 			for (var i = 0; i < 48; i++) {
 				list.push(i);
 			}
-			drawTakenCards(list, document.getElementById('player1taken'));
-			drawTakenCards(list, document.getElementById('player2taken'));
-
+			Layout.drawTakenCards(list, document.getElementById('player1taken'));
+			Layout.drawTakenCards(list, document.getElementById('player2taken'));
 			var floor = [0, 1, 5, 10, 11, 20];
 			var floorCards = sortCardsForFloorDisplay(floor);
-			insertToFloorCards(15, floorCards);
-			insertToFloorCards(6, floorCards);
-			removeFromFloorCards(0, floorCards);
-			removeFromFloorCards(6, floorCards);
-			drawFloorCards(floorCards, document.getElementById('floor-cards'));
+			Layout.insertToFloorCards(15, floorCards);
+			Layout.insertToFloorCards(6, floorCards);			
+			Layout.removeFromFloorCards(0, floorCards);
+			Layout.removeFromFloorCards(6, floorCards);
 
-			drawHandCard([23, 25, 26, 27, 28, 29, 30], document.getElementById('hand-cards'));
+			Layout.drawFloorCards(floorCards, document.getElementById('floor-cards'));
+
+			Layout.drawHandCards([23, 25, 26, 27, 28, 29, 30], document.getElementById('hand-cards'));
 		}
 	</script>
 </head>

@@ -1,51 +1,44 @@
-﻿var interval = 32;
+﻿var Layout = {};
 
-var cardWidth = 54;
-var cardHeight = 81;
+Layout.interval = 32;
 
-var handCardWidth =	70;
-var handCardHeight = 105;
-var handCardMargin = 3;
+Layout.cardWidth = 54;
+Layout.cardHeight = 81;
 
-var lightStartPoint = [5, 100];
-var lightEndPoint = [50, 100];
+Layout.handCardWidth =	70;
+Layout.handCardHeight = 105;
+Layout.handCardMargin = 3;
 
-var tenStartPoint = [115, 5];
-var tenEndPoint = [260, 5];
+Layout.lightStartPoint = [5, 100];
+Layout.lightEndPoint = [50, 100];
 
-var fiveStartPoint = [115, 100];
-var fiveEndPoint = [260, 102];
+Layout.tenStartPoint = [115, 5];
+Layout.tenEndPoint = [260, 5];
 
-var shellStartPoint1 = [330, 100];
-var shellEndPoint1 = [440, 102];
+Layout.fiveStartPoint = [115, 100];
+Layout.fiveEndPoint = [260, 102];
 
-var shellStartPoint2 = [330, 60];
-var shellEndPoint2 = [440, 60];
+Layout.shellStartPoint1 = [330, 100];
+Layout.shellEndPoint1 = [440, 102];
 
-var shellStartPoint3 = [330, 5];
-var shellEndPoint3 = [440, 5];
+Layout.shellStartPoint2 = [330, 60];
+Layout.shellEndPoint2 = [440, 60];
 
-var floorSlot = [[-150, 110], [-50, 110], [50, 110], [150, 110],
+Layout.shellStartPoint3 = [330, 5];
+Layout.shellEndPoint3 = [440, 5];
+
+Layout.floorSlot = [[-150, 110], [-50, 110], [50, 110], [150, 110],
 									[-200, 0], [-100, 0], [100, 0], [200, 0],
 									[-150, -110], [-50, -110], [50, -110], [150, -110]];
 
-var floorSlot2 = [floorSlot[5], floorSlot[6], floorSlot[1], floorSlot[10],
-								floorSlot[2], floorSlot[9], floorSlot[0], floorSlot[3],
-								floorSlot[4], floorSlot[7], floorSlot[8], floorSlot[11]];
+Layout.floorSlot2 = [Layout.floorSlot[5], Layout.floorSlot[6], Layout.floorSlot[1], Layout.floorSlot[10],
+								Layout.floorSlot[2], Layout.floorSlot[9], Layout.floorSlot[0], Layout.floorSlot[3],
+								Layout.floorSlot[4], Layout.floorSlot[7], Layout.floorSlot[8], Layout.floorSlot[11]];
 
 // i'th element contains floor cards at i'th slot
-var floorCards = new Array(12);
+Layout.floorCards = new Array(12);
 
-function O(i) {
-	if (typeof i == 'object') {
-		return i;
-	} else {
-		return document.getElementById(i);
-	}
-}
-
-function getCoordinates(startPoint, endPoint, interval, numCards) {
-
+Layout.getCoordinates = function(startPoint, endPoint, interval, numCards) {
 	var result = [];
 	if (startPoint[0] + interval * (numCards - 1) < endPoint[0]) {
 	} else {
@@ -58,14 +51,13 @@ function getCoordinates(startPoint, endPoint, interval, numCards) {
 	return result;
 }
 
-function drawAtCoordinates(cards, coordinates, screen) {
-
+Layout.drawAtCoordinates = function(cards, coordinates, screen) {
 	for (var i = 0; i < cards.length; i++) {
-		drawAtCoordinate(cards[i], coordinates[i], screen);
+		Layout.drawAtCoordinate(cards[i], coordinates[i], screen, Layout.cardWidth, Layout.cardHeight);
 	}
 }
 
-function drawAtCoordinate(card, coordinate, screen, width = cardWidth, height = cardHeight) {
+Layout.drawAtCoordinate = function (card, coordinate, screen, width, height) {
 	var img = document.createElement('img');
 	screen.appendChild(img);
 	img.src = '/image/' + card + '.png';
@@ -77,8 +69,7 @@ function drawAtCoordinate(card, coordinate, screen, width = cardWidth, height = 
 	img.style.left = coordinate[0] + 'px';
 	img.style.top = coordinate[1] + 'px';
 
-
-	img.onmouseenter = function () {
+	img.onmouseenter = function() {
 		img.style.left = (coordinate[0]) + (-0) + 'px';
 		img.style['z-index'] = '1';
 	}
@@ -86,14 +77,12 @@ function drawAtCoordinate(card, coordinate, screen, width = cardWidth, height = 
 		img.style.left = coordinate[0] + 'px';
 		img.style['z-index'] = '0';
 	}
-	return img;
-	
+	return img;	
 }
 
-function drawTakenCards(cards, screen) {
 
+Layout.drawTakenCards = function(cards, screen) {
 	var splitedCards = splitCardsForDisplay(cards);
-
 	var lights = splitedCards['광'];
 	var tens = splitedCards['열끗'];
 	var fives = splitedCards['다섯끗'];
@@ -101,33 +90,36 @@ function drawTakenCards(cards, screen) {
 	var shellByLines = splitShellsForDisplay(shells);
 	//alert(shellByLines[0]);
 
-	var lightCoordinates = getCoordinates(lightStartPoint, lightEndPoint, interval, lights.length);
-	var tenCoordinates = getCoordinates(tenStartPoint, tenEndPoint, interval, tens.length);
-	var fiveCoordinates = getCoordinates(fiveStartPoint, fiveEndPoint, interval, fives.length);
+	var lightCoordinates = Layout.getCoordinates(Layout.lightStartPoint, Layout.lightEndPoint,
+		Layout.interval, lights.length);
+	var tenCoordinates = Layout.getCoordinates(Layout.tenStartPoint, Layout.tenEndPoint,
+		Layout.interval, tens.length);
+	var fiveCoordinates = Layout.getCoordinates(Layout.fiveStartPoint, Layout.fiveEndPoint,
+		Layout.interval, fives.length);
 
-	drawAtCoordinates(lights, lightCoordinates, screen);
-	drawAtCoordinates(tens, tenCoordinates, screen);
-	drawAtCoordinates(fives, fiveCoordinates, screen);
+	Layout.drawAtCoordinates(lights, lightCoordinates, screen);
+	Layout.drawAtCoordinates(tens, tenCoordinates, screen);
+	Layout.drawAtCoordinates(fives, fiveCoordinates, screen);
 
-	var shellCoordinates1 =
-		getCoordinates(shellStartPoint1, shellEndPoint1, interval, shellByLines[0].length);
-	var shellCoordinates2 =
-		getCoordinates(shellStartPoint2, shellEndPoint2, interval, shellByLines[1].length);
-	var shellCoordinates3 =
-		getCoordinates(shellStartPoint3, shellEndPoint3, interval, shellByLines[2].length);
+	var shellCoordinates1 = Layout.getCoordinates(Layout.shellStartPoint1, Layout.shellEndPoint1,
+		Layout.interval, shellByLines[0].length);
+	var shellCoordinates2 = Layout.getCoordinates(Layout.shellStartPoint2, Layout.shellEndPoint2,
+		Layout.interval, shellByLines[1].length);
+	var shellCoordinates3 = Layout.getCoordinates(Layout.shellStartPoint3, Layout.shellEndPoint3,
+		Layout.interval, shellByLines[2].length);
 
-	drawAtCoordinates(shellByLines[0], shellCoordinates1, screen);
-	drawAtCoordinates(shellByLines[1], shellCoordinates2, screen);
-	drawAtCoordinates(shellByLines[2], shellCoordinates3, screen);
+	Layout.drawAtCoordinates(shellByLines[0], shellCoordinates1, screen);
+	Layout.drawAtCoordinates(shellByLines[1], shellCoordinates2, screen);
+	Layout.drawAtCoordinates(shellByLines[2], shellCoordinates3, screen);
 }
 
-function drawFloorCards(cards, screen) {
+Layout.drawFloorCards = function(cards, screen) {
 	// draw hidden card deck
 	var hidden = document.createElement('img');
 	screen.appendChild(hidden);
 	hidden.src = '/image/back.png';
-	hidden.style.width = cardWidth + 'px';
-	hidden.style.height = cardHeight + 'px';
+	hidden.style.width = Layout.cardWidth + 'px';
+	hidden.style.height = Layout.cardHeight + 'px';
 	hidden.style.position = 'absolute';
 
 	var screenWidth = screen.offsetWidth;
@@ -144,24 +136,26 @@ function drawFloorCards(cards, screen) {
 		var thisMonthCards = cards[month];
 		//alert(thisMonthCards.length);
 		var adjustedCoordinate = [hiddenLeft, hiddenTop];
-		adjustedCoordinate[0] += floorSlot2[floorSlotIndex][0] - 0;
-		adjustedCoordinate[1] += floorSlot2[floorSlotIndex][1] - 0;
+		adjustedCoordinate[0] += Layout.floorSlot2[floorSlotIndex][0] - 0;
+		adjustedCoordinate[1] += Layout.floorSlot2[floorSlotIndex][1] - 0;
 		for (var i = 0; i < thisMonthCards.length; i++) {
-			var img = drawAtCoordinate(thisMonthCards[i], [adjustedCoordinate[0], adjustedCoordinate[1]], screen);
+			var img = Layout.drawAtCoordinate(
+				thisMonthCards[i], [adjustedCoordinate[0], adjustedCoordinate[1]], screen,
+				Layout.cardWidth, Layout.cardHeight);
 			//img.style['z-value'] = '' + (-i);
 			adjustedCoordinate[0] += 10;
 			adjustedCoordinate[1] += 10;
-			if (floorCards[floorSlotIndex]) {
-				floorCards[floorSlotIndex].push(thisMonthCards[i]);
+			if (Layout.floorCards[floorSlotIndex]) {
+				Layout.floorCards[floorSlotIndex].push(thisMonthCards[i]);
 			} else {
-				floorCards[floorSlotIndex] = [thisMonthCards[i]];
+				Layout.floorCards[floorSlotIndex] = [thisMonthCards[i]];
 			}
 		}
 		floorSlotIndex++;
 	}
 }
 
-function insertToFloorCards(card, floorCards) {
+Layout.insertToFloorCards = function(card, floorCards) {
 	var month = getCard(card).month();
 	if (floorCards[month]) {
 		
@@ -171,24 +165,26 @@ function insertToFloorCards(card, floorCards) {
 	}
 }
 
-function removeFromFloorCards(card, floorCards) {
+Layout.removeFromFloorCards = function(card, floorCards) {
 	var month = getCard(card).month();
 	if (floorCards[month]) {
-		floorCards[month] = floorCards[month].filter(function (x) { return x != card; });
+		floorCards[month] = floorCards[month].filter(function(x) { return x != card; });
 	} else {
 		alert('removeFromFloorCards error');
 	}
 }
 
-function drawHandCard(cards, screen) {
-	for (var i = 0; i < cards.length; i++) {
+Layout.drawHandCards = function(cards, screen) {	
+	for (var i = 0; i < cards.length; i++) {		
 		if (i < 4) { // upper line
-			var left = i * (handCardWidth + handCardMargin);
-			var top = handCardMargin;
+			var left = i * (Layout.handCardWidth + Layout.handCardMargin);
+			var top = Layout.handCardMargin;
 		} else { // lower line
-			var left = (i - 4) * (handCardWidth + handCardMargin);
-			var top = handCardHeight + 2 * handCardMargin;
+			var left = (i - 4) * (Layout.handCardWidth + Layout.handCardMargin);
+			var top = Layout.handCardHeight + 2 * Layout.handCardMargin;
 		}
-		drawAtCoordinate(cards[i], [left, top], screen, handCardWidth, handCardHeight);
+		
+		Layout.drawAtCoordinate(cards[i], [left, top], screen,
+			Layout.handCardWidth, Layout.handCardHeight);
 	}
 }
