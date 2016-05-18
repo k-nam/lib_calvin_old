@@ -82,12 +82,12 @@ Layout.drawAtCoordinate = function (card, coordinate, screen, width, height) {
 
 
 Layout.drawTakenCards = function(cards, screen) {
-	var splitedCards = splitCardsForDisplay(cards);
+	var splitedCards = Card.splitCardsForDisplay(cards);
 	var lights = splitedCards['광'];
 	var tens = splitedCards['열끗'];
 	var fives = splitedCards['다섯끗'];
 	var shells = splitedCards['피'];
-	var shellByLines = splitShellsForDisplay(shells);
+	var shellByLines = Card.splitShellsForDisplay(shells);
 	//alert(shellByLines[0]);
 
 	var lightCoordinates = Layout.getCoordinates(Layout.lightStartPoint, Layout.lightEndPoint,
@@ -156,7 +156,7 @@ Layout.drawFloorCards = function(cards, screen) {
 }
 
 Layout.insertToFloorCards = function(card, floorCards) {
-	var month = getCard(card).month();
+	var month = Card.getCard(card).month();
 	if (floorCards[month]) {
 		
 		floorCards[month].push(card);
@@ -166,7 +166,7 @@ Layout.insertToFloorCards = function(card, floorCards) {
 }
 
 Layout.removeFromFloorCards = function(card, floorCards) {
-	var month = getCard(card).month();
+	var month = Card.getCard(card).month();
 	if (floorCards[month]) {
 		floorCards[month] = floorCards[month].filter(function(x) { return x != card; });
 	} else {

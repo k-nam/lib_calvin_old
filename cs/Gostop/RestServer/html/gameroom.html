@@ -9,22 +9,21 @@
 
 	<script>
 		function start() {
-			//splitCardsForDisplay([0, 3, 5]);
+			//Card.splitCardsForDisplay([0, 3, 5]);
 			var list = [];
 			for (var i = 0; i < 48; i++) {
 				list.push(i);
 			}
 			Layout.drawTakenCards(list, document.getElementById('player1taken'));
 			Layout.drawTakenCards(list, document.getElementById('player2taken'));
+			Layout.drawTakenCards(list, document.getElementById('player-taken'));
 			var floor = [0, 1, 5, 10, 11, 20];
-			var floorCards = sortCardsForFloorDisplay(floor);
+			var floorCards = Card.sortCardsForFloorDisplay(floor);
 			Layout.insertToFloorCards(15, floorCards);
 			Layout.insertToFloorCards(6, floorCards);			
 			Layout.removeFromFloorCards(0, floorCards);
 			Layout.removeFromFloorCards(6, floorCards);
-
 			Layout.drawFloorCards(floorCards, document.getElementById('floor-cards'));
-
 			Layout.drawHandCards([23, 25, 26, 27, 28, 29, 30], document.getElementById('hand-cards'));
 		}
 	</script>
@@ -70,7 +69,7 @@
 				<div class="score">
 
 				</div>
-				<div class="taken-card">
+				<div id="player-taken" class="taken-card"  style="position:relative;">
 
 				</div>
 
