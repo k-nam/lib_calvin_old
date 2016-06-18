@@ -107,3 +107,7 @@ void lib_calvin_string::matchingTest(void (*matchingCharAlg)
   delete[] pPattern;
 	cout << "\n";
 }
+
+void lib_calvin_string::palindromeTest() {
+	
+}
