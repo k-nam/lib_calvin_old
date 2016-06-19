@@ -41,7 +41,7 @@ R.java
 *.suo
 *.user
 *.sln.docstates
-*.VC.db
+*.db
 # Build results
 
 [Dd]ebug/
@@ -216,3 +216,4 @@ pip-log.txt
 .mr.developer.cfg
 java/scala/Hacking/input.txt
 cpp/lib_calvin/lib_calvin.VC.opendb
+*.opendb
