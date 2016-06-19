@@ -42,6 +42,7 @@ R.java
 *.user
 *.sln.docstates
 *.db
+
 # Build results
 
 [Dd]ebug/
