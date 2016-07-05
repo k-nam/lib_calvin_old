@@ -3,8 +3,8 @@ package lib.db.connection
 import java.sql.{ DriverManager, Connection };
 
 class MysqlConnection(override val databaseName: String) extends DbConnection(databaseName) {
-	val hostName = "localhost";
-	//val hostName = "lecture.cytzyor3ndjk.ap-northeast-2.rds.amazonaws.com";
+	//val hostName = "localhost";
+	val hostName = "kocia.cytzyor3ndjk.ap-northeast-2.rds.amazonaws.com";
 	override val connection: Connection = getConnection()
 	def getConnection(): Connection = {
 		try {
