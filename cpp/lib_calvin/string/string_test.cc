@@ -53,7 +53,7 @@ void lib_calvin_string::matchingTest(void (*matchingCharAlg)
 	lib_calvin::stopwatch watch;
 
 	Alphabet alphabetSize = 4;
-  size_t textLen   = 1000000;
+  size_t textLen   = 100000;
   size_t patternLen  = 16;
   Alphabet *pText   = new Alphabet[textLen];
   Alphabet *pPattern  = new Alphabet[patternLen];
