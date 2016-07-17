@@ -26,7 +26,7 @@ public class SqlServerDbConnector {
 	
 	private static final String sqlServerDriverName = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 	private static final String userId = "sa";
-	private static final String userPassword = "calvin1729";
+	private static final String userPassword = "password";
 	private static final String dbHostName = "localhost";
 	private static final String dbPort = "1433";
 	private static final String databaseName = "Web";
