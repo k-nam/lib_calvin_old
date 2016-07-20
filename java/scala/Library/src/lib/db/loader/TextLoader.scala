@@ -17,12 +17,12 @@ class TextFileLoader(val sourceFileName: String, val connection: Connection, val
 							batch.executeBatch
 						} catch {
 							case e: Exception => {
-								//println(e)
+								println("Error in batch:" + e)
 								for (stmt <- querySet) {
 									try {
 										stmt.execute
 									} catch {
-										case e: Exception => println(e)
+										case e: Exception => println("Error in query:" + e)
 									}
 								}
 							}
@@ -42,7 +42,7 @@ class TextFileLoader(val sourceFileName: String, val connection: Connection, val
 
 		val batchStmt = getPreparedStmt
 		connection.setAutoCommit(false)
-		val batchSize = 10
+		val batchSize = 1000
 		val queries = HashSet[PreparedStatement]()
 		var thisLine = reader.readLine
 		var i = 0
