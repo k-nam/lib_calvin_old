@@ -22,12 +22,12 @@ int main() {
 	//hash("D:\\dev/data/hacking/data/Password_10K.txt", "D:\\dev/data/hacking/test/hash.txt");
 	
 	// Hacking-time operations
-	//getChain("D:\\dev/data/hacking/test/hash.txt", "D:\\dev/data/hacking/test/chain.txt", CHAIN_LENGHTH);
+	getChain("D:\\dev/data/hacking/test/hash.txt", "D:\\dev/data/hacking/test/chain.txt", CHAIN_LENGHTH);
 	
 	// Query DB here: select each hash in chains in last column of first-last table to get first.txt
 
-	getCrackedPassword("D:\\dev/data/hacking/test/first.txt", 
-									 "D:\\dev/data/hacking/test/cracked_password.txt", CHAIN_LENGHTH);
+	//getCrackedPassword("D:\\dev/data/hacking/test/first.txt", 
+						//			 "D:\\dev/data/hacking/test/cracked_password.txt", CHAIN_LENGHTH);
 										 
 										 
 }
