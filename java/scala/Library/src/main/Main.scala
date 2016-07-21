@@ -22,9 +22,9 @@ object Main {
 				set.add(word)
 				stmt.setString(1, word)
 				//println("current word: " + word)
-				if (words.length == 1) { // 100k dict without rank field
+				if (words.length == 1) { // 100k dictionary without rank field
 					stmt.setNull(2, java.sql.Types.INTEGER)
-				} else if (words.length == 2) { // 5k dict witih rank field
+				} else if (words.length == 2) { // 5k dictionary with rank field
 					stmt.setInt(2, words(1).toInt)
 				} else {
 					println("loadDictionary error")
