@@ -41,8 +41,8 @@ object Main {
 				new TextFileLoader("D:\\dev/data/dictionary/100k_combined.txt",
 					new MysqlConnection("calvin").connection, "dictionary2").loadFile(2, op)
 			}
-		loadToSqlserver()
-		//loadToMysql()
+		//loadToSqlserver()
+		loadToMysql()
 		println("size was: " + set.size)
 	}
 }

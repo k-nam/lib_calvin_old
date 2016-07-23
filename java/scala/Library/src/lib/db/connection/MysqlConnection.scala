@@ -19,7 +19,7 @@ class MysqlConnection(override val databaseName: String) extends DbConnection(da
 			println("Host name is: " + hostName)
 			val conn = DriverManager.getConnection(
 				"jdbc:mysql://" + hostName + ":3306/" + databaseName + "?" +
-					"user=root&password=password&characterEncoding=UTF-8")
+					"user=calvin&password=password&characterEncoding=UTF-8")
 			println("mysql connection successful")
 			conn.setAutoCommit(false);
 			return conn
