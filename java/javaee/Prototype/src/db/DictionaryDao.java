@@ -16,7 +16,8 @@ public class DictionaryDao {
 					+ "SELECT TOP "
 					+ Integer.valueOf(num)
 					+ " word, rank INTO #temp "
-					+ "FROM Wordlist.Eng_100K WHERE word LIKE '"
+					+ "FROM Wordlist.Eng_100K WHERE word LIKE "
+					+ "'%"
 					+ prefix
 					+ "%' "
 					+ "ORDER BY  (CASE WHEN rank IS NULL THEN 1 ELSE 0 END), rank ASC;"
