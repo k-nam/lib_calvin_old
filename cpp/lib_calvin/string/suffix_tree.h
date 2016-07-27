@@ -222,7 +222,7 @@ void suffix_tree<Alphabet>::buildTree() {
 			//std::cout << "phase: " << phase_ << " char: " << character << "\n";
 			for (; extension_ < phase_; extension_++) {
 				//std::cout << "extension: " << extension_;
-				if (extension_ + 1 == phase_) { // last one char; deal with root only
+				if (extension_ + 1 == phase_) { // one last char left; deal with root only
 					auto result = rootContinuesWith(character);
 					if (!result.second) {
 						//std::cout << "  Rule A: " << "\n";

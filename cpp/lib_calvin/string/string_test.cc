@@ -6,9 +6,9 @@
 
 void lib_calvin_string::stringTest() { 
 	std::cout << "---------- Beginning string test -----------\n\n";
-	//abstractStringTest();
+	abstractStringTest();
 	matchingAlgorithmTest();
-	//suffixTreeTest();
+	suffixTreeTest();
 	SuffixTreeTest<char>::Node::countThisObject();
 	std::cout << "---------- String test finished -----------\n\n\n";
 }
