@@ -25,7 +25,7 @@ class MysqlConnection(override val databaseName: String) extends DbConnection(da
 			return conn
 
 		} catch {
-			case _: Throwable => { println("Connection error"); throw new Exception }
+			case e: Throwable => { println("Connection error" + e.printStackTrace()); throw new Exception }
 		}
 	}
 }
