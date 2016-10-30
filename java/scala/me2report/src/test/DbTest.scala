@@ -14,12 +14,13 @@ object DbTest {
 		//getNewFriendsTest()
 	}
 
-	def dbManagerTest() {
-		//val dbManager = new MysqlDbManager()
-		//val dbManager = new SqlServerDbManager()
+	def dbManagerTest() {		
+		
 		var dbManagers = List[DbManager]()
 		for (i <- 1 to 4) {
-			dbManagers = new MysqlDbManager() :: dbManagers
+			val dbManager = new SqlServerDbManager()
+			//val dbManager = new MysqlDbManager()
+			dbManagers = dbManager :: dbManagers
 		}
 		dbManagers(0).truncate
 		for (dbManager <- dbManagers) {
