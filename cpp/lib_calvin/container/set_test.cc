@@ -223,18 +223,10 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 			cout << "assignment error\n";
 			exit(0);
 		} 
-		if (impl > copy || impl < copy) {
-			cout << "assignment error\n";
-			exit(0);
-		}
 		if (impl != copy2) {
 			cout << "copy con error\n";
 			exit(0);
 		} 
-		if (impl > copy2 || impl < copy2) {
-			cout << "copy con error\n";
-			exit(0);
-		}
 	}
 	for (size_t i = 0; i < testSize; ++i) {
 		T temp = testVector[i];
