@@ -62,7 +62,7 @@ void lib_calvin_container::setTest() {
 	setPerformanceTest<BPlusTree<Numeric>>(largeSize, "BPlusTree / Numeric");
 	//setPerformanceTest<OrderedArray<Numeric>>(largeSize, "OrderedArray / Numeric");
 	//setPerformanceTest<std::unordered_set<Numeric>>(largeSize, "std::unordered_set / Numeric");
-  setPerformanceTest<boost::unordered_set<Numeric>>(largeSize, "boost::unordered_set / Numeric");
+	setPerformanceTest<boost::unordered_set<Numeric>>(largeSize, "boost::unordered_set / Numeric");
 	setPerformanceTest<HashTable<Numeric>>(largeSize, "HashTable / Numeric");
 	
 	//setPerformanceTest<std::set<LightObject>>(largeSize, "std::set / LightObject");
@@ -199,14 +199,6 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 				cout << "iterating error\n";
 				exit(0);
 			}
-			/*
-			if (*implIter != *impl.at(index)) {
-				cout << "iterating at(index) method error\n";
-				exit(0);
-			} else {
-				//cout << "at() working well\n";
-			}
-			*/
 			++stdIter;
 			index++;
 		}
@@ -231,16 +223,24 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 			cout << "assignment error\n";
 			exit(0);
 		} 
+		if (impl > copy || impl < copy) {
+			cout << "assignment error\n";
+			exit(0);
+		}
 		if (impl != copy2) {
 			cout << "copy con error\n";
 			exit(0);
 		} 
+		if (impl > copy2 || impl < copy2) {
+			cout << "copy con error\n";
+			exit(0);
+		}
 	}
-	for (unsigned i = 0; i < testSize; ++i) {
+	for (size_t i = 0; i < testSize; ++i) {
 		T temp = testVector[i];
 		if (impl.count(temp) != copy.count(temp) || impl.count(temp) != copy2.count(temp)) {
 			correct = false;
-			cout << "copy error\n";
+			cout << "assignment / copy con counting error\n";
 			exit(0);
 		}
 	}
@@ -258,35 +258,7 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 			exit(0);
 		} 
 	}	
-	/*
-	Impl table1, table2;
-	table1.insert(6);	
-	table1.erase(6);
-	table1.insert(6);
-	table1.insert(5);
-	table1.insert(4);
-	table1.insert(3);
-	table1.insert(2);
-	table1.insert(1);
-	table1.erase(1);
-	table1.insert(1);
-	table1.erase(6);
-	table2 = table1;
-	cout << "table1 size: " << table1.size() << "\n";
-	cout << "table2 size: " << table2.size() << "\n";	
-	if (table1 != table2) {
-		correct = false;
-	}
-	if (table1 < table2 || table1 > table2) {
-		correct = false;
-	}
-	if (correct) {
-		cout << title << " turned out to be O.K :-)\n";
-	}	else {
-		cout << title << " turned out to be erroneous T.T\n";
-		exit(0);
-	}
-	*/
+
 	std::cout << "\n";
 }
 
@@ -300,9 +272,9 @@ void lib_calvin_container::setFunctionTest2(size_t testSize, std::string title) 
 		T temp = rand() % testSize;
 		impl.insert(temp);
 	}
+	Impl temp = impl;
 	size_t index = 0;
 	for (auto iter = impl.begin(); iter != impl.end(); ++iter) {
-		Impl temp = impl;
 		if (*iter != *temp.at(index)) {
 			cout << "at() method error\n";
 			exit(0);
@@ -314,13 +286,14 @@ void lib_calvin_container::setFunctionTest2(size_t testSize, std::string title) 
 		index++;
 	}
 	cout << "at() test part.1 O.K\n";
+
 	for (unsigned i = 0; i < testSize; ++i) {	
 		T temp = rand() % testSize;
 		impl.erase(temp);
 	}
+	temp = impl;
 	index = 0;
 	for (auto iter = impl.begin(); iter != impl.end(); ++iter) {
-		Impl temp = impl;
 		if (*iter != *temp.at(index)) {
 			cout << "at() method error\n";
 			exit(0);
