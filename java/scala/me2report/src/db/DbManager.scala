@@ -198,7 +198,7 @@ abstract class DbManager extends Thread {
 	}
 
 	def pushData() {
-		val tableName = "TEST"
+		val tableName = "test"
 		Thread.sleep(1000)
 		val stmt = connection.prepareStatement(
 			"INSERT into " + tableName + " values (?, ?)")
