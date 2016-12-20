@@ -272,7 +272,7 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 		Log.v(Main.TAG, "enterInstructionStage");
 		mCurrentStage = Stage.Instruction;
 		hideRedCircle();
-		showInstruction("Direct your head exactly toward red dot, and Touch anywhere");
+		showInstruction("얼굴과 시선을 빨간 점을 향하게 하시고 아무 곳에나 터치해서 촬영하세요");
 		enterStageDelayed(Stage.FirstShot, 5000);
 	}
 
@@ -288,7 +288,7 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 		Log.v(Main.TAG, "enterInstructionStage2");
 		mCurrentStage = Stage.Instruction2;
 		hideRedCircle();
-		showInstruction("One more time");
+		showInstruction("다시 한 번");
 		enterStageDelayed(Stage.SecondShot, 1000);
 	}
 
