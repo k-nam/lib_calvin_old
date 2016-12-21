@@ -1,0 +1,63 @@
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:paddingBottom="@dimen/activity_vertical_margin"
+	android:paddingLeft="@dimen/activity_horizontal_margin"
+	android:paddingRight="@dimen/activity_horizontal_margin"
+	android:paddingTop="@dimen/activity_vertical_margin"
+	android:orientation="vertical"
+	tools:context="com.excelsior.comfydrive.Home">
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="30dp"
+		android:orientation="horizontal">
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Now monitoring" />
+	</LinearLayout>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="30dp"
+		android:orientation="horizontal">
+		<TextView
+			android:text="Forward accel:"
+			android:layout_width="100dp"
+			android:layout_height="wrap_content" />
+		<TextView
+			android:id="@+id/forward_accel"
+			android:layout_width="50dp"
+			android:layout_height="wrap_content" />
+		<TextView
+			android:text="Forward shock:"
+			android:layout_width="100dp"
+			android:layout_height="wrap_content" />
+		<TextView
+			android:id="@+id/forward_shock"
+			android:layout_width="50dp"
+			android:layout_height="wrap_content" />
+	</LinearLayout>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="30dp"
+		android:orientation="horizontal">
+		<TextView
+			android:text="Updown accel:"
+			android:layout_width="100dp"
+			android:layout_height="wrap_content" />
+		<TextView
+			android:id="@+id/updown_accel"
+			android:layout_width="50dp"
+			android:layout_height="wrap_content" />
+		<TextView
+			android:text="Updown shock:"
+			android:layout_width="100dp"
+			android:layout_height="wrap_content" />
+		<TextView
+			android:id="@+id/updown_shock"
+			android:layout_width="50dp"
+			android:layout_height="wrap_content" />
+	</LinearLayout>
+</LinearLayout>
