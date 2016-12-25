@@ -1,10 +1,10 @@
-package com.excelsior.vividcamera;
+package com.excelsior.vrselfy;
 
 import android.app.Application;
 import android.content.res.Configuration;
 
-public class VividCamera extends Application {
-	public static VividCamera getInstance() {
+public class VrSelfy extends Application {
+	public static VrSelfy getInstance() {
 		return singleton;
 	}
 
@@ -24,5 +24,5 @@ public class VividCamera extends Application {
 		super.onConfigurationChanged(newConfig);
 	}
 
-	private static VividCamera singleton;
+	private static VrSelfy singleton;
 }

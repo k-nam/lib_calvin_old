@@ -1,4 +1,4 @@
-package com.excelsior.vividcamera;
+package com.excelsior.vrselfy;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,8 +54,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.excelsior.vividcamera.R;
-
 public class Shooting extends Activity implements SurfaceTextureListener {
 	private FrameLayout mFrame;
 	private TextureView mTextureView;
@@ -95,19 +93,19 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 
 	private final Runnable mTryEnterFirstShot = new Runnable() {
 		public void run() {
-			// Log.v(VividCamera.TAG, "runnable: mTryEnterFirstShot");
+			// Log.v(VrSelfy.TAG, "runnable: mTryEnterFirstShot");
 			tryEnterStage(Stage.FirstShot);
 		}
 	};
 	private final Runnable mTryEnterSecondShot = new Runnable() {
 		public void run() {
-			// Log.v(VividCamera.TAG, "runnable: mTryEnterSecondShot");
+			// Log.v(VrSelfy.TAG, "runnable: mTryEnterSecondShot");
 			tryEnterStage(Stage.SecondShot);
 		}
 	};
 	private final Runnable mTryEnterCompleted2 = new Runnable() {
 		public void run() {
-			// Log.v(VividCamera.TAG, "runnable: mCheckBitmaps");
+			// Log.v(VrSelfy.TAG, "runnable: mCheckBitmaps");
 			if (mBitmap1 != null && mBitmap2 != null) { // OK
 				enterCompletedStage2();
 			} else {
@@ -393,14 +391,14 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 				} catch (Exception e) {
 					e.printStackTrace();
 					Thread.sleep(200);
-					// Log.w(VividCamera.TAG, "Waiting loop");
+					// Log.w(VrSelfy.TAG, "Waiting loop");
 				}
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} finally {}
 		isDataProcessingBusy = false;
-		// Log.w(VividCamera.TAG, "Picture taken");
+		// Log.w(VrSelfy.TAG, "Picture taken");
 	}
 
 	private void takeScreenshot() {
@@ -409,7 +407,7 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 
 	private ShutterCallback mShutterCallback = new ShutterCallback() {
 		public void onShutter() {
-			// Log.w(VividCamera.TAG, "ShutterCallback");
+			// Log.w(VrSelfy.TAG, "ShutterCallback");
 			isShutterCallbackBusy = false;
 		}
 	};
@@ -417,7 +415,7 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 		@Override
 		public void onPictureTaken(byte[] data, Camera camera) {
 			if (exifImageRotation < 0) {
-				// Log.e(VividCamera.TAG, "exifImageRotation : " + exifImageRotation);
+				// Log.e(VrSelfy.TAG, "exifImageRotation : " + exifImageRotation);
 				File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
 				if (pictureFile == null) {
 					Log.d(Main.TAG, "Error creating media file, check storage permission");
@@ -446,7 +444,7 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 				finish();
 			}
 			isJpegCallbackBusy = false;
-			// Log.w(VividCamera.TAG, "PictureCallback finished");
+			// Log.w(VrSelfy.TAG, "PictureCallback finished");
 		}
 	};
 
@@ -463,7 +461,7 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		// Log.e(VividCamera.TAG, "calculated exif rotation = " +
+		// Log.e(VrSelfy.TAG, "calculated exif rotation = " +
 		// exifToDegrees(exifOrientation));
 		return exifToDegrees(exifOrientation);
 	}
@@ -488,7 +486,7 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 	private static File getOutputMediaFile(int type) {
 		// To be safe, you should check that the SDCard is mounted
 		// using Environment.getExternalStorageState() before doing this.
-		// Log.e(VividCamera.TAG, "External storage: " +
+		// Log.e(VrSelfy.TAG, "External storage: " +
 		// Environment.getExternalStorageState());
 		File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
 				"MyCameraApp");
@@ -511,7 +509,7 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 		} else {
 			return null;
 		}
-		// Log.w(VividCamera.TAG, "get outputfile " + mediaStorageDir.getPath() +
+		// Log.w(VrSelfy.TAG, "get outputfile " + mediaStorageDir.getPath() +
 		// File.separator + "IMG_" + timeStamp + ".jpg");
 		return mediaFile;
 	}
@@ -575,16 +573,16 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 		// pick largest resolution (except square type)
 		for (Size size : sortSizeList(params.getSupportedPictureSizes())) {
 			if (size.width > 1000) {
-				// Log.v(VividCamera.TAG, "Available picture: " + size.width + " " +
+				// Log.v(VrSelfy.TAG, "Available picture: " + size.width + " " +
 				// size.height + " ratio: " + getRatio(size));
 			}
 		}
 		// for (int[] fps : params.getSupportedPreviewFpsRange()) {
-		// Log.v(VividCamera.TAG, "Supported FPS: " + fps[0] + " " + fps[1]);
+		// Log.v(VrSelfy.TAG, "Supported FPS: " + fps[0] + " " + fps[1]);
 		// }
 		for (Size size : sortSizeList(params.getSupportedPreviewSizes())) {
 			if (size.width > 1000) {
-				// Log.v(VividCamera.TAG, "Available preview: " + size.width + " " +
+				// Log.v(VrSelfy.TAG, "Available preview: " + size.width + " " +
 				// size.height + " ratio: " + getRatio(size));
 			}
 		}
@@ -595,10 +593,10 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 			params.setPreviewSize(pictureAndPreviewSize[1].width, pictureAndPreviewSize[1].height);
 		}
 		mCamera.setParameters(params);
-		// Log.v(VividCamera.TAG, "Set picture size to: " +
+		// Log.v(VrSelfy.TAG, "Set picture size to: " +
 		// params.getPictureSize().width + " "
 		// + params.getPictureSize().height);
-		// Log.v(VividCamera.TAG, "Set preview size to: " +
+		// Log.v(VrSelfy.TAG, "Set preview size to: " +
 		// params.getPreviewSize().width + " "
 		// + params.getPreviewSize().height);
 	}
@@ -650,13 +648,13 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 	private void adjustFrameSize() {
 		Camera.Size previewSize = mCamera.getParameters().getPreviewSize();
 		Camera.Size pictureSize = mCamera.getParameters().getPictureSize();
-		// Log.v(VividCamera.TAG, "screen size is " + realWidth + ", " +
+		// Log.v(VrSelfy.TAG, "screen size is " + realWidth + ", " +
 		// realHeight);
-		// Log.v(VividCamera.TAG, "framelayout size is " + preview.getWidth() + ", "
+		// Log.v(VrSelfy.TAG, "framelayout size is " + preview.getWidth() + ", "
 		// + preview.getHeight());
-		// Log.v(VividCamera.TAG, "picture size was " + pictureSize.width + ", " +
+		// Log.v(VrSelfy.TAG, "picture size was " + pictureSize.width + ", " +
 		// pictureSize.height);
-		// Log.v(VividCamera.TAG, "preview size was " + previewSize.width + ", " +
+		// Log.v(VrSelfy.TAG, "preview size was " + previewSize.width + ", " +
 		// previewSize.height);
 		// landscape
 		float ratio = getRatio(previewSize);
@@ -674,7 +672,7 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 			new_width = realWidth;
 			new_height = Math.round(realWidth / ratio);
 		}
-		// Log.v(VividCamera.TAG, "result mPreview size is " + new_width + ", " +
+		// Log.v(VrSelfy.TAG, "result mPreview size is " + new_width + ", " +
 		// new_height + " ratio is " + ratio);
 		mFrame.setLayoutParams(new LinearLayout.LayoutParams(new_width, new_height));
 	}
@@ -683,7 +681,7 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 		ViewGroup.LayoutParams params = mDarkScreen.getLayoutParams();
 		params.width = mFrame.getLayoutParams().width;
 		params.height = mFrame.getLayoutParams().height;
-		// Log.v(VividCamera.TAG, "adjust dark screen " + params.width + ", " +
+		// Log.v(VrSelfy.TAG, "adjust dark screen " + params.width + ", " +
 		// params.height);
 		mDarkScreen.setLayoutParams(params);
 	}
@@ -749,7 +747,7 @@ public class Shooting extends Activity implements SurfaceTextureListener {
 
 	private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
 		public void onPreviewFrame(byte[] data, Camera camera) {
-			// Log.v(VividCamera.TAG, "Preview callback!");
+			// Log.v(VrSelfy.TAG, "Preview callback!");
 			if (shouldCapturePreview == false) {
 				return;
 			}

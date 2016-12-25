@@ -376,7 +376,7 @@ public class WhoLikesMe extends Fragment implements OnClickListener {
 			return null;
 		}
 
-		protected void onPostExecute(Void nothinig) {
+		protected void onPostExecute(Void nothing) {
 			if (jobName.equals("FromYou")) {
 				showFromYouList();
 			} else if (jobName.equals("ToYou")) {

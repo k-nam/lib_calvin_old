@@ -1,4 +1,4 @@
-package com.excelsior.vividcamera;
+package com.excelsior.vrselfy;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -1,4 +1,4 @@
-package com.excelsior.vividcamera;
+package com.excelsior.vrselfy;
 
 import android.app.Activity;
 import android.content.Intent;
