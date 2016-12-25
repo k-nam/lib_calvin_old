@@ -77,24 +77,7 @@
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
-		<activity
-			android:name="com.excelsior.prototype.vividcamera.Shooting"
-			android:theme="@style/Theme.Fullscreen"
-			android:screenOrientation="portrait">
-			<intent-filter>
-				<action android:name="com.excelsior.prototype.Shooting" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
-		<activity
-			android:name="com.excelsior.prototype.vividcamera.Review"
-			android:theme="@style/Theme.Fullscreen"
-			android:screenOrientation="landscape">
-			<intent-filter>
-				<action android:name="com.excelsior.prototype.Review" />
-				<category android:name="android.intent.category.DEFAULT" />
-			</intent-filter>
-		</activity>
+
 		<meta-data
 			android:name="com.facebook.sdk.ApplicationId"
 			android:value="@string/app_id" />
