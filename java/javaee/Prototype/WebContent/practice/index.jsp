@@ -93,7 +93,6 @@
 						</ol>
 				</dl>
 
-				<jsp:include page="personInfo.jsp" />
 			</div>
 		</div>
 	</div>

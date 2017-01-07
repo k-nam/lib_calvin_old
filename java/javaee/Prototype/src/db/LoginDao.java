@@ -6,7 +6,7 @@ import java.sql.*;
 public class LoginDao {
 
 	public static boolean logIn(String userId, String userPassword) {
-		Connection connection = SqlServerDbConnector.getConnection();
+		Connection connection = MysqlDbConnector.getConnection();
 		
 		if (connection == null) {
 			System.out.println("DB connection error");
@@ -16,8 +16,8 @@ public class LoginDao {
 		try {
 			PreparedStatement pstmt = 
 				connection.prepareStatement(
-						"SELECT COUNT(1) FROM USERACCOUNT " +
-						"WHERE ID = ? AND PASSWORD = ?");
+						"SELECT COUNT(1) FROM user_account " +
+						"WHERE user_id = ? AND password = ?");
 			pstmt.setString(1, userId);
 			pstmt.setString(2, userPassword);
 			ResultSet rs = pstmt.executeQuery();

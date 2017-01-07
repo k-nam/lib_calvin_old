@@ -254,3 +254,5 @@ local.properties
 .Trashes
 ehthumbs.db
 Thumbs.db
+*.prx
+java/javaee/.recommenders/

@@ -13,8 +13,6 @@ public class SqlServerDbConnector {
 			if (isDriverLoaded == false) {
 				loadDriver();
 			}
-			connectionString = "jdbc:sqlserver://" + dbHostName + ":" + dbPort + ";" + 
-					"databaseName=" + databaseName;
 			return DriverManager.getConnection(connectionString, userId, userPassword);
 		} catch (Exception e) {
 			e.printStackTrace();

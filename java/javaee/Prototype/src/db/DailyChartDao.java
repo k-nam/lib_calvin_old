@@ -15,13 +15,13 @@ public class DailyChartDao {
 	public static List<DailyStatus> getChart() {
 		List<DailyStatus> result = new ArrayList<DailyStatus>();
 		try {
-			Connection connection = SqlServerDbConnector.getConnection();
-			String query = "SELECT date, recordedtime, mood, medication FROM PatientChart.DailyStatus;";
+			Connection connection = MysqlDbConnector.getConnection();
+			String query = "SELECT date, recorded_time, mood, medication FROM patient_chart;";
 			PreparedStatement pstmt = connection.prepareStatement(query);
 			ResultSet rs = pstmt.executeQuery();
 			while (rs.next()) {
 				Date a = rs.getDate("date");
-				Timestamp b = rs.getTimestamp("recordedtime");
+				Timestamp b = rs.getTimestamp("recorded_time");
 				int mood = rs.getInt("mood");
 				int medication = rs.getInt("medication");
 				result.add(new DailyStatus(a.getTime(), b.getTime(), mood, medication));
@@ -36,8 +36,8 @@ public class DailyChartDao {
 
 	public static void updatChart(Date date, Timestamp recordedTime, int mood, int medication) {
 		try {
-			Connection connection = SqlServerDbConnector.getConnection();
-			String query = "INSERT INTO PatientChart.DailyStatus (date, recordedtime, mood, medication)" +
+			Connection connection = MysqlDbConnector.getConnection();
+			String query = "INSERT INTO patient_chart (date, recorded_time, mood, medication)" +
 			" VALUES (?, ?, ?, ?);";
 			PreparedStatement pstmt = connection.prepareStatement(query);
 			pstmt.setDate(1, date);

@@ -67,10 +67,6 @@
 		<url-pattern>/LogOut.do</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>Me2day user finding</servlet-name>
-		<url-pattern>/Me2day.FindUser</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
 		<servlet-name>Blog</servlet-name>
 		<url-pattern>/Blogajax</url-pattern>
 	</servlet-mapping>
