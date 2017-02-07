@@ -15,12 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="auto_ptr.hpp">
+    <ClInclude Include="neural_network.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="auto_ptr_main.cc">
+    <ClCompile Include="neural_network.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ai_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "container", "container\container.vcxproj", "{2128696A-5B24-4B8E-9993-22103BACCCBD}"
 EndProject
@@ -28,6 +28,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "parser", "parser\parser.vcxproj", "{D2E35782-142B-411A-B08B-92E67E17C440}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "auto_ptr", "auto_ptr\auto_ptr.vcxproj", "{224D68BC-8674-4835-9C80-7CAF31F23286}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ai", "ai\neural_network.vcxproj", "{A2629ABB-A112-4579-BAEB-07AF98AE91B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -298,6 +300,28 @@ Global
 		{224D68BC-8674-4835-9C80-7CAF31F23286}.Release|Win32.Build.0 = Release|Win32
 		{224D68BC-8674-4835-9C80-7CAF31F23286}.Release|x64.ActiveCfg = Release|x64
 		{224D68BC-8674-4835-9C80-7CAF31F23286}.Release|x64.Build.0 = Release|x64
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Debug|Win32.Build.0 = Debug|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Debug|x64.ActiveCfg = Debug|x64
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Debug|x64.Build.0 = Debug|x64
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Intel_SSA|Any CPU.ActiveCfg = Release|x64
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Intel_SSA|Any CPU.Build.0 = Release|x64
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Intel_SSA|Mixed Platforms.ActiveCfg = Release|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Intel_SSA|Mixed Platforms.Build.0 = Release|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Intel_SSA|Win32.ActiveCfg = Release|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Intel_SSA|Win32.Build.0 = Release|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Intel_SSA|x64.ActiveCfg = Release|x64
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Intel_SSA|x64.Build.0 = Release|x64
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Release|Any CPU.ActiveCfg = Release|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Release|Win32.ActiveCfg = Release|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Release|Win32.Build.0 = Release|Win32
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Release|x64.ActiveCfg = Release|x64
+		{A2629ABB-A112-4579-BAEB-07AF98AE91B9}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

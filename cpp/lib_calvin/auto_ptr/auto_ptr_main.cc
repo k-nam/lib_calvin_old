@@ -12,13 +12,13 @@ int main() {
 	int (*a)[3][3] = &c;
 	int b[3][3][3];
 	ptrdiff_t pointerSize = (char *)(a[0] + 1) - (char *)a[0];
-	printf("pointer size = %d\n", pointerSize);	
+	printf("pointer size = %td\n", pointerSize);	
 	pointerSize = (char *)(b[0] + 1) - (char *)b[0];
-	printf("pointer size = %d\n", pointerSize);	
+	printf("pointer size = %td\n", pointerSize);	
 	pointerSize = (char *)(a + 1) - (char *)a;
-	printf("pointer size = %d\n", pointerSize);	
+	printf("pointer size = %td\n", pointerSize);	
 	pointerSize = (char *)(b + 1) - (char *)b;
-	printf("pointer size = %d\n", pointerSize);
+	printf("pointer size = %td\n", pointerSize);
 
 	class_b bb1;
 	class_b bb2;
