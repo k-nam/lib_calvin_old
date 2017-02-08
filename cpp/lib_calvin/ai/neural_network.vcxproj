@@ -159,11 +159,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="handwritten_digits_analyzer.h" />
     <ClInclude Include="neural_network.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ai_main.cc" />
     <ClCompile Include="neural_network.cc" />
+    <ClCompile Include="handwritten_digits_analyzer.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
