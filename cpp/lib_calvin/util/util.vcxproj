@@ -199,7 +199,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="random.cc" />
-    <ClCompile Include="stopwatch.cc" />
     <ClCompile Include="util_main.cc" />
   </ItemGroup>
   <ItemGroup>

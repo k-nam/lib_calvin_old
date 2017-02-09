@@ -3,32 +3,74 @@
 
 #include <vector>
 #include <string>
+#include "matrix.h"
+#include "vector.h"
 
-using std::vector;
+namespace lib_calvin_ai
+{
 
-class neural_network 
+using lib_calvin::vector;
+using lib_calvin::matrix;
+
+class neural_network
 {
 public:
 	neural_network(size_t numInput, size_t numOutput, vector<size_t> hiddenLayers);
-	void train(vector<std::pair<vector<double>, vector<double>>> trainData);
+	void train(vector<std::pair<vector<double>, vector<double>>> const &trainData);
 
 private:
-	struct neuron {
-		// output value = G (inner product of weights and input values + bias)
-		// G(x) = 1 / (1 + e^-x)
-		vector<double> weights_;
-		double bias_; // bias >= 0
-		double mutable output_;
+	class layer {
+	public:
+		layer(); // dummy 
+		layer(size_t numInput, size_t numOutput, bool isOutputLayer);
+		layer & operator=(layer const &);
+	public:
+		size_t getNumInput() const;
+		size_t getNumOutput() const;
+		vector<double> getOutput() const;
+		void clearGradient() const;
+		void randomize();
+		// Return outputs.
+		vector<double> runNetwork(vector<double> const &previousLayerOutput) const;
+		// Output values must have been calculated already.
+		vector<double> getLayerMultiplier() const;
+		// As there will be multiple test data, we have to sum gradient for each. 
+		// Calculate gradient for current previous and next layer setting, and accumulate it.
+		void addGradient(vector<double> const &previousLayerOutput, vector<double> const &nextLayerMultiplier) const;
+		// w <- w + gradient * multiplier
+		void adjustVariablesWithMultiplier(double multipler);
+	private:
+		// Sets errors_ vector. For hidden layers.
+		void calculateErrorsForHiddenLayer(vector<double> const &nextLayerMultiplier) const;
+		// For output layer.
+		void calculateErrorsForOutputLayer(vector<double> const &outputData) const;
+		// Return matrix product of output and weights
+	private:
+		double getSigmoid(double) const;
+		double getDerivativeOfSigmoid(double) const;
+	private:
+		bool isOutputLayer_;
+	private:
+		matrix<double> weights_;
+		vector<double> biases_;
+	public:
+		mutable vector<double> z_; // z = wx + bias
+		mutable vector<double> outputs_;  // output = sigmoid(z)
+		mutable vector<double> errors_;
+		mutable matrix<double> accumulated_gradient_weights_;
+		mutable vector<double> accumulated_gradient_biases_;
 	};
 
 private:
-	double calculateAvgCost(vector<std::pair<vector<double>, vector<double>>> trainData) const;
-	double calculateCost(vector<double> input, vector<double> output) const; // sum of square 
-	// Using sigmoid
-	double getOutputOfNeuron(vector<double> input, neuron const &) const;
+	double learnFromData(vector<std::pair<vector<double>, vector<double>>> const &trainData);
+	double learnFromData(vector<double> const &input, vector<double> const &output); // sum of square 
+	void clearGradient() const;
+	void randomize();
 private:
-	vector<vector<neuron>> layers_; // last element is output
+	vector<layer> layers_; // last element is output
 };
+
+}
 
 #endif
 

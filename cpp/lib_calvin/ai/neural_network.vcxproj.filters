@@ -32,5 +32,11 @@
     <ClCompile Include="handwritten_digits_analyzer.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\util\stopwatch.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thread\common_thread.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

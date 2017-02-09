@@ -4,6 +4,9 @@
 #include "neural_network.h"
 #include <fstream>
 
+namespace lib_calvin_ai
+{
+
 class handwritten_digits_analyzer : public neural_network
 {
 public:
@@ -21,5 +24,5 @@ private:
 	void showBytes(std::ifstream &) const;
 };
 
-
+}
 #endif

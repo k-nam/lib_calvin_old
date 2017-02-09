@@ -237,6 +237,9 @@ public:
   T const &getval(size_t row, size_t col) const;
   T &setval(size_t row, size_t col);
   
+	T & operator()(size_t row, size_t col);
+	T const &operator()(size_t row, size_t col) const;
+
   struct matrixRow {
     size_t width_; // number of elements in a single row
     T *start_;
@@ -391,7 +394,7 @@ template <typename T>
 T const & 
 matrix<T>::getval(size_t row, size_t col) const {
   // No boundary check!
-  return (elements_[width_ * row + col]);
+  return elements_[width_ * row + col];
 }
 
 /*---------------- setval-------------*/
@@ -400,7 +403,21 @@ template <typename T>
 T & 
 matrix<T>::setval(size_t row, size_t col) {
   // No boundary check!
-  return (elements_[width_ * row + col]);
+  return elements_[width_ * row + col];
+}
+
+/*-----------function call style access------------*/
+
+template <typename T>
+T const &
+matrix<T>::operator()(size_t row, size_t col) const {
+	return elements_[width_ * row + col];
+}
+
+template <typename T>
+T &
+matrix<T>::operator()(size_t row, size_t col) {
+	return elements_[width_ * row + col];
 }
 
 /*--------------- operator[] --------------*/
@@ -578,7 +595,7 @@ void matrix<T>::check() {
 	cout << "Transpose took " << watch.read() << "\n";
   for (size_t i = 0; i < height_; ++i) {
     for (size_t j = 0; j < width_; ++j) {
-      if (m1.getval(i, j) != m2.getval(j, i)) {
+      if (m1(i, j) != m2(j, i)) {
         cout << "transpose Error!!!\n";
 				exit(0);
       } else {
@@ -678,9 +695,9 @@ void matrix<T>::check() {
     m7.prsize_t(); 
     for (size_t i = 0; i < m4.height(); ++i) {
       for (size_t j = 0; j < m4.width(); ++j) {
-        if (m4.getval(i, j) != m7.getval(i, j)) {
+        if (m4(i, j) != m7(i, j)) {
           cout << i << " , " << j << " is error\t" << 
-            m4.getval(i, j) << " " << m7.getval(i, j) << endl;
+            m4(i, j) << " " << m7(i, j) << endl;
         }
       }
     }
@@ -737,7 +754,7 @@ void matrix<T>::randomize() {
   srand(static_cast<int>(height_ * width_));
   for (size_t i = 0; i < height_; ++i) {
     for (size_t j = 0; j < width_; ++j) {
-      setval(i, j) = T(rand() % 10); 
+      (*this)(i, j) = T(rand() % 10); 
     }
   }
 }
@@ -907,10 +924,10 @@ void lib_calvin_matrix::recursiveMultiAdd(
   T *temp = new T[A.height_*B.width_];
 	size_t mul_thre = A.mul_thre_;
 	size_t initialRecursionDepth = 0;
-	if (A.width_ - mul_thre > 0) {
-		initialRecursionDepth = log(A.width_) - log(mul_thre);
+	if (std::min(A.width_, A.height_) > mul_thre) {
+		initialRecursionDepth = log(std::min(A.width_, A.height_)) - log(mul_thre);
 	}
-	std::cout << "recursion depth starting: " << initialRecursionDepth << "\n";
+	//std::cout << "recursion depth starting: " << initialRecursionDepth << "\n";
 	lib_calvin::stopwatch watch;
   recursiveArrange (A.elements_, lhs, 
       A.height_, A.width_, A.width_, initialRecursionDepth, true);
@@ -979,7 +996,7 @@ void lib_calvin_matrix::strassenMultiAdd (
   recursiveArrange (B.elements_, rhs, n, n, n, initialRecursionDepth, true);
   recursiveArrange (C.elements_, result, n, n, n, initialRecursionDepth, true);
 	// actual multiplication takes place here
-	std::cout << "recursion depth starting: " << initialRecursionDepth << "\n";
+	//std::cout << "recursion depth starting: " << initialRecursionDepth << "\n";
 	if (toBeParallel == true) {
 		strassenMultiAddParallel(lhs, rhs, result, n, initialRecursionDepth);
 	} else {

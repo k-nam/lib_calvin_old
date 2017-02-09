@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stopwatch.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="util_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>

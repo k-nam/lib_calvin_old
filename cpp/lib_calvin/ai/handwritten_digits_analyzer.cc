@@ -2,19 +2,21 @@
 #include <iostream>
 #include <fstream>
 
+namespace lib_calvin_ai
+{
 using std::ifstream;
 
 handwritten_digits_analyzer::
-handwritten_digits_analyzer():
+handwritten_digits_analyzer() :
 	neural_network(28 * 28, 10, vector<size_t>{ 30 }) {
 }
 
 void
 handwritten_digits_analyzer::trainWithFile(std::string imageFileName, std::string labelFileName) {
 	vector<std::pair<vector<double>, vector<double>>> trainData;
-
 	ifstream imageFile(imageFileName);
 	ifstream labelFile(labelFileName);
+
 	std::cout << "Checking image data file...\n";
 	std::cout << "magic num: " << readOneUnsigned(imageFile) << "\n";
 
@@ -22,10 +24,10 @@ handwritten_digits_analyzer::trainWithFile(std::string imageFileName, std::strin
 	size_t numRows = readOneUnsigned(imageFile);
 	size_t numColumns = readOneUnsigned(imageFile);
 
-	std::cout << "# of items: " << (int)numItems  << "\n";
+	std::cout << "# of items: " << (int)numItems << "\n";
 	std::cout << "# of rows: " << numRows << "\n";
 	std::cout << "# of columns: " << numColumns << "\n\n";
-	
+
 	std::cout << "Checking label data file...\n";
 	std::cout << "magic num: " << readOneUnsigned(labelFile) << "\n";
 	std::cout << "# of items: " << readOneUnsigned(labelFile) << "\n";
@@ -42,9 +44,14 @@ handwritten_digits_analyzer::trainWithFile(std::string imageFileName, std::strin
 				output[i] = 0.0;
 			}
 		}
+		std::cout << "label: " << (int)label << "\n";
 		for (size_t column = 0; column < numColumns; column++) {
 			for (size_t row = 0; row < numRows; row++) {
-				input.push_back(static_cast<double>(readByte(imageFile)) / UCHAR_MAX);
+				double data = static_cast<double>(readByte(imageFile));
+				input.push_back(data);
+				if (column == 10 && row == 10) {
+					std::cout << data << " ";
+				}
 			}
 		}
 		trainData.push_back(std::make_pair(input, output));
@@ -56,10 +63,11 @@ handwritten_digits_analyzer::trainWithFile(std::string imageFileName, std::strin
 }
 
 
-unsigned char 
+unsigned char
 handwritten_digits_analyzer::readByte(std::ifstream &file) const {
-	char buffer[1];
-	file.read(buffer, 1);
+	char buffer[2];
+	file.read(buffer, 2);
+	//std::cout << "reading " << static_cast<int>(buffer[0]) << " ";
 	return static_cast<unsigned char>(buffer[0]);
 }
 
@@ -71,7 +79,7 @@ handwritten_digits_analyzer::readInt(std::ifstream &file) const {
 	return value;*/
 	char buffer[4];
 	file.read(buffer, 4);
-	return (buffer[0] ) | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24 );
+	return (buffer[0]) | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24);
 }
 
 uint32_t
@@ -81,17 +89,19 @@ handwritten_digits_analyzer::readOneUnsigned(ifstream &file) const {
 	return convertFromBigEndian(buffer);
 }
 
-uint32_t 
+uint32_t
 handwritten_digits_analyzer::convertFromBigEndian(char buffer[4]) const {
-	return static_cast<unsigned char>(buffer[0]) << 24 | 
-		static_cast<unsigned char>(buffer[1]) << 16 | 
-		static_cast<unsigned char>(buffer[2]) << 8 | 
+	return static_cast<unsigned char>(buffer[0]) << 24 |
+		static_cast<unsigned char>(buffer[1]) << 16 |
+		static_cast<unsigned char>(buffer[2]) << 8 |
 		static_cast<unsigned char>(buffer[3]);
 }
 
 void
 handwritten_digits_analyzer::showBytes(ifstream &file) const {
-	for (int i = 0; i < 16; i++) {
+	for (int i = 0; i < 100000; i++) {
 		std::cout << static_cast<int>(readByte(file)) << "\n";
 	}
+}
+
 }
