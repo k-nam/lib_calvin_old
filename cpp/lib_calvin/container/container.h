@@ -24,8 +24,8 @@ ptrdiff_t distanceBetweenIterator(Iterator begin, Iterator end);
 template <typename Iterator>
 bool containerLess(Iterator lhsBegin, Iterator lhsEnd, Iterator rhsBegin, Iterator rhsEnd);
 
-template <typename Iterator>
-bool containerEqual(Iterator lhsBegin, Iterator lhsEnd, Iterator rhsBegin, Iterator rhsEnd);
+template <typename Iterator1, typename Iterator2>
+bool containerEqual(Iterator1 lhsBegin, Iterator1 lhsEnd, Iterator2 rhsBegin, Iterator2 rhsEnd);
 	
 template <typename T, typename T1>
 void insertSingleElement(T *elements, size_t size, size_t index, T1&& elem);
@@ -335,7 +335,7 @@ void eraseSingleElement(T *elements, size_t size, size_t index) {
 }
 
 template <typename T>
-void moveConstructAndDestruct(T  *source, T *target, size_t number) {
+void moveConstructAndDestruct(T *source, T *target, size_t number) {
 	for (size_t i = 0; i < number; ++i) {
 		new (target + i) T(std::move(source[i]));
 		source[i].~T();
@@ -417,9 +417,9 @@ getIndexToInsert(T const *begin, T const *end, K const &key, bool toUseBinarySea
 	}
 }
 
-template <typename Iterator>
-bool containerEqual(Iterator lhsBegin, Iterator lhsEnd, 
-								Iterator rhsBegin, Iterator rhsEnd) {		
+template <typename Iterator1, typename Iterator2>
+bool containerEqual(Iterator1 lhsBegin, Iterator1 lhsEnd,
+								Iterator2 rhsBegin, Iterator2 rhsEnd) {		
 	while (true) {
 		if (lhsBegin == lhsEnd) {
 			if (rhsBegin == rhsEnd) {

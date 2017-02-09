@@ -27,6 +27,9 @@ public:
 	vector(vector<T, Impl> &&rhs): impl_(std::move(rhs.impl_)) { }
 	vector(size_t initSize, T const &value): impl_(initSize, value) { }
 	vector(size_t initSize): impl_(initSize) { }	
+	template <typename InputIter>
+	vector(InputIter begin, InputIter end): impl_(begin, end) { }
+	vector(std::initializer_list<T> const &list): impl_(list) { }
 
 	vector<T, Impl> & operator= (vector<T, Impl> const &rhs) { impl_ = rhs.impl_; return *this; }
 	vector<T, Impl> & operator= (vector<T, Impl> &&rhs) { impl_ = std::move(rhs.impl_); return *this; }

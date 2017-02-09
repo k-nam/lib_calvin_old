@@ -583,18 +583,18 @@ void lib_calvin_container::setRvalueTest(std::string title) {
 	std::cout << "\n";
 }
 
-void lib_calvin_container::randomAccessSpeedTest(int size) {
+void lib_calvin_container::randomAccessSpeedTest(size_t size) {
 	typedef BinTreeNode<int> ElemType;
-	lib_calvin::vector<ElemType> ElemTypeArray(size, 1);
-	lib_calvin::vector<int> indexArray(size, 0);
-	for (int i = 1; i < size; ++i) {
+	lib_calvin::vector<ElemType> ElemTypeArray(size, ElemType(1));
+	lib_calvin::vector<size_t> indexArray(size, 0);
+	for (size_t i = 1; i < size; ++i) {
 		indexArray[i] = i;
 	}
 	std::random_shuffle(indexArray.begin(), indexArray.end());
 	lib_calvin::stopwatch watch;
 	int temp = 0;
 	watch.start();
-	for (int i = 0; i < size - 1; ++i) {
+	for (size_t i = 0; i < size - 1; ++i) {
 		temp += ElemTypeArray[indexArray[i]].getKey();
 		//ElemTypeArray[indexArray[i]].next_ = (&ElemTypeArray[indexArray[i + 1]]);
 	}
@@ -604,7 +604,7 @@ void lib_calvin_container::randomAccessSpeedTest(int size) {
 
 	watch.start();
 	ElemType *thisPointer = &ElemTypeArray[indexArray[0]];
-	for (int i = 0; i < size - 1; ++i) {
+	for (size_t i = 0; i < size - 1; ++i) {
 		temp += thisPointer->getKey();
 		//thisPointer = thisPointer->next_;
 	}
