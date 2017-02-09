@@ -906,7 +906,10 @@ void lib_calvin_matrix::recursiveMultiAdd(
   T *result = new T[A.height_*B.width_];
   T *temp = new T[A.height_*B.width_];
 	size_t mul_thre = A.mul_thre_;
-	size_t initialRecursionDepth = log(A.width_) - log(mul_thre);
+	size_t initialRecursionDepth = 0;
+	if (A.width_ - mul_thre > 0) {
+		initialRecursionDepth = log(A.width_) - log(mul_thre);
+	}
 	std::cout << "recursion depth starting: " << initialRecursionDepth << "\n";
 	lib_calvin::stopwatch watch;
   recursiveArrange (A.elements_, lhs, 
@@ -965,7 +968,10 @@ void lib_calvin_matrix::strassenMultiAdd (
     exit(0);
   }
 	size_t n = A.height_;
-	size_t initialRecursionDepth = log(n) - log(A.mul_thre_);
+	size_t initialRecursionDepth = 0;
+	if (n > A.mul_thre_) {
+		initialRecursionDepth = log(n) - log(A.mul_thre_);
+	}
   T *lhs =		new T[n*n];
   T *rhs =		new T[n*n];
   T *result = new T[n*n];
