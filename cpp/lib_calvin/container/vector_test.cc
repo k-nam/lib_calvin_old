@@ -171,6 +171,27 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 		cout << "vector assignment OK!\n";
 	}
 
+	std::set<Impl::value_type> intSet;
+	intSet.insert(Impl::value_type(3));
+	intSet.insert(Impl::value_type(5));
+	intSet.insert(Impl::value_type(7));
+	Impl impl4(intSet.begin(), intSet.end());
+	if (containerEqual(impl4.begin(), impl4.end(), intSet.begin(), intSet.end())) {
+		cout << "vector iterator ctor OK!\n";
+	} else {
+		cout << "vector iterator ctor error\n";
+		exit(0);
+	}
+
+	Impl impl5 { Impl::value_type(3), Impl::value_type(5), Impl::value_type(7) };
+	//std::vector<Impl::value_type> ss { Impl::value_type(3), Impl::value_type(5), Impl::value_type(7) };
+	if (containerEqual(impl5.begin(), impl5.end(), intSet.begin(), intSet.end())) {
+		cout << "vector initializer list ctor OK!\n";
+	} else {
+		cout << "vector initializer list ctor error\n";
+		exit(0);
+	}
+
 	impl.clear();
 	if (impl.size() != 0) {
 		cout << "vector clear error\n";
@@ -193,6 +214,8 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 		}
 	}
 	cout << "vector iterator minus operator OK!!!\n";
+
+
 
 	cout << "vector function OK!!!\n\n";
 }

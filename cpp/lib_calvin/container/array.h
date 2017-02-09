@@ -71,6 +71,10 @@ public:
 	// starts with initSize objects (using default ctor if second arg is absent)
 	Array(size_t initSize, T const &value); 	
 	Array(size_t initSize);
+	template <typename InputIter>
+	Array(InputIter begin, InputIter end);
+	Array(std::initializer_list<T> const &);
+
 	~Array();
 	Array<T> & operator= (Array<T> const &rhs); 
 	Array<T> & operator= (Array<T> &&rhs); 
@@ -116,8 +120,7 @@ public:
 	reverse_iterator rend() { return begin(); }
 
 private: 
-	void init();
-	void init(size_t initSize, size_t initCapacity);
+	void init(size_t initSize = 0);
 	void reserve_impl(size_t numElem);
 
 private: // member variables	
@@ -172,8 +175,8 @@ Array<T>::Array(Array<T> const &rhs) {
 		init();
 		return;
 	} else {
-		init(rhs.size_, rhs.capacity_);
-		copyConstruct(rhs.array_, array_, size_);
+		init();
+		*this = rhs;
 	}
 }
 
@@ -187,11 +190,7 @@ Array<T>::Array(Array<T> &&rhs) {
 // Be careful with initSize == 0 case
 template <typename T>
 Array<T>::Array(size_t initSize, T const &value) {
-	size_t initCapacity = initSize*VECTOR_REALLOC_MULTIPLIER;
-	if (initCapacity == 0) {
-		initCapacity = VECTOR_INIT_CAPACITY;
-	}
-	init(initSize, initCapacity);
+	init(initSize);
 	for (size_t i = 0; i < initSize; ++i) {
 		new (array_ + i) T(value);
 	}
@@ -199,13 +198,28 @@ Array<T>::Array(size_t initSize, T const &value) {
 
 template <typename T>
 Array<T>::Array(size_t initSize) {
-	size_t initCapacity = initSize*VECTOR_REALLOC_MULTIPLIER;
-	if (initCapacity == 0) {
-		initCapacity = VECTOR_INIT_CAPACITY;
-	}
-	init(initSize, initCapacity);
+	init(initSize);
 	for (size_t i = 0; i < initSize; ++i) {
 		new (array_ + i) T();
+	}
+}
+
+
+template <typename T>
+template <typename InputIter>
+Array<T>::Array(InputIter begin, InputIter end) {
+	init();
+	for (InputIter iter = begin; iter != end; ++iter) {
+		push_back(*iter);
+	}
+}
+
+template <typename T>
+Array<T>::Array(std::initializer_list<T> const &list) {
+	init();
+	//std::cout << list.size() << "   \n";
+	for (auto iter = list.begin(); iter != list.end(); ++iter) {
+		push_back(*iter);
 	}
 }
 
@@ -230,12 +244,9 @@ Array<T>::operator= (Array<T> const &rhs) {
 	for (size_t i = 0; i < size_; ++i) {
 		array_[i].~T();
 	}
-	// reuse memory we appropriate
-	if (rhs.size_ <= capacity_ && rhs.size_*VECTOR_REALLOC_MULTIPLIER >= capacity_) {
-	} else {
-		operator delete (array_);
-		array_ = (T *)operator new(sizeof(T)*rhs.capacity_);
-	}
+
+	operator delete (array_);
+	array_ = (T *)operator new(sizeof(T)*rhs.capacity_);
 	size_ = rhs.size_;
 	capacity_ = rhs.capacity_;
 	copyConstruct(rhs.array_, array_, size_);
@@ -345,7 +356,7 @@ template <typename T>
 void Array<T>::resize(size_t newSize, T const &value) {
 	if (newSize > size_) {
 		if (newSize > capacity_) { // need to re-allocate
-			reserve_impl(newSize*VECTOR_REALLOC_MULTIPLIER);
+			reserve_impl(newSize);
 		}
 		for (size_t i = size_; i < newSize; ++i) { // copy construct
 			new (array_ + i) T(value);
@@ -373,29 +384,25 @@ void Array<T>::clear() {
 
 //--------------------------- private methods ------------------------------//
 template <typename T>
-void Array<T>::reserve_impl(size_t numElem) {
-	if (numElem <= capacity_) {
+void Array<T>::reserve_impl(size_t newCapacity) {
+	if (newCapacity <= capacity_) {
 		return;
 	}
-	capacity_ = numElem;
-	T *newArray = (T *)operator new(sizeof(T)*numElem);
+	capacity_ = newCapacity;
+	T *newArray = (T *)operator new(sizeof(T)*newCapacity);
 	moveConstructAndDestruct(array_, newArray, size_);
 	operator delete(array_);
 	array_ = newArray;
 }
 
 template <typename T>
-void Array<T>::init() {
-	size_ = 0;
-	capacity_ = 0;
-	array_ = nullptr;
-}
-
-template <typename T>
-void Array<T>::init(size_t initSize, size_t initCapacity) {
+void Array<T>::init(size_t initSize) {
 	size_ = initSize;
-	capacity_ = initCapacity;
-	array_ = (T *)operator new(sizeof(T)*initCapacity);
+	capacity_ = initSize;
+	array_ = nullptr;
+	if (initSize > 0) {
+		array_ = (T *)operator new(sizeof(T)*initSize);
+	}
 }
 
 } // end namespace lib_calvin_container
