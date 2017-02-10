@@ -12,9 +12,10 @@ class handwritten_digits_analyzer : public neural_network
 public:
 	handwritten_digits_analyzer();
 	// labe means actual number (0-9)
-	void trainWithFile(std::string imageDataFile, std::string labelDataFile);
-
+	void trainWithBinaryFile(std::string imageDataFileName, std::string labelDataFileName);
+	void trainWithTextFile(std::string trainFileName, std::string testFileName);
 private:
+	vector<std::pair<vector<double>, vector<double>>> readFile(std::string fileName, size_t count) const;
 	unsigned char readByte(std::ifstream &) const;
 	int32_t readInt(std::ifstream &) const;
 	// some data is stored in big endian. Convert this to little endian and return the value.

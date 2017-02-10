@@ -16,7 +16,10 @@ class neural_network
 {
 public:
 	neural_network(size_t numInput, size_t numOutput, vector<size_t> hiddenLayers);
-	void train(vector<std::pair<vector<double>, vector<double>>> const &trainData);
+	void train(vector<std::pair<vector<double>, vector<double>>> trainData,
+		vector<std::pair<vector<double>, vector<double>>> testData);
+	// Return succees rate
+	double test(vector<std::pair<vector<double>, vector<double>>> testData) const;
 
 private:
 	class layer {
@@ -62,9 +65,9 @@ private:
 	};
 
 private:
+	vector<double> runNetwork(vector<double> const &input) const;
 	double learnFromData(vector<std::pair<vector<double>, vector<double>>> const &trainData);
 	double learnFromData(vector<double> const &input, vector<double> const &output); // sum of square 
-	void clearGradient() const;
 	void randomize();
 private:
 	vector<layer> layers_; // last element is output

@@ -1,6 +1,7 @@
 #include "handwritten_digits_analyzer.h"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 
 namespace lib_calvin_ai
 {
@@ -8,11 +9,11 @@ using std::ifstream;
 
 handwritten_digits_analyzer::
 handwritten_digits_analyzer() :
-	neural_network(28 * 28, 10, vector<size_t>{ 30 }) {
+	neural_network(28 * 28, 10, vector<size_t>{ 50 }) {
 }
 
 void
-handwritten_digits_analyzer::trainWithFile(std::string imageFileName, std::string labelFileName) {
+handwritten_digits_analyzer::trainWithBinaryFile(std::string imageFileName, std::string labelFileName) {
 	vector<std::pair<vector<double>, vector<double>>> trainData;
 	ifstream imageFile(imageFileName);
 	ifstream labelFile(labelFileName);
@@ -35,15 +36,10 @@ handwritten_digits_analyzer::trainWithFile(std::string imageFileName, std::strin
 	std::cout << "Starting to load data.\n";
 	for (size_t item = 0; item < numItems; item++) {
 		vector<double> input;
-		vector<double> output(10);
+		vector<double> output(10, 0.0);
 		unsigned char label = readByte(labelFile);
-		for (unsigned char i = 0; i < 10; i++) {
-			if (i == label) {
-				output[i] = 1.0;
-			} else {
-				output[i] = 0.0;
-			}
-		}
+		output[label] = 1.0;
+
 		std::cout << "label: " << (int)label << "\n";
 		for (size_t column = 0; column < numColumns; column++) {
 			for (size_t row = 0; row < numRows; row++) {
@@ -57,11 +53,60 @@ handwritten_digits_analyzer::trainWithFile(std::string imageFileName, std::strin
 		trainData.push_back(std::make_pair(input, output));
 	}
 	std::cout << "Finished loading data.\n\n";
-
 	std::cout << "Start training.\n";
-	train(trainData);
+	//train(trainData);
+	std::cout << "End training.\n";
 }
 
+void 
+handwritten_digits_analyzer::trainWithTextFile(std::string trainFileName, std::string testFileName) {
+	std::cout << "Start training.\n";
+	size_t trainDataSize = 100000;
+	size_t testDataSize = 10000;
+	//size_t part1Size = 30000;
+	//size_t validationSize = 10000;
+
+	auto trainData = readFile(trainFileName, trainDataSize);
+	auto testData = readFile(testFileName, testDataSize);
+	//vector<std::pair<vector<double>, vector<double>>> part1(trainData.begin(), trainData.begin() + part1Size);
+	//vector<std::pair<vector<double>, vector<double>>> part2(trainData.begin() + part1Size, 
+		//trainData.begin() + part1Size + validationSize);
+	//train(part1, part2);
+	train(trainData, testData);
+	std::cout << "End training.\n";
+}
+
+vector<std::pair<vector<double>, vector<double>>> 
+handwritten_digits_analyzer::readFile(std::string fileName, size_t count) const {
+	vector<std::pair<vector<double>, vector<double>>> data;
+	ifstream dataFile(fileName);
+	std::string line;
+	std::string token;
+	char delim = ',';
+	std::cout << "Starting to load data: " << fileName << "\n";
+	for (size_t i = 0; getline(dataFile, line) && i < count; i++) {
+		vector<double> input;
+		vector<double> output(10, 0.0);
+		vector<int> values;
+		std::stringstream stringStream(line);
+		while (getline(stringStream, token, delim)) {
+			values.push_back(std::stoi(token));
+		}
+
+		for (size_t i = 0; i < values.size(); i++) {
+			int value = values[i];
+			//std::cout << value << ",";
+			if (i == 0) { // first tokoen is output
+				output[static_cast<size_t>(value)] = 1.0;
+			} else {
+				input.push_back(static_cast<double>(value) / UCHAR_MAX);
+			}
+		}
+		data.push_back(std::make_pair(input, output));
+	}
+	std::cout << "Finished loading data.\n\n";
+	return data;
+}
 
 unsigned char
 handwritten_digits_analyzer::readByte(std::ifstream &file) const {
