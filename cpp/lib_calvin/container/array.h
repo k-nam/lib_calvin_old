@@ -32,24 +32,26 @@ public:
 		typedef ptrdiff_t difference_type;
 		typedef std::random_access_iterator_tag iterator_category;
 
-		IteratorImpl(): pointer_(NULL) { }
-		IteratorImpl(T *pointer): pointer_(pointer) { }
+		IteratorImpl() : pointer_(NULL) { }
+		IteratorImpl(T *pointer) : pointer_(pointer) { }
 		IteratorImpl & operator=(IteratorImpl const &rhs) { pointer_ = rhs.pointer_; return *this; }
 
 		pointer operator->() const { return pointer_; }
 		reference operator*() const { return *pointer_; }
-		IteratorImpl const operator+(ptrdiff_t offset) const { 
-			return IteratorImpl(pointer_ + offset); }
-		IteratorImpl const operator-(ptrdiff_t offset) const { 
-			return IteratorImpl(pointer_ - offset); }
-		IteratorImpl & operator+=(ptrdiff_t offset) { pointer_ += offset; return *this;}
-		IteratorImpl & operator-=(ptrdiff_t offset) { pointer_ -= offset; return *this;}
+		IteratorImpl const operator+(ptrdiff_t offset) const {
+			return IteratorImpl(pointer_ + offset);
+		}
+		IteratorImpl const operator-(ptrdiff_t offset) const {
+			return IteratorImpl(pointer_ - offset);
+		}
+		IteratorImpl & operator+=(ptrdiff_t offset) { pointer_ += offset; return *this; }
+		IteratorImpl & operator-=(ptrdiff_t offset) { pointer_ -= offset; return *this; }
 		IteratorImpl & operator++() { ++pointer_; return *this; }
 		IteratorImpl & operator--() { --pointer_; return *this; }
 		IteratorImpl const operator++(int) { IteratorImpl temp = *this; ++(*this); return temp; }
 		IteratorImpl const operator--(int) { IteratorImpl temp = *this; --(*this); return temp; }
 		difference_type operator-(IteratorImpl const &rhs) const { return pointer_ - rhs.pointer_; }
-	
+
 		bool operator==(IteratorImpl const &rhs) const { return pointer_ == rhs.pointer_; }
 		bool operator!=(IteratorImpl const &rhs) const { return pointer_ != rhs.pointer_; }
 		bool operator<(IteratorImpl const &rhs) const { return pointer_ < rhs.pointer_; }
@@ -66,23 +68,24 @@ public:
 	typedef lib_calvin_container::ConstReverseIterator<IteratorImpl> const_reverse_iterator;
 
 	Array();
-	Array(Array<T> const &rhs); 
-	Array(Array<T> &&rhs); 
+	Array(Array<T> const &rhs);
+	Array(Array<T> &&rhs);
 	// starts with initSize objects (using default ctor if second arg is absent)
-	Array(size_t initSize, T const &value); 	
+	Array(size_t initSize, T const &value);
 	Array(size_t initSize);
-	template <typename InputIter>
+	template <typename InputIter, typename = 
+						std::void_t<typename InputIter::iterator_category>>
 	Array(InputIter begin, InputIter end);
 	Array(std::initializer_list<T> const &);
 
 	~Array();
-	Array<T> & operator= (Array<T> const &rhs); 
-	Array<T> & operator= (Array<T> &&rhs); 
+	Array<T> & operator= (Array<T> const &rhs);
+	Array<T> & operator= (Array<T> &&rhs);
 	void swap(Array<T> &rhs);
 
 	reference operator[] (size_t index) { return *(array_ + index); }
 	const_reference operator[] (size_t index) const { return *(array_ + index); }
-	
+
 	template <typename T1> void push_back(T1 &&);
 	void pop_back();
 	reference front() { return *array_; }
@@ -115,11 +118,11 @@ public:
 	iterator end() { return iterator(array_ + size_); }
 
 	const_reverse_iterator rbegin() const { return end(); }
-	const_reverse_iterator rend() const	{ return begin(); }
+	const_reverse_iterator rend() const { return begin(); }
 	reverse_iterator rbegin() { return end(); }
 	reverse_iterator rend() { return begin(); }
 
-private: 
+private:
 	void init(size_t initSize = 0);
 	void reserve_impl(size_t numElem);
 
@@ -187,6 +190,14 @@ Array<T>::Array(Array<T> &&rhs) {
 	swap(rhs);
 }
 
+template <typename T>
+Array<T>::Array(size_t initSize) {
+	init(initSize);
+	for (size_t i = 0; i < initSize; ++i) {
+		new (array_ + i) T();
+	}
+}
+
 // Be careful with initSize == 0 case
 template <typename T>
 Array<T>::Array(size_t initSize, T const &value) {
@@ -197,17 +208,9 @@ Array<T>::Array(size_t initSize, T const &value) {
 }
 
 template <typename T>
-Array<T>::Array(size_t initSize) {
-	init(initSize);
-	for (size_t i = 0; i < initSize; ++i) {
-		new (array_ + i) T();
-	}
-}
-
-
-template <typename T>
-template <typename InputIter>
+template <typename InputIter, typename Void>
 Array<T>::Array(InputIter begin, InputIter end) {
+	// InputIter is an iterator. 
 	init();
 	for (InputIter iter = begin; iter != end; ++iter) {
 		push_back(*iter);
