@@ -9,7 +9,7 @@ using std::ifstream;
 
 handwritten_digits_analyzer::
 handwritten_digits_analyzer() :
-	neuralNetwork_(28 * 28, 10, vector<size_t>{ 100 }) {
+	neuralNetwork_(28 * 28, 10, vector<size_t>{ 100, 50, 30 }) {
 }
 
 void
