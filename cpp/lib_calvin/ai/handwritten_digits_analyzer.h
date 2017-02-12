@@ -7,7 +7,7 @@
 namespace lib_calvin_ai
 {
 
-class handwritten_digits_analyzer : public neural_network
+class handwritten_digits_analyzer
 {
 public:
 	handwritten_digits_analyzer();
@@ -21,8 +21,9 @@ private:
 	// some data is stored in big endian. Convert this to little endian and return the value.
 	uint32_t readOneUnsigned(std::ifstream &) const;
 	uint32_t convertFromBigEndian(char[4]) const;
-
 	void showBytes(std::ifstream &) const;
+private:
+	neural_network neuralNetwork_;
 };
 
 }

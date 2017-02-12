@@ -9,7 +9,7 @@ using std::ifstream;
 
 handwritten_digits_analyzer::
 handwritten_digits_analyzer() :
-	neural_network(28 * 28, 10, vector<size_t>{ 50 }) {
+	neuralNetwork_(28 * 28, 10, vector<size_t>{ 100 }) {
 }
 
 void
@@ -72,7 +72,7 @@ handwritten_digits_analyzer::trainWithTextFile(std::string trainFileName, std::s
 	//vector<std::pair<vector<double>, vector<double>>> part2(trainData.begin() + part1Size, 
 		//trainData.begin() + part1Size + validationSize);
 	//train(part1, part2);
-	train(trainData, testData);
+	neuralNetwork_.train(trainData, testData);
 	std::cout << "End training.\n";
 }
 

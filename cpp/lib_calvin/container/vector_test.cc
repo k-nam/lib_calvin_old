@@ -171,11 +171,15 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 		cout << "vector assignment OK!\n";
 	}
 
+	
 	std::set<Impl::value_type> intSet;
 	intSet.insert(Impl::value_type(3));
 	intSet.insert(Impl::value_type(5));
 	intSet.insert(Impl::value_type(7));
+	
+	typedef decltype(intSet.begin())::iterator_category tag;
 	Impl impl4(intSet.begin(), intSet.end());
+	std::vector<int> temp(intSet.begin(), intSet.end());
 	if (containerEqual(impl4.begin(), impl4.end(), intSet.begin(), intSet.end())) {
 		cout << "vector iterator ctor OK!\n";
 	} else {

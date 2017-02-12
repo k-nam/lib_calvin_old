@@ -38,7 +38,7 @@ void
 neural_network::train(vector<std::pair<vector<double>, vector<double>>> trainData,
 					vector<std::pair<vector<double>, vector<double>>> testData) {
 	size_t subsetSize = 10;	
-	size_t num_epoch = 100;
+	size_t num_epoch = 10000;
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	
@@ -224,8 +224,9 @@ void
 neural_network::layer::randomize() {
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	double d = 0.1;
+	double d = 1 / pow(getNumInput(), 0.5);
 	std::normal_distribution<> dist(0, d);
+	std::normal_distribution<> dist2(0, 1.0);
 	for (size_t i = 0; i < weights_.height(); i++) {
 		for (size_t j = 0; j < weights_.width(); j++) {
 			weights_(i, j) = dist(gen);
@@ -233,7 +234,7 @@ neural_network::layer::randomize() {
 		}
 	}
 	for (double &bias : biases_) {
-		bias = dist(gen);
+		bias = dist2(gen);
 		//bias = 0;
 	}
 }
@@ -369,16 +370,29 @@ neural_network::layer::calculateErrorsForOutputLayer(vector<double> const &outpu
 
 double
 neural_network::layer::getSigmoid(double x) const {
-	//return 1 / (1 + exp(-x));
-	return tanh(x) * 0.5 + 0.5;
+	/*
+	return 1 / (1 + exp(-x));
+	*/
+	
+	return tanh(x);
+	/*
+	return x > 0 ? x : 0;
+	*/
 }
 
 double 
 neural_network::layer::getDerivativeOfSigmoid(double x) const {
-	//double temp = exp(-x);
-	//return temp / (1 + temp) / (1 + temp);
+	/*
+	double temp = exp(-x);
+	return temp / (1 + temp) / (1 + temp);
+	*/
+	
 	double a = tanh(x);
-	return 0.5 * (1 - a * a);
+	return (1 - a * a);
+	
+	/*
+	return x > 0 ? 1 : 0;
+	*/
 }
 
 }
