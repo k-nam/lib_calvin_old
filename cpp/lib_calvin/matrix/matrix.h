@@ -114,6 +114,10 @@ template <typename T>
 void naiveMultiAdd2(T const *A, T const *B, T *C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
+template <>
+void naiveMultiAdd2(double const *A, double const *B, double *C,
+	size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
+
 // Normal layout, transpose B for sequential access
 template <typename T>
 void naiveMultiAdd3(T const *A, T const *B, T *C,
@@ -122,11 +126,11 @@ void naiveMultiAdd3(T const *A, T const *B, T *C,
 // normal layout multiply (row * row)
 // lheight, lwidth, rwidth: operating region
 template <typename T>
-void simpleMultiAdd(T const * __restrict A, T const * __restrict B, T * __restrict C,
+void simpleMultiAdd(T const *A, T const *B, T *C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
 template <>
-void simpleMultiAdd<float>(float const * __restrict A, float const * __restrict B, float * __restrict C,
+void simpleMultiAdd<float>(float const *A, float const *B, float *C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
 // normal layout multiply (cache-optimized)
@@ -1044,7 +1048,7 @@ void lib_calvin_matrix::naiveMultiAdd(T const *A, T const *B, T * __restrict C,
 }
 
 template <typename T>
-void lib_calvin_matrix::naiveMultiAdd2(T const *A, T const *B, T * __restrict C,
+void lib_calvin_matrix::naiveMultiAdd2(T const * __restrict A, T const * __restrict B, T * __restrict C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
 	size_t Cw = Bw;
 	for (size_t i = 0; i < lheight; ++i) {
@@ -1067,7 +1071,7 @@ void lib_calvin_matrix::naiveMultiAdd2(T const *A, T const *B, T * __restrict C,
 }
 
 template <typename T>
-void lib_calvin_matrix::naiveMultiAdd3(T const *A, T const *B, T * __restrict C,
+void lib_calvin_matrix::naiveMultiAdd3(T const * __restrict A, T const * __restrict B, T * __restrict C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
 	size_t Cw = Bw;
 	T *transposedB = new T[lwidth*rwidth];
@@ -1083,7 +1087,7 @@ void lib_calvin_matrix::naiveMultiAdd3(T const *A, T const *B, T * __restrict C,
 }
 template <typename T>
 void
-lib_calvin_matrix::simpleMultiAdd(T const *A, T const *B, T * __restrict C,
+lib_calvin_matrix::simpleMultiAdd(T const * __restrict A, T const *__restrict B, T * __restrict C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
 	size_t Cw = Bw;
 	for (size_t i = 0; i < lheight; ++i) {

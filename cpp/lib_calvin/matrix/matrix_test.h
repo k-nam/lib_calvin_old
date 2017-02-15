@@ -7,6 +7,7 @@
 namespace lib_calvin_matrix {
 	void matrixTest();
 	double doGigaOps();
+	double doGigaOps2();
 	void mklTest(size_t size);
 }
 
