@@ -114,7 +114,6 @@ template <typename T>
 void naiveMultiAdd2(T const *A, T const *B, T *C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
-template <>
 void naiveMultiAdd2(double const *A, double const *B, double *C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
@@ -933,7 +932,7 @@ void lib_calvin_matrix::recursiveMultiAdd(
 	if (std::min(A.width_, A.height_) > mul_thre) {
 		initialRecursionDepth = log(std::min(A.width_, A.height_)) - log(mul_thre);
 	}
-	//std::cout << "recursion depth starting: " << initialRecursionDepth << "\n";
+	std::cout << "recursion depth starting: " << initialRecursionDepth << "\n";
 	lib_calvin::stopwatch watch;
 	recursiveArrange(A.elements_, lhs,
 		A.height_, A.width_, A.width_, initialRecursionDepth, true);
@@ -1200,7 +1199,7 @@ void lib_calvin_matrix::recursiveMultiAddParallelAdvanced(T const *A, T const *B
 	size_t l, size_t m, size_t n, size_t remainingRecursion)
 {
 	size_t const parallelBeginRecursion = 6;
-	size_t const parallelRecursionDepth = 3;
+	size_t const parallelRecursionDepth = 1;
 	if (remainingRecursion <= parallelBeginRecursion) {
 		recursiveMultiAddParallel(A, B, C, l, m, n, remainingRecursion, parallelRecursionDepth);
 		return;

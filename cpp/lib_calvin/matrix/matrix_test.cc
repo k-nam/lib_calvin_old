@@ -12,7 +12,7 @@
 
 void lib_calvin_matrix::matrixTest() {	
 	typedef double NumericType;
-	size_t testSize = 500;
+	size_t testSize = 1024;
 	lib_calvin_matrix::mklTest(testSize);
 
 	//lib_calvin::matrix<NumericType> t1(10000);
