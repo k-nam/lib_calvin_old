@@ -2,7 +2,7 @@ package com.excelsior.comfydrive;
 
 import android.hardware.SensorEvent;
 
-public class Analyzer {
+class Analyzer {
 	private final float nano = 1000000000.0f;
 	private float interval = 0;
 	private final float gravityConstant = 10.1f;
@@ -21,29 +21,29 @@ public class Analyzer {
 	private float previousTimestamp = 0;
 
 	private class Vector {
-		public final float x;
-		public final float y;
-		public final float z;
+		final float x;
+		final float y;
+		final float z;
 
-		public Vector(float x, float y, float z) {
+		Vector(float x, float y, float z) {
 			this.x = x;
 			this.y = y;
 			this.z = z;
 		}
 
-		public float length() {
+		float length() {
 			return (float)Math.sqrt(x * x + y * y + z * z);
 		}
 
-		public float getInnterProductWith(Vector vector) {
+		float getInnterProductWith(Vector vector) {
 			return x * vector.x + y * vector.y + z * vector.z;
 		}
 
-		public Vector getNormarlPartTo(Vector vector) {
+		Vector getNormarlPartTo(Vector vector) {
 			return subtract(getParallelPartTo(vector));
 		}
 
-		public Vector getParallelPartTo(Vector vector) {
+		Vector getParallelPartTo(Vector vector) {
 			return vector.multiply(this.getInnterProductWith(vector) / vector.getInnterProductWith(vector));
 		}
 
@@ -72,7 +72,7 @@ public class Analyzer {
 		return vector.multiply(k);
 	}
 
-	public void refresh(SensorEvent event) {
+	void refresh(SensorEvent event) {
 		Vector currentAccel = new Vector(event.values[0], event.values[1], event.values[2]);
 		if (gravity == null) {
 			gravity = currentAccel;
@@ -114,11 +114,11 @@ public class Analyzer {
 		updown = updown.add(residual);
 	}
 
-	public float getForwardAccel() {
+	float getForwardAccel() {
 		return forward.length();
 	}
 
-	public float getForwardShock() {
+	float getForwardShock() {
 		if (previousForward == null) {
 			return 0;
 		} else {
@@ -126,11 +126,11 @@ public class Analyzer {
 		}
 	}
 
-	public float getUpdownAccel() {
+	float getUpdownAccel() {
 		return updown.length();
 	}
 
-	public float getUpdownShock() {
+	float getUpdownShock() {
 		if (previousUpdown == null) {
 			return 0;
 		} else {

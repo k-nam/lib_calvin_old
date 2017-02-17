@@ -10,6 +10,7 @@
 #include "mkl/include/mkl_boost_ublas_matrix_prod.hpp" // prod using MKL
 //#include "boost/numeric/ublas/matrix.hpp" // prod using BOOST implementation
 
+
 void lib_calvin_matrix::matrixTest() {	
 	typedef double NumericType;
 	size_t testSize = 1024;
@@ -17,9 +18,10 @@ void lib_calvin_matrix::matrixTest() {
 
 	//lib_calvin::matrix<NumericType> t1(10000);
 	//lib_calvin::matrix<NumericType> t2(10000);
-	//auto t3 = t1 * t2;	
-	
+	//auto t3 = t1 * t2;		
 	double rtv = doGigaOps();
+
+	assemblyTest();
 
 	std::cout << "---------- Beginning matrix test -----------\n\n";
 	lib_calvin::matrix<NumericType> m1(testSize);
@@ -167,8 +169,10 @@ double lib_calvin_matrix::doGigaOps() {
 		d[150] ;
 }
 
-double lib_calvin_matrix::doGigaOps2() {
-	return 0;
+void lib_calvin_matrix::assemblyTest() {
+	std::cout << "---------- Beginning assemblyTest -----------\n\n";
+	doAssemblyGigaOp();
+	std::cout << "------------- assemblyTest finished ---------------\n\n";
 }
 
 void lib_calvin_matrix::mklTest(size_t size) {
@@ -185,8 +189,8 @@ void lib_calvin_matrix::mklTest(size_t size) {
 	matrix<NumericType> c(size2, size);
 	matrix<NumericType> x(size, 1);
 	matrix<NumericType> y(1, size);
-	for (int i = 0; i < size; ++i) {
-		for (int j = 0; j < size; j++) {
+	for (size_t i = 0; i < size; ++i) {
+		for (size_t j = 0; j < size; j++) {
 			a(i, j) = 1.2;
 			b(i, j) = 1.5;
 		}
@@ -199,8 +203,8 @@ void lib_calvin_matrix::mklTest(size_t size) {
 	watch.stop();
 	std::cout << "mkl size: " << size << ". " << watch.read() << "  GFLOPS: " <<
 		(double)size * size * size * 2 / watch.read() / 1000000000 << "\n";
-	for (int i = 0; i < size; ++i) {
-		for (int j = 0; j < size; j++) {
+	for (size_t i = 0; i < size; ++i) {
+		for (size_t j = 0; j < size; j++) {
 			double residual = result(i, j) - 1.2 * 1.5 * size;
 			if (residual*residual > 0.01) {
 				std::cout << "MKL is lie\n";

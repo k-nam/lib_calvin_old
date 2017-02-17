@@ -136,7 +136,6 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../string;../container;../../../../lib;../graph;../util;../matrix;../thread;../sort;../lexer;../parser;../subcc</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <BrowseInformation>false</BrowseInformation>
     </ClCompile>
@@ -180,6 +179,7 @@
     <ClCompile Include="..\graph\graph.cc" />
     <ClCompile Include="..\graph\graph_test.cc" />
     <ClCompile Include="..\lexer\lexer_test.cc" />
+    <ClCompile Include="..\matrix\matrix.cc" />
     <ClCompile Include="..\matrix\matrix_test.cc" />
     <ClCompile Include="..\parser\parser.cc" />
     <ClCompile Include="..\parser\parser_test.cc" />

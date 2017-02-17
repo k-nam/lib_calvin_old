@@ -5,10 +5,12 @@
 #include "matrix.h"
 
 namespace lib_calvin_matrix {
+	
 	void matrixTest();
 	double doGigaOps();
-	double doGigaOps2();
+	void assemblyTest();
 	void mklTest(size_t size);
+	extern "C" int doAssemblyGigaOp();
 }
 
 #endif

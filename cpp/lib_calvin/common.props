@@ -20,6 +20,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
+      <AdditionalOptions>/arch:AVX %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link />
     <Link>

@@ -33,6 +33,9 @@
     <ClCompile Include="graph_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\matrix\matrix.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graph.h">

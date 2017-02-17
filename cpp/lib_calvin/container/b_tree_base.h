@@ -1050,7 +1050,7 @@ size_t
 B_TREE_BASE<T, K, Comp, ExtractKey>::index_of(const_iterator iterator) const {
 	IteratorImpl const &impl = iterator.getImpl();
 	Node *curNode = impl.node_;
-	int curIndex = impl.index_;
+	size_t curIndex = static_cast<size_t>(impl.index_);
 	size_t index = 0;
 #ifndef BPLUS
 	bool startedInInternalNode;
@@ -1894,7 +1894,7 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::bTreeNodeContentCopy(Node const *sourc
 		InternalNode const *src = static_cast<InternalNode const *>(source);
 		InternalNode *tar = static_cast<InternalNode *>(target);
 		tar->treeSize_ = src->treeSize_;
-		for (size_t i = 0; i <= src->getSize(); i++) {
+		for (int i = 0; i <= src->getSize(); i++) {
 			tar->treeSize2_[i] = src->treeSize2_[i];
 		}
 	}
