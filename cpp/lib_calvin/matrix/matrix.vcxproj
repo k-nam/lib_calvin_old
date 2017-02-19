@@ -121,7 +121,6 @@
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <DisableSpecificWarnings>4503; 4127;4996</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>../string;../container;../../../../lib;../graph;../util;../matrix;../thread;../sort;../lexer;../parser;../subcc</AdditionalIncludeDirectories>
       <BrowseInformation>false</BrowseInformation>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
@@ -164,6 +163,7 @@
       <CompileAs>CompileAsCpp</CompileAs>
       <EnableMatrixMultiplyLibraryCall>Yes</EnableMatrixMultiplyLibraryCall>
       <Optimization>MaxSpeed</Optimization>
+      <CallingConvention>StdCall</CallingConvention>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -192,6 +192,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
       <FileType>Document</FileType>
+      <PerformSyntaxCheckOnly Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</PerformSyntaxCheckOnly>
+      <PackAlignmentBoundary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5</PackAlignmentBoundary>
     </MASM>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

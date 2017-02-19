@@ -1,6 +1,7 @@
 #include "matrix_test.h"
 #include <stdlib.h>
 #include <cstdlib>
+#include <chrono>
 
 #ifdef _WIN64 
 #define MKL_ILP64
@@ -34,6 +35,7 @@ void lib_calvin_matrix::matrixTest() {
 	std::cout << p[0] << " " << p[1] << " " << p[2] << " " << p[3] << "\n";
 	std::cout << "\n";
 	std::cout << "------------- Matrix test finished ---------------\n\n\n";
+	
 }
 
 double lib_calvin_matrix::doGigaOps() {
@@ -44,10 +46,10 @@ double lib_calvin_matrix::doGigaOps() {
 	int const matrixSize = 1000;
 
 	int const iter = giga / arraySize;
-	double *  a = (double *)_aligned_malloc(arraySize * sizeof(double), 32);
-	double *  b = (double *)_aligned_malloc(arraySize * sizeof(double), 32);
-	double *  c = (double *)_aligned_malloc(arraySize * sizeof(double), 32);
-	double *  d = (double *)_aligned_malloc(arraySize * sizeof(double), 32);
+	double *a = (double *)_aligned_malloc(arraySize * sizeof(double), 32);
+	double *b = (double *)_aligned_malloc(arraySize * sizeof(double), 32);
+	double *c = (double *)_aligned_malloc(arraySize * sizeof(double), 32);
+	double *d = (double *)_aligned_malloc(arraySize * sizeof(double), 32);
 	double * __restrict x = new double[matrixSize*matrixSize];
 	double * __restrict y = new double[matrixSize*matrixSize];
 	double * __restrict z = new double[matrixSize*matrixSize];
@@ -89,7 +91,7 @@ double lib_calvin_matrix::doGigaOps() {
 
 	for (int ii = 0; ii < 1; ++ii) {
 		for (int i = 0; i < iter; ++i) {
-			for (int j = 0; j < arraySize - 200; j += 8) {
+			for (int j = 0; j < arraySize - 100; j += 8) {
 				/*
 				returnValue1 *= 2;				
 				returnValue2 *= 2;
@@ -113,13 +115,13 @@ double lib_calvin_matrix::doGigaOps() {
 				//x3 = _mm256_load_pd(a + j + 8);
 				//x4 = _mm256_load_pd(a + j + 12);
 
-				//y1 = _mm256_load_pd(b + j);
-				//y2 = _mm256_load_pd(b + j + 4);
+				y1 = _mm256_load_pd(b + j);
+				y2 = _mm256_load_pd(b + j + 4);
 				//y3 = _mm256_load_pd(b + j + 8);
 				//y4 = _mm256_load_pd(b + j + 12);
 
-				//a1 = _mm256_load_pd(d + j);
-				//a2 = _mm256_load_pd(d + j + 4);
+				a1 = _mm256_load_pd(d + j);
+				a2 = _mm256_load_pd(d + j + 4);
 				//a3 = _mm256_load_pd(d + j + 8);
 				//a4 = _mm256_load_pd(d + j + 12);
 
@@ -171,7 +173,29 @@ double lib_calvin_matrix::doGigaOps() {
 
 void lib_calvin_matrix::assemblyTest() {
 	std::cout << "---------- Beginning assemblyTest -----------\n\n";
-	doAssemblyGigaOp();
+	size_t arraySize = 1024;
+	size_t iteration = 10000;
+	size_t multiplier = 2;
+	double *source = (double *)_aligned_malloc(arraySize * sizeof(double), 32);
+	double *target = (double *)_aligned_malloc(arraySize * sizeof(double), 32);
+	for (size_t i = 0; i < arraySize; i++) {
+		source[i] = 2.0;
+		target[i] = 3.0;
+	}
+
+	lib_calvin::stopwatch watch;
+	watch.start();
+	size_t returnValue = doAssemblyGigaOp(source, target, arraySize, iteration);
+	watch.stop();
+	std::cout << "assemblyTest took: " << watch.read() << "GFLOPS: " << 
+		arraySize * iteration / watch.read() / 1000000000 << "\n";
+
+	double result = 0;
+	for (size_t i = 0; i < arraySize; i++) {
+		//std::cout << inputArray[i] << "\n";
+		result += target[i];
+	}
+	std::cout << "Result was: " << result << ", return value: " << returnValue << "\n\n";
 	std::cout << "------------- assemblyTest finished ---------------\n\n";
 }
 

@@ -10,7 +10,7 @@ namespace lib_calvin_matrix {
 	double doGigaOps();
 	void assemblyTest();
 	void mklTest(size_t size);
-	extern "C" int doAssemblyGigaOp();
+	extern "C" int doAssemblyGigaOp(double *src, double *target, size_t size, size_t iteration);
 }
 
 #endif
