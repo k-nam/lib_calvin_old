@@ -4,38 +4,32 @@
 #ifdef _WIN32
 
 #include <Windows.h>
+#include <chrono>
 
 namespace lib_calvin_stopwatch
-{ 
-  double GetDoubleFrom(LARGE_INTEGER const *pLargetInteger);
+{
+double GetDoubleFrom(LARGE_INTEGER const *pLargetInteger);
 }
 
 namespace lib_calvin
 {
-	using lib_calvin_stopwatch::GetDoubleFrom;
-  class stopwatch {
-  public:
-    stopwatch() {
-      LARGE_INTEGER temp;
-      QueryPerformanceFrequency(&temp);
-      frequency_ = GetDoubleFrom(&temp);
-    }
-    void start() {
-      LARGE_INTEGER temp;
-      QueryPerformanceCounter(&temp);
-      start_ = GetDoubleFrom(&temp);
-    }
-    void stop() {
-      LARGE_INTEGER temp;
-      QueryPerformanceCounter(&temp);
-      finish_ = GetDoubleFrom(&temp);
-    }
-    double read() { return (finish_ - start_) / frequency_; }
-  private:
-    double start_;
-    double finish_;
-    double frequency_;
-  };
+using lib_calvin_stopwatch::GetDoubleFrom;
+class stopwatch {
+public:
+	stopwatch() {
+	}
+	void start() {
+		start_ = clock_.now();
+	}
+	void stop() {
+		finish_ = clock_.now();
+	}
+	double read() { return std::chrono::duration<double>(finish_ - start_).count(); }
+private:
+	std::chrono::high_resolution_clock clock_;
+	std::chrono::time_point<std::chrono::high_resolution_clock> start_;
+	std::chrono::time_point<std::chrono::high_resolution_clock> finish_;
+};
 }
 
 #else
@@ -44,20 +38,20 @@ namespace lib_calvin
 namespace lib_calvin
 {
 class stopwatch {
-  public:
-    stopwatch() {
-    }
-    void start() {
-			start_ = clock();
-    }
-    void stop() {
-			finish_ = clock();
-    }
-		double read() { return static_cast<float>(finish_ - start_) / CLOCKS_PER_SEC;  }
-  private:
-		clock_t start_;
-		clock_t finish_;
-  };
+public:
+	stopwatch() {
+	}
+	void start() {
+		start_ = clock();
+	}
+	void stop() {
+		finish_ = clock();
+	}
+	double read() { return static_cast<float>(finish_ - start_) / CLOCKS_PER_SEC; }
+private:
+	clock_t start_;
+	clock_t finish_;
+};
 }
 
 #endif
