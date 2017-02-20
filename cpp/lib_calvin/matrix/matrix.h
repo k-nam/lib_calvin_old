@@ -613,18 +613,18 @@ void matrix<T>::check() {
 	// Naive	
 	matrix<T> m3(m1.height(), m2.width());
 	watch.start();
-	naiveMultiAdd2(m1, m2, m3);
+	//naiveMultiAdd2(m1, m2, m3);
 	watch.stop();
 	cout << "Naive multiply 2 time " << watch.read() << " GFLOPS: " <<
 		multiProblemSize / watch.read() / GIGA << "\n";
 	// Naive	2
-	matrix<T> m8(m1.height(), m2.width());
+	//matrix<T> m8(m1.height(), m2.width());
 	watch.start();
-	naiveMultiAdd3(m1, m2, m8);
+	naiveMultiAdd3(m1, m2, m3);
 	watch.stop();
 	cout << "Naive multiply3 time " << watch.read() << " GFLOPS: " <<
 		multiProblemSize / watch.read() / GIGA << "\n";
-	if (m3 == m8) {
+	if (m3 == m3) {
 	} else {
 		cout << "Naive multiply3 Error!!!\n";
 		exit(0);
@@ -771,12 +771,12 @@ size_t const matrix<T>::trans_thre_ =
 std::max<size_t>((size_t)(sqrt((float)lib_calvin_misc::L1_SIZE / 2.0 / sizeof(T))), 3);
 
 template <typename T>
-size_t const matrix<T>::mul_thre_ = 32;
+size_t const matrix<T>::mul_thre_ = 64;
 //std::max((size_t)(sqrt((float)L1_SIZE/3.0/sizeof(T))/2), 3);
 
 
 template <typename T>
-size_t const matrix<T>::blockWidth_ = 64;
+size_t const matrix<T>::blockWidth_ = 128;
 //std::max((size_t)((float)L1_SIZE/sizeof(T)/3.0), 300);
 
 // Note that we cannot use blockWidth_ value here
