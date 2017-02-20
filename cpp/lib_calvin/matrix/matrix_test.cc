@@ -24,7 +24,7 @@ void lib_calvin_matrix::matrixTest() {
 
 	assemblyTest();
 
-	/*
+	
 	std::cout << "---------- Beginning matrix test -----------\n\n";
 	lib_calvin::matrix<NumericType> m1(testSize);
 	m1.check();
@@ -36,10 +36,11 @@ void lib_calvin_matrix::matrixTest() {
 	std::cout << p[0] << " " << p[1] << " " << p[2] << " " << p[3] << "\n";
 	std::cout << "\n";
 	std::cout << "------------- Matrix test finished ---------------\n\n\n";
-	*/
+	
 }
 
 double lib_calvin_matrix::doGigaOps() {
+	std::cout << "---------- Beginning Gigaops -----------\n\n";
 	lib_calvin::stopwatch watch;
 	
 	int const giga = 1000*1000*1000;
@@ -63,91 +64,63 @@ double lib_calvin_matrix::doGigaOps() {
 	}
 
 	watch.start();
-	double returnValue1 = 1;
-	double returnValue2 = 2;
-	double returnValue3 = 2;
-	double returnValue4 = 2;
-	double returnValue5 = 2;
-	double returnValue6 = 2;
-	double returnValue7 = 2;
-	double returnValue8 = 2;
-	double returnValue9 = 2;
-	double returnValue10 = 2;
 
 	__m256d x1 = _mm256_set_pd(0, 0, 0, 0); 
-	__m256d x2 = _mm256_set_pd(0, 0, 0, 0);
-	__m256d x3 = _mm256_set_pd(0, 0, 0, 0);
-	__m256d x4 = _mm256_set_pd(0, 0, 0, 0);
 
 	__m256d y1 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d y2 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d y3 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d y4 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d y5 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d y6 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d y7 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d y8 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d y9 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d y10 = _mm256_set_pd(0, 0, 0, 0);
 
 	__m256d a1 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d a2 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d a3 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d a4 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d a5 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d a6 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d a7 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d a8 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d a9 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d a10 = _mm256_set_pd(0, 0, 0, 0);
 
 
-	for (int ii = 0; ii < 1; ++ii) {
-		for (int i = 0; i < iter; ++i) {
-			for (int j = 0; j < arraySize - 100; j += 8) {
-				/*
-				returnValue1 *= 2;				
-				returnValue2 *= 2;
-				returnValue3 *= 2;
-				returnValue4 *= 2;
-				returnValue5 *= 2;
-				returnValue6 *= 2;
-				returnValue7 *= 2;
-				returnValue8 *= 2;
-				returnValue9 *= 2;
-				returnValue10 *= 2;
-				*/
-				//c[j] = a[j] * b[j];
-				//d[j] += a[j] * b[j];
-				//d[j + 1] += (a[j + 1] * b[j + 1]);
-				//d[j + 2] += (a[j + 2] * b[j + 2]);
-				//d[j + 3] += (a[j + 3] * b[j + 3]);
-				
-				x1 = _mm256_load_pd(a + j);
-				x2 = _mm256_load_pd(a + j + 4);
-				//x3 = _mm256_load_pd(a + j + 8);
-				//x4 = _mm256_load_pd(a + j + 12);
+	for (int i = 0; i < iter; ++i) {
+		for (int j = 0; j < arraySize; j += 40) {
 
-				y1 = _mm256_load_pd(b + j);
-				y2 = _mm256_load_pd(b + j + 4);
-				//y3 = _mm256_load_pd(b + j + 8);
-				//y4 = _mm256_load_pd(b + j + 12);
+			x1 = _mm256_load_pd(a + j);
 
-				a1 = _mm256_load_pd(d + j);
-				a2 = _mm256_load_pd(d + j + 4);
-				//a3 = _mm256_load_pd(d + j + 8);
-				//a4 = _mm256_load_pd(d + j + 12);
+			y1 = _mm256_load_pd(b + j);
+			y2 = _mm256_load_pd(b + j + 4);
+			y3 = _mm256_load_pd(b + j + 8);
+			y4 = _mm256_load_pd(b + j + 12);
+			y5 = _mm256_load_pd(b + j + 16);
+			y6 = _mm256_load_pd(b + j + 20);
+			y7 = _mm256_load_pd(b + j + 24);
+			y8 = _mm256_load_pd(b + j + 28);
+			y9 = _mm256_load_pd(b + j + 32);
+			y10 = _mm256_load_pd(b + j + 36);
 
-				x1 = _mm256_mul_pd(x1, y1);
-				x2 = _mm256_mul_pd(x2, y2);
-				//x3 = _mm256_mul_pd(x3, y3);
-				//x4 = _mm256_mul_pd(x4, y4);
-				
-				a1 = _mm256_add_pd(a1, x1);
-				a2 = _mm256_add_pd(a2, x2);
-				//a3 = _mm256_add_pd(a3, x3);
-				//a4 = _mm256_add_pd(a4, x4);			
+			//a1 = _mm256_load_pd(d + j);
+			//a1 = _mm256_mul_pd(x1, y1);
 
-				_mm256_store_pd(d + j, a1);
-				_mm256_store_pd(d + j + 4, a2);
-				//_mm256_store_pd(d + j + 8, a3);
-				//_mm256_store_pd(d + j + 12, a4);
+			a1 = _mm256_fmadd_pd(x1, y1, a1);
+			a2 = _mm256_fmadd_pd(x1, y2, a2);
+			a3 = _mm256_fmadd_pd(x1, y3, a3);
+			a4 = _mm256_fmadd_pd(x1, y4, a4);
+			a5 = _mm256_fmadd_pd(x1, y5, a5);
+			a6 = _mm256_fmadd_pd(x1, y6, a6);
+			a7 = _mm256_fmadd_pd(x1, y7, a7);
+			a8 = _mm256_fmadd_pd(x1, y8, a8);
+			a9 = _mm256_fmadd_pd(x1, y9, a9);
+			a10 = _mm256_fmadd_pd(x1, y10, a10);
 
-				//d[j] = j;
-				//c[j] += 2;
-				//d[j] += a[j] ;
-				//d[j + 1] += a[j + 1];
-				//returnValue += a[j + 2];
-				//returnValue += a[j + 3];
-			}
+			//_mm256_store_pd(d + j, a1);
 		}
 	}
 	
@@ -163,11 +136,9 @@ double lib_calvin_matrix::doGigaOps() {
 	watch.stop();
 	std::cout << "Gigaop: " << watch.read() << "  GFLOPS: " <<
 		(double)giga  * 2 / watch.read() / (1000*1000*1000) << "\n\n";
-	for (int i = 0; i < arraySize; ++i) {
-		returnValue1 += c[i];
-	}
+	std::cout << "---------- Gigaops finished -----------\n\n";
 
-	return returnValue1 + returnValue2 + returnValue8 + *((double *)&a1) * *((double *)&a2) *
+	return *((double *)&a1) * *((double *)&a2) *
 		*((double *)&a3) * *((double *)&a4) * 
 		d[150] ;
 }
