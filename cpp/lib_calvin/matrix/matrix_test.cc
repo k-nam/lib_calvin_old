@@ -24,6 +24,7 @@ void lib_calvin_matrix::matrixTest() {
 
 	assemblyTest();
 
+	/*
 	std::cout << "---------- Beginning matrix test -----------\n\n";
 	lib_calvin::matrix<NumericType> m1(testSize);
 	m1.check();
@@ -35,7 +36,7 @@ void lib_calvin_matrix::matrixTest() {
 	std::cout << p[0] << " " << p[1] << " " << p[2] << " " << p[3] << "\n";
 	std::cout << "\n";
 	std::cout << "------------- Matrix test finished ---------------\n\n\n";
-	
+	*/
 }
 
 double lib_calvin_matrix::doGigaOps() {
@@ -174,7 +175,7 @@ double lib_calvin_matrix::doGigaOps() {
 void lib_calvin_matrix::assemblyTest() {
 	std::cout << "---------- Beginning assemblyTest -----------\n\n";
 	size_t arraySize = 1024;
-	size_t iteration = 10000;
+	size_t iteration = 1000 * 1000;
 	size_t multiplier = 2;
 	double *source = (double *)_aligned_malloc(arraySize * sizeof(double), 32);
 	double *target = (double *)_aligned_malloc(arraySize * sizeof(double), 32);
@@ -187,8 +188,8 @@ void lib_calvin_matrix::assemblyTest() {
 	watch.start();
 	size_t returnValue = doAssemblyGigaOp(source, target, arraySize, iteration);
 	watch.stop();
-	std::cout << "assemblyTest took: " << watch.read() << "GFLOPS: " << 
-		arraySize * iteration / watch.read() / 1000000000 << "\n";
+	std::cout << "assemblyTest took: " << watch.read() << " GFLOPS: " << 
+		arraySize * iteration * 2 / watch.read() / 1000000000 << "\n";
 
 	double result = 0;
 	for (size_t i = 0; i < arraySize; i++) {
