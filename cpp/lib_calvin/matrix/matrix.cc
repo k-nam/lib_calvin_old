@@ -5,7 +5,7 @@ void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 		size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
 
 	size_t Cw = Bw;
-	size_t const loopUnroll = 32;
+	size_t const loopUnroll = 40;
 
 	//std::cout << "naiveMultiAdd2 template specialization\n";
 	__m256d a = _mm256_set_pd(0, 0, 0, 0);
@@ -18,6 +18,8 @@ void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 	__m256d b6 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d b7 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d b8 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d b9 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d b10 = _mm256_set_pd(0, 0, 0, 0);
 
 	__m256d c1 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d c2 = _mm256_set_pd(0, 0, 0, 0);
@@ -27,10 +29,13 @@ void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 	__m256d c6 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d c7 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d c8 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d c9 = _mm256_set_pd(0, 0, 0, 0);
+	__m256d c10 = _mm256_set_pd(0, 0, 0, 0);
 
-	for (size_t i = 0; i < lheight; ++i) {		
-		size_t k = 0;
-		for (; k + loopUnroll - 1 < rwidth; k += loopUnroll) {
+	size_t k = 0;
+			
+	for (; k + loopUnroll - 1 < rwidth; k += loopUnroll) {
+		for (size_t i = 0; i < lheight; ++i) {
 			c1 = _mm256_load_pd(C + Cw * i + k + 0);
 			c2 = _mm256_load_pd(C + Cw * i + k + 4);
 			c3 = _mm256_load_pd(C + Cw * i + k + 8);
@@ -39,6 +44,8 @@ void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 			c6 = _mm256_load_pd(C + Cw * i + k + 20);
 			c7 = _mm256_load_pd(C + Cw * i + k + 24);
 			c8 = _mm256_load_pd(C + Cw * i + k + 28);
+			c9 = _mm256_load_pd(C + Cw * i + k + 32);
+			c10 = _mm256_load_pd(C + Cw * i + k + 36);
 
 			for (size_t j = 0; j < lwidth; ++j) {
 				/*
@@ -57,6 +64,8 @@ void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 				b6 = _mm256_load_pd(B + Bw * j + k + 20);
 				b7 = _mm256_load_pd(B + Bw * j + k + 24);
 				b8 = _mm256_load_pd(B + Bw * j + k + 28);
+				b9 = _mm256_load_pd(B + Bw * j + k + 32);
+				b10 = _mm256_load_pd(B + Bw * j + k + 36);
 
 				c1 = _mm256_fmadd_pd(a, b1, c1);
 				c2 = _mm256_fmadd_pd(a, b2, c2);
@@ -66,6 +75,8 @@ void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 				c6 = _mm256_fmadd_pd(a, b6, c6);
 				c7 = _mm256_fmadd_pd(a, b7, c7);
 				c8 = _mm256_fmadd_pd(a, b8, c8);
+				c9 = _mm256_fmadd_pd(a, b9, c9);
+				c10 = _mm256_fmadd_pd(a, b10, c10);
 			}
 			/*
 			C[Cw * i + k + 0] = ((double *)&c1)[0];
@@ -106,8 +117,13 @@ void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 			_mm256_store_pd(C + Cw * i + k + 20, c6);
 			_mm256_store_pd(C + Cw * i + k + 24, c7);
 			_mm256_store_pd(C + Cw * i + k + 28, c8);
+			_mm256_store_pd(C + Cw * i + k + 32, c9);
+			_mm256_store_pd(C + Cw * i + k + 36, c10);
 		}
-		for (; k < rwidth; ++k) {
+
+	}
+	for (; k < rwidth; ++k) {
+		for (size_t i = 0; i < lheight; ++i) {
 			for (size_t j = 0; j < lwidth; ++j) {
 				C[Cw * i + k] += (A[Aw * i + j] * B[Bw * j + k]);
 			}
