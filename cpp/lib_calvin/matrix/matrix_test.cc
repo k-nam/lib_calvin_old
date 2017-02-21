@@ -14,7 +14,7 @@
 
 void lib_calvin_matrix::matrixTest() {	
 	typedef double NumericType;
-	size_t testSize = 1024;
+	size_t testSize = 640;
 	lib_calvin_matrix::mklTest(testSize);
 
 	//lib_calvin::matrix<NumericType> t1(10000);
@@ -27,7 +27,7 @@ void lib_calvin_matrix::matrixTest() {
 	
 	std::cout << "---------- Beginning matrix test -----------\n\n";
 	lib_calvin::matrix<NumericType> m1(testSize);
-	m1.check();
+	m1.check(true);
 
 	__m128 aa = _mm_set_ps(1, 2, 3, 4);
 	__m128 bb = _mm_set_ps(2, 4, 5, 6);

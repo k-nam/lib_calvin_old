@@ -297,7 +297,7 @@ public:
 
 	// show the content. Assuming that "cout <<  E" works!
 	void prsize_t() const;
-	void check(); // unit test 
+	void check(bool toAbortIfWrong); // unit test 
 	void test();
 	void randomize(); // for unit testing
 
@@ -576,7 +576,7 @@ void matrix<T>::prsize_t() const {
 
 /*----------- check -------------*/
 template <typename T>
-void matrix<T>::check() {
+void matrix<T>::check(bool toAbortIfWrong) {
 	using namespace lib_calvin_matrix;
 	using std::cout;
 	using std::endl;
@@ -608,115 +608,121 @@ void matrix<T>::check() {
 			}
 		}
 	}
-	// test multiplication
-	m2.randomize();
-	// Naive	
+
+	
 	matrix<T> m3(m1.height(), m2.width());
-	watch.start();
-	//naiveMultiAdd2(m1, m2, m3);
-	watch.stop();
-	cout << "Naive multiply 2 time " << watch.read() << " GFLOPS: " <<
-		multiProblemSize / watch.read() / GIGA << "\n";
-	// Naive	2
-	//matrix<T> m8(m1.height(), m2.width());
-	watch.start();
-	naiveMultiAdd3(m1, m2, m3);
-	watch.stop();
-	cout << "Naive multiply3 time " << watch.read() << " GFLOPS: " <<
-		multiProblemSize / watch.read() / GIGA << "\n";
-	if (m3 == m3) {
-	} else {
-		cout << "Naive multiply3 Error!!!\n";
-		exit(0);
+	matrix<T> m4(m1.height(), m2.width());
+
+	if (toAbortIfWrong) {
+		// Reference algorithm
+		naiveMultiAdd(m1, m2, m3);
+
+		// Naive algorithms
+		watch.start();
+		naiveMultiAdd2(m1, m2, m4);
+		watch.stop();
+		cout << "Naive multiply 2 time " << watch.read() << " GFLOPS: " <<
+			multiProblemSize / watch.read() / GIGA << "\n";
+		if (toAbortIfWrong && m4 != m3) {
+			cout << "naiveMultiAdd2 Error!!!\n";
+			exit(0);
+		}
+		m4.reset(m1.height(), m2.width());
+		watch.start();
+		naiveMultiAdd3(m1, m2, m4);
+		watch.stop();
+		cout << "Naive multiply3 time " << watch.read() << " GFLOPS: " <<
+			multiProblemSize / watch.read() / GIGA << "\n";
+		if (toAbortIfWrong && m4 != m3) {
+			cout << "naiveMultiAdd3 Error!!!\n";
+			exit(0);
+		}
+
+		// Simple
+		m4.reset(m1.height(), m2.width());
+		watch.start();
+		simpleMultiAdd(m1, m2, m4);
+		watch.stop();
+		cout << "Simple multiply time " << watch.read() << " GFLOPS: " <<
+			multiProblemSize / watch.read() / GIGA << "\n";
+		if (toAbortIfWrong && m4 != m3) {
+			cout << "simpleMultiAdd Error!!!\n";
+			exit(0);
+		}
 	}
-	// Blocked
-	matrix<T> m5(m1.height(), m2.width());
+
+	// Blocked	
+	m4.reset(m1.height(), m2.width());
 	watch.start();
-	blockedMultiAdd(m1, m2, m5);
+	blockedMultiAdd(m1, m2, m4);
 	watch.stop();
 	cout << "Blocked multiply time " << watch.read() << " GFLOPS: " <<
 		multiProblemSize / watch.read() / GIGA << "\n";
-	if (m3 == m5) {
-	} else {
-		cout << "blockedMulti Error!!!\n";
+	if (toAbortIfWrong && m4 != m3) {
+		cout << "blockedMultiAdd Error!!!\n";
 		exit(0);
 	}
-	// Simple
-	matrix<T> m4(m1.height(), m2.width());
-	watch.start();
-	simpleMultiAdd(m1, m2, m4);
-	watch.stop();
-	cout << "Simple multiply time " << watch.read() << " GFLOPS: " <<
-		multiProblemSize / watch.read() / GIGA << "\n";
-	if (m3 == m4) {
-	} else {
-		cout << "Simple Error!!!\n";
-		exit(0);
-	}
+
 	// recursive
-	matrix<T> m6(m1.height(), m2.width());
+	m4.reset(m1.height(), m2.width());
 	watch.start();
-	recursiveMultiAddSingleThread(m1, m2, m6);
+	recursiveMultiAddSingleThread(m1, m2, m4);
 	watch.stop();
 	cout << "Recursive multiply time " << watch.read() << " GFLOPS: " <<
 		multiProblemSize / watch.read() / GIGA << "\n";
-	if (m3 == m6) {
-	} else {
-		cout << "recursiveMulti Error!!!\n";
+	if (toAbortIfWrong && m4 != m3) {
+		cout << "recursiveMultiAddSingleThread Error!!!\n";
 		cout << "Right answer is:\n";
-		m4.prsize_t();
+		m3.prsize_t();
 		cout << "Recursive multi result is:\n";
-		m6.prsize_t();
+		m4.prsize_t();
 		exit(0);
 	}
-	m6.reset(m1.height(), m2.width());
+	m4.reset(m1.height(), m2.width());
 	watch.start();
-	recursiveMultiAddParallel(m1, m2, m6);
+	recursiveMultiAddParallel(m1, m2, m4);
 	watch.stop();
 	cout << "Recursive multiply 2 (parallel) time " << watch.read() << " GFLOPS: " <<
 		multiProblemSize / watch.read() / GIGA << "\n";
-	if (m3 == m6) {
-	} else {
-		cout << "Recursive multiply 2 (parallel) Error!!!\n";
+	if (toAbortIfWrong && m4 != m3) {
+		cout << "recursiveMultiAddParallel Error!!!\n";
 		exit(0);
 	}
 	// Strassen
-	matrix<T> m7(m1.height(), m2.width());
+	m4.reset(m1.height(), m2.width());
 	watch.start();
-	strassenMultiAdd(m1, m2, m7);
+	strassenMultiAdd(m1, m2, m4);
 	watch.stop();
 	cout << "Strassen multiply time " << watch.read() << " GFLOPS: " <<
 		multiProblemSize / watch.read() / GIGA << "\n";
-	if (m4 == m7) {
-	} else {
-		cout << "Strassen Error!!!\n";
+	if (toAbortIfWrong && m4 != m3) {
+		cout << "strassenMultiAdd Error!!!\n";
 		cout << "A = \n";
 		m1.prsize_t();
 		cout << "B = \n";
 		m2.prsize_t();
 		cout << "Right answer is:\n";
-		m4.prsize_t();
+		m3.prsize_t();
 		cout << "Strassen multi result is:\n";
-		m7.prsize_t();
-		for (size_t i = 0; i < m4.height(); ++i) {
-			for (size_t j = 0; j < m4.width(); ++j) {
-				if (m4(i, j) != m7(i, j)) {
+		m4.prsize_t();
+		for (size_t i = 0; i < m3.height(); ++i) {
+			for (size_t j = 0; j < m3.width(); ++j) {
+				if (m4(i, j) != m3(i, j)) {
 					cout << i << " , " << j << " is error\t" <<
-						m4(i, j) << " " << m7(i, j) << endl;
+						m4(i, j) << " " << m3(i, j) << endl;
 				}
 			}
 		}
 		exit(0);
 	}
-	m7.reset(m1.height(), m2.width());
+	m4.reset(m1.height(), m2.width());
 	watch.start();
-	strassenMultiAddParallel(m1, m2, m7);
+	strassenMultiAddParallel(m1, m2, m4);
 	watch.stop();
 	cout << "Strassen parallel multiply GFLOPS " <<
 		multiProblemSize / watch.read() / GIGA << "\n";
-	if (m4 == m7) {
-	} else {
-		cout << "Strassen parallel Error!!!\n";
+	if (toAbortIfWrong && m4 != m3) {
+		cout << "strassenMultiAddParallel Error!!!\n";
 		exit(0);
 	}
 }
@@ -1198,8 +1204,10 @@ template <typename T>
 void lib_calvin_matrix::recursiveMultiAddParallelAdvanced(T const *A, T const *B, T *C,
 	size_t l, size_t m, size_t n, size_t remainingRecursion)
 {
+	// Starting to use multi thread in small problem to avoid L2 or L3 cache miss. 
+	// But L2 is only 256K in Haswell, so doesn't do much.
 	size_t const parallelBeginRecursion = 6;
-	size_t const parallelRecursionDepth = 1;
+	size_t const parallelRecursionDepth = 2;
 	if (remainingRecursion <= parallelBeginRecursion) {
 		recursiveMultiAddParallel(A, B, C, l, m, n, remainingRecursion, parallelRecursionDepth);
 		return;
