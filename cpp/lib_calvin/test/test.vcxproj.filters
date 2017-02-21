@@ -106,4 +106,9 @@
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <MASM Include="..\matrix\matrix_multi.asm">
+      <Filter>Resource Files</Filter>
+    </MASM>
+  </ItemGroup>
 </Project>
