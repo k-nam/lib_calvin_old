@@ -4,10 +4,11 @@
 #define NOMINMAX
 
 #include <iostream>
+#include <thread>
 #include "utility.h" 
 #include "stopwatch.h"
 #include "common_thread.h"
-
+#include "factory.h"
 
 // type T should have default constructor as initializer
 namespace lib_calvin_matrix
@@ -148,11 +149,15 @@ void recursiveMultiAddSingleThread(T const *A, T const *B, T *C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t remainingRecursion);
 
 template <typename T>
+void recursiveMultiAddParallel(T const *A, T const *B, T *C,
+	size_t lheight, size_t lwidth, size_t rwidth, size_t remainingRecursion);
+
+template <typename T>
 void recursiveMultiAddParallelAdvanced(T const *A, T const *B, T *C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t remainingRecursion);
 
 template <typename T>
-void recursiveMultiAddParallel(T const *A, T const *B, T *C,
+void recursiveMultiAddParallelSubRoutine(T const *A, T const *B, T *C,
 	size_t lheight, size_t lwidth, size_t rwidth,
 	size_t remainingRecursion, size_t parallelDepth);
 
@@ -168,11 +173,25 @@ void strassenMultiAddParallel(T const *A, T const *B, T *C,
 	size_t n, size_t remainingRecursion, size_t parallelDepth);
 
 template <typename T>
+struct recursiveMultiThreadArg;
+
+template <typename T>
+class recursiveMultiAddOp {
+public:
+	void operator()(recursiveMultiThreadArg<T> const &threadArg) const {
+		recursiveMultiAddSingleThread<T>(threadArg.A_, threadArg.B_, threadArg.C_,
+			threadArg.l_, threadArg.m_, threadArg.n_,
+			threadArg.remainingRecursion_);
+	}
+};
+
+template <typename T>
 struct recursiveMultiThreadArg {
 	recursiveMultiThreadArg(T const *A, T const *B, T *C, size_t l, size_t m, size_t n,
-		size_t remainingRecursion, size_t parallelDepth) :
+		size_t remainingRecursion, size_t parallelDepth, 
+		lib_calvin::Factory<recursiveMultiThreadArg<T>, recursiveMultiAddOp<T>> *factory) :
 		A_(A), B_(B), C_(C), l_(l), m_(m), n_(n),
-		remainingRecursion_(remainingRecursion), parallelDepth_(parallelDepth) { }
+		remainingRecursion_(remainingRecursion), parallelDepth_(parallelDepth), factory_(factory) { }
 	T const *A_;
 	T const *B_;
 	T *C_;
@@ -181,6 +200,7 @@ struct recursiveMultiThreadArg {
 	size_t n_;
 	size_t remainingRecursion_;
 	size_t parallelDepth_;
+	lib_calvin::Factory<recursiveMultiThreadArg<T>, recursiveMultiAddOp<T>> *factory_;
 };
 
 
@@ -201,6 +221,8 @@ struct StrassenThreadArg {
 template <typename T>
 void* recursiveMultiThreadFunc(void *lpParam);
 
+template <typename T>
+void* recursiveMultiAdvancedThreadFunc(void *lpParam);
 
 template <typename T>
 void* strassenThreadFunc(void *lpParam);
@@ -213,6 +235,18 @@ void* strassenThreadFunc(void *lpParam);
 template <typename T>
 void recursiveArrange(T *src, T *dest,
 	size_t height, size_t width, size_t srcW, size_t threshold, bool direction);
+
+template <typename T>
+void recursiveMultiAddParallelAdvancedSubRoutine(T const *A, T const *B, T *C,
+	size_t lheight, size_t lwidth, size_t rwidth,
+	size_t remainingRecursion, size_t parallenDepth, 
+	lib_calvin::Factory<recursiveMultiThreadArg<T>, recursiveMultiAddOp<T>> *);
+
+template <typename T>
+void recursiveMultiAddParallelAdvancedSubRoutine2(T const *A, T const *B, T *C,
+	size_t lheight, size_t lwidth, size_t rwidth,
+	size_t remainingRecursion, 
+	lib_calvin::Factory<recursiveMultiThreadArg<T>, recursiveMultiAddOp<T>> *);
 
 } // end namespace lib_calvin_matrix
 
@@ -649,20 +683,59 @@ void matrix<T>::check(bool toAbortIfWrong) {
 			cout << "simpleMultiAdd Error!!!\n";
 			exit(0);
 		}
-	}
 
-	// Blocked	
-	m4.reset(m1.height(), m2.width());
-	watch.start();
-	blockedMultiAdd(m1, m2, m4);
-	watch.stop();
-	cout << "Blocked multiply time " << watch.read() << " GFLOPS: " <<
-		multiProblemSize / watch.read() / GIGA << "\n";
-	if (toAbortIfWrong && m4 != m3) {
-		cout << "blockedMultiAdd Error!!!\n";
-		exit(0);
-	}
+		// Blocked	
+		m4.reset(m1.height(), m2.width());
+		watch.start();
+		blockedMultiAdd(m1, m2, m4);
+		watch.stop();
+		cout << "Blocked multiply time " << watch.read() << " GFLOPS: " <<
+			multiProblemSize / watch.read() / GIGA << "\n";
+		if (toAbortIfWrong && m4 != m3) {
+			cout << "blockedMultiAdd Error!!!\n";
+			exit(0);
+		}
 
+		// Strassen
+		m4.reset(m1.height(), m2.width());
+		watch.start();
+		strassenMultiAdd(m1, m2, m4);
+		watch.stop();
+		cout << "Strassen multiply time " << watch.read() << " GFLOPS: " <<
+			multiProblemSize / watch.read() / GIGA << "\n";
+		if (toAbortIfWrong && m4 != m3) {
+			cout << "strassenMultiAdd Error!!!\n";
+			cout << "A = \n";
+			m1.prsize_t();
+			cout << "B = \n";
+			m2.prsize_t();
+			cout << "Right answer is:\n";
+			m3.prsize_t();
+			cout << "Strassen multi result is:\n";
+			m4.prsize_t();
+			for (size_t i = 0; i < m3.height(); ++i) {
+				for (size_t j = 0; j < m3.width(); ++j) {
+					if (m4(i, j) != m3(i, j)) {
+						cout << i << " , " << j << " is error\t" <<
+							m4(i, j) << " " << m3(i, j) << endl;
+					}
+				}
+			}
+			exit(0);
+		}
+
+		// Strassen multi
+		m4.reset(m1.height(), m2.width());
+		watch.start();
+		strassenMultiAddParallel(m1, m2, m4);
+		watch.stop();
+		cout << "Strassen parallel multiply GFLOPS " <<
+			multiProblemSize / watch.read() / GIGA << "\n";
+		if (toAbortIfWrong && m4 != m3) {
+			cout << "strassenMultiAddParallel Error!!!\n";
+			exit(0);
+		}
+	}
 	// recursive
 	m4.reset(m1.height(), m2.width());
 	watch.start();
@@ -678,6 +751,7 @@ void matrix<T>::check(bool toAbortIfWrong) {
 		m4.prsize_t();
 		exit(0);
 	}
+	// recursive parallel advanced
 	m4.reset(m1.height(), m2.width());
 	watch.start();
 	recursiveMultiAddParallel(m1, m2, m4);
@@ -685,46 +759,10 @@ void matrix<T>::check(bool toAbortIfWrong) {
 	cout << "Recursive multiply 2 (parallel) time " << watch.read() << " GFLOPS: " <<
 		multiProblemSize / watch.read() / GIGA << "\n";
 	if (toAbortIfWrong && m4 != m3) {
-		cout << "recursiveMultiAddParallel Error!!!\n";
+		cout << "recursiveMultiAddParallelAdvanced Error!!!\n";
 		exit(0);
 	}
-	// Strassen
-	m4.reset(m1.height(), m2.width());
-	watch.start();
-	strassenMultiAdd(m1, m2, m4);
-	watch.stop();
-	cout << "Strassen multiply time " << watch.read() << " GFLOPS: " <<
-		multiProblemSize / watch.read() / GIGA << "\n";
-	if (toAbortIfWrong && m4 != m3) {
-		cout << "strassenMultiAdd Error!!!\n";
-		cout << "A = \n";
-		m1.prsize_t();
-		cout << "B = \n";
-		m2.prsize_t();
-		cout << "Right answer is:\n";
-		m3.prsize_t();
-		cout << "Strassen multi result is:\n";
-		m4.prsize_t();
-		for (size_t i = 0; i < m3.height(); ++i) {
-			for (size_t j = 0; j < m3.width(); ++j) {
-				if (m4(i, j) != m3(i, j)) {
-					cout << i << " , " << j << " is error\t" <<
-						m4(i, j) << " " << m3(i, j) << endl;
-				}
-			}
-		}
-		exit(0);
-	}
-	m4.reset(m1.height(), m2.width());
-	watch.start();
-	strassenMultiAddParallel(m1, m2, m4);
-	watch.stop();
-	cout << "Strassen parallel multiply GFLOPS " <<
-		multiProblemSize / watch.read() / GIGA << "\n";
-	if (toAbortIfWrong && m4 != m3) {
-		cout << "strassenMultiAddParallel Error!!!\n";
-		exit(0);
-	}
+
 }
 
 template <typename T>
@@ -777,7 +815,7 @@ size_t const matrix<T>::trans_thre_ =
 std::max<size_t>((size_t)(sqrt((float)lib_calvin_misc::L1_SIZE / 2.0 / sizeof(T))), 3);
 
 template <typename T>
-size_t const matrix<T>::mul_thre_ = 64;
+size_t const matrix<T>::mul_thre_ = 100;
 //std::max((size_t)(sqrt((float)L1_SIZE/3.0/sizeof(T))/2), 3);
 
 
@@ -831,7 +869,7 @@ lib_calvin_matrix::matrixMultiAdd(matrix<T> const &lhs, matrix<T> const &rhs,
 	//naiveMultiAdd3(lhs, rhs, result);
 	//simpleMultiAdd(lhs, rhs, result);
 	//recursiveMultiAdd(lhs, rhs, result);
-	//recursiveMultiAddParallel(lhs, rhs, result);
+	//recursiveMultiAddParallelSubRoutine(lhs, rhs, result);
 }
 
 template <typename T>
@@ -1201,15 +1239,15 @@ void lib_calvin_matrix::recursiveMultiAddSingleThread(T const *A, T const *B, T 
 // multi-threading only when problem becomes small enough to fit in cache
 // does not brings performance gain; refer to one-note files
 template <typename T>
-void lib_calvin_matrix::recursiveMultiAddParallelAdvanced(T const *A, T const *B, T *C,
+void lib_calvin_matrix::recursiveMultiAddParallel(T const *A, T const *B, T *C,
 	size_t l, size_t m, size_t n, size_t remainingRecursion)
 {
 	// Starting to use multi thread in small problem to avoid L2 or L3 cache miss. 
 	// But L2 is only 256K in Haswell, so doesn't do much.
-	size_t const parallelBeginRecursion = 6;
-	size_t const parallelRecursionDepth = 2;
+	size_t const parallelBeginRecursion = 10;
+	size_t const parallelRecursionDepth = 1;
 	if (remainingRecursion <= parallelBeginRecursion) {
-		recursiveMultiAddParallel(A, B, C, l, m, n, remainingRecursion, parallelRecursionDepth);
+		recursiveMultiAddParallelSubRoutine(A, B, C, l, m, n, remainingRecursion, parallelRecursionDepth);
 		return;
 	}
 	// Recursive calls for sub-problems
@@ -1224,34 +1262,159 @@ void lib_calvin_matrix::recursiveMultiAddParallelAdvanced(T const *A, T const *B
 	// too many threads.
 
 	// (1,1) (1,1) (1,1)
-	recursiveMultiAddParallelAdvanced(A, B, C, l / 2, m / 2, n / 2, remainingRecursion - 1);
+	recursiveMultiAddParallel(A, B, C, l / 2, m / 2, n / 2, remainingRecursion - 1);
 	// (1,2) (2,1) (1,1)
-	recursiveMultiAddParallelAdvanced(A + (l / 2)*(m / 2), B + (m / 2)*n, C,
+	recursiveMultiAddParallel(A + (l / 2)*(m / 2), B + (m / 2)*n, C,
 		l / 2, m - m / 2, n / 2, remainingRecursion - 1);
 	// (1,1) (1,2) (1,2)
-	recursiveMultiAddParallelAdvanced(A, B + (m / 2)*(n / 2), C + (l / 2)*(n / 2),
+	recursiveMultiAddParallel(A, B + (m / 2)*(n / 2), C + (l / 2)*(n / 2),
 		l / 2, m / 2, n - n / 2, remainingRecursion - 1);
 	// (1,2) (2,2) (1,2)
-	recursiveMultiAddParallelAdvanced(A + (l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
+	recursiveMultiAddParallel(A + (l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
 		C + (l / 2)*(n / 2),
 		l / 2, m - m / 2, n - n / 2, remainingRecursion - 1);
 	// (2,1) (1,1) (2,1)
-	recursiveMultiAddParallelAdvanced(A + (l / 2)*m, B, C + (l / 2)*n,
+	recursiveMultiAddParallel(A + (l / 2)*m, B, C + (l / 2)*n,
 		l - l / 2, m / 2, n / 2, remainingRecursion - 1);
 	// (2,2) (2,1) (2,1)
-	recursiveMultiAddParallelAdvanced(A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n, C + (l / 2)*n,
+	recursiveMultiAddParallel(A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n, C + (l / 2)*n,
 		l - l / 2, m - m / 2, n / 2, remainingRecursion - 1);
 	// (2,1) (1,2) (2,2)
-	recursiveMultiAddParallelAdvanced(A + (l / 2)*m, B + (m / 2)*(n / 2), C + (l / 2)*n + (l - l / 2)*(n / 2),
+	recursiveMultiAddParallel(A + (l / 2)*m, B + (m / 2)*(n / 2), C + (l / 2)*n + (l - l / 2)*(n / 2),
 		l - l / 2, m / 2, n - n / 2, remainingRecursion - 1);
 	// (2,2) (2,2) (2,2)
-	recursiveMultiAddParallelAdvanced(A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
+	recursiveMultiAddParallel(A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
 		C + (l / 2)*n + (l - l / 2)*(n / 2),
 		l - l / 2, m - m / 2, n - n / 2, remainingRecursion - 1);
 }
 
+// This algorithm is WRONG, because matrix multiplication's sub-problems cannot be solved
+//  out-of-order way, unlike sorting algorithms.
 template <typename T>
-void lib_calvin_matrix::recursiveMultiAddParallel(T const *A, T const *B, T *C,
+void lib_calvin_matrix::recursiveMultiAddParallelAdvanced(T const *A, T const *B, T *C,
+	size_t l, size_t m, size_t n, size_t remainingRecursion) {
+	using namespace lib_calvin;
+	using namespace lib_calvin_thread;
+	auto op = recursiveMultiAddOp<T>();
+	Factory<recursiveMultiThreadArg<T>, recursiveMultiAddOp<T>> factory(op);
+	size_t const parallelRecursionDepth = 0;
+	size_t numCores = 8;
+	thread_type *handleArray = new thread_type[numCores];
+	for (size_t i = 0; i < numCores; ++i) {
+		handleArray[i] = create_thread(
+			factoryThreadFunction<recursiveMultiThreadArg<T>, recursiveMultiAddOp<T>>, &factory);
+	}
+	recursiveMultiAddParallelAdvancedSubRoutine(A, B, C, l, m, n, 
+		remainingRecursion, parallelRecursionDepth, &factory);
+	factory.close();
+	for (size_t i = 0; i < numCores; ++i) {
+		wait_for_thread(handleArray[i]);
+		CloseHandle(handleArray[i]);
+	}
+	delete[] handleArray;
+}
+
+template <typename T>
+void lib_calvin_matrix::recursiveMultiAddParallelAdvancedSubRoutine(T const *A, T const *B, T *C,
+		size_t l, size_t m, size_t n,
+		size_t remainingRecursion, size_t parallelDepth,
+		lib_calvin::Factory<recursiveMultiThreadArg<T>, recursiveMultiAddOp<T>> *factory) {
+	
+	if (parallelDepth <= 0) { // fall back to single thread
+		recursiveMultiAddParallelAdvancedSubRoutine2(A, B, C, l, m, n, remainingRecursion, factory);
+		return;
+	}
+	// (1,1) (1,1) (1,1)
+	recursiveMultiThreadArg<T> arg1(A, B, C, l / 2, m / 2, n / 2,
+		remainingRecursion - 1, parallelDepth - 1, factory);
+	// (1,2) (2,1) (1,1)
+	recursiveMultiThreadArg<T> arg2(A + (l / 2)*(m / 2), B + (m / 2)*n, C,
+		l / 2, m - m / 2, n / 2, remainingRecursion - 1, parallelDepth - 1, factory);
+	// (1,1) (1,2) (1,2)
+	recursiveMultiThreadArg<T> arg3(A, B + (m / 2)*(n / 2), C + (l / 2)*(n / 2),
+		l / 2, m / 2, n - n / 2, remainingRecursion - 1, parallelDepth - 1, factory);
+	// (1,2) (2,2) (1,2)
+	recursiveMultiThreadArg<T> arg4(A + (l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
+		C + (l / 2)*(n / 2),
+		l / 2, m - m / 2, n - n / 2, remainingRecursion - 1, parallelDepth - 1, factory);
+	// (2,1) (1,1) (2,1)
+	recursiveMultiThreadArg<T> arg5(A + (l / 2)*m, B, C + (l / 2)*n,
+		l - l / 2, m / 2, n / 2, remainingRecursion - 1, parallelDepth - 1, factory);
+	// (2,2) (2,1) (2,1)
+	recursiveMultiThreadArg<T> arg6(A + (l / 2)*m + (l - l / 2)*(m / 2),
+		B + (m / 2)*n, C + (l / 2)*n,
+		l - l / 2, m - m / 2, n / 2, remainingRecursion - 1, parallelDepth - 1, factory);
+	// (2,1) (1,2) (2,2)
+	recursiveMultiThreadArg<T> arg7(A + (l / 2)*m, B + (m / 2)*(n / 2),
+		C + (l / 2)*n + (l - l / 2)*(n / 2),
+		l - l / 2, m / 2, n - n / 2, remainingRecursion - 1, parallelDepth - 1, factory);
+	// (2,2) (2,2) (2,2)
+	recursiveMultiThreadArg<T> arg8(A + (l / 2)*m + (l - l / 2)*(m / 2),
+		B + (m / 2)*n + (m - m / 2)*(n / 2),
+		C + (l / 2)*n + (l - l / 2)*(n / 2),
+		l - l / 2, m - m / 2, n - n / 2, remainingRecursion - 1, parallelDepth - 1, factory);
+
+	using namespace lib_calvin_thread;
+	thread_type thread1 = create_thread(recursiveMultiAdvancedThreadFunc<T>, &arg1);
+	thread_type thread3 = create_thread(recursiveMultiAdvancedThreadFunc<T>, &arg3);
+	thread_type thread5 = create_thread(recursiveMultiAdvancedThreadFunc<T>, &arg5);
+	thread_type thread7 = create_thread(recursiveMultiAdvancedThreadFunc<T>, &arg7);
+	wait_for_thread(thread1);
+	wait_for_thread(thread3);
+	wait_for_thread(thread5);
+	wait_for_thread(thread7);
+	thread_type thread2 = create_thread(recursiveMultiAdvancedThreadFunc<T>, &arg2);
+	thread_type thread4 = create_thread(recursiveMultiAdvancedThreadFunc<T>, &arg4);
+	thread_type thread6 = create_thread(recursiveMultiAdvancedThreadFunc<T>, &arg6);
+	thread_type thread8 = create_thread(recursiveMultiAdvancedThreadFunc<T>, &arg8);
+	wait_for_thread(thread2);
+	wait_for_thread(thread4);
+	wait_for_thread(thread6);
+	wait_for_thread(thread8);
+}
+
+template <typename T>
+void lib_calvin_matrix::recursiveMultiAddParallelAdvancedSubRoutine2(T const *A, T const *B, T *C,
+		size_t l, size_t m, size_t n, size_t remainingRecursion,
+		lib_calvin::Factory<recursiveMultiThreadArg<T>, recursiveMultiAddOp<T>> *factory) {
+	// Blocking problems to increase cache efficiency. Currently no effect.
+	if (remainingRecursion <= 2) {
+		// Add to work queue
+		factory->add(recursiveMultiThreadArg<T>(A, B, C, l, m, n, remainingRecursion, 0, factory));
+		return;
+	}
+	// (1,1) (1,1) (1,1)
+	recursiveMultiAddParallelAdvancedSubRoutine2(A, B, C, l / 2, m / 2, n / 2, remainingRecursion - 1, factory);
+	// (1,2) (2,1) (1,1)
+	recursiveMultiAddParallelAdvancedSubRoutine2(A + (l / 2)*(m / 2), B + (m / 2)*n, C,
+		l / 2, m - m / 2, n / 2, remainingRecursion - 1, factory);
+	// (1,1) (1,2) (1,2)
+	recursiveMultiAddParallelAdvancedSubRoutine2(A, B + (m / 2)*(n / 2), C + (l / 2)*(n / 2),
+		l / 2, m / 2, n - n / 2, remainingRecursion - 1, factory);
+	// (1,2) (2,2) (1,2)
+	recursiveMultiAddParallelAdvancedSubRoutine2(A + (l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
+		C + (l / 2)*(n / 2),
+		l / 2, m - m / 2, n - n / 2, remainingRecursion - 1, factory);
+	// (2,1) (1,1) (2,1)
+	recursiveMultiAddParallelAdvancedSubRoutine2(A + (l / 2)*m, B, C + (l / 2)*n,
+		l - l / 2, m / 2, n / 2, remainingRecursion - 1, factory);
+	// (2,2) (2,1) (2,1)
+	recursiveMultiAddParallelAdvancedSubRoutine2(
+		A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n, C + (l / 2)*n,
+		l - l / 2, m - m / 2, n / 2, remainingRecursion - 1, factory);
+	// (2,1) (1,2) (2,2)
+	recursiveMultiAddParallelAdvancedSubRoutine2(
+		A + (l / 2)*m, B + (m / 2)*(n / 2), C + (l / 2)*n + (l - l / 2)*(n / 2),
+		l - l / 2, m / 2, n - n / 2, remainingRecursion - 1, factory);
+	// (2,2) (2,2) (2,2)
+	recursiveMultiAddParallelAdvancedSubRoutine2(
+		A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
+		C + (l / 2)*n + (l - l / 2)*(n / 2),
+		l - l / 2, m - m / 2, n - n / 2, remainingRecursion - 1, factory);
+}
+
+template <typename T>
+void lib_calvin_matrix::recursiveMultiAddParallelSubRoutine(T const *A, T const *B, T *C,
 	size_t l, size_t m, size_t n, size_t remainingRecursion, size_t parallelDepth) {
 	if (remainingRecursion <= 0) {
 		naiveMultiAdd2(A, B, C, l, m, n, m, n);
@@ -1263,33 +1426,33 @@ void lib_calvin_matrix::recursiveMultiAddParallel(T const *A, T const *B, T *C,
 	}
 	// (1,1) (1,1) (1,1)
 	recursiveMultiThreadArg<T> arg1(A, B, C, l / 2, m / 2, n / 2,
-		remainingRecursion - 1, parallelDepth - 1);
+		remainingRecursion - 1, parallelDepth - 1, nullptr);
 	// (1,2) (2,1) (1,1)
 	recursiveMultiThreadArg<T> arg2(A + (l / 2)*(m / 2), B + (m / 2)*n, C,
-		l / 2, m - m / 2, n / 2, remainingRecursion - 1, parallelDepth - 1);
+		l / 2, m - m / 2, n / 2, remainingRecursion - 1, parallelDepth - 1, nullptr);
 	// (1,1) (1,2) (1,2)
 	recursiveMultiThreadArg<T> arg3(A, B + (m / 2)*(n / 2), C + (l / 2)*(n / 2),
-		l / 2, m / 2, n - n / 2, remainingRecursion - 1, parallelDepth - 1);
+		l / 2, m / 2, n - n / 2, remainingRecursion - 1, parallelDepth - 1, nullptr);
 	// (1,2) (2,2) (1,2)
 	recursiveMultiThreadArg<T> arg4(A + (l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
 		C + (l / 2)*(n / 2),
-		l / 2, m - m / 2, n - n / 2, remainingRecursion - 1, parallelDepth - 1);
+		l / 2, m - m / 2, n - n / 2, remainingRecursion - 1, parallelDepth - 1, nullptr);
 	// (2,1) (1,1) (2,1)
 	recursiveMultiThreadArg<T> arg5(A + (l / 2)*m, B, C + (l / 2)*n,
-		l - l / 2, m / 2, n / 2, remainingRecursion - 1, parallelDepth - 1);
+		l - l / 2, m / 2, n / 2, remainingRecursion - 1, parallelDepth - 1, nullptr);
 	// (2,2) (2,1) (2,1)
 	recursiveMultiThreadArg<T> arg6(A + (l / 2)*m + (l - l / 2)*(m / 2),
 		B + (m / 2)*n, C + (l / 2)*n,
-		l - l / 2, m - m / 2, n / 2, remainingRecursion - 1, parallelDepth - 1);
+		l - l / 2, m - m / 2, n / 2, remainingRecursion - 1, parallelDepth - 1, nullptr);
 	// (2,1) (1,2) (2,2)
 	recursiveMultiThreadArg<T> arg7(A + (l / 2)*m, B + (m / 2)*(n / 2),
 		C + (l / 2)*n + (l - l / 2)*(n / 2),
-		l - l / 2, m / 2, n - n / 2, remainingRecursion - 1, parallelDepth - 1);
+		l - l / 2, m / 2, n - n / 2, remainingRecursion - 1, parallelDepth - 1, nullptr);
 	// (2,2) (2,2) (2,2)
 	recursiveMultiThreadArg<T> arg8(A + (l / 2)*m + (l - l / 2)*(m / 2),
 		B + (m / 2)*n + (m - m / 2)*(n / 2),
 		C + (l / 2)*n + (l - l / 2)*(n / 2),
-		l - l / 2, m - m / 2, n - n / 2, remainingRecursion - 1, parallelDepth - 1);
+		l - l / 2, m - m / 2, n - n / 2, remainingRecursion - 1, parallelDepth - 1, nullptr);
 
 	using namespace lib_calvin_thread;
 	thread_type thread1 = create_thread(recursiveMultiThreadFunc<T>, &arg1);
@@ -1416,7 +1579,7 @@ template <typename T>
 void lib_calvin_matrix::strassenMultiAddParallel(T const *A, T const *B, T *C,
 	size_t n, size_t remainingRecursion, size_t parallelDepth) {
 	if (n % 2 != 0) {
-		recursiveMultiAddParallel(A, B, C, n, n, n, remainingRecursion, 2);
+		recursiveMultiAddParallelSubRoutine(A, B, C, n, n, n, remainingRecursion, 2);
 		return;
 	}
 	if (remainingRecursion <= 0) {
@@ -1560,9 +1723,20 @@ template <typename T>
 void *
 lib_calvin_matrix::recursiveMultiThreadFunc(void *lpParam) {
 	recursiveMultiThreadArg<T> *threadArg = (recursiveMultiThreadArg<T> *)lpParam;
-	recursiveMultiAddParallel<T>(threadArg->A_, threadArg->B_, threadArg->C_,
+	recursiveMultiAddParallelSubRoutine<T>(threadArg->A_, threadArg->B_, threadArg->C_,
 		threadArg->l_, threadArg->m_, threadArg->n_,
 		threadArg->remainingRecursion_, threadArg->parallelDepth_);
+	return NULL;
+}
+
+template <typename T>
+void *
+lib_calvin_matrix::recursiveMultiAdvancedThreadFunc(void *lpParam) {
+	recursiveMultiThreadArg<T> *threadArg = (recursiveMultiThreadArg<T> *)lpParam;
+	recursiveMultiAddParallelAdvancedSubRoutine<T>(threadArg->A_, threadArg->B_, threadArg->C_,
+		threadArg->l_, threadArg->m_, threadArg->n_,
+		threadArg->remainingRecursion_, threadArg->parallelDepth_, 
+		threadArg->factory_);
 	return NULL;
 }
 

@@ -187,6 +187,24 @@
     <ClCompile Include="matrix_main.cc" />
     <ClCompile Include="matrix_test.cc" />
   </ItemGroup>
+  <ItemGroup>
+    <MASM Include="matrix_multi.asm">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <DeploymentContent>true</DeploymentContent>
+      <FileType>Document</FileType>
+      <PerformSyntaxCheckOnly Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</PerformSyntaxCheckOnly>
+      <PerformSyntaxCheckOnly Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</PerformSyntaxCheckOnly>
+      <PerformSyntaxCheckOnly Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</PerformSyntaxCheckOnly>
+      <PerformSyntaxCheckOnly Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</PerformSyntaxCheckOnly>
+      <PackAlignmentBoundary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5</PackAlignmentBoundary>
+      <PackAlignmentBoundary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5</PackAlignmentBoundary>
+      <PackAlignmentBoundary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5</PackAlignmentBoundary>
+      <PackAlignmentBoundary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5</PackAlignmentBoundary>
+    </MASM>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />

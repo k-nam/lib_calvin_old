@@ -14,6 +14,7 @@
 
 #include "vector.h"
 #include "common_thread.h"
+#include "factory.h"
 
 namespace lib_calvin_sort {
 
@@ -22,6 +23,8 @@ using lib_calvin::vector;
 using std::pair;
 using std::iterator_traits;
 using namespace lib_calvin_thread;
+using lib_calvin::Factory;
+using lib_calvin::FactoryLoader;
 
 int const HEAP_D = 6;
 int const INTROSORT_THRESHOLD = 18;
@@ -57,36 +60,6 @@ void introSortPointerSorting(Iterator first, Iterator last, Comparator comp = Co
 template <typename Iterator>
 class QuickSortParallelOperationQueue;
 
-// Interface to factory only for adding work (cannot call work())
-template <typename Argument>
-class FactoryLoader 
-{
-public:
-	FactoryLoader(): lock_(create_lock()), workQueue_(), 
-		isClosed_(false) { }
-	virtual ~FactoryLoader() { }
-	void add(Argument const &); // add additional work to do
-	void close() { isClosed_ = true; } // close the factory
-protected:	
-	lock_type lock_; 	
-	vector<Argument> workQueue_;
-	bool isClosed_;
-private:		
-};
-
-// Wrapping class for factory pattern with multithreading support
-// Simply calls Operation(Argument) for arguments in the given vector
-template <typename Argument, typename Operation>
-class Factory: public FactoryLoader<Argument> 
-{
-public:
-	Factory(Operation const &op): FactoryLoader(), index_(0), op_(op) { }
-	// work() does not return until all work is done AND the factory is closed
-	void work(); // includes critical section	
-private:	
-	unsigned index_; // indicates current position
-	Operation op_; // function object
-};
 
 // Argument type of quicksort for multithreaded quicksort
 template <typename Iterator, typename Comparator>
@@ -127,10 +100,6 @@ void *introSortParallelSub1ThreadFunction(void *lpParam);
 template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void *mergeSortParallelSub0ThreadFunction(void *lpParam);
 
-// Thread function for factory pattern
-// lpParam should be a pointer to Factory<Argument, Operation>
-template <typename Argument, typename Operation>
-void *factoryThreadFunction(void *lpParam);
 
 /*** auxiliary functions ***/
 
@@ -311,42 +280,6 @@ namespace lib_calvin {
 namespace lib_calvin_sort { // open for definitions
 using lib_calvin::stopwatch;
 
-template <typename Argument>
-void FactoryLoader<Argument>::add(Argument const &newWork)
-{
-	acquire_lock(lock_);
-	if (isClosed_) { // can not add work if closed
-		release_lock(lock_);
-		return;
-	} else {
-		workQueue_.push_back(newWork);
-		release_lock(lock_);
-	}
-}
-
-template <typename Argument, typename Operation>
-void Factory<Argument, Operation>::work() {
-	// data mambers should be accessed only in the critical section
-	while (true) {
-		acquire_lock(lock_);
-		if (index_ >= workQueue_.size()) { // all work done
-			if (isClosed_) { // return only when the factory is closed
-				release_lock(lock_);
-				return;
-			} else {		
-				release_lock(lock_);
-				thread_yield(); // don't consume CPU time
-				//Sleep(1);
-			}
-		} else {
-			unsigned index = index_;
-			++index_;
-			release_lock(lock_);
-			op_(workQueue_[index]);
-		}
-	}
-}
-
 /****************** Thread functions *****************/
 
 template <typename Iterator, typename Comparator>
@@ -375,13 +308,6 @@ mergeSortParallelSub0ThreadFunction(void *lpParam) {
 	return NULL;
 }
 
-template <typename Argument, typename Operation>
-void * 
-factoryThreadFunction(void *param) {
-	Factory<Argument, Operation> *factory = (Factory<Argument, Operation> *)param;
-	factory->work();
-	return NULL;
-}
 
 } // end namespace lib_calvin_sort for definitions
 
@@ -922,7 +848,7 @@ void lib_calvin_sort::introSortParallelAdvanced(Iterator first, Iterator last, C
 	unsigned numCores = 4;
 	thread_type *handleArray = new thread_type[numCores];
 	for (unsigned i = 0; i < numCores; ++i) {
-		handleArray[i] = create_thread(factoryThreadFunction<pair<Iterator, Iterator>, 
+		handleArray[i] = create_thread(lib_calvin::factoryThreadFunction<pair<Iterator, Iterator>, 
 				IntroSort<Iterator, Comparator>>, &factory);
 	}
 	factory.close();
@@ -945,7 +871,7 @@ void lib_calvin_sort::introSortParallelAdvanced2(Iterator first, Iterator last, 
 	for (unsigned i = 0; i < numCores; ++i) {
 		// We can change how to sort small sub-array simply by choosing IntroSort or
 		// CountingSort below
-		handleArray[i] = create_thread(factoryThreadFunction<pair<Iterator, Iterator>, 
+		handleArray[i] = create_thread(lib_calvin::factoryThreadFunction<pair<Iterator, Iterator>,
 			IntroSort<Iterator, Comparator>>, &factory); 
 		//SetThreadAffinityMask(handleArray[i], 1 << (i % 2));
 	}

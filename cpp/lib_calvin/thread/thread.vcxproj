@@ -188,7 +188,11 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="common_thread.cc" />
     <ClCompile Include="thread_main.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common_thread.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

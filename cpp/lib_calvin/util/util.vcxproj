@@ -202,6 +202,7 @@
     <ClCompile Include="util_main.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="factory.h" />
     <ClInclude Include="random.h" />
     <ClInclude Include="stopwatch.h" />
     <ClInclude Include="utility.h" />
