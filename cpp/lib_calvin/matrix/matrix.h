@@ -1634,7 +1634,6 @@ void lib_calvin_matrix::recursiveArrange(T *src, T *dest,
 		srcW, remainingDepth - 1, isToRecursive);
 }
 
-#undef MAX
 #endif
 
 

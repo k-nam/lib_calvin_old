@@ -6,7 +6,6 @@
 #include "type.h"
 #include "symbol_table.h"
 #include "syntax_tree.h"
-#include "utility.h" // for min() 
 
 #include <iostream>
 
