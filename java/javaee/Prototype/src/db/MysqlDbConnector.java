@@ -29,7 +29,7 @@ public class MysqlDbConnector {
 		return getConnection(databaseName);
 	}
 	
-	private static final String mysqlDriverName = "com.mysql.cj.jdbc.Driver";
+	private static final String mysqlDriverName = "com.mysql.jdbc.Driver";
 	private static final String userId = "root";
 	private static final String userPassword = "password";
 	private static final String dbHostName = "calvin-mysql.cytzyor3ndjk.ap-northeast-2.rds.amazonaws.com";
