@@ -18,10 +18,7 @@ void lib_calvin_matrix::matrixTest() {
 	//  with _mm256_store_pd().
 	size_t testSize = 640;
 	lib_calvin_matrix::mklTest(testSize);
-
-	//lib_calvin::matrix<NumericType> t1(10000);
-	//lib_calvin::matrix<NumericType> t2(10000);
-	//auto t3 = t1 * t2;		
+	
 	double rtv = doGigaOps();
 
 	assemblyTest();
@@ -64,8 +61,6 @@ double lib_calvin_matrix::doGigaOps() {
 		d[i] = 3;
 	}
 
-	watch.start();
-
 	__m256d x1 = _mm256_set_pd(0, 0, 0, 0); 
 
 	__m256d y1 = _mm256_set_pd(0, 0, 0, 0);
@@ -90,7 +85,7 @@ double lib_calvin_matrix::doGigaOps() {
 	__m256d a9 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d a10 = _mm256_set_pd(0, 0, 0, 0);
 
-
+	watch.start();
 	for (int i = 0; i < iter; ++i) {
 		for (int j = 0; j < arraySize; j += 40) {
 
@@ -123,8 +118,7 @@ double lib_calvin_matrix::doGigaOps() {
 
 			//_mm256_store_pd(d + j, a1);
 		}
-	}
-	
+	}	
 	for (int i = 0; i < matrixSize; ++i) {
 		for (int j = 0; j < matrixSize; ++j) {
 			for (int k = 0; k < matrixSize; ++k) {
@@ -133,15 +127,12 @@ double lib_calvin_matrix::doGigaOps() {
 			}
 		}
 	}	
-
 	watch.stop();
 	std::cout << "Gigaop: " << watch.read() << "  GFLOPS: " <<
 		(double)giga  * 2 / watch.read() / (1000*1000*1000) << "\n\n";
 	std::cout << "---------- Gigaops finished -----------\n\n";
 
-	return *((double *)&a1) * *((double *)&a2) *
-		*((double *)&a3) * *((double *)&a4) * 
-		d[150] ;
+	return *((double *)&a1) * *((double *)&a2) * *((double *)&a3) * *((double *)&a4);
 }
 
 void lib_calvin_matrix::assemblyTest() {

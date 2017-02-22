@@ -1,3 +1,6 @@
+#ifndef LIB_CALVIN__UTIL__FACTORY_H
+#define LIB_CALVIN__UTIL__FACTORY_H 
+
 #include "common_thread.h"
 #include "vector.h"
 
@@ -86,3 +89,5 @@ lib_calvin::factoryThreadFunction(void *param) {
 	factory->work();
 	return NULL;
 }
+
+#endif
