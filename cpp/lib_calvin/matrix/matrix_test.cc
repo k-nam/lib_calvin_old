@@ -16,17 +16,21 @@ void lib_calvin_matrix::matrixTest() {
 	typedef double NumericType;
 	// If test size is not 40 * 2^n, naiveMultiAdd2 in matrix.cc will cause runtime error
 	//  with _mm256_store_pd().
-	size_t testSize = 640;
+	size_t testSize = 2560;
 	lib_calvin_matrix::mklTest(testSize);
 	
+	lib_calvin::stopwatch watch;
+	watch.start();
 	double rtv = doGigaOps();
+	watch.stop();
+	std::cout << watch.read() << "\n";
 
 	assemblyTest();
 
 	
 	std::cout << "---------- Beginning matrix test -----------\n\n";
 	lib_calvin::matrix<NumericType> m1(testSize);
-	m1.check(true);
+	m1.check(false);
 
 	__m128 aa = _mm_set_ps(1, 2, 3, 4);
 	__m128 bb = _mm_set_ps(2, 4, 5, 6);
@@ -60,7 +64,7 @@ double lib_calvin_matrix::doGigaOps() {
 		c[i] = 0;
 		d[i] = 3;
 	}
-
+	watch.start();
 	__m256d x1 = _mm256_set_pd(0, 0, 0, 0); 
 
 	__m256d y1 = _mm256_set_pd(0, 0, 0, 0);
@@ -84,8 +88,7 @@ double lib_calvin_matrix::doGigaOps() {
 	__m256d a8 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d a9 = _mm256_set_pd(0, 0, 0, 0);
 	__m256d a10 = _mm256_set_pd(0, 0, 0, 0);
-
-	watch.start();
+	
 	for (int i = 0; i < iter; ++i) {
 		for (int j = 0; j < arraySize; j += 40) {
 
