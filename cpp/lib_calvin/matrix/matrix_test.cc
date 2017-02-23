@@ -41,6 +41,74 @@ void lib_calvin_matrix::matrixTest() {
 	std::cout << "------------- Matrix test finished ---------------\n\n\n";	
 }
 
+void lib_calvin_matrix::mklTest(size_t size) {
+	std::cout << "---------- Beginning mklTest -----------\n\n";
+
+	typedef double NumericType;
+	using boost::numeric::ublas::matrix;
+	lib_calvin::stopwatch watch;
+
+	size_t const size2 = 100;
+
+	matrix<NumericType> a(size, size);
+	matrix<NumericType> b(size, size);
+	matrix<NumericType> c(size2, size);
+	matrix<NumericType> x(size, 1);
+	matrix<NumericType> y(1, size);
+	for (size_t i = 0; i < size; ++i) {
+		for (size_t j = 0; j < size; j++) {
+			a(i, j) = 1.2;
+			b(i, j) = 1.5;
+		}
+		x(i, 0) = 1.5;
+		y(0, i) = 1.2;
+	}
+
+	prod(a, b);
+	watch.start();
+	matrix<NumericType> result = prod(a, b);
+	watch.stop();
+	std::cout << "mkl size: " << size << ". " << watch.read() << "  GFLOPS: " <<
+		(double)size * size * size * 2 / watch.read() / 1000000000 << "\n";
+	for (size_t i = 0; i < size; ++i) {
+		for (size_t j = 0; j < size; j++) {
+			double residual = result(i, j) - 1.2 * 1.5 * size;
+			if (residual*residual > 0.01) {
+				std::cout << "MKL is lie\n";
+				exit(0);
+			}
+		}
+	}
+	watch.start();
+	result = prod(c, x);
+	watch.stop();
+	std::cout << "mkl matrix*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
+		(double)size * size2 * 2 / watch.read() / 1000000000 << "\n";
+	watch.start();
+	result = prod(y, x);
+	watch.stop();
+	std::cout << "mkl vector*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
+		(double)size * 2 / watch.read() / 1000000000 << "\n";
+	std::cout << "\n";
+
+	lib_calvin::matrix<NumericType> c1(size2, size);
+	lib_calvin::matrix<NumericType> x1(size, 1);
+	lib_calvin::matrix<NumericType> y1(1, size);
+	watch.start();
+	auto result1 = c1 * x1;
+	watch.stop();
+	std::cout << "lib_calvin matrix*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
+		(double)size * size2 * 2 / watch.read() / 1000000000 << "\n";
+	watch.start();
+	result1.reset(y1 * x1);
+	watch.stop();
+	std::cout << "lib_calvin vector*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
+		(double)size * 2 / watch.read() / 1000000000 << "\n";
+	std::cout << "\n";
+
+	std::cout << "------------- mklTest finished ---------------\n\n";
+}
+
 double lib_calvin_matrix::doGigaOps() {
 	std::cout << "---------- Beginning Gigaops -----------\n\n";
 	lib_calvin::stopwatch watch;
@@ -152,7 +220,7 @@ void lib_calvin_matrix::assemblyTest() {
 
 	lib_calvin::stopwatch watch;
 	watch.start();
-	size_t returnValue = doAssemblyGigaOp(source, target, arraySize, iteration);
+	size_t returnValue = doAssembly(source, target, arraySize, iteration);
 	watch.stop();
 	std::cout << "assemblyTest took: " << watch.read() << " GFLOPS: " << 
 		arraySize * iteration * 2 / watch.read() / 1000000000 << "\n";
@@ -164,72 +232,4 @@ void lib_calvin_matrix::assemblyTest() {
 	}
 	std::cout << "Result was: " << result << ", return value: " << returnValue << "\n\n";
 	std::cout << "------------- assemblyTest finished ---------------\n\n";
-}
-
-void lib_calvin_matrix::mklTest(size_t size) {
-	std::cout << "---------- Beginning mklTest -----------\n\n";
-
-	typedef double NumericType;
-	using boost::numeric::ublas::matrix;
-	lib_calvin::stopwatch watch;
-
-	size_t const size2 = 100;
-
-	matrix<NumericType> a(size, size);
-	matrix<NumericType> b(size, size);
-	matrix<NumericType> c(size2, size);
-	matrix<NumericType> x(size, 1);
-	matrix<NumericType> y(1, size);
-	for (size_t i = 0; i < size; ++i) {
-		for (size_t j = 0; j < size; j++) {
-			a(i, j) = 1.2;
-			b(i, j) = 1.5;
-		}
-		x(i, 0) = 1.5;
-		y(0, i) = 1.2;
-	}
-
-	prod(a, b);
-	watch.start();
-	matrix<NumericType> result = prod(a, b);
-	watch.stop();
-	std::cout << "mkl size: " << size << ". " << watch.read() << "  GFLOPS: " <<
-		(double)size * size * size * 2 / watch.read() / 1000000000 << "\n";
-	for (size_t i = 0; i < size; ++i) {
-		for (size_t j = 0; j < size; j++) {
-			double residual = result(i, j) - 1.2 * 1.5 * size;
-			if (residual*residual > 0.01) {
-				std::cout << "MKL is lie\n";
-				exit(0);
-			}
-		}
-	}
-	watch.start();
-	result = prod(c, x);
-	watch.stop();
-	std::cout << "mkl matrix*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
-		(double)size * size2 * 2 / watch.read() / 1000000000 << "\n";
-	watch.start();
-	result = prod(y, x);
-	watch.stop();
-	std::cout << "mkl vector*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
-		(double)size * 2 / watch.read() / 1000000000 << "\n";
-	std::cout << "\n";
-
-	lib_calvin::matrix<NumericType> c1(size2, size);
-	lib_calvin::matrix<NumericType> x1(size, 1);
-	lib_calvin::matrix<NumericType> y1(1, size);
-	watch.start();
-	auto result1 = c1 * x1;
-	watch.stop();
-	std::cout << "lib_calvin matrix*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
-		(double)size * size2 * 2 / watch.read() / 1000000000 << "\n";
-	watch.start();
-	result1.reset(y1 * x1);
-	watch.stop();
-	std::cout << "lib_calvin vector*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
-		(double)size * 2 / watch.read() / 1000000000 << "\n";
-	std::cout << "\n";
-
-	std::cout << "------------- mklTest finished ---------------\n\n";
 }

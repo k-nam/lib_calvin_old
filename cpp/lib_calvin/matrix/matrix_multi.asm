@@ -6,7 +6,7 @@ sum qword 0
 
 
 .code
-doAssemblyGigaOp PROC
+doAssembly PROC
 	; params:
 	; rcx = src
 	; rdx = target
@@ -85,5 +85,5 @@ outerloopend:
 	mov r12, qword ptr[rsp + 8h] ; pop
 	add rsp, 40h		
 	ret
-doAssemblyGigaOp ENDP
+doAssembly ENDP
 End

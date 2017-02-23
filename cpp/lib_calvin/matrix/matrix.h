@@ -796,7 +796,7 @@ size_t const matrix<T>::trans_thre_ =
 std::max<size_t>((size_t)(sqrt((float)lib_calvin_misc::L1_SIZE / 2.0 / sizeof(T))), 3);
 
 template <typename T>
-size_t const matrix<T>::mul_thre_ = 80;
+size_t const matrix<T>::mul_thre_ = 40;
 //std::max((size_t)(sqrt((float)L1_SIZE/3.0/sizeof(T))/2), 3);
 
 
@@ -1225,8 +1225,11 @@ void lib_calvin_matrix::recursiveMultiAddParallel(T const *A, T const *B, T *C,
 {
 	// Starting to use multi thread in small problem to avoid L2 or L3 cache miss. 
 	// But L2 is only 256K in Haswell, so doesn't do much.
-	size_t const parallelBeginRecursion = 4;
-	size_t const parallelRecursionDepth = 1;
+	// On the other hand, small parallelBeginRecursion value will incur significant 
+	//  thread creation overhead, so it's not meaningful at all now.
+	// Only left for possible application in the future.
+	size_t const parallelBeginRecursion = 10; // shouldn't be small (eg.3)
+	size_t const parallelRecursionDepth = 2;
 	if (remainingRecursion <= parallelBeginRecursion) {
 		recursiveMultiAddParallelSubRoutine(A, B, C, l, m, n, remainingRecursion, parallelRecursionDepth);
 		return;
@@ -1271,7 +1274,8 @@ void lib_calvin_matrix::recursiveMultiAddParallel(T const *A, T const *B, T *C,
 
 template <typename T>
 void lib_calvin_matrix::recursiveMultiAddParallelSubRoutine(T const *A, T const *B, T *C,
-	size_t l, size_t m, size_t n, size_t remainingRecursion, size_t parallelDepth) {
+	size_t l, size_t m, size_t n, size_t remainingRecursion, size_t parallelDepth) 
+{
 	if (remainingRecursion <= 0) {
 		naiveMultiAdd2(A, B, C, l, m, n, m, n);
 		return;
