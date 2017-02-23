@@ -206,7 +206,6 @@
     <ClCompile Include="map_test.cc" />
     <ClCompile Include="set_test.cc" />
     <ClCompile Include="vector_test.cc" />
-    <ClCompile Include="..\util\Stopwatch.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="adt.h" />

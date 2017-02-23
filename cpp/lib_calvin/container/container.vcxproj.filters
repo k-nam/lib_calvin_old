@@ -24,9 +24,6 @@
     <ClCompile Include="vector_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\util\Stopwatch.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="map_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>

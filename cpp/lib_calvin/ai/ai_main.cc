@@ -1,5 +1,4 @@
 #include "handwritten_digits_analyzer.h"
-#include "matrix.h"
 
 int main() {
 	//using namespace lib_calvin_ai;

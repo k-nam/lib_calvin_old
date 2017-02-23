@@ -200,7 +200,6 @@
     <ClCompile Include="abstract_string.cc" />
     <ClCompile Include="string_main.cc" />
     <ClCompile Include="string_test.cc" />
-    <ClCompile Include="..\util\Stopwatch.cc" />
     <ClCompile Include="suffix_tree_test.cc" />
   </ItemGroup>
   <ItemGroup>

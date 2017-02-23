@@ -21,9 +21,6 @@
     <ClCompile Include="string_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\util\Stopwatch.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="string_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>

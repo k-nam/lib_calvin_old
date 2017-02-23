@@ -163,8 +163,6 @@
     <ClInclude Include="neural_network.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\thread\common_thread.cc" />
-    <ClCompile Include="..\util\stopwatch.cc" />
     <ClCompile Include="ai_main.cc" />
     <ClCompile Include="neural_network.cc" />
     <ClCompile Include="handwritten_digits_analyzer.cc" />

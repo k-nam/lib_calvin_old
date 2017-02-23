@@ -1,7 +1,6 @@
 #ifndef LIB_CALVIN__NEURAL_NETWORK__NEURAL_NETWORK_H
 #define LIB_CALVIN__NEURAL_NETWORK__NEURAL_NETWORK_H
 
-#include <vector>
 #include <string>
 #include "matrix.h"
 #include "vector.h"

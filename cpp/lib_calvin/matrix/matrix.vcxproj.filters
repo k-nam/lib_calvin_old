@@ -29,9 +29,6 @@
     <ClCompile Include="..\thread\common_thread.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\util\Stopwatch.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="matrix_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>

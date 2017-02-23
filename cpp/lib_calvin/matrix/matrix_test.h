@@ -9,7 +9,6 @@ namespace lib_calvin_matrix {
 	double doGigaOps();		
 	void assemblyTest();
 	extern "C" int doAssembly(double *src, double *target, size_t size, size_t iteration);
-	void cudaTest();
 }
 
 #endif

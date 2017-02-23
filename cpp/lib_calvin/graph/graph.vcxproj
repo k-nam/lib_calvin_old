@@ -204,7 +204,6 @@
     <ClCompile Include="graph_main.cc" />
     <ClCompile Include="graph_test.cc" />
     <ClCompile Include="..\container\adt.cc" />
-    <ClCompile Include="..\util\Stopwatch.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="graph.h" />

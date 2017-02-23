@@ -199,7 +199,6 @@
   <ItemGroup>
     <ClCompile Include="lexer_main.cc" />
     <ClCompile Include="lexer_test.cc" />
-    <ClCompile Include="..\util\Stopwatch.cc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lexer.h" />

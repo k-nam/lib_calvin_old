@@ -163,7 +163,6 @@
   <ItemGroup>
     <ClCompile Include="..\thread\common_thread.cc" />
     <ClCompile Include="..\util\random.cc" />
-    <ClCompile Include="..\util\stopwatch.cc" />
     <ClCompile Include="file_sort_test.cc" />
     <ClCompile Include="sort_main.cc" />
     <ClCompile Include="sort_test.cc" />

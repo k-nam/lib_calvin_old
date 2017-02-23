@@ -87,9 +87,6 @@
     <ClCompile Include="..\subcc\type.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\util\stopwatch.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\sort\sort_test.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
