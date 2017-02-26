@@ -1,9 +1,6 @@
-#include <thrust/host_vector.h>
-#include <thrust/device_vector.h>
-
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-
+#include <cstdio>
 
 __global__ void addKernel(int *c, const int *a, const int *b)
 {
