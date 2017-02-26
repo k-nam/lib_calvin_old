@@ -13,7 +13,7 @@
 
 
 qsort([])->[];
-qsort([Pivot|S])->qsort([L||L<-S, L < Pivot])++[Pivot]++qsort([R||R<-S, R>=Pivot]).
+qsort([Pivot|S])->qsort([L||L<-S, L < Pivot])++[Pivot]++ qsort([R||R<-S, R >= Pivot]).
 
 
 
