@@ -1,4 +1,5 @@
 #include "handwritten_digits_analyzer.h"
+#include "json/json.hpp"
 
 int main() {
 	//using namespace lib_calvin_ai;

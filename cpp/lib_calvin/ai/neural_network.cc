@@ -372,8 +372,7 @@ double
 neural_network::layer::getSigmoid(double x) const {
 	/*
 	return 1 / (1 + exp(-x));
-	*/
-	
+	*/	
 	return tanh(x);
 	/*
 	return x > 0 ? x : 0;
@@ -385,11 +384,9 @@ neural_network::layer::getDerivativeOfSigmoid(double x) const {
 	/*
 	double temp = exp(-x);
 	return temp / (1 + temp) / (1 + temp);
-	*/
-	
+	*/	
 	double a = tanh(x);
-	return (1 - a * a);
-	
+	return (1 - a * a);	
 	/*
 	return x > 0 ? 1 : 0;
 	*/
