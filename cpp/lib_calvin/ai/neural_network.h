@@ -27,6 +27,8 @@ private:
 		layer(size_t numInput, size_t numOutput, bool isOutputLayer);
 		layer & operator=(layer const &);
 	public:
+		friend class neural_network;
+	public:
 		size_t getNumInput() const;
 		size_t getNumOutput() const;
 		vector<double> getOutput() const;
@@ -68,6 +70,8 @@ private:
 	double learnFromData(vector<std::pair<vector<double>, vector<double>>> const &trainData);
 	double learnFromData(vector<double> const &input, vector<double> const &output); // sum of square 
 	void randomize();
+	void saveJson() const;
+	vector<vector<double>> convertMatrixToVetor(matrix<double> const &) const;
 private:
 	vector<layer> layers_; // last element is output
 };

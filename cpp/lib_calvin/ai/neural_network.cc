@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <iostream>
 #include <cmath>
+#include <fstream>
+#include "json/json.hpp"
 
 namespace lib_calvin_ai
 {
@@ -41,7 +43,8 @@ neural_network::train(vector<std::pair<vector<double>, vector<double>>> trainDat
 	size_t num_epoch = 10000;
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	
+	double maxAccuracy = 0.0; // in percent
+
 	randomize();
 	for (size_t i = 0; i < num_epoch; i++) {
 		double epochTotalCost = 0.0;
@@ -64,8 +67,12 @@ neural_network::train(vector<std::pair<vector<double>, vector<double>>> trainDat
 
 			subsetBegin = subsetEnd;
 		}
+		double currAccuracy = test(testData) * 100;
 		std::cout << "Epoch: " << i << " Current sigma: " << pow(epochTotalCost / trainData.size(), 0.5) << 
-			 ". Subset sigma: " << pow(subsetAvgCost, 0.5) << ". Ratio: " << test(testData) * 100 << "\n";
+			 ". Subset sigma: " << pow(subsetAvgCost, 0.5) << ". Ratio: " << currAccuracy << "\n";
+		if (currAccuracy > maxAccuracy) { // save as JSON 
+			saveJson();
+		}
 	}
 }
 
@@ -177,6 +184,38 @@ neural_network::randomize() {
 	for (layer &thisLayer : layers_) {
 		thisLayer.randomize();
 	}
+}
+
+
+void
+neural_network::saveJson() const {
+	// 
+	using json = nlohmann::json;
+	json layersJson = json::array();
+	for (auto const &layer : layers_) {
+		json thisLayerJson;
+		json weightsJson(convertMatrixToVetor(layer.weights_));
+		json biasesJson(layer.biases_);
+		thisLayerJson["weights"] = weightsJson;
+		thisLayerJson["biases"] = biasesJson;
+		layersJson.push_back(thisLayerJson);
+	}
+	std::ofstream jsonFile("handwriting_network.js");
+	jsonFile << "let neuralNetwork = " << layersJson.dump() << ";";
+	jsonFile.close();
+}
+
+vector<vector<double>>
+neural_network::convertMatrixToVetor(matrix<double> const &matrix) const {
+	vector<vector<double>> result;
+	for (size_t i = 0; i < matrix.height(); i++) {
+		vector<double> row;
+		for (size_t j = 0; j < matrix.width(); j++) {
+			row.push_back(matrix[i][j]);
+		}
+		result.push_back(row);
+	}
+	return result;
 }
 
 neural_network::layer::layer() :

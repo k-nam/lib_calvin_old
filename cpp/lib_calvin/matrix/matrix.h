@@ -249,10 +249,8 @@ public:
 	size_t width() const { return width_; }
 	void reset(size_t dimension); // for square matrix
 	void reset(size_t height, size_t width);
-	void reset(matrix<T> const &rhs); // assignment with arbitrary dimensions
-
-									  // No boundary check; fast
-	T const &getval(size_t row, size_t col) const;
+	void reset(matrix<T> const &rhs); // assignment with arbitrary dimensions									  
+	T const &getval(size_t row, size_t col) const; // No boundary check
 	T &setval(size_t row, size_t col);
 
 	T & operator()(size_t row, size_t col);
@@ -265,7 +263,7 @@ public:
 	};
 	// meant to be used as: m1[row][col] = val;
 	// Does boundary check; safe and clean size_terface
-	matrixRow const operator[] (size_t row);
+	matrixRow const operator[] (size_t row) const;
 
 	bool operator== (matrix<T> const &rhs) const;
 	bool operator!= (matrix<T> const &rhs) const;
@@ -273,9 +271,9 @@ public:
 	matrix<T> const operator- (matrix<T> const &rhs) const;
 	matrix<T> const operator- () const; // unary minus
 
-										// Using global function (not method) for multiplication operator
-										// Twofold function calling is not necessary here (just for practice),
-										// ..but it is useful for automatic type conversion with multiplication.
+	// Using global function (not method) for multiplication operator
+	// Twofold function calling is not necessary here (just for practice),
+	// ..but it is useful for automatic type conversion with multiplication.
 	friend matrix<T> const
 		operator* (matrix<T> const &lhs, matrix<T> const &rhs)
 	{
@@ -445,18 +443,18 @@ matrix<T>::operator()(size_t row, size_t col) {
 template <typename T>
 T & matrix<T>::matrixRow::operator[] (size_t col) const {
 	if (col >= width_) {
-		cout << "matirx operator[][] boundary error.\n";
-		return;
+		std::cout << "matirx operator[][] boundary error.\n";
+		exit(0);
 	}
 	return start_[col];
 }
 
 template <typename T>
 typename matrix<T>::matrixRow const
-matrix<T>::operator[] (size_t row) {
+matrix<T>::operator[] (size_t row) const {
 	if (row >= height_) {
-		cout << "matrix operator[][] boundary error.\n";
-		return;
+		std::cout << "matrix operator[][] boundary error.\n";
+		exit(0);
 	}
 	typename matrix<T>::matrixRow rowElements;
 	rowElements.start_ = elements_ + width_ * row;
