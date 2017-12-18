@@ -186,7 +186,6 @@ neural_network::randomize() {
 	}
 }
 
-
 void
 neural_network::saveJson() const {
 	// 
@@ -225,8 +224,8 @@ neural_network::layer::layer() :
 	isOutputLayer_(false) { }
 
 neural_network::layer::layer(size_t numInput, size_t numOutput, bool isOutputLayer) :
-	weights_(numOutput, numInput), biases_(numOutput),
-	accumulated_gradient_weights_(numOutput, numInput), accumulated_gradient_biases_(numOutput),
+	weights_(numInput, numOutput), biases_(numOutput),
+	accumulated_gradient_weights_(numInput, numOutput), accumulated_gradient_biases_(numOutput),
 	z_(numOutput), outputs_(numOutput), errors_(numOutput),
 	isOutputLayer_(isOutputLayer) { }
 
@@ -243,15 +242,14 @@ neural_network::layer::operator=(layer const &rhs) {
 	return *this;
 }
 
-
 size_t 
 neural_network::layer::getNumInput() const {
-	return weights_.width();
+	return weights_.height();
 }
 
 size_t 
 neural_network::layer::getNumOutput() const {
-	return weights_.height();
+	return weights_.width();
 }
 
 vector<double>
@@ -297,15 +295,15 @@ neural_network::layer::runNetwork(vector<double> const &previousLayerOutput) con
 	}
 	for (size_t i = 0; i < weights_.height(); i++) {
 		for (size_t j = 0; j < weights_.width(); j++) {
-			z_[i] += weights_(i, j) * previousLayerOutput[j];
+			z_[j] += previousLayerOutput[i] * weights_(i, j);
 			//std::cout << previousLayerOutput[j] << " " << weights_(i, j) << "\n";
 		}
 	}
-	for (size_t i = 0; i < biases_.size(); i++) {
-		z_[i] += biases_[i];
+	for (size_t j = 0; j < biases_.size(); j++) {
+		z_[j] += biases_[j];
 	}
-	for (size_t i = 0; i < z_.size(); i++) {
-		outputs_[i] = getSigmoid(z_[i]);
+	for (size_t j = 0; j < z_.size(); j++) {
+		outputs_[j] = getSigmoid(z_[j]);
 		//std::cout << "output: " << outputs_[i];
 		//if (outputs_[i] != outputs_[i]) {
 		//	std::cout << "runNetwork nan\n";
@@ -328,14 +326,13 @@ neural_network::layer::addGradient(vector<double> const &previousLayerOutput,
 
 	for (size_t i = 0; i < accumulated_gradient_weights_.height(); i++) {
 		for (size_t j = 0; j < accumulated_gradient_weights_.width(); j++) {
-			accumulated_gradient_weights_(i, j) += previousLayerOutput[j] * errors_[i];
+			accumulated_gradient_weights_(i, j) += previousLayerOutput[i] * errors_[j];
 		}
 	}
-	for (size_t i = 0; i < accumulated_gradient_biases_.size(); i++) {
-		accumulated_gradient_biases_[i] += errors_[i];
+	for (size_t j = 0; j < accumulated_gradient_biases_.size(); j++) {
+		accumulated_gradient_biases_[j] += errors_[j];
 	}
 }
-
 
 void 
 neural_network::layer::adjustVariablesWithMultiplier(double multipler) {
@@ -349,9 +346,9 @@ neural_network::layer::adjustVariablesWithMultiplier(double multipler) {
 			//}
 		}
 	}
-	for (size_t i = 0; i < biases_.size(); i++) {
-		biases_[i] -= accumulated_gradient_biases_[i] * multipler;
-		//std::cout << accumulated_gradient_biases_[i] << ", ";
+	for (size_t j = 0; j < biases_.size(); j++) {
+		biases_[j] -= accumulated_gradient_biases_[j] * multipler;
+		//std::cout << accumulated_gradient_biases_[j] << ", ";
 	}
 }
 
@@ -361,10 +358,10 @@ neural_network::layer::getLayerMultiplier() const {
 	for (size_t i = 0; i < errors_.size(); i++) {
 		error_vector(0, i) = errors_[i];
 	}
-	auto temp = error_vector * weights_;
+	auto temp = weights_ * error_vector.transpose();
 	vector<double> result(getNumInput()); // weights_.height() == numInput
 	for (size_t i = 0; i < result.size(); i++) {
-		result[i] = temp(0, i);
+		result[i] = temp(i, 0);
 		//if (result[i] != result[i]) {
 		//	std::cout << "getLayerMultiplier nan\n";
 		//	exit(0);

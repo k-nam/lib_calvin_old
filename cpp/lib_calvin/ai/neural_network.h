@@ -57,7 +57,7 @@ private:
 	private:
 		matrix<double> weights_;
 		vector<double> biases_;
-	public:
+	private:
 		mutable vector<double> z_; // z = wx + bias
 		mutable vector<double> outputs_;  // output = sigmoid(z)
 		mutable vector<double> errors_;
