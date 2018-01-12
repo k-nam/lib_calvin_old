@@ -257,3 +257,6 @@ Thumbs.db
 *.prx
 java/javaee/.recommenders/
 cpp/lib_calvin/ai/handwriting_network.js
+*.vcxproj
+*.pyproj
+*.sln
