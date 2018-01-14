@@ -38,6 +38,7 @@ using lib_calvin::set;
 using std::pair;
 using std::cout;
 using std::endl;
+using lib_calvin_container::Identity;
 
 template <typename W>
 struct Arc { 
@@ -117,7 +118,7 @@ class GraphTest;
 // V must support '<'and '==' operator (key).
 // At least two subclasses will be derived from this: undirected graph and
 // ..network flow.
-template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>>
+template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>>
 class graph_base { 
 public: // basic data access
   graph_base();
@@ -195,8 +196,8 @@ private:
 	size_t numEdges_;
 }; // end graph
 
-template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>, 
-	typename W = E, typename ExtractWeight = std::identity<E>>
+template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>, 
+	typename W = E, typename ExtractWeight = Identity<E>>
 class weighted_graph_base: public virtual graph_base<V, E, K, ExtractKey> {
 public:
 	class weighted_path: public graph_base::path {
@@ -231,15 +232,15 @@ private:
 	mutable lib_calvin::matrix<lib_calvin_graph::Arc<W>> apspSolution_; 
 };
 
-template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>>
+template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>>
 class undirected_graph_base: public virtual graph_base<V, E, K, ExtractKey> {
 public:
   virtual bool insert_edge(K const &src, K const &dest, E const &edge = E()) override;
   virtual bool remove_edge(K const &src, K const &dest) override;
 };
 
-template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>, 
-	typename W = E, typename ExtractWeight = std::identity<E>>
+template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>, 
+	typename W = E, typename ExtractWeight = Identity<E>>
 class undirected_weighted_graph_base: public undirected_graph_base<V, E, K, ExtractKey>, 
 																				public weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight> {
 public:
@@ -269,20 +270,20 @@ public:
 
 namespace lib_calvin {
 
-template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>>
+template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>>
 using graph = lib_calvin_graph::graph_base<V, E, K, ExtractKey>;
 
 // Undirected graphs override insertiong and modifying methods to ensure
 // ..symmetry at all times.
-template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>>
+template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>>
 using undirected_graph = lib_calvin_graph::undirected_graph_base<V, E, K, ExtractKey>;
 
-template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>, 
-	typename W = E, typename ExtractWeight = std::identity<E>>
+template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>, 
+	typename W = E, typename ExtractWeight = Identity<E>>
 using weighted_graph = lib_calvin_graph::weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>;
 
-template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = std::identity<V>, 
-	typename W = E, typename ExtractWeight = std::identity<E>>
+template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>, 
+	typename W = E, typename ExtractWeight = Identity<E>>
 using undirected_weighted_graph =
 	lib_calvin_graph::undirected_weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>;
 
@@ -827,7 +828,7 @@ void graph<V, E, ExtractWeight>::prsize_t() const {
 template <typename V, typename E, typename K, typename ExtractKey>
 void graph_base<V, E, K, ExtractKey>::goStatic() const {
   if (isDynamic_ == true) { 
-		lib_calvin_graph::makeArrayData<E, E, std::identity<E>>(outLinks_, arrayData_);
+		lib_calvin_graph::makeArrayData<E, E, Identity<E>>(outLinks_, arrayData_);
   }
 }
 

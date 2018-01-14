@@ -310,7 +310,7 @@ public:
 
 	// show the content. Assuming that "cout <<  E" works!
 	void prsize_t() const;
-	void check(bool toAbortIfWrong); // unit test 
+	void check(bool toAbortIfWrong = true); // unit test 
 	void test();
 	void randomize(); // for unit testing
 
@@ -621,7 +621,6 @@ void matrix<T>::check(bool toAbortIfWrong) {
 			}
 		}
 	}
-
 	
 	matrix<T> m3(m1.height(), m2.width());
 	matrix<T> m4(m1.height(), m2.width());
@@ -636,7 +635,7 @@ void matrix<T>::check(bool toAbortIfWrong) {
 		watch.stop();
 		cout << "Naive multiply 2 time " << watch.read() << " GFLOPS: " <<
 			multiProblemSize / watch.read() / GIGA << "\n";
-		if (toAbortIfWrong && m4 != m3) {
+		if (m4 != m3) {
 			cout << "naiveMultiAdd2 Error!!!\n";
 			exit(0);
 		}
@@ -646,7 +645,7 @@ void matrix<T>::check(bool toAbortIfWrong) {
 		watch.stop();
 		cout << "Naive multiply3 time " << watch.read() << " GFLOPS: " <<
 			multiProblemSize / watch.read() / GIGA << "\n";
-		if (toAbortIfWrong && m4 != m3) {
+		if (m4 != m3) {
 			cout << "naiveMultiAdd3 Error!!!\n";
 			exit(0);
 		}
@@ -658,7 +657,7 @@ void matrix<T>::check(bool toAbortIfWrong) {
 		watch.stop();
 		cout << "Simple multiply time " << watch.read() << " GFLOPS: " <<
 			multiProblemSize / watch.read() / GIGA << "\n";
-		if (toAbortIfWrong && m4 != m3) {
+		if (m4 != m3) {
 			cout << "simpleMultiAdd Error!!!\n";
 			exit(0);
 		}
@@ -670,7 +669,7 @@ void matrix<T>::check(bool toAbortIfWrong) {
 		watch.stop();
 		cout << "Blocked multiply time " << watch.read() << " GFLOPS: " <<
 			multiProblemSize / watch.read() / GIGA << "\n";
-		if (toAbortIfWrong && m4 != m3) {
+		if (m4 != m3) {
 			cout << "blockedMultiAdd Error!!!\n";
 			exit(0);
 		}
@@ -682,7 +681,7 @@ void matrix<T>::check(bool toAbortIfWrong) {
 		watch.stop();
 		cout << "Strassen multiply time " << watch.read() << " GFLOPS: " <<
 			multiProblemSize / watch.read() / GIGA << "\n";
-		if (toAbortIfWrong && m4 != m3) {
+		if (m4 != m3) {
 			cout << "strassenMultiAdd Error!!!\n";
 			cout << "A = \n";
 			m1.prsize_t();
@@ -710,7 +709,7 @@ void matrix<T>::check(bool toAbortIfWrong) {
 		watch.stop();
 		cout << "Strassen parallel multiply GFLOPS " <<
 			multiProblemSize / watch.read() / GIGA << "\n";
-		if (toAbortIfWrong && m4 != m3) {
+		if (m4 != m3) {
 			cout << "strassenMultiAddParallel Error!!!\n";
 			exit(0);
 		}

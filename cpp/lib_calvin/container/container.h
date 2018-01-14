@@ -52,6 +52,12 @@ size_t binarySearch(T const *begin, T const *end, K const &key);
 template <typename T, typename K, typename Comp, typename ExtractKey>
 size_t sequentialSearch(T const *begin, T const *end, K const &key); 
 
+template <typename T>
+class Identity {
+public:
+	T const & operator()(T const &elem) const { return elem; }
+};
+
 template <typename T1, typename T2>
 class TakeFirstOfPair {
 public:

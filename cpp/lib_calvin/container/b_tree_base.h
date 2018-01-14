@@ -8,7 +8,7 @@
 
 namespace lib_calvin_container
 {
-template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = std::identity<T>>
+template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = Identity<T>>
 class B_TREE_BASE 
 {
 private:

@@ -42,7 +42,7 @@ private:
 // K and ExtractKey added to implement map using this set implementation
 // ExtractKey: function object T -> K
 // Comp: function object (K, K) -> bool
-template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = std::identity<T>>
+template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = Identity<T>>
 class BinTree {
 public:
 	typedef T value_type;

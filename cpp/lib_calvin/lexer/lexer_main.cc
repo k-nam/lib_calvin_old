@@ -2,8 +2,8 @@
 
 int main(int argc, char* argv[])
 {
-	while (true)
+	//while (true)
 		lib_calvin_lexer::lexerTest();
-	return 0;
+	//return 0;
 }
 

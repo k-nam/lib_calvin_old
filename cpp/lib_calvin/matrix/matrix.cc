@@ -1,4 +1,5 @@
 #include "matrix.h"
+#include <immintrin.h>
 
 void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 		double const * __restrict B, double * __restrict C,
