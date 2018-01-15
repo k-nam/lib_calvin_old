@@ -261,3 +261,5 @@ cpp/lib_calvin/ai/handwriting_network.js
 *.pyproj
 *.sln
 *.filters
+*.db-wal
+*.db-shm
