@@ -30,7 +30,6 @@ CCCSCCSSCCCSSCC"""
 
 from random import randint
 
-
 input_text = c
 
 lines = input_text.split("\n")
@@ -41,16 +40,10 @@ data = []
 for line in lines:
     data.append([1 if x == "S" else 0 for x in list(line)])
 
-
-#print(data)
-
-
 def getRandomData(size):
 	data = []
 	for i in range(size):
-		#data.append([1 if x == 0 else 0 for x in range(size)])
 		data.append([randint(0, 1) for x in range(size)])
-		#print(data[-1])
 	return data
 
 def rotate(array):
@@ -68,7 +61,6 @@ def get_one_positions(number):
 		number = int(number / 2)
 		i += 1
 	return result
-
 
 def shift_integer(bit_rep, row_size, direction):
 	right_most_one = 1 # 000..0001
@@ -104,36 +96,6 @@ def applySingleStep(bit_rep, row_size):
 	return bit_rep ^ shift_integer(bit_rep, row_size, True) ^ shift_integer(bit_rep, row_size, False)
 
 def calculate_unit(row_size, num_iter):
-	# start with 1000.. and repeat XOR num_iter times
-	# utilize cycle when detected
-	bit_representation = 2**(row_size - 1)
-	history = { bit_representation: 0 }
-	history2 = [ bit_representation ]
-	result = 0
-	found_in_history = False
-
-	for iter in range(1, num_iter + 1):
-		bit_representation = applySingleStep(bit_representation, row_size)
-		
-		if (row_size < 200):
-			if (bit_representation in history):
-				prev_occurence = history[bit_representation]
-				interval = iter - prev_occurence
-				#print('interval: ' + str(interval))
-				remaining_iter = (num_iter - iter) % interval
-				result = history2[prev_occurence + remaining_iter]
-				found_in_history = True
-				break
-			else:
-				history[bit_representation] = iter
-				history2.append(bit_representation);
-		
-	if (found_in_history == False):
-		result = bit_representation
-	#print('unit of len ' + str(row_size) + ', num_iter ' + str(num_iter) + ' was ' + str(result))
-	return result
-	
-def calculate_unit2(row_size, num_iter):
 	ones_in_num_iter= get_one_positions(num_iter)
 	unit = 1 << (row_size - 1)
 	if (num_iter == 0):
@@ -169,12 +131,12 @@ def process_matrix(data, unit):
 	return [process_row(row, unit) for row in data]
 
 def solve(data, num_iter):
-	unit = calculate_unit2(len(data[0]), num_iter)
+	unit = calculate_unit(len(data[0]), num_iter)
 	data = process_matrix(data, unit)
 
 	data = rotate(data)
 
-	unit = calculate_unit2(len(data[0]), num_iter)
+	unit = calculate_unit(len(data[0]), num_iter)
 	data = process_matrix(data, unit)
 
 	sum = 0
@@ -184,18 +146,5 @@ def solve(data, num_iter):
 	print(str(sum))
 	
 solve(data, num_iter)
-solve(getRandomData(300), 300000000)
+#solve(getRandomData(300), 300000000)
 
-
-'''
-print(calculate_unit(6, 3)) # 1, 42
-print(calculate_unit(5, 5)) # 3, 22
-print(calculate_unit(5, 18)) # 16
-print(calculate_unit(7, 18)) # 76
-'''
-'''
-print(calculate_unit2(6, 3)) # 1, 42
-print(calculate_unit2(5, 5)) # 3, 22
-print(calculate_unit2(5, 18)) # 16
-print(calculate_unit2(7, 18)) # 76
-'''

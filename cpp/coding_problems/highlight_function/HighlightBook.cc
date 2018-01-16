@@ -66,7 +66,7 @@ HighlightBook::processInput(pair<int, int> input) {
 			}
 		}
 	}
-	/*
+#ifdef TEST
 	// check
 	for (auto iter = blocks_.begin(); iter != blocks_.end(); iter++) {
 		auto temp = iter;
@@ -78,7 +78,7 @@ HighlightBook::processInput(pair<int, int> input) {
 			}
 		}
 	}
-	*/
+#endif
 	return toExtend;
 }
 
@@ -89,12 +89,15 @@ HighlightBook::processData(std::vector<pair<int, int>> const &data) {
 
 	for (auto iter = data.begin(); iter != data.end(); ++iter) {
 		processInput(*iter);
+#ifdef TEST
 		processWithArray(*iter);
+#endif
 	}
 	for (auto iter = blocks_.begin(); iter != blocks_.end(); ++iter) {
 		//std::cout << "processData: " << iter->first << ", " << iter->second << "\n";
 		sum += iter->second - iter->first;
 	}
+#ifdef TEST
 	for (auto point : marked_points_) {
 		if (point) {
 			sum2++;
@@ -105,9 +108,11 @@ HighlightBook::processData(std::vector<pair<int, int>> const &data) {
 		cout << "processData Error!\n";
 		exit(0);
 	}
+#endif
 	return sum;
 }
 
+#ifdef TEST
 int
 HighlightBook::processWithArray(pair<int, int> input) {
 	//cout << "processWithArray\n";
@@ -129,3 +134,4 @@ HighlightBook::processWithArray(pair<int, int> input) {
 	}
 	return 0;
 }
+#endif

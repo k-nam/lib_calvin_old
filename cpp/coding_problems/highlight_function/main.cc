@@ -17,15 +17,6 @@ int totalLength;
 int numOps;
 
 int main() {
-	using namespace std;
-	string a1 = R"(10 5
-		2 4
-		2 4 
-		2 5
-		8 11
-		6 15)";
-
-
 	string a = R"(10 3
 		2 6
 		6 8
@@ -77,10 +68,10 @@ int main() {
 	// 83
 
 	string input;
-
 	vector<pair<int, int>> data(numOps);
 
 	/*
+	// For Paiza submission
 	getline(cin, input, ' ');
 	totalLength = stoi(input);
 	getline(cin, input);
@@ -98,14 +89,10 @@ int main() {
 	*/
 	
 	data = getDataFromString(d);
-	//cout << "data size " << data.size();	
-	//printContainer(data);
-
 	HighlightBook book(1000);
 	cout << book.processData(data) << "\n";
 
-	//cout << testWithRandomData() << "\n";
-
+	cout << testWithRandomData() << "\n";
 }
 
 
@@ -127,12 +114,9 @@ getDataFromString(string text) {
 	totalLength = stoi(input);
 	getline(iss, input);
 	numOps = stoi(input);
-	//cout << "numop " << numOps;
 	vector<pair<int, int>> data(numOps);
 
-
 	for (int i = 0; i < numOps; i++) {
-		//cout << "size " << data.size();
 		int beginIndex;
 		int endIndex;
 		getline(iss, input, ' ');
@@ -147,7 +131,7 @@ getDataFromString(string text) {
 
 int testWithRandomData() {
 	int testSize = 1000000000;
-	int testIter = 100000;
+	int testIter = 10000;
 	HighlightBook book(testSize + 100);
 	vector<pair<int, int>> data;
 	srand(static_cast<unsigned>(time(nullptr)));

@@ -1,10 +1,8 @@
-
 a = r"""2 3""" # 4
 
 b = r"""2 1""" # 0
 
 c = r"""5 9""" # 144
-
 
 input_line = c
 
@@ -13,7 +11,6 @@ N, k = [int(x) for x in input_line.split()]
 found_answers = []
 for i in range (N + 1):
 	found_answers.append([-1 for x in range(k + 1)])
-
 
 # what if cannot be divided? ex) (1234), (5678) which means minial prefix is the whole input
 # in this case, diversion goes up very high. For N == 4, minimum diversion is already 10 (1246), (3578)
@@ -71,7 +68,4 @@ def solve(N, k):
 		sum += solve_exact(N, i)
 	return sum
 
-#print(found_answers)
-#print(solve_exact(2, 4))
-#print(solve(5, 9))
 print(solve(5, 9))
