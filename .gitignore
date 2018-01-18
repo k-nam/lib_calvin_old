@@ -263,3 +263,5 @@ cpp/lib_calvin/ai/handwriting_network.js
 *.filters
 *.db-wal
 *.db-shm
+*.code-workspace
+ruby/tutorial/.vscode/launch.json
