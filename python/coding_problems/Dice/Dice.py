@@ -24,7 +24,7 @@ d = r"""5 6
 100101
 111101""" # 0
 
-input_text = a
+input_text = c
 lines = input_text.split("\n")
 lines.pop(0)
 
@@ -55,44 +55,40 @@ def get_new_dice_orientation(direction, dice_orientation):
 	else:
 		print('get_new_dice_orientation Error')
 
-# succesor looks like [position, dice_orientation]
-def get_succesors(data, position, original_dice_orientation):
+# previous looks like [position, dice_orientation]
+def get_succesors(data, previous):
 	def filter_succesors(succesors):
 		return [x for x in succesors if is_inside(data, x[0])]
 
 	succesors = []
-
-	top = [[position[0] - 1, position[1]], get_new_dice_orientation(0, original_dice_orientation)]
-	right = [[position[0], position[1] + 1], get_new_dice_orientation(1, original_dice_orientation)]
-	bottom = [[position[0] + 1, position[1]], get_new_dice_orientation(2, original_dice_orientation)]
-	left = [[position[0], position[1] - 1], get_new_dice_orientation(3, original_dice_orientation)]
+	position = previous[0]
+	original_dice_orientation = previous[1]
+	top = ((position[0] - 1, position[1]), get_new_dice_orientation(0, original_dice_orientation))
+	right = ((position[0], position[1] + 1), get_new_dice_orientation(1, original_dice_orientation))
+	bottom = ((position[0] + 1, position[1]), get_new_dice_orientation(2, original_dice_orientation))
+	left = ((position[0], position[1] - 1), get_new_dice_orientation(3, original_dice_orientation))
 
 	return filter_succesors([top, right, bottom, left])
 
 
 def solve(data):
-	records = []
-	# -1 means unreachable
-	for i in range(len(data)):	
-		# each record: [total_distance, dice_orientation]
-		records.append([[-1, (0, 0, 0)] for x in range(len(data[0]))])
-	records[0][0] = [0, (1, 3, 2)]
+	records = {}
+	# position, dice_orientation => distance
+	records[((0, 0), (1, 3, 2))] = 0
 
-	# elems in heap: [total distance, position]
-	heap = [[0, [0, 0]]]
-	finished = [[ False for y in range(len(data[0]))] for x in range(len(data))]
+	# abstract_node: (position, dice_orientation)
+	# elems in heap: (total distance, abstract_node)
+	heap = [(0, ((0, 0), (1, 3, 2)))]
+	finished = {}
 	#print(finished)
-	def is_finished(position):
-		#print(position)
-		return finished[position[0]][position[1]]
 
-	def relax(succesor, new_distance):
-		current_distance = records[succesor[0][0]][succesor[0][1]][0]
-		if (current_distance < 0 or new_distance < current_distance):
-			records[succesor[0][0]][succesor[0][1]] = [new_distance, succesor[1]]
-			return True
-		else:
+	def relax(new_distance, succesor):
+		if (succesor in records and records[succesor] <= new_distance):
 			return False
+		else:
+			#print('relaxing: ' + str(succesor))
+			records[succesor] = new_distance
+			return True
 
 	def cost_of(succesor):
 		map_value = data[succesor[0][0]][succesor[0][1]]
@@ -100,25 +96,36 @@ def solve(data):
 			return 1000000
 		return abs(map_value - succesor[1][0])
 
+	def is_finished(abstract_node):
+		return abstract_node in finished;
+
 	while (len(heap) > 0):
 		elem = heappop(heap)
 		#elem = heap.pop(0)
-		if (is_finished(elem[1]) == False):
-			print('Processing: ' + str(elem[1]) + ' cost: ' + str(elem[0]))
-			succesors = get_succesors(data, elem[1], records[elem[1][0]][elem[1][1]][1])
+		if not is_finished(elem[1]):
+			#print('Processing: ' + str(elem[1]) + ' cost: ' + str(elem[0]))
+			succesors = get_succesors(data, elem[1])
 			#print('Succesors: ' + str(succesors))
 			for	succesor in succesors:
-				# succesor: [position, dice_orientation]
+				# succesor: (position, dice_orientation)
 				if (is_finished(succesor[0]) == False):
 					relaxing_distance = elem[0] + cost_of(succesor)
-					if (elem[0] != records[elem[1][0]][elem[1][1]][0]):
+					if (elem[0] != records[(elem[1])]):
 						print('Error')
-					if (relax(succesor, relaxing_distance)):							
-						heappush(heap, [relaxing_distance, succesor[0]])
+					if (relax(relaxing_distance, succesor)):							
+						heappush(heap, (relaxing_distance, succesor))
 						
-			finished[elem[1][0]][elem[1][1]] = True
+			finished[elem[1]] = True
 
-	return records[len(data) - 1][len(data[0]) - 1]
+	min_distance = 1000000000
+	destination = (len(data) - 1, len(data[0]) - 1)
+	#print(destination)
+	for key, value in records.items():
+		#print(key[0])
+		if (key[0] == destination):
+			if value < min_distance:
+				min_distance = value
+	return min_distance
 
 #print(records)
 #print(min([1,2,3]))
