@@ -1,4 +1,4 @@
-a = r"""7 7
+test_a = r"""7 7
 #######
 #X.2..#
 #.#.#.#
@@ -7,7 +7,7 @@ a = r"""7 7
 #4....#
 #######""" # No
 
-b = r"""6 3
+test_b = r"""6 3
 ###
 #3#
 #1#
@@ -15,7 +15,7 @@ b = r"""6 3
 #X#
 ###""" # Yes
 
-c = r"""5 3
+test_c = r"""5 3
 ###
 #2#
 ###
@@ -23,15 +23,22 @@ c = r"""5 3
 ###""" # No
 
 
-input_text = b
-
+input_text = test_c
 lines = input_text.split("\n")
-h, w = [int(x) for x in lines.pop(0).split()]
+for_paiza_submission = False
+
+def read_line():
+	if (for_paiza_submission):
+		return input()
+	else:
+		return lines.pop(0)
+
+h, w = [int(x) for x in read_line().split()]
 
 data = []
 
-for line in lines:
-    data.append([x for x in list(line)])
+for i in range(h):
+    data.append([x for x in list(read_line())])
 
 def get_explosion_cells(data, bomb_position, firepower):
 	upward = True

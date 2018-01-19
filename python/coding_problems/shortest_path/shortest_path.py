@@ -1,6 +1,4 @@
-from heapq import heappush, heappop
-
-a = r"""4 5
+test_a = r"""4 5
 0 s 0 1
 0 0 1 0
 0 1 1 0
@@ -8,14 +6,14 @@ a = r"""4 5
 0 0 0 0"""
 # 9
 
-b = r"""4 4
+test_b = r"""4 4
 0 s 0 1
 1 0 0 0
 0 1 1 1
 0 0 0 g"""
 # Fail
 
-c = r"""6 6
+test_c = r"""6 6
 s 0 0 1 0 0
 0 1 1 1 0 0
 0 1 0 0 0 0
@@ -24,20 +22,28 @@ s 0 0 1 0 0
 0 0 0 1 0 g"""
 # Fail
 
-d = r"""2 2
+test_d = r"""2 2
 s 1
 1 g"""
 
-input = d
-lines = input.split('\n')
+from heapq import heappush, heappop
 
+for_paiza_submission = False
+test_input = test_d
+lines = test_input.split('\n')
+
+def read_line():
+	if (for_paiza_submission):
+		return input()
+	else:
+		return lines.pop(0)
 
 # change of order of M and N is intentional
-N, M = [int(x) for x in lines.pop(0).split()]
+N, M = [int(x) for x in read_line().split()]
 
 data = []
-for row in lines:
-	data.append([x for x in row.split()])
+for i in range(M):
+	data.append([x for x in read_line().split()])
 
 start = (0, 0)
 goal = (0, 0)
@@ -59,7 +65,7 @@ for i in range(M):
 
 def relax(new_distance, position):
 	current_distance = data[position[0]][position[1]]
-	if (current_distance == -1 or (current_distance > 0 and new_distance < current_distance)):
+	if (current_distance == -1 or new_distance < current_distance):
 		data[position[0]][position[1]] = new_distance
 		return True
 	else:
@@ -70,13 +76,13 @@ def get_nexts(point):
 		return point[0] >= 0 and point[0] < M and point[1] >= 0 and point[1] < N
 	
 	def is_wall(point):
-		data[point[0]][point[1]] != -2
+		return data[point[0]][point[1]] == -2
 
 	x, y = [point[0], point[1]]
 
 	four_points = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
 	result = [x for x in four_points if is_inside(x) and not is_wall(x)]
-	print('Nexts: ' + str(result))
+	#print('Nexts: ' + str(result))
 	return result
 
 def get_shortest_distance():

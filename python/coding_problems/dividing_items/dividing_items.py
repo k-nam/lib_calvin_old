@@ -1,12 +1,19 @@
-a = r"""2 3""" # 4
+test_a = r"""2 3""" # 4
 
-b = r"""2 1""" # 0
+test_b = r"""2 1""" # 0
 
-c = r"""5 9""" # 144
+test_c = r"""5 9""" # 144
 
-input_line = c
+input_line = test_c
+for_paiza_submission = False
 
-N, k = [int(x) for x in input_line.split()]
+def read_line():
+	if (for_paiza_submission):
+		return input()
+	else:
+		return input_line
+
+N, k = [int(x) for x in read_line().split()]
 
 found_answers = []
 for i in range (N + 1):
@@ -47,16 +54,14 @@ def solve_exact(N, k):
 	elif (k == 1): # note that the case of N == 1 has already been taken care of
 		final_answer = 0
 	else:
-		# dynamic programming by dividing N to i, N-i
+		# dynamic programming by dividing N to (i, N-i)
 		# left part is defined by minial prefix in which two players get same num of items
 		total_num_case = 0
 		for i in range(1, N):
 			for left_part_k in range(1, k):
 				total_num_case += solve_exact_unfair(i, left_part_k) * solve_exact(N - i, k - left_part_k)
-		
-		total_num_case += solve_exact_unfair(N, k)
-
 		# add the case when the whole input is unfair
+		total_num_case += solve_exact_unfair(N, k)
 		final_answer = total_num_case
 
 	found_answers[N][k] = final_answer;
@@ -68,4 +73,4 @@ def solve(N, k):
 		sum += solve_exact(N, i)
 	return sum
 
-print(solve(5, 9))
+print(solve(N, k))

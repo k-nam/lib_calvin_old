@@ -1,14 +1,18 @@
-a = r"""2 3 6""" # BCBA
-b = r"""10 123 139""" # BAAABCBABCCBAABCB
+test_a = r"""2 3 6""" # BCBA
+test_b = r"""10 123 139""" # BAAABCBABCCBAABCB
 
-input = b
+input_text = test_a
+for_paiza_submission = False
+
+def read_line():
+	if (for_paiza_submission):
+		return input()
+	else:
+		return input_text
 
 # index t means end of output string, but inclusive
-N, s, t = [int(x) for x in input.split()]
-
-
+N, s, t = [int(x) for x in read_line().split()]
 max_n = 51
-
 calculated_length = []
 
 # 1 => ABC
@@ -39,10 +43,7 @@ def letter_of(N, index):
 			return "C"
 
 def get_all_letters(N, begin, end):
-	return [letter_of(N, x) for x in range(begin, end)]
+	return [letter_of(N, x) for x in range(begin, end)]		
 
-		
-#print(str(N), str(s), str(t))
 #print(length_of(4))
-
 print(''.join(get_all_letters(N, s - 1, t)))

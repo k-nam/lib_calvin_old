@@ -1,9 +1,9 @@
-a = r"""2
+test_a = r"""2
 3 0 0 1 2 2
 2 0 1 2 2 1"""
 # 6
 
-b = r"""10
+test_b = r"""10
 17 15 16 93 89 23
 51 42 26 25 60 52
 60 53 43 13 35 70
@@ -16,13 +16,20 @@ b = r"""10
 14 6 14 28 76 22"""
 # 597935
 
-input_text = b
-
+input_text = test_b
 lines = input_text.split("\n")
-num_cuboid = int(lines.pop(0))
+for_paiza_submission = False
+
+def read_line():
+	if (for_paiza_submission):
+		return input()
+	else:
+		return lines.pop(0)
+
 data = []
-for line in lines:
-	data.append(tuple(int(x) for x in line.split()))
+num_cuboid = int(read_line())
+for i in range(num_cuboid):
+	data.append(tuple(int(x) for x in read_line().split()))
 
 def get_intersection(cuboid1, cuboid2):
 	# each line is represented as (origin, len)
@@ -72,8 +79,5 @@ def get_union(cuboids):
 			if (result[intersection] == 0):
 				result.pop(intersection, 2)
 	return result
-
-#print(data)
-#print(tuple(int(x) for x in range(5)))
 
 print(get_volumn(get_union(data)))

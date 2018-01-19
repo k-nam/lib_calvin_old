@@ -1,7 +1,7 @@
 from heapq import heappush, heappop
 from random import randint
 
-a = r"""5 5
+test_a = r"""5 5
 2 2 2 2 2
 2 0 0 0 1
 2 0 0 0 1
@@ -9,7 +9,7 @@ a = r"""5 5
 2 1 1 1 1"""
 # answer: 9
 
-b = r"""5 5
+test_b = r"""5 5
 4 4 4 4 4
 4 3 3 3 4
 4 3 2 3 4
@@ -17,7 +17,7 @@ b = r"""5 5
 4 4 4 4 4"""
 # 10
 
-c = r"""8 20
+test_c = r"""8 20
 1 1 1 0 0 2 0 0 3 3 3 4 4 4 4 2 0 5 0 0
 1 0 0 1 2 1 2 0 1 3 1 3 3 3 4 2 5 4 5 0
 1 0 0 1 2 0 2 0 0 3 0 0 2 4 2 1 5 3 5 0
@@ -28,25 +28,33 @@ c = r"""8 20
 1 0 0 2 1 0 1 2 3 3 3 4 4 4 4 5 4 3 4 5"""
 # 55
 
-input_text = c
-
+input_text = test_c
 lines = input_text.split("\n")
-map_size = [int(x) for x in lines.pop(0).split()]
+for_paiza_submission = False
+
+def read_line():
+	if (for_paiza_submission):
+		return input()
+	else:
+		return lines.pop(0)
+
+
+map_size = [int(x) for x in read_line().split()]
 land_data = []
 water_data = []
 maximum_water_value = 1000000 # this should be larger than highest land
 
-for line in lines:
-	land_data.append([int(x) for x in line.split()])
-	water_data.append([maximum_water_value for x in line.split()])
+for i in range(map_size[0]):
+	land_data.append([int(x) for x in read_line().split()])
+	water_data.append([maximum_water_value for x in range(map_size[1])])
 
 # run this part to create randomized test data
-#'''
+'''
 size = 300
 map_size = (size, size)
 land_data = [[randint(1, 300) for x in range(size)] for x in range(size)]
 water_data = [[50000 for x in range(size)] for x in range(size)]
-#'''
+'''
 
 def check_error():
 	num_errors = 0
@@ -55,18 +63,15 @@ def check_error():
 			position = [h, w]
 			if (isOnTheVerge(position)):
 				if (get_water_at(position) != land_at(position)):
-					print("error 1")
 					num_errors += 1
 			else:
 				min_of_adjascent = min([get_water_at(p) for p in getAdjascent(position)])
 				if (get_water_at(position) < land_at(position)):
-					print("error 0")
 					num_errors += 1
 				elif (get_water_at(position) == land_at(position)):
 					pass
 				else:
 					if (get_water_at(position) != min_of_adjascent):
-						print("error 3")
 						print(str(get_water_at(position)) + ', ' + str(land_at(position)) + ', ' + str(min_of_adjascent)) 
 						num_errors += 1
 	if (num_errors > 0):
@@ -140,4 +145,4 @@ def solve_problem():
 	print(containedWater)
 
 solve_problem()
-check_error()
+#check_error()

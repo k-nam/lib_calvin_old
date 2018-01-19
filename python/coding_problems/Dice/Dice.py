@@ -1,41 +1,48 @@
-from heapq import heappush, heappop
-
-a = r"""3 4
+test_a = r"""3 4
 1463
 1261
 3463""" # 2
 
-b = r"""3 4
+test_b = r"""3 4
 6463
 3562
 1463""" # 0
 
-c = r"""5 3
+test_c = r"""5 3
 146
 222
 631
 555
 146""" # 0
 
-d = r"""5 6
+test_d = r"""5 6
 101111
 101001
 101101
 100101
-111101""" # 0
+111101""" # ?
 
-input_text = c
+from heapq import heappush, heappop
+
+input_text = test_d
 lines = input_text.split("\n")
-lines.pop(0)
+for_paiza_submission = False
+
+def read_line():
+	if (for_paiza_submission):
+		return input()
+	else:
+		return lines.pop(0)
+
+h, w = [int(x) for x in read_line().split()]
 
 data = []
-for line in lines:
-	data.append([int(x) for x in list(line)])
-
+for i in range(h):
+	data.append([int(x) for x in list(read_line())])
 
 def is_inside(data, position):
-	return position[0] >= 0 and position[0] < len(data) and \
-		position[1] >= 0 and position[1] < len(data[0])
+	return position[0] >= 0 and position[0] < h and \
+		position[1] >= 0 and position[1] < w
 
 # (face, right, top)
 def get_new_dice_orientation(direction, dice_orientation):
@@ -80,13 +87,11 @@ def solve(data):
 	# elems in heap: (total distance, abstract_node)
 	heap = [(0, ((0, 0), (1, 3, 2)))]
 	finished = {}
-	#print(finished)
 
 	def relax(new_distance, succesor):
 		if (succesor in records and records[succesor] <= new_distance):
 			return False
 		else:
-			#print('relaxing: ' + str(succesor))
 			records[succesor] = new_distance
 			return True
 
@@ -101,11 +106,8 @@ def solve(data):
 
 	while (len(heap) > 0):
 		elem = heappop(heap)
-		#elem = heap.pop(0)
 		if not is_finished(elem[1]):
-			#print('Processing: ' + str(elem[1]) + ' cost: ' + str(elem[0]))
 			succesors = get_succesors(data, elem[1])
-			#print('Succesors: ' + str(succesors))
 			for	succesor in succesors:
 				# succesor: (position, dice_orientation)
 				if (is_finished(succesor[0]) == False):
@@ -118,18 +120,12 @@ def solve(data):
 			finished[elem[1]] = True
 
 	min_distance = 1000000000
-	destination = (len(data) - 1, len(data[0]) - 1)
-	#print(destination)
+	destination = (h - 1, w - 1)
 	for key, value in records.items():
-		#print(key[0])
 		if (key[0] == destination):
 			if value < min_distance:
 				min_distance = value
 	return min_distance
-
-#print(records)
-#print(min([1,2,3]))
-#print(data)
 
 print(solve(data))
 

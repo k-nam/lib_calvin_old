@@ -1,11 +1,11 @@
-a = r"""4 4 2
+test_a = r"""4 4 2
 SCSC
 CSSS
 CCCC
 SSSC"""
 #8
 
-b = r"""7 5 18
+test_b = r"""7 5 18
 CCCSS
 SCSCC
 SSCCS
@@ -15,7 +15,7 @@ SSSSS
 CCCCS"""
 #16
 
-c = r"""10 15 12345678
+test_c = r"""10 15 12345678
 CCCSSCSSSCCSCCS
 CCCCCSSCSSSSSCS
 CSSSSSCSCCCCCSC
@@ -30,17 +30,24 @@ CCCSCCSSCCCSSCC"""
 
 from random import randint
 
-input_text = c
-
+input_text = test_c
 lines = input_text.split("\n")
-h, w, num_iter = [int(x) for x in lines.pop(0).split()]
+for_paiza_submission = False
+
+def read_line():
+	if (for_paiza_submission):
+		return input()
+	else:
+		return lines.pop(0)
+
+h, w, num_iter = [int(x) for x in read_line().split()]
 
 data = []
 
-for line in lines:
-    data.append([1 if x == "S" else 0 for x in list(line)])
+for i in range(h):
+    data.append([1 if x == "S" else 0 for x in list(read_line())])
 
-def getRandomData(size):
+def get_random_data(size):
 	data = []
 	for i in range(size):
 		data.append([randint(0, 1) for x in range(size)])
@@ -146,5 +153,5 @@ def solve(data, num_iter):
 	print(str(sum))
 	
 solve(data, num_iter)
-#solve(getRandomData(300), 300000000)
+#solve(get_random_data(300), 300000000)
 
