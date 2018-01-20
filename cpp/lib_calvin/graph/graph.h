@@ -41,18 +41,18 @@ using std::endl;
 using lib_calvin_container::Identity;
 
 template <typename W>
-struct Arc { 
-  Arc(); // default constructor should work for matrix elements
-  Arc(size_t predecessor, W weight);
-  Arc<W> & operator= (Arc<W> const &rhs);
+struct Tail { 
+  Tail(); // default constructor should work for matrix elements
+  Tail(size_t predecessor, W weight);
+  Tail<W> & operator= (Tail<W> const &rhs);
   // operators tuned to specific purposes: this will enable us to just
   // ...use matrix multiplication for shortest path algorithms.
-  Arc<W> operator* (Arc<W> const &rhs) const; // addition of weights.
+  Tail<W> operator* (Tail<W> const &rhs) const; // addition of weights.
   // take minimum of weights.
-  Arc<W> const & operator+ (Arc<W> const &rhs) const;
-  Arc<W> & operator+= (Arc<W> const &rhs); 
-  bool operator== (Arc<W> const &rhs) const;
-  bool operator!= (Arc<W> const &rhs) const;
+  Tail<W> const & operator+ (Tail<W> const &rhs) const;
+  Tail<W> & operator+= (Tail<W> const &rhs); 
+  bool operator== (Tail<W> const &rhs) const;
+  bool operator!= (Tail<W> const &rhs) const;
 	bool isUnreachable() const;
   size_t predecessor_; // negative value indicates non-reachability.
   W weight_; // may be single or total weight, depending on context.  
@@ -60,16 +60,16 @@ struct Arc {
 
 // not necessarily the closest path
 template <typename W>
-struct GeneralArc: public Arc<W> {
-	GeneralArc();
-	GeneralArc(size_t predecessor, W weight, size_t nThClosest);
+struct GeneralTail: public Tail<W> {
+	GeneralTail();
+	GeneralTail(size_t predecessor, W weight, size_t nThClosest);
 	void prsize_t() const;
-	bool operator< (GeneralArc<W> const &) const;
+	bool operator< (GeneralTail<W> const &) const;
 	// denotes that the path to predecessor is n'th closest path.
 	size_t nThClosest_;
 };
 
-// extension of Arc for n'th closest path algorithm
+// extension of Tail for n'th closest path algorithm
 template <typename W>
 class Node {
 public:
@@ -79,11 +79,11 @@ public:
 	Node & operator= (Node const &);
 	Node & operator= (Node &&);
 public:
-	void relax(GeneralArc<W> const &);
+	void relax(GeneralTail<W> const &);
 	void foundPath(); // reached the top of heap
 	W const & getWeight() const;
 	size_t getNumPathFoundUntilNow() const;
-	GeneralArc<W> const & getGeneralArc() const;
+	GeneralTail<W> const & getGeneralTail() const;
 	bool hasRemainingPaths() const;
 public:
 	bool operator< (Node const &rhs) const;
@@ -94,7 +94,7 @@ private:
 private:
 	size_t numPathsToFind_;
 	size_t numPathsFoundUntilNow_;
-	vector<GeneralArc<W>> arcs_;
+	vector<GeneralTail<W>> arcs_;
 };
 
 template <typename W>
@@ -173,7 +173,7 @@ public:
 	friend class lib_calvin_graph::GraphTest<V, E>;
 protected:
 	template <typename T>
-	path getPathAfterAlgorithm(vector<Arc<T>> result, size_t src, size_t target) const;
+	path getPathAfterAlgorithm(vector<Tail<T>> result, size_t src, size_t target) const;
 	path getPathFromReversedPath(size_t src, vector<size_t> const &reversedPath) const;
 protected: 
 	lib_calvin_adt::IntIndexer<K> mapping_; // 1:1 mapping of verticex and size_tegers
@@ -220,16 +220,16 @@ public:
 	friend class lib_calvin_graph::GraphTest<V, E>;
 protected:
 	template <typename T>
-		vector<weighted_path> getPathsAfterAlgorithm(vector<vector<GeneralArc<T>>> result, 
+		vector<weighted_path> getPathsAfterAlgorithm(vector<vector<GeneralTail<T>>> result, 
 																				size_t src, size_t target) const;
 private:
 	// additional data structure for algorithms
   // graph algorithms are performed only with size_tegers (not V type)
-	mutable lib_calvin::matrix<lib_calvin_graph::Arc<W>> matrixData_; // For matrix computation.
+	mutable lib_calvin::matrix<lib_calvin_graph::Tail<W>> matrixData_; // For matrix computation.
   // SSSP solution; not solved if size is 0.
-  //vector<vector<Arc<W>>> SSSP_; 
+  //vector<vector<Tail<W>>> SSSP_; 
 	// Apsp solution; not solved if size is 1.
-	mutable lib_calvin::matrix<lib_calvin_graph::Arc<W>> apspSolution_; 
+	mutable lib_calvin::matrix<lib_calvin_graph::Tail<W>> apspSolution_; 
 };
 
 template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>>
@@ -297,7 +297,7 @@ using lib_calvin::matrix;
 // ...no need to size_troduce another size_tegrated function at all! (of course only
 // ...in -O3 option)
 template <typename W>
-bool relax (Arc<W> const &lhs1, Arc<W> const &lhs2, Arc<W> &rhs);
+bool relax (Tail<W> const &lhs1, Tail<W> const &lhs2, Tail<W> &rhs);
 
 template <typename E, typename W, typename ExtractWeight>
 void makeArrayData (vector<map<size_t, E>> const &dynamicData, 
@@ -309,7 +309,7 @@ void makeSymArrayData (vector<map<size_t, E>> const &dynamicData,
 
 template <typename W>
 void makeMatrixData (vector<vector<pair<size_t, W>>> const &arrayData, 
-    matrix<Arc<W>> &matrixData);
+    matrix<Tail<W>> &matrixData);
 
 template <typename E>
 void ripEdge (vector<vector<pair<size_t, E>>> const &arrayData,
@@ -342,7 +342,7 @@ void dfs2(vector<vector<size_t>> const &graph,
 
 // Find reachable vertices from a source vertex
 // Predecessor table is stored in result
-void bfs(vector<vector<size_t>> const &graph, size_t source, vector<Arc<size_t>> &result);
+void bfs(vector<vector<size_t>> const &graph, size_t source, vector<Tail<size_t>> &result);
 
 // Find strongly connected components of a directed graph.
 // Each value in result indicates the set to which the vertex belongs 
@@ -359,32 +359,32 @@ void sccByTc(vector<vector<size_t>> const &graph,
 // arcs in result: stores total weight of paths
 template <typename W>
 void dijkstra(vector<vector<std::pair<size_t, W>>> const &graph, size_t source, 
-    vector<Arc<W>> &result);
+    vector<Tail<W>> &result);
 
 // find n closest paths
 template <typename W>
 void dijkstra2(vector<vector<std::pair<size_t, W>>> const &graph, size_t source, 
-    vector<Arc<W>> &result);
+    vector<Tail<W>> &result);
 
 template <typename W>
-void vellmanFord(vector<vector<std::pair<size_t, W>>> const &graph, size_t source,
-    vector<Arc<W>> &result);
+void bellmanFord(vector<vector<std::pair<size_t, W>>> const &graph, size_t source,
+    vector<Tail<W>> &result);
 
 template <typename W>
-void matrixApsp(matrix<Arc<W>> const &graph, matrix<Arc<W>> &result);
+void matrixApsp(matrix<Tail<W>> const &graph, matrix<Tail<W>> &result);
 
 template <typename W>
-void floydWarshall(matrix<Arc<W>> const &graph, matrix<Arc<W>> &result);
+void floydWarshall(matrix<Tail<W>> const &graph, matrix<Tail<W>> &result);
 
 template <typename W>
 void johnson(vector<vector<pair<size_t, W>>> const &graph, 
-    matrix<Arc<W>> &result);
+    matrix<Tail<W>> &result);
 
 // check the validity of shortest path solution
 // returns true if no error has been detected, false otherwise
 template <typename W>
 bool shortestPathCheck(vector<vector<pair<size_t, W>>> const &graph, size_t source,
-    vector<Arc<W>> &solution);
+    vector<Tail<W>> &solution);
 
 // Getting transitive closure
 // true: edge, false: no edge
@@ -404,21 +404,21 @@ void prim(vector<vector<pair<size_t, W>>>const &graph,
       
 } // end namespace lib_calvin_graph
 
-/******************* struct Arc<W> definition *********************/
+/******************* struct Tail<W> definition *********************/
 
 namespace lib_calvin_graph { // open for definitions
 
 template <typename W>
-Arc<W>::Arc(): predecessor_(UNREACHABLE_VERTEX), weight_(0) { // must initialize to 0
+Tail<W>::Tail(): predecessor_(UNREACHABLE_VERTEX), weight_(0) { // must initialize to 0
 }
 
 template <typename W>
-Arc<W>::Arc(size_t predecessor, W weight): predecessor_(predecessor), weight_(weight) { 
+Tail<W>::Tail(size_t predecessor, W weight): predecessor_(predecessor), weight_(weight) { 
 }
 
 template <typename W>
-Arc<W> & 
-Arc<W>::operator= (Arc<W> const &rhs) {
+Tail<W> & 
+Tail<W>::operator= (Tail<W> const &rhs) {
   predecessor_ 	= rhs.predecessor_;
   weight_    	= rhs.weight_;
   return *this;
@@ -426,18 +426,18 @@ Arc<W>::operator= (Arc<W> const &rhs) {
 
 // addition of paths
 template <typename W>
-Arc<W>
-Arc<W>::operator* (Arc<W> const &rhs) const {
+Tail<W>
+Tail<W>::operator* (Tail<W> const &rhs) const {
   if (isUnreachable() || rhs.isUnreachable()) {
-    return Arc<W>(); // no path
+    return Tail<W>(); // no path
   }
-  return Arc<W> (rhs.predecessor_, weight_ + rhs.weight_);
+  return Tail<W> (rhs.predecessor_, weight_ + rhs.weight_);
 }
 
 // take minimum
 template <typename W>
-Arc<W> const & 
-Arc<W>::operator+ (Arc<W> const &rhs) const {
+Tail<W> const & 
+Tail<W>::operator+ (Tail<W> const &rhs) const {
   if (rhs.isUnreachable()) {
     return *this;
 	}
@@ -449,8 +449,8 @@ Arc<W>::operator+ (Arc<W> const &rhs) const {
 
 // take minimum
 template <typename W>
-Arc<W> & 
-Arc<W>::operator+= (Arc<W> const &rhs) {
+Tail<W> & 
+Tail<W>::operator+= (Tail<W> const &rhs) {
   if (rhs.isUnreachable()) {
     return *this;
 	}
@@ -464,7 +464,7 @@ Arc<W>::operator+= (Arc<W> const &rhs) {
 
 // equivalence
 template <typename W>
-bool Arc<W>::operator== (Arc<W> const &rhs) const {
+bool Tail<W>::operator== (Tail<W> const &rhs) const {
   if (isUnreachable() && rhs.isUnreachable()) {
     return true;
 	}
@@ -475,7 +475,7 @@ bool Arc<W>::operator== (Arc<W> const &rhs) const {
 }
 
 template <typename W>
-bool Arc<W>::operator!= (Arc<W> const &rhs) const {
+bool Tail<W>::operator!= (Tail<W> const &rhs) const {
   if (predecessor_ == rhs.predecessor_ && weight_ == rhs.weight_) {
     return false;
 	}
@@ -483,25 +483,25 @@ bool Arc<W>::operator!= (Arc<W> const &rhs) const {
 }
 
 template <typename W>
-bool Arc<W>::isUnreachable() const {
+bool Tail<W>::isUnreachable() const {
 	return predecessor_ == UNREACHABLE_VERTEX;
 }
 
 template <typename W>
-GeneralArc<W>::GeneralArc(): Arc<W>(), nThClosest_(0) { }
+GeneralTail<W>::GeneralTail(): Tail<W>(), nThClosest_(0) { }
 
 template <typename W>
-GeneralArc<W>::GeneralArc(size_t predecessor, W weight, size_t nThClosest): 
-	Arc<W>(predecessor, weight), nThClosest_(nThClosest) { }
+GeneralTail<W>::GeneralTail(size_t predecessor, W weight, size_t nThClosest): 
+	Tail<W>(predecessor, weight), nThClosest_(nThClosest) { }
 
 template <typename W>
-void GeneralArc<W>::prsize_t() const {
+void GeneralTail<W>::prsize_t() const {
 	//std::cout << "This arc. predecessor = " << predecessor_ << ", weight: " << weight_ << 
 		//"nThClosest: " << nThClosest_ << "\n";
 }
 
 template <typename W>
-bool GeneralArc<W>::operator< (GeneralArc<W> const &rhs) const {
+bool GeneralTail<W>::operator< (GeneralTail<W> const &rhs) const {
   return weight_ < rhs.weight_;
 }
 
@@ -546,7 +546,7 @@ Node<W>::operator= (Node &&rhs) {
 }
 
 template <typename W>
-void Node<W>::relax(GeneralArc<W> const &arc) { // general arcs should be in ascending order always
+void Node<W>::relax(GeneralTail<W> const &arc) { // general arcs should be in ascending order always
 	bool isInserted = false;
 	//std::cout << "\nbefore node was:\n\t";
 	prsize_t();
@@ -595,8 +595,8 @@ template <typename W>
 size_t Node<W>::getNumPathFoundUntilNow() const { return numPathsFoundUntilNow_; }
 
 template <typename W>
-GeneralArc<W> const & 
-Node<W>::getGeneralArc() const {
+GeneralTail<W> const & 
+Node<W>::getGeneralTail() const {
 	return arcs_[numPathsFoundUntilNow_];
 }
 
@@ -610,7 +610,7 @@ bool Node<W>::operator< (Node const &rhs) const {
 	if (arcs_.size() <= numPathsFoundUntilNow_) { // currently not reachable; infinitely far
 		return false;
 	}
-	return getGeneralArc() < rhs.getGeneralArc();
+	return getGeneralTail() < rhs.getGeneralTail();
 }
 
 template <typename W>
@@ -846,7 +846,7 @@ graph_base<V, E, K, ExtractKey>::get_closest_path(K const &src, K const &target)
 	size_t targetVertex = mapping_.indexOf(target).first;
 	vector<vector<size_t>> graph;
 	ripEdge(arrayData_, graph);
-	vector<Arc<size_t>> result;
+	vector<Tail<size_t>> result;
 	bfs(graph, srcVertex, result);	
 	//std::cout << "after bfs\n";
 	if (result[targetVertex].isUnreachable()) { // not reachable
@@ -884,7 +884,7 @@ weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::get_shortest_path(K 
 	}
 	size_t srcVertex = mapping_.indexOf(src).first;
 	size_t targetVertex = mapping_.indexOf(target).first;
-	vector<Arc<W>> result;
+	vector<Tail<W>> result;
 	dijkstra(arrayData_, srcVertex, result);	
 	//std::cout << "after dijkstra\n";
 	if (result[targetVertex].isUnreachable()) { // not reachable
@@ -905,7 +905,7 @@ weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::
 	}
 	size_t srcVertex = mapping_.indexOf(src).first;
 	size_t targetVertex = mapping_.indexOf(target).first;
-	vector<vector<GeneralArc<W>>> result;
+	vector<vector<GeneralTail<W>>> result;
 	dijkstra2(arrayData_, srcVertex, result, num);	
 	//std::cout << "after dijkstra2\n";
 	if (result[targetVertex].empty()) { // not reachable
@@ -920,7 +920,7 @@ template <typename V, typename E, typename K, typename ExtractKey>
 template <typename T>
 typename graph_base<V, E, K, ExtractKey>::path
 graph_base<V, E, K, ExtractKey>::getPathAfterAlgorithm(
-			vector<Arc<T>> result, size_t srcVertex, size_t targetVertex) const {
+			vector<Tail<T>> result, size_t srcVertex, size_t targetVertex) const {
 	vector<size_t> reversedPath;
 	for (size_t curVertex = targetVertex; curVertex != srcVertex; ) {
 		//std::cout << "following predeccsor array\n";
@@ -934,7 +934,7 @@ template <typename V, typename E, typename K, typename ExtractKey, typename W, t
 template <typename T>
 vector<typename weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_path>
 weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::getPathsAfterAlgorithm(
-			vector<vector<GeneralArc<T>>> result, size_t srcVertex, size_t targetVertex) const {
+			vector<vector<GeneralTail<T>>> result, size_t srcVertex, size_t targetVertex) const {
 	size_t numPaths = result[targetVertex].size();
 	vector<vector<size_t>> reversedPaths(numPaths);
 	for (size_t nThCloest = 0; nThCloest < numPaths; nThCloest++){
@@ -942,7 +942,7 @@ weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::getPathsAfterAlgorit
 		for (size_t curVertex = targetVertex; curVertex != srcVertex; ) {
 			//std::cout << "following predeccsor array\n";
 			reversedPaths[nThCloest].push_back(curVertex);
-			GeneralArc<T> arc = result[curVertex][curNThClosest];
+			GeneralTail<T> arc = result[curVertex][curNThClosest];
 			curVertex = arc.predecessor_;
 			curNThClosest = arc.nThClosest_;
 		}
@@ -1092,7 +1092,7 @@ namespace lib_calvin_graph { // open for definitions
 
 // return whether the relaxation took place or not
 template <typename E>
-bool relax (Arc<E> const &lhs1, Arc<E> const &lhs2, Arc<E> &rhs) {
+bool relax (Tail<E> const &lhs1, Tail<E> const &lhs2, Tail<E> &rhs) {
   if (lhs1.isUnreachable() || lhs2.isUnreachable()) {
     return false;
 	}
@@ -1143,7 +1143,7 @@ void makeSymArrayData (vector<map<size_t, E>> const &dynamicData,
 
 template <typename W>
 void makeMatrixData (vector<vector<pair<size_t, W>>> const &arrayData, 
-    matrix<Arc<W>> &matrixData) {    
+    matrix<Tail<W>> &matrixData) {    
   size_t numV = static_cast<size_t>(arrayData.size());
   // remake matrix (initialization done here: predecessor_ = UNREACHABLE_VERTEX)
   matrixData.reset(numV);
@@ -1152,11 +1152,11 @@ void makeMatrixData (vector<vector<pair<size_t, W>>> const &arrayData,
     typename vector<pair<size_t, W>>::const_iterator iter;
     for (iter = original.begin(); iter != original.end(); ++iter) {
       // setval return a reference to matrix element.
-      matrixData.setval(i, iter->first)= Arc<W> (i, iter->second);
+      matrixData.setval(i, iter->first)= Tail<W> (i, iter->second);
     }
     // set self-edge (path of length 0)
     W zero = W();
-    matrixData.setval(i, i) = Arc<W> (i, zero);
+    matrixData.setval(i, i) = Tail<W> (i, zero);
   }
 }
 
@@ -1199,12 +1199,12 @@ using lib_calvin_adt::IntPq;
 // arcs in result: stores total weight of paths
 template <typename W>
 void dijkstra(vector<vector<pair<size_t, W>>> const &graph, size_t source, 
-    vector<Arc<W>> &result) {  
+    vector<Tail<W>> &result) {  
   size_t numV = static_cast<size_t>(graph.size()); 
   IntPq<W> pq(numV);
   vector<bool> isFinished(numV); // mark finished vertices
   result.clear();
-  result.resize(numV, Arc<W>()); // predecessor_ = UNREACHABLE_VERTEX for default
+  result.resize(numV, Tail<W>()); // predecessor_ = UNREACHABLE_VERTEX for default
   result[source].predecessor_ = source; // my convention
   // push source vertex with priority 0.
   W zero = W(); // W() must represent 0 value (true for built-in type)
@@ -1230,7 +1230,7 @@ void dijkstra(vector<vector<pair<size_t, W>>> const &graph, size_t source,
 
 template <typename W>
 void dijkstra2(vector<vector<pair<size_t, W>>> const &graph, size_t source, 
-							 vector<vector<GeneralArc<W>>> &result, size_t num) {  
+							 vector<vector<GeneralTail<W>>> &result, size_t num) {  
 	size_t const numPathsToFind = 20;
   size_t numV = static_cast<size_t>(graph.size()); 
 	typedef Node<W> Node;
@@ -1240,14 +1240,14 @@ void dijkstra2(vector<vector<pair<size_t, W>>> const &graph, size_t source,
   result.resize(numV);
 	vector<size_t> numFinishedPath(numV, 0);
 	Node zero = emptyNode;
-	zero.relax(GeneralArc<W>(source, 0, 0)); // 0'th closest path for itself
+	zero.relax(GeneralTail<W>(source, 0, 0)); // 0'th closest path for itself
   pq.insert(source, zero); 
   while (pq.size() != 0) {
     pair<size_t, Node> const &topElem = pq.pop();
     size_t curVertex = topElem.first;  
     Node curNode = topElem.second;
-		W const & curWeight = curNode.getGeneralArc().weight_;
-		result[curVertex].push_back(curNode.getGeneralArc());
+		W const & curWeight = curNode.getGeneralTail().weight_;
+		result[curVertex].push_back(curNode.getGeneralTail());
 		//std::cout << "Node popped curVertex; " << curVertex << ", nTh: " << 
 			//curNode.getNumPathFoundUntilNow() << 
 			//" weight = " << curNode.getWeight() << "\n";
@@ -1266,7 +1266,7 @@ void dijkstra2(vector<vector<pair<size_t, W>>> const &graph, size_t source,
 			if (pq.hasKey(targetVertex)) {
 				targetNode = pq.getPriority(targetVertex);
 			}
-			GeneralArc<W> arc(curVertex, curWeight + targetWeight, static_cast<size_t>(curNode.getNumPathFoundUntilNow()));
+			GeneralTail<W> arc(curVertex, curWeight + targetWeight, static_cast<size_t>(curNode.getNumPathFoundUntilNow()));
 			targetNode.relax(arc);
       if (pq.insert(targetVertex, targetNode) == true) {
       } else {
@@ -1282,12 +1282,13 @@ void dijkstra2(vector<vector<pair<size_t, W>>> const &graph, size_t source,
   }
 }
   
+// O(VE)
 template <typename W>
-void vellmanFord(vector<vector<pair<size_t, W>>> const &graph, 
-    size_t source, vector<Arc<W>> &result) {
+void bellmanFord(vector<vector<pair<size_t, W>>> const &graph, 
+    size_t source, vector<Tail<W>> &result) {
   size_t numV = static_cast<size_t>(graph.size());
   result.clear();
-  result.resize (numV, Arc<W>());
+  result.resize (numV, Tail<W>());
   result[source].predecessor_ = source; // my convention
   W zero = W();
   result[source].weight_ = zero;
@@ -1299,7 +1300,7 @@ void vellmanFord(vector<vector<pair<size_t, W>>> const &graph,
     for (size_t src = 0; src < numV; src++) {
 			for (size_t j = 0; j < graph[src].size(); j++) {
         pair<size_t, W> const &iter = graph[src][j];
-        Arc<W> edge (src, iter.second);
+        Tail<W> edge (src, iter.second);
         if (relax(result[src], edge, result[iter.first])) {
           finished = false;
 				}
@@ -1310,11 +1311,11 @@ void vellmanFord(vector<vector<pair<size_t, W>>> const &graph,
     }
   }
   // negative weighted cycle detection
-  vector<Arc<W>> temp = result;
+  vector<Tail<W>> temp = result;
   for (size_t src = 0; src < numV; src++) {
     for (size_t i = 0; i < static_cast<size_t>(graph[src].size()); ++i) {
       pair<size_t, W> const &iter = graph[src][i];
-      Arc<W> edge (src, iter.second);
+      Tail<W> edge (src, iter.second);
       relax(result[src], edge, result[iter.first]);
     }
   }
@@ -1332,8 +1333,8 @@ void vellmanFord(vector<vector<pair<size_t, W>>> const &graph,
 // Inferior to floydWarshall; practically useless
 // 2008-10-31: Researching this algorithm again for my B.S thesis.
 template <typename W>
-void matrixApsp (matrix<Arc<W>> const &graph, 
-    matrix<Arc<W>> &result) {
+void matrixApsp (matrix<Tail<W>> const &graph, 
+    matrix<Tail<W>> &result) {
   size_t numV = graph.height();
   result.reset(graph); // optimal solution of path length 1 (base case)
   // get ceiling of lg(numV)
@@ -1341,7 +1342,7 @@ void matrixApsp (matrix<Arc<W>> const &graph,
   cout << "matrixApsp iteration: " << lg_V << endl;
   // matrix multiplication lg_V times
   for (size_t i = 0; i < lg_V + 1; ++i) {
-    matrix<Arc<W>> temp = result;
+    matrix<Tail<W>> temp = result;
     result = result + result * result;
     //lib_calvin_matrix::blockedMultiAdd(result, result, result);
     //lib_calvin_matrix::recursiveMultiAdd(result, result, result);
@@ -1354,7 +1355,7 @@ void matrixApsp (matrix<Arc<W>> const &graph,
   
   // negative weighted cycle detection
   for (size_t i = 0 ; i < numV; ++i) {
-    Arc<W> temp = result.getval(i, i);
+    Tail<W> temp = result.getval(i, i);
     if (temp.weight_ < W()) {
       cout << "matrixApsp negative weighted cycle detected!!\n";
       return;
@@ -1363,15 +1364,15 @@ void matrixApsp (matrix<Arc<W>> const &graph,
 }
 
 // Slower than johnson upto E = 0.5 * V^0.5; fast in very dense graph
-// There is a room for performance boost: making * and + operations of struct
-// ...Arc simpler by omitting consideration for infinity (no edge). To do so, 
+// There is a room for performance boost: making * and + operations of 
+// ...Tail simpler by omitting consideration for infinity (no edge). To do so, 
 // ...there should a limit on possible edge weight of graph. And then, we can
 // ...use a very big positive weight to represent no-edge. But it turned out 
 // ...that it provides only about 10% boost, so I rejected it because it hampers
 // ...design and clarity. 
 template <typename W>
-void floydWarshall (matrix<Arc<W>> const &graph, 
-    matrix<Arc<W>> &result) {  
+void floydWarshall (matrix<Tail<W>> const &graph, 
+    matrix<Tail<W>> &result) {  
   size_t numV = graph.height();
   result.reset(graph); // copy
   for (size_t m = 0; m < numV; m++) { // m is the vertex that is being added
@@ -1389,21 +1390,21 @@ void floydWarshall (matrix<Arc<W>> const &graph,
 // So that the transformed edges are all positive weighted.
 template <typename W>
 void johnson (vector<vector<pair<size_t, W>>> const &graph, 
-    matrix<Arc<W>> &result) {
+    matrix<Tail<W>> &result) {
   size_t numV = static_cast<size_t>(graph.size());
   W zero = W();
   result.reset(numV);
-  // Use vellmanFord to calculate offsets 
+  // Use bellmanFord to calculate offsets 
   vector<W> offsets(numV); // offset for each vertex
   vector<vector<pair<size_t, W>>> tempGraph = graph;
   tempGraph.push_back(vector<pair<size_t, W>> (numV)); // artificial vertex
   for (size_t i = 0; i < numV; ++i) { 
     tempGraph[numV][i] = pair<size_t, W> (i, zero); 
   }
-  vector<Arc<W>> tempArcs;
-  vellmanFord (tempGraph, numV, tempArcs);
+  vector<Tail<W>> tempTails;
+  bellmanFord (tempGraph, numV, tempTails);
   for (size_t i = 0; i < numV; ++i) {
-    offsets[i] = tempArcs[i].weight_;
+    offsets[i] = tempTails[i].weight_;
   }
   // Use offsets to adjust graph to a positive weighted one 
   vector<vector<pair<size_t, W>>> &positiveGraph = tempGraph;
@@ -1417,7 +1418,7 @@ void johnson (vector<vector<pair<size_t, W>>> const &graph,
     }
   }
   // Use dijkstra on transformed graph for every source vertex 
-  vector<Arc<W>> SSSP_result; // SSSP result
+  vector<Tail<W>> SSSP_result; // single source shortest path
   for (size_t i = 0; i < numV; ++i) {
     dijkstra (positiveGraph, i, SSSP_result);
     // copy SSSP result size_to matrix row
@@ -1431,7 +1432,7 @@ void johnson (vector<vector<pair<size_t, W>>> const &graph,
 
 template <typename W>
 bool shortestPathCheck (vector<vector<pair<size_t, W>>> const &graph, 
-    size_t source, vector<Arc<W>> &solution) {  
+    size_t source, vector<Tail<W>> &solution) {  
   size_t numV = static_cast<size_t>(graph.size());
   if (solution[source].isUnreachable() || solution[source].weight_ != W()) {
 		cout << "input error\n";

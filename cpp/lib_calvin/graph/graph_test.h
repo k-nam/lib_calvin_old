@@ -186,8 +186,8 @@ void lib_calvin_graph::GraphTest<V, E>::bfsTest() {
 	graph<V, size_t> graph;
 	populateGraph<V, size_t>(graph, numV_, numE_, 0, 1);
   graph.goStatic();
-  vector<Arc<size_t>> result1; 
-	vector<Arc<size_t>> result2;
+  vector<Tail<size_t>> result1; 
+	vector<Tail<size_t>> result2;
   vector<vector<size_t>> arrayDataWithoutEdge;
   ripEdge(graph.arrayData_, arrayDataWithoutEdge);
 	stopwatch watch;
@@ -220,7 +220,7 @@ void lib_calvin_graph::GraphTest<V, E>::algorithmTest() {
 	graph.goStatic();
 	// Additional tests for weighted graph: shortetst paths problems
 	// dijkstra with array data
-	vector<Arc<E>> solution;
+	vector<Tail<E>> solution;
 	stopwatch watch;
   watch.start();
   dijkstra<E>(graph.arrayData_, 0, solution);
@@ -233,22 +233,22 @@ void lib_calvin_graph::GraphTest<V, E>::algorithmTest() {
     "\t" << watch.read() << endl;
 
   // Vellman-Ford
-  vector<Arc<E>> solution_v;
+  vector<Tail<E>> solution_v;
   for (size_t i = numV_ - 1; i < numV_; ++i) {
     watch.start();
-    vellmanFord (graph.arrayData_, i, solution_v);
+    bellmanFord (graph.arrayData_, i, solution_v);
     watch.stop();
 		if (shortestPathCheck (graph.arrayData_, i, solution_v) == false) {
-      cout << "vellmanFord error.\n";
+      cout << "bellmanFord error.\n";
 			exit(0);
 		}
   }
   cout << "Vellman-Ford of vertices: " << numV_ << "\tedges: " << numE_ << 
     "\t" << watch.read() << endl;
 	
-  vector<Arc<E>> row;
+  vector<Tail<E>> row;
   // matrixApsp
-  matrix<Arc<E>> apspResult(1);
+  matrix<Tail<E>> apspResult(1);
   watch.start();
   matrixApsp(graph.matrixData_, apspResult);
   watch.stop();
@@ -256,7 +256,7 @@ void lib_calvin_graph::GraphTest<V, E>::algorithmTest() {
     "\t" << watch.read() << endl;
 
   // Floyd-Earshall
-  matrix<Arc<E>> floydResult(1);
+  matrix<Tail<E>> floydResult(1);
   watch.start();
   floydWarshall (graph.matrixData_, floydResult);
   watch.stop();
@@ -264,7 +264,7 @@ void lib_calvin_graph::GraphTest<V, E>::algorithmTest() {
     "\t" << watch.read() << endl;
 
   // johnson's
-  matrix<Arc<E>> johnsonResult(1);
+  matrix<Tail<E>> johnsonResult(1);
   watch.start();
   johnson(graph.arrayData_, johnsonResult);
   watch.stop();
@@ -275,7 +275,7 @@ void lib_calvin_graph::GraphTest<V, E>::algorithmTest() {
 	bool isFloydCorrect = true;
 	bool isJohnsonCorrect = true;
   for (size_t i = 0; i < numV_; ++i) {
-    vellmanFord(graph.arrayData_, i, row); 
+    bellmanFord(graph.arrayData_, i, row); 
     for (size_t j = 0; j < numV_; j++) {
       if (apspResult.getval(i, j).weight_ != row[j].weight_ && 
           row[j].predecessor_!= UNREACHABLE_VERTEX) {
@@ -292,15 +292,15 @@ void lib_calvin_graph::GraphTest<V, E>::algorithmTest() {
     }
   }
 	if (isApspCorrect == false) {
-    cout << "Apsp error (to vellmanFord)\n";
+    cout << "Apsp error (to bellmanFord)\n";
 		exit(0);
 	}
 	if (isFloydCorrect == false) {
-    cout << "FLOYD error (to vellmanFord)\n";
+    cout << "FLOYD error (to bellmanFord)\n";
 		exit(0);
 	}
 	if (isJohnsonCorrect == false) {
-    cout << "JOHNSON error (to vellmanFord)\n";
+    cout << "JOHNSON error (to bellmanFord)\n";
 		exit(0);
 	}
 	std::cout << "\n";

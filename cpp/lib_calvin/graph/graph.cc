@@ -104,7 +104,7 @@ void lib_calvin_graph::dfs2(vector<vector<size_t>> const &graph,
   }
 }
 
-void lib_calvin_graph::bfs(vector<vector<size_t>> const &graph, size_t source, vector<Arc<size_t>> &result) {
+void lib_calvin_graph::bfs(vector<vector<size_t>> const &graph, size_t source, vector<Tail<size_t>> &result) {
   result.clear();
   result.resize(graph.size());
 	for (size_t i = 0; i < graph.size(); ++i) {
