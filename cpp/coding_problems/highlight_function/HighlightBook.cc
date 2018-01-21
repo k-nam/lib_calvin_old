@@ -9,7 +9,7 @@ HighlightBook::processInput(pair<int, int> input) {
 	if (input.first >= input.second) {
 		return false;
 	}
-	auto iter = blocks_.upper_bound(input.first);
+	auto iter = blocks_.upper_bound(input.first); // first element greater than input
 	decltype(blocks_)::iterator blockToExtend;
 	bool toExtend = false;
 

@@ -7,23 +7,13 @@
 #include <ctime>
 #include "HighlightBook.h"
 
-using namespace std;
-
-void printContainer(vector<pair<int, int>> const &container);
-vector<pair<int, int>> getDataFromString(string input);
-int testWithRandomData();
-
-int totalLength;
-int numOps;
-
-int main() {
-	string a = R"(10 3
+string a = R"(10 3
 		2 6
 		6 8
 		3 4)";
-	// 5
+// 5
 
-	string b = R"(10 10
+string b = R"(10 10
 		1 6
 		2 5
 		1 7
@@ -34,17 +24,17 @@ int main() {
 		2 2
 		1 10
 		2 10)";
-	// 1
+// 1
 
-	string c = R"(100 5
+string c = R"(100 5
 		1 100
 		1 100
 		1 100
 		1 100
 		1 100)";
-	// 100
+// 100
 
-	string d = R"(100 20
+string d = R"(100 20
 		14 14
 		53 100
 		60 64
@@ -65,8 +55,18 @@ int main() {
 		92 94
 		49 53
 		17 17)";
-	// 83
+// 83
 
+using namespace std;
+
+void printContainer(vector<pair<int, int>> const &container);
+vector<pair<int, int>> getDataFromString(string input);
+int testWithRandomData();
+
+int totalLength;
+int numOps;
+
+int main() {
 	string input;
 	vector<pair<int, int>> data(numOps);
 
@@ -106,9 +106,7 @@ void printContainer(vector<pair<int, int>> const &container) {
 vector<pair<int, int>>
 getDataFromString(string text) {
 	using namespace std;
-
 	istringstream iss(text);
-
 	string input;
 	getline(iss, input, ' ');
 	totalLength = stoi(input);
