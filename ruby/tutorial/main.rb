@@ -1,4 +1,5 @@
 require_relative 'container.rb'
+require_relative 'iteration.rb'
 require_relative 'regex.rb'
 require_relative 'block.rb'
 
@@ -10,10 +11,12 @@ end
 
 #un_test('container', '01')
 
+run_test('iteration', '03')
+
 #run_test('regex', '01')
 #run_test('regex', '02')
 
-run_test('block', '01')
+#run_test('block', '01')
 
-puts 'a'*3
+
 
