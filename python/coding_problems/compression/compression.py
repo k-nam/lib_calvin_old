@@ -1,3 +1,5 @@
+test_data = []
+
 test_a = r"""abcdefg10h12(ij2(3k))l9mnop4(3(2(6(qq)r)s5tu)7v5w)x15(yz)"""
 # 5 2 3 4 1 5
 
@@ -57,16 +59,10 @@ x 0
 y 0
 z 500000000000000"""
 
+test_data.append((test_a, answer_a))
+test_data.append((test_b, answer_b))
+
 test_c = "e2(a2(bc))d"
-
-for_paiza_submission = False
-test_input = test_b
-
-def read_line():
-	if (for_paiza_submission):
-		return input()
-	else:
-		return test_input
 
 # term => alphabet
 # term => digit | term
@@ -94,7 +90,7 @@ def sum(set1, set2):
 			set1[key] = set2[key]
 	return set1
 
-def decode(compressed_string):
+def solve(compressed_string):
 	current_index = 0
 
 	def parse_char(char):
@@ -129,7 +125,6 @@ def decode(compressed_string):
 			return { first_letter: 1 }
 
 	def parse_exp():
-		nonlocal current_index
 		if (current_index == len(compressed_string)):
 			return get_empty()
 		else:
@@ -151,12 +146,18 @@ def decode(compressed_string):
 #print(multiply({'a': 2, 'b': 3}, 3))
 #print(sum({'a': 2, 'b': 3 }, { 'b': 1, 'd': 3}))
 #print(get_empty())
-print(decode(read_line()))
 
-if (decode(read_line()) == answer_b):
-	print('OK')
+for_paiza_submission = False
+
+if (for_paiza_submission):
+	print(solve(input()))
 else:
-	print('Wrong')
+	for test_case in test_data:
+		if (solve(test_case[0]) == test_case[1]):
+			print('OK')
+		else:
+			print('Wrong')
+
 
 
 
