@@ -89,6 +89,7 @@ for permutation in get_all_permutation_of_all_subset(list(range(1, len(given_per
 
 first_string = sorted(result_string_list)[0]
 print(" ".join(str(elem) for elem in first_string))
+
 #print(apply_permutation([3, 1, 2], [1, 3, 2]))
 #print(get_all_permutation([1, 2, 3]))
 #print(len(get_all_subsets([1, 2, 3, 5, 4])))

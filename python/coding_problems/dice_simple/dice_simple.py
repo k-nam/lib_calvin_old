@@ -96,8 +96,6 @@ def solve(index, dice_orientation):
 	record[(index, dice_orientation)] = total_cost
 	return total_cost
 
-
-
 def solve2():
 	def is_opposite(n1, n2):
 		return opposite_data[n1] == n2

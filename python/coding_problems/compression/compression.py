@@ -150,7 +150,7 @@ def solve(compressed_string):
 for_paiza_submission = False
 
 if (for_paiza_submission):
-	print(solve(input()))
+	print(solve(get_paiza_input()))
 else:
 	for test_case in test_data:
 		if (solve(test_case[0]) == test_case[1]):

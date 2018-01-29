@@ -41,7 +41,6 @@ def read_line():
 		return lines.pop(0)
 
 h, w, num_iter = [int(x) for x in read_line().split()]
-
 data = []
 
 for i in range(h):
@@ -98,7 +97,6 @@ def bitrep_to_list(bitrep, row_size):
 		bitrep = shift_integer(bitrep, row_size, False)
 	return result
 
-
 def applySingleStep(bit_rep, row_size):
 	return bit_rep ^ shift_integer(bit_rep, row_size, True) ^ shift_integer(bit_rep, row_size, False)
 
@@ -153,5 +151,6 @@ def solve(data, num_iter):
 	print(str(sum))
 	
 solve(data, num_iter)
+
 #solve(get_random_data(300), 300000000)
 
