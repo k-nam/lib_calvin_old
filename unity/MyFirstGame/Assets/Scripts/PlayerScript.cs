@@ -56,7 +56,7 @@ public class PlayerScript : MonoBehaviour {
 				}
 			} else if (Input.GetMouseButtonDown(1)) { // move unit
 				if (isSelected) {
-					NavMeshAgent agent = GetComponent<NavMeshAgent> ();
+					UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent> ();
 					agent.destination = hit.point;	
 				}
 			}
