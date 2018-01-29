@@ -9,7 +9,6 @@ module RegexTest
             else
                 print ' didnt match '
             end
-            puts regex
         end
         check_with_regex('Calvin', /C.+n/)
         check_with_regex('Tom', /C.+n/)

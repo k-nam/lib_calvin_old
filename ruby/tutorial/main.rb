@@ -9,11 +9,12 @@ def run_test(category, number)
 end
 
 
-#un_test('container', '01')
+run_test('container', '01')
+run_test('container', '02')
 
-run_test('iteration', '03')
+#run_test('iteration', '03')
 
-#run_test('regex', '01')
+#un_test('regex', '01')
 #run_test('regex', '02')
 
 #run_test('block', '01')
