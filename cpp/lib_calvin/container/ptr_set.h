@@ -13,7 +13,7 @@ public:
 	K operator()(T *const &ptr) const { return ExtractKey()(*ptr); }
 };
 
-template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = std::identity<T>,
+template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = Identity<T>,
 	typename SetImpl = BTree<T *, Comp, K, PtrExtractKey<T, K, ExtractKey>>>
 class PtrSet 
 {

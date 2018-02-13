@@ -12,7 +12,7 @@ size_t const HASH_SET_SIZES[26] = { 53, 97, 193, 389, 769, 1543, 3079, 6151,
 									393241, 786433, 1572869, 3145739, 6291469, 12582917, 25165843, 50331653, 
 									100663319, 201326611, 402653189, 805306457, 1610612741 };
 
-template <typename T, typename K = T, typename ExtractKey = std::identity<T>,
+template <typename T, typename K = T, typename ExtractKey = Identity<T>,
 	typename HashFunc = boost::hash<K>> 
 class HashTable 
 {

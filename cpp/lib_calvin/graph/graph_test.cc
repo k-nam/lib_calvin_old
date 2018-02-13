@@ -7,7 +7,7 @@ void lib_calvin_graph::graphTest() {
 	std::cout << "--------------- Beginning graph test ----------------\n\n";
 
 	GraphTest<int, int> test(1000, 100000, 0);
-  test.insertionTest();
+	test.insertionTest();
 	test.insertionTest2();
 	test.dfsTest();
 	test.bfsTest();

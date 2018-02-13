@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <cstdlib>
 #include <chrono>
+#include <immintrin.h>
 
 #ifdef _WIN64 
 #define MKL_ILP64
@@ -13,6 +14,7 @@
 
 
 void lib_calvin_matrix::matrixTest() {	
+	std::cout << "---------- Beginning matrix test -----------\n\n";
 	typedef double NumericType;
 	// If test size is not 40 * 2^n, naiveMultiAdd2 in matrix.cc will cause runtime error
 	//  with _mm256_store_pd().
@@ -26,11 +28,9 @@ void lib_calvin_matrix::matrixTest() {
 	std::cout << watch.read() << "\n";
 
 	assemblyTest();
-
 	
-	std::cout << "---------- Beginning matrix test -----------\n\n";
-	lib_calvin::matrix<NumericType> m1(testSize);
-	m1.check(false);
+	matrixFunctionTest();
+	matrixPerformanceTest();
 
 	__m128 aa = _mm_set_ps(1, 2, 3, 4);
 	__m128 bb = _mm_set_ps(2, 4, 5, 6);
@@ -39,6 +39,22 @@ void lib_calvin_matrix::matrixTest() {
 	std::cout << p[0] << " " << p[1] << " " << p[2] << " " << p[3] << "\n";
 	std::cout << "\n";
 	std::cout << "------------- Matrix test finished ---------------\n\n\n";	
+}
+
+void lib_calvin_matrix::matrixFunctionTest() {
+	std::cout << "---------- Beginning matrixFunctionTest -----------\n\n";
+	size_t testSize = 500;
+	lib_calvin::matrix<double> m(testSize);
+	m.check();
+	std::cout << "------------- matrixFunctionTest finished ---------------\n\n\n";
+}
+
+void lib_calvin_matrix::matrixPerformanceTest() {
+	std::cout << "---------- Beginning matrixPerformanceTest -----------\n\n";
+	size_t testSize = 1280;
+	lib_calvin::matrix<double> m(testSize);
+	m.check(false);
+	std::cout << "------------- matrixPerformanceTest finished ---------------\n\n\n";
 }
 
 void lib_calvin_matrix::mklTest(size_t size) {
@@ -68,7 +84,8 @@ void lib_calvin_matrix::mklTest(size_t size) {
 	watch.start();
 	matrix<NumericType> result = prod(a, b);
 	watch.stop();
-	std::cout << "mkl size: " << size << ". " << watch.read() << "  GFLOPS: " <<
+	std::cout << "size: " << size << "\n";
+	std::cout << "matrix*matrix: " << watch.read() << "  GFLOPS: " <<
 		(double)size * size * size * 2 / watch.read() / 1000000000 << "\n";
 	for (size_t i = 0; i < size; ++i) {
 		for (size_t j = 0; j < size; j++) {
@@ -82,12 +99,12 @@ void lib_calvin_matrix::mklTest(size_t size) {
 	watch.start();
 	result = prod(c, x);
 	watch.stop();
-	std::cout << "mkl matrix*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
+	std::cout << "matrix*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
 		(double)size * size2 * 2 / watch.read() / 1000000000 << "\n";
 	watch.start();
 	result = prod(y, x);
 	watch.stop();
-	std::cout << "mkl vector*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
+	std::cout << "vector*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
 		(double)size * 2 / watch.read() / 1000000000 << "\n";
 	std::cout << "\n";
 

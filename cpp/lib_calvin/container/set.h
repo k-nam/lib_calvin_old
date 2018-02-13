@@ -13,13 +13,13 @@
 
 namespace lib_calvin_container
 {
-template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = std::identity<T>>
+template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = Identity<T>>
 using SetImpl = 
 	//lib_calvin_container::BPlusTree<T, K, Comp, ExtractKey>;
 	lib_calvin_container::RbTree<T, K, Comp, ExtractKey>;
 	//lib_calvin_container::BinTree<T, K, Comp, ExtractKey>;
 
-template <typename T, typename K = T, typename ExtractKey = std::identity<T>, typename HashFunc = boost::hash<T>>
+template <typename T, typename K = T, typename ExtractKey = Identity<T>, typename HashFunc = boost::hash<T>>
 using HashSetImpl = 
 	lib_calvin_container::HashTable<T, K, ExtractKey, HashFunc>;
 
@@ -27,7 +27,7 @@ template <typename T, typename Comp = std::less<K>>
 using Set = SetImpl<T, T, Comp>;
 
 template <typename T, typename HashFunc>
-using HashSet = HashSetImpl<T, T, std::identity<T>, HashFunc>;
+using HashSet = HashSetImpl<T, T, Identity<T>, HashFunc>;
 } // end namespace lib_calvin_container
 
 namespace lib_calvin

@@ -8,7 +8,7 @@ namespace lib_calvin_container
 {
 
 
-template <typename T, typename K = T, typename ExtractKey = std::identity<T>,
+template <typename T, typename K = T, typename ExtractKey = Identity<T>,
 	typename HashFunc = boost::hash<K>> 
 class HashTable2 
 {

@@ -30,7 +30,7 @@ private:
 	RbColor color_;
 };
 
-template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = std::identity<T>>
+template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = Identity<T>>
 class RbTree: public BinTree<T, K, Comp, ExtractKey> {
 public:
 	RbTree<T, K, Comp, ExtractKey>(): BinTree<T, K, Comp, ExtractKey>() { }
