@@ -9,13 +9,13 @@ using std::ifstream;
 
 handwritten_digits_analyzer::
 handwritten_digits_analyzer() :
-	neuralNetwork_(28 * 28, 10, vector<size_t>{ 100, 50, 30 }) {
+	neuralNetwork_(28 * 28, 10, vector<size_t>{ 50 }) {
 }
 
 void
 handwritten_digits_analyzer::trainWithBinaryFile(std::string imageFileName, std::string labelFileName) {
 	vector<std::pair<vector<double>, vector<double>>> trainData;
-	ifstream imageFile(imageFileName);
+	ifstream imageFile(imageFileName);  
 	ifstream labelFile(labelFileName);
 
 	std::cout << "Checking image data file...\n";
