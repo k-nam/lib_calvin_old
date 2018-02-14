@@ -25,10 +25,10 @@ test_c = r"""6 5 4 3 2 1
 6
 6
 6"""
-# 8
+# 0
 
 for_paiza_submission = False
-test_input = test_c
+test_input = test_b
 lines = test_input.split('\n')
 
 def read_line():
@@ -73,30 +73,7 @@ def rotate_dice(original_orientation, new_top):
 	else:
 		return [(T, B, U, D, L, R)]
 
-def solve(index, dice_orientation):
-	if (index == total_length):
-		return 0
-	if ((index, dice_orientation) in record):
-		return record[(index, dice_orientation)]
-	
-	possible_new_orientations = rotate_dice(dice_orientation, map_data[index])
-
-	if (dice_orientation[0] == map_data[index]):
-		this_cost = 0
-	elif (dice_orientation[1] == map_data[index]):
-		this_cost = 2
-	else:
-		this_cost = 1
-
-	#min_cost_afterward = total_length * 2
-	#for orientation in possible_new_orientations:
-	min_cost_afterward = solve(index + 1, possible_new_orientations[0])
-
-	total_cost = this_cost + min_cost_afterward
-	record[(index, dice_orientation)] = total_cost
-	return total_cost
-
-def solve2():
+def solve():
 	def is_opposite(n1, n2):
 		return opposite_data[n1] == n2
 	total_cost = 0
@@ -109,6 +86,5 @@ def solve2():
 			total_cost += 1
 	return total_cost
 
-#print(solve(1, dice_orientation))
-print(solve2())
+print(solve())
 
