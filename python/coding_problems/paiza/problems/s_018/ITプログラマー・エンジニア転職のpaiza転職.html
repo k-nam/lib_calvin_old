@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)https://paiza.jp/career/challenges/223/page/problem -->
+<html lang="ja" xml:lang="ja" xmlns:fb="http://www.facebook.com/2008/fbml" xmlns:gr="http://gree.jp/ns" xmlns:mixi="http://mixi-platform.com/ns#" xmlns:og="http://ogp.me/ns#" xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<script type="text/javascript" src="./ITプログラマー・エンジニア転職のpaiza転職_files/397ecd5a4b"></script><script src="./ITプログラマー・エンジニア転職のpaiza転職_files/nr-1071.min.js.다운로드"></script><script type="text/javascript" async="" src="./ITプログラマー・エンジニア転職のpaiza転職_files/widget.js.다운로드"></script><script id="facebook-jssdk" async="" src="./ITプログラマー・エンジニア転職のpaiza転職_files/sdk.js.다운로드"></script><script id="twitter-wjs" async="" src="./ITプログラマー・エンジニア転職のpaiza転職_files/widgets.js.다운로드"></script><script async="" src="./ITプログラマー・エンジニア転職のpaiza転職_files/analytics.js.다운로드"></script><script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","errorBeacon":"bam.nr-data.net","licenseKey":"397ecd5a4b","applicationID":"24775725","transactionName":"IlkPRxReXgpTF0pUVxNTBEFJUloHWgkAWVEERU5BA0JHCkI=","queueTime":0,"applicationTime":490,"agent":""}</script>
+<script type="text/javascript">window.NREUM||(NREUM={}),__nr_require=function(e,t,n){function r(n){if(!t[n]){var o=t[n]={exports:{}};e[n][0].call(o.exports,function(t){var o=e[n][1][t];return r(o||t)},o,o.exports)}return t[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<n.length;o++)r(n[o]);return r}({1:[function(e,t,n){function r(){}function o(e,t,n){return function(){return i(e,[f.now()].concat(u(arguments)),t?null:this,n),t?void 0:this}}var i=e("handle"),a=e(2),u=e(3),c=e("ee").get("tracer"),f=e("loader"),s=NREUM;"undefined"==typeof window.newrelic&&(newrelic=s);var p=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],d="api-",l=d+"ixn-";a(p,function(e,t){s[t]=o(d+t,!0,"api")}),s.addPageAction=o(d+"addPageAction",!0),s.setCurrentRouteName=o(d+"routeName",!0),t.exports=newrelic,s.interaction=function(){return(new r).get()};var m=r.prototype={createTracer:function(e,t){var n={},r=this,o="function"==typeof t;return i(l+"tracer",[f.now(),e,n],r),function(){if(c.emit((o?"":"no-")+"fn-start",[f.now(),r,o],n),o)try{return t.apply(this,arguments)}catch(e){throw c.emit("fn-err",[arguments,this,e],n),e}finally{c.emit("fn-end",[f.now()],n)}}}};a("setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(e,t){m[t]=o(l+t)}),newrelic.noticeError=function(e){"string"==typeof e&&(e=new Error(e)),i("err",[e,f.now()])}},{}],2:[function(e,t,n){function r(e,t){var n=[],r="",i=0;for(r in e)o.call(e,r)&&(n[i]=t(r,e[r]),i+=1);return n}var o=Object.prototype.hasOwnProperty;t.exports=r},{}],3:[function(e,t,n){function r(e,t,n){t||(t=0),"undefined"==typeof n&&(n=e?e.length:0);for(var r=-1,o=n-t||0,i=Array(o<0?0:o);++r<o;)i[r]=e[t+r];return i}t.exports=r},{}],4:[function(e,t,n){t.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(e,t,n){function r(){}function o(e){function t(e){return e&&e instanceof r?e:e?c(e,u,i):i()}function n(n,r,o,i){if(!d.aborted||i){e&&e(n,r,o);for(var a=t(o),u=m(n),c=u.length,f=0;f<c;f++)u[f].apply(a,r);var p=s[y[n]];return p&&p.push([b,n,r,a]),a}}function l(e,t){v[e]=m(e).concat(t)}function m(e){return v[e]||[]}function w(e){return p[e]=p[e]||o(n)}function g(e,t){f(e,function(e,n){t=t||"feature",y[n]=t,t in s||(s[t]=[])})}var v={},y={},b={on:l,emit:n,get:w,listeners:m,context:t,buffer:g,abort:a,aborted:!1};return b}function i(){return new r}function a(){(s.api||s.feature)&&(d.aborted=!0,s=d.backlog={})}var u="nr@context",c=e("gos"),f=e(2),s={},p={},d=t.exports=o();d.backlog=s},{}],gos:[function(e,t,n){function r(e,t,n){if(o.call(e,t))return e[t];var r=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,t,{value:r,writable:!0,enumerable:!1}),r}catch(i){}return e[t]=r,r}var o=Object.prototype.hasOwnProperty;t.exports=r},{}],handle:[function(e,t,n){function r(e,t,n,r){o.buffer([e],r),o.emit(e,t,n)}var o=e("ee").get("handle");t.exports=r,r.ee=o},{}],id:[function(e,t,n){function r(e){var t=typeof e;return!e||"object"!==t&&"function"!==t?-1:e===window?0:a(e,i,function(){return o++})}var o=1,i="nr@id",a=e("gos");t.exports=r},{}],loader:[function(e,t,n){function r(){if(!x++){var e=h.info=NREUM.info,t=d.getElementsByTagName("script")[0];if(setTimeout(s.abort,3e4),!(e&&e.licenseKey&&e.applicationID&&t))return s.abort();f(y,function(t,n){e[t]||(e[t]=n)}),c("mark",["onload",a()+h.offset],null,"api");var n=d.createElement("script");n.src="https://"+e.agent,t.parentNode.insertBefore(n,t)}}function o(){"complete"===d.readyState&&i()}function i(){c("mark",["domContent",a()+h.offset],null,"api")}function a(){return E.exists&&performance.now?Math.round(performance.now()):(u=Math.max((new Date).getTime(),u))-h.offset}var u=(new Date).getTime(),c=e("handle"),f=e(2),s=e("ee"),p=window,d=p.document,l="addEventListener",m="attachEvent",w=p.XMLHttpRequest,g=w&&w.prototype;NREUM.o={ST:setTimeout,SI:p.setImmediate,CT:clearTimeout,XHR:w,REQ:p.Request,EV:p.Event,PR:p.Promise,MO:p.MutationObserver};var v=""+location,y={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1071.min.js"},b=w&&g&&g[l]&&!/CriOS/.test(navigator.userAgent),h=t.exports={offset:u,now:a,origin:v,features:{},xhrWrappable:b};e(1),d[l]?(d[l]("DOMContentLoaded",i,!1),p[l]("load",r,!1)):(d[m]("onreadystatechange",o),p[m]("onload",r)),c("mark",["firstbyte",u],null,"api");var x=0,E=e(4)},{}]},{},["loader"]);</script>
+<meta content="text/javascript" http-equiv="Content-Script-Type">
+<meta content="text/css" http-equiv="Content-Style-Type">
+<meta content="no" http-equiv="Imagetoolbar">
+<title>ITプログラマー・エンジニア転職のpaiza転職</title>
+<meta name="description" content="転職・就活情報から未経験向け求人や動画学習まで、IT／WEBエンジニアに特化した総合求職・学習サイト「paiza（パイザ）」。プログラミングスキルチェックを提供し、学歴や職歴ではなく「技術がある人」が評価され、活躍できる社会の実現を目指したサービスを提供しています。">
+<meta name="keywords" content="java求人,php求人,ruby求人,python求人,c++求人,c#求人,it,web,転職,就活,求人,新卒,学習,未経験,プログラミング,エンジニア,プログラマー,pg,se,コーディング面接,プログラミング試験,年収診断">
+<meta property="fb:app_id" content="896098410425951">
+<meta property="og:title" content="ITプログラマー・エンジニア転職のpaiza転職">
+<meta property="og:image" content="https://paiza.jp/images/ogp/og_paiza_career.png">
+<meta property="og:type" content="company">
+<meta property="og:url" content="https://paiza.jp/career/challenges/223/page/problem">
+<meta property="og:site_name" content="ITプログラマー・エンジニア転職のpaiza転職">
+<meta property="og:description" content="転職・就活情報から未経験向け求人や動画学習まで、IT／WEBエンジニアに特化した総合求職・学習サイト「paiza（パイザ）」。プログラミングスキルチェックを提供し、学歴や職歴ではなく「技術がある人」が評価され、活躍できる社会の実現を目指したサービスを提供しています。">
+<meta property="og:locale" content="ja_JP">
+<meta name="charset" content="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noodp,noydir">
+<meta name="copyright" content="Copyright&amp;copy; Gino, Inc. All Rights Reserved.">
+<meta name="index" content="true">
+<meta name="follow" content="true">
+<link rel="stylesheet" media="screen,print" href="./ITプログラマー・エンジニア転職のpaiza転職_files/reset-06fd7f92fa1ed6e6d040943f584eb2d1.css">
+<link rel="stylesheet" media="screen,print" href="./ITプログラマー・エンジニア転職のpaiza転職_files/init_bootstrap-f4067bf799152f8372db0c348e344b49.css">
+<link rel="stylesheet" media="all" href="./ITプログラマー・エンジニア転職のpaiza転職_files/application-7f6df811e4590018473cedac2bae2f17.css">
+<link rel="stylesheet" media="all" href="./ITプログラマー・エンジニア転職のpaiza転職_files/colorbox-e4438f5ff068feed4551de3297012880.css">
+<link rel="stylesheet" media="all" href="./ITプログラマー・エンジニア転職のpaiza転職_files/sweet-alert-931b27ce0ed5f830f0f1649f19740cf4.css">
+<link rel="stylesheet" media="all" href="./ITプログラマー・エンジニア転職のpaiza転職_files/suggest_profile_input-04a28a5781dc5791e6e6a111640b1881.css">
+<link rel="stylesheet" media="all" href="./ITプログラマー・エンジニア転職のpaiza転職_files/application-733f739a7bea8cd71346f8cac854d4fb.css">
+<link rel="stylesheet" media="screen,print" href="./ITプログラマー・エンジニア転職のpaiza転職_files/common-9667bbf0663fc76527ab5ba45fd0e681.css">
+<link rel="stylesheet" media="print" href="./ITプログラマー・エンジニア転職のpaiza転職_files/print-41097d4dc31840ba9d550d944524e607.css">
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/application-84d1ed6cd19877602083b6c732f48663.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/rollover-202c64a5592c3276b9a61ebf5fe164f0.js.다운로드" defer="defer"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/social_button-a4dbff699f882d637b13af688d1a7fd3.js.다운로드" async="async"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/easing_scroll-cab35fd6a06d2045314ce44f51657a2c.js.다운로드" defer="defer"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/challenge_clear_effect-2c01d5a3de355cb2443f19dae6a2507c.js.다운로드"></script>
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/font-awesome.min.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/animate.min.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/style.min.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/style-responsive.min.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/default.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/init_bootstrap-f4067bf799152f8372db0c348e344b49.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/mypage-6d41ec1f7a2e0b01b76279b87220b288.css">
+<link rel="stylesheet" media="screen,print" href="./ITプログラマー・エンジニア転職のpaiza転職_files/member_layout-7a399cc0ee13c2a179d6c0e372d69e57.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/application-7f6df811e4590018473cedac2bae2f17.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/challenges-6b8a4fbc3f75e2d31648133ea24d3e54.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/challenge_tab-5bda7814367dccf455949f5bcfb9983a.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/judge_result-4d9038b6fa184e1aa57fa528ccf47268.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/rank_up-cc7b4d4a170b81f810f92425ad149168.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/button-843b7236341cb7c680c0a6ebdaa504ca.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/editor-cbc4b8d8aed41559519604f8de027f85.css">
+<link rel="stylesheet" media="screen, print" href="./ITプログラマー・エンジニア転職のpaiza転職_files/offer_button-d799b5c65231feb8834dd053cea539c5.css">
+<link rel="stylesheet" media="screen, print" href="./ITプログラマー・エンジニア転職のpaiza転職_files/notice_balloon-b3ffe9cc7a8e18f200331a5ef76e7e6c.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/standing-23a8dd6ba3fb471f44ec14007fd8b312.css">
+
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/editor-cbc4b8d8aed41559519604f8de027f85.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/parts-2c5cbcdfcfba444745dde75c7145f374.css">
+<link rel="stylesheet" media="screen" href="./ITプログラマー・エンジニア転職のpaiza転職_files/neko_sensei-7a58e695ccfa60e71d53dd3ddd6be74d.css">
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/result_recommend-f3524b4417691d4617b42df979e0bae4.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/utility-2a262c77b7a9111af659ad2eaba04f3b.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/ace-3c9b767400a81fa99b51fce4f921bf1a.js.다운로드"></script><style id="ace_editor.css">.ace_editor {position: relative;overflow: hidden;font: 12px/normal 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;direction: ltr;text-align: left;}.ace_scroller {position: absolute;overflow: hidden;top: 0;bottom: 0;background-color: inherit;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;user-select: none;cursor: text;}.ace_content {position: absolute;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box;min-width: 100%;}.ace_dragging .ace_scroller:before{position: absolute;top: 0;left: 0;right: 0;bottom: 0;content: '';background: rgba(250, 250, 250, 0.01);z-index: 1000;}.ace_dragging.ace_dark .ace_scroller:before{background: rgba(0, 0, 0, 0.01);}.ace_selecting, .ace_selecting * {cursor: text !important;}.ace_gutter {position: absolute;overflow : hidden;width: auto;top: 0;bottom: 0;left: 0;cursor: default;z-index: 4;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;user-select: none;}.ace_gutter-active-line {position: absolute;left: 0;right: 0;}.ace_scroller.ace_scroll-left {box-shadow: 17px 0 16px -16px rgba(0, 0, 0, 0.4) inset;}.ace_gutter-cell {padding-left: 19px;padding-right: 6px;background-repeat: no-repeat;}.ace_gutter-cell.ace_error {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABOFBMVEX/////////QRswFAb/Ui4wFAYwFAYwFAaWGAfDRymzOSH/PxswFAb/SiUwFAYwFAbUPRvjQiDllog5HhHdRybsTi3/Tyv9Tir+Syj/UC3////XurebMBIwFAb/RSHbPx/gUzfdwL3kzMivKBAwFAbbvbnhPx66NhowFAYwFAaZJg8wFAaxKBDZurf/RB6mMxb/SCMwFAYwFAbxQB3+RB4wFAb/Qhy4Oh+4QifbNRcwFAYwFAYwFAb/QRzdNhgwFAYwFAbav7v/Uy7oaE68MBK5LxLewr/r2NXewLswFAaxJw4wFAbkPRy2PyYwFAaxKhLm1tMwFAazPiQwFAaUGAb/QBrfOx3bvrv/VC/maE4wFAbRPBq6MRO8Qynew8Dp2tjfwb0wFAbx6eju5+by6uns4uH9/f36+vr/GkHjAAAAYnRSTlMAGt+64rnWu/bo8eAA4InH3+DwoN7j4eLi4xP99Nfg4+b+/u9B/eDs1MD1mO7+4PHg2MXa347g7vDizMLN4eG+Pv7i5evs/v79yu7S3/DV7/498Yv24eH+4ufQ3Ozu/v7+y13sRqwAAADLSURBVHjaZc/XDsFgGIBhtDrshlitmk2IrbHFqL2pvXf/+78DPokj7+Fz9qpU/9UXJIlhmPaTaQ6QPaz0mm+5gwkgovcV6GZzd5JtCQwgsxoHOvJO15kleRLAnMgHFIESUEPmawB9ngmelTtipwwfASilxOLyiV5UVUyVAfbG0cCPHig+GBkzAENHS0AstVF6bacZIOzgLmxsHbt2OecNgJC83JERmePUYq8ARGkJx6XtFsdddBQgZE2nPR6CICZhawjA4Fb/chv+399kfR+MMMDGOQAAAABJRU5ErkJggg==");background-repeat: no-repeat;background-position: 2px center;}.ace_gutter-cell.ace_warning {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAmVBMVEX///8AAAD///8AAAAAAABPSzb/5sAAAAB/blH/73z/ulkAAAAAAAD85pkAAAAAAAACAgP/vGz/rkDerGbGrV7/pkQICAf////e0IsAAAD/oED/qTvhrnUAAAD/yHD/njcAAADuv2r/nz//oTj/p064oGf/zHAAAAA9Nir/tFIAAAD/tlTiuWf/tkIAAACynXEAAAAAAAAtIRW7zBpBAAAAM3RSTlMAABR1m7RXO8Ln31Z36zT+neXe5OzooRDfn+TZ4p3h2hTf4t3k3ucyrN1K5+Xaks52Sfs9CXgrAAAAjklEQVR42o3PbQ+CIBQFYEwboPhSYgoYunIqqLn6/z8uYdH8Vmdnu9vz4WwXgN/xTPRD2+sgOcZjsge/whXZgUaYYvT8QnuJaUrjrHUQreGczuEafQCO/SJTufTbroWsPgsllVhq3wJEk2jUSzX3CUEDJC84707djRc5MTAQxoLgupWRwW6UB5fS++NV8AbOZgnsC7BpEAAAAABJRU5ErkJggg==");background-position: 2px center;}.ace_gutter-cell.ace_info {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAAAAAA6mKC9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAJ0Uk5TAAB2k804AAAAPklEQVQY02NgIB68QuO3tiLznjAwpKTgNyDbMegwisCHZUETUZV0ZqOquBpXj2rtnpSJT1AEnnRmL2OgGgAAIKkRQap2htgAAAAASUVORK5CYII=");background-position: 2px center;}.ace_dark .ace_gutter-cell.ace_info {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAJFBMVEUAAAChoaGAgIAqKiq+vr6tra1ZWVmUlJSbm5s8PDxubm56enrdgzg3AAAAAXRSTlMAQObYZgAAAClJREFUeNpjYMAPdsMYHegyJZFQBlsUlMFVCWUYKkAZMxZAGdxlDMQBAG+TBP4B6RyJAAAAAElFTkSuQmCC");}.ace_scrollbar {position: absolute;right: 0;bottom: 0;z-index: 6;}.ace_scrollbar-inner {position: absolute;cursor: text;left: 0;top: 0;}.ace_scrollbar-v{overflow-x: hidden;overflow-y: scroll;top: 0;}.ace_scrollbar-h {overflow-x: scroll;overflow-y: hidden;left: 0;}.ace_print-margin {position: absolute;height: 100%;}.ace_text-input {position: absolute;z-index: 0;width: 0.5em;height: 1em;opacity: 0;background: transparent;-moz-appearance: none;appearance: none;border: none;resize: none;outline: none;overflow: hidden;font: inherit;padding: 0 1px;margin: 0 -1px;text-indent: -1em;-ms-user-select: text;-moz-user-select: text;-webkit-user-select: text;user-select: text;white-space: pre!important;}.ace_text-input.ace_composition {background: inherit;color: inherit;z-index: 1000;opacity: 1;text-indent: 0;}.ace_layer {z-index: 1;position: absolute;overflow: hidden;word-wrap: normal;white-space: pre;height: 100%;width: 100%;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box;pointer-events: none;}.ace_gutter-layer {position: relative;width: auto;text-align: right;pointer-events: auto;}.ace_text-layer {font: inherit !important;}.ace_cjk {display: inline-block;text-align: center;}.ace_cursor-layer {z-index: 4;}.ace_cursor {z-index: 4;position: absolute;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box;border-left: 2px solid;transform: translatez(0);}.ace_slim-cursors .ace_cursor {border-left-width: 1px;}.ace_overwrite-cursors .ace_cursor {border-left-width: 0;border-bottom: 1px solid;}.ace_hidden-cursors .ace_cursor {opacity: 0.2;}.ace_smooth-blinking .ace_cursor {-webkit-transition: opacity 0.18s;transition: opacity 0.18s;}.ace_editor.ace_multiselect .ace_cursor {border-left-width: 1px;}.ace_marker-layer .ace_step, .ace_marker-layer .ace_stack {position: absolute;z-index: 3;}.ace_marker-layer .ace_selection {position: absolute;z-index: 5;}.ace_marker-layer .ace_bracket {position: absolute;z-index: 6;}.ace_marker-layer .ace_active-line {position: absolute;z-index: 2;}.ace_marker-layer .ace_selected-word {position: absolute;z-index: 4;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box;}.ace_line .ace_fold {-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box;display: inline-block;height: 11px;margin-top: -2px;vertical-align: middle;background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAJCAYAAADU6McMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJpJREFUeNpi/P//PwOlgAXGYGRklAVSokD8GmjwY1wasKljQpYACtpCFeADcHVQfQyMQAwzwAZI3wJKvCLkfKBaMSClBlR7BOQikCFGQEErIH0VqkabiGCAqwUadAzZJRxQr/0gwiXIal8zQQPnNVTgJ1TdawL0T5gBIP1MUJNhBv2HKoQHHjqNrA4WO4zY0glyNKLT2KIfIMAAQsdgGiXvgnYAAAAASUVORK5CYII="),url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAA3CAYAAADNNiA5AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACJJREFUeNpi+P//fxgTAwPDBxDxD078RSX+YeEyDFMCIMAAI3INmXiwf2YAAAAASUVORK5CYII=");background-repeat: no-repeat, repeat-x;background-position: center center, top left;color: transparent;border: 1px solid black;border-radius: 2px;cursor: pointer;pointer-events: auto;}.ace_dark .ace_fold {}.ace_fold:hover{background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABEAAAAJCAYAAADU6McMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJpJREFUeNpi/P//PwOlgAXGYGRklAVSokD8GmjwY1wasKljQpYACtpCFeADcHVQfQyMQAwzwAZI3wJKvCLkfKBaMSClBlR7BOQikCFGQEErIH0VqkabiGCAqwUadAzZJRxQr/0gwiXIal8zQQPnNVTgJ1TdawL0T5gBIP1MUJNhBv2HKoQHHjqNrA4WO4zY0glyNKLT2KIfIMAAQsdgGiXvgnYAAAAASUVORK5CYII="),url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAA3CAYAAADNNiA5AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACBJREFUeNpi+P//fz4TAwPDZxDxD5X4i5fLMEwJgAADAEPVDbjNw87ZAAAAAElFTkSuQmCC");}.ace_tooltip {background-color: #FFF;background-image: -webkit-linear-gradient(top, transparent, rgba(0, 0, 0, 0.1));background-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));border: 1px solid gray;border-radius: 1px;box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);color: black;max-width: 100%;padding: 3px 4px;position: fixed;z-index: 999999;-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box;cursor: default;white-space: pre;word-wrap: break-word;line-height: normal;font-style: normal;font-weight: normal;letter-spacing: normal;pointer-events: none;}.ace_folding-enabled > .ace_gutter-cell {padding-right: 13px;}.ace_fold-widget {-moz-box-sizing: border-box;-webkit-box-sizing: border-box;box-sizing: border-box;margin: 0 -12px 0 1px;display: none;width: 11px;vertical-align: top;background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAANElEQVR42mWKsQ0AMAzC8ixLlrzQjzmBiEjp0A6WwBCSPgKAXoLkqSot7nN3yMwR7pZ32NzpKkVoDBUxKAAAAABJRU5ErkJggg==");background-repeat: no-repeat;background-position: center;border-radius: 3px;border: 1px solid transparent;cursor: pointer;}.ace_folding-enabled .ace_fold-widget {display: inline-block;   }.ace_fold-widget.ace_end {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAANElEQVR42m3HwQkAMAhD0YzsRchFKI7sAikeWkrxwScEB0nh5e7KTPWimZki4tYfVbX+MNl4pyZXejUO1QAAAABJRU5ErkJggg==");}.ace_fold-widget.ace_closed {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAGCAYAAAAG5SQMAAAAOUlEQVR42jXKwQkAMAgDwKwqKD4EwQ26sSOkVWjgIIHAzPiCgaqiqnJHZnKICBERHN194O5b9vbLuAVRL+l0YWnZAAAAAElFTkSuQmCCXA==");}.ace_fold-widget:hover {border: 1px solid rgba(0, 0, 0, 0.3);background-color: rgba(255, 255, 255, 0.2);box-shadow: 0 1px 1px rgba(255, 255, 255, 0.7);}.ace_fold-widget:active {border: 1px solid rgba(0, 0, 0, 0.4);background-color: rgba(0, 0, 0, 0.05);box-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);}.ace_dark .ace_fold-widget {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHklEQVQIW2P4//8/AzoGEQ7oGCaLLAhWiSwB146BAQCSTPYocqT0AAAAAElFTkSuQmCC");}.ace_dark .ace_fold-widget.ace_end {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAH0lEQVQIW2P4//8/AxQ7wNjIAjDMgC4AxjCVKBirIAAF0kz2rlhxpAAAAABJRU5ErkJggg==");}.ace_dark .ace_fold-widget.ace_closed {background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAFCAYAAACAcVaiAAAAHElEQVQIW2P4//+/AxAzgDADlOOAznHAKgPWAwARji8UIDTfQQAAAABJRU5ErkJggg==");}.ace_dark .ace_fold-widget:hover {box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);background-color: rgba(255, 255, 255, 0.1);}.ace_dark .ace_fold-widget:active {box-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);}.ace_fold-widget.ace_invalid {background-color: #FFB4B4;border-color: #DE5555;}.ace_fade-fold-widgets .ace_fold-widget {-webkit-transition: opacity 0.4s ease 0.05s;transition: opacity 0.4s ease 0.05s;opacity: 0;}.ace_fade-fold-widgets:hover .ace_fold-widget {-webkit-transition: opacity 0.05s ease 0.05s;transition: opacity 0.05s ease 0.05s;opacity:1;}.ace_underline {text-decoration: underline;}.ace_bold {font-weight: bold;}.ace_nobold .ace_bold {font-weight: normal;}.ace_italic {font-style: italic;}.ace_error-marker {background-color: rgba(255, 0, 0,0.2);position: absolute;z-index: 9;}.ace_highlight-marker {background-color: rgba(255, 255, 0,0.2);position: absolute;z-index: 8;}.ace_br1 {border-top-left-radius    : 3px;}.ace_br2 {border-top-right-radius   : 3px;}.ace_br3 {border-top-left-radius    : 3px; border-top-right-radius:    3px;}.ace_br4 {border-bottom-right-radius: 3px;}.ace_br5 {border-top-left-radius    : 3px; border-bottom-right-radius: 3px;}.ace_br6 {border-top-right-radius   : 3px; border-bottom-right-radius: 3px;}.ace_br7 {border-top-left-radius    : 3px; border-top-right-radius:    3px; border-bottom-right-radius: 3px;}.ace_br8 {border-bottom-left-radius : 3px;}.ace_br9 {border-top-left-radius    : 3px; border-bottom-left-radius:  3px;}.ace_br10{border-top-right-radius   : 3px; border-bottom-left-radius:  3px;}.ace_br11{border-top-left-radius    : 3px; border-top-right-radius:    3px; border-bottom-left-radius:  3px;}.ace_br12{border-bottom-right-radius: 3px; border-bottom-left-radius:  3px;}.ace_br13{border-top-left-radius    : 3px; border-bottom-right-radius: 3px; border-bottom-left-radius:  3px;}.ace_br14{border-top-right-radius   : 3px; border-bottom-right-radius: 3px; border-bottom-left-radius:  3px;}.ace_br15{border-top-left-radius    : 3px; border-top-right-radius:    3px; border-bottom-right-radius: 3px; border-bottom-left-radius: 3px;}
+/*# sourceURL=ace/css/ace_editor.css */</style><style id="ace-tm">.ace-tm .ace_gutter {background: #f0f0f0;color: #333;}.ace-tm .ace_print-margin {width: 1px;background: #e8e8e8;}.ace-tm .ace_fold {background-color: #6B72E6;}.ace-tm {background-color: #FFFFFF;color: black;}.ace-tm .ace_cursor {color: black;}.ace-tm .ace_invisible {color: rgb(191, 191, 191);}.ace-tm .ace_storage,.ace-tm .ace_keyword {color: blue;}.ace-tm .ace_constant {color: rgb(197, 6, 11);}.ace-tm .ace_constant.ace_buildin {color: rgb(88, 72, 246);}.ace-tm .ace_constant.ace_language {color: rgb(88, 92, 246);}.ace-tm .ace_constant.ace_library {color: rgb(6, 150, 14);}.ace-tm .ace_invalid {background-color: rgba(255, 0, 0, 0.1);color: red;}.ace-tm .ace_support.ace_function {color: rgb(60, 76, 114);}.ace-tm .ace_support.ace_constant {color: rgb(6, 150, 14);}.ace-tm .ace_support.ace_type,.ace-tm .ace_support.ace_class {color: rgb(109, 121, 222);}.ace-tm .ace_keyword.ace_operator {color: rgb(104, 118, 135);}.ace-tm .ace_string {color: rgb(3, 106, 7);}.ace-tm .ace_comment {color: rgb(76, 136, 107);}.ace-tm .ace_comment.ace_doc {color: rgb(0, 102, 255);}.ace-tm .ace_comment.ace_doc.ace_tag {color: rgb(128, 159, 191);}.ace-tm .ace_constant.ace_numeric {color: rgb(0, 0, 205);}.ace-tm .ace_variable {color: rgb(49, 132, 149);}.ace-tm .ace_xml-pe {color: rgb(104, 104, 91);}.ace-tm .ace_entity.ace_name.ace_function {color: #0000A2;}.ace-tm .ace_heading {color: rgb(12, 7, 255);}.ace-tm .ace_list {color:rgb(185, 6, 144);}.ace-tm .ace_meta.ace_tag {color:rgb(0, 22, 142);}.ace-tm .ace_string.ace_regex {color: rgb(255, 0, 0)}.ace-tm .ace_marker-layer .ace_selection {background: rgb(181, 213, 255);}.ace-tm.ace_multiselect .ace_selection.ace_start {box-shadow: 0 0 3px 0px white;}.ace-tm .ace_marker-layer .ace_step {background: rgb(252, 255, 0);}.ace-tm .ace_marker-layer .ace_stack {background: rgb(164, 229, 101);}.ace-tm .ace_marker-layer .ace_bracket {margin: -1px 0 0 -1px;border: 1px solid rgb(192, 192, 192);}.ace-tm .ace_marker-layer .ace_active-line {background: rgba(0, 0, 0, 0.07);}.ace-tm .ace_gutter-active-line {background-color : #dcdcdc;}.ace-tm .ace_marker-layer .ace_selected-word {background: rgb(250, 250, 255);border: 1px solid rgb(200, 200, 250);}.ace-tm .ace_indent-guide {background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==") right repeat-y;}
+/*# sourceURL=ace/css/ace-tm */</style><style>    .error_widget_wrapper {        background: inherit;        color: inherit;        border:none    }    .error_widget {        border-top: solid 2px;        border-bottom: solid 2px;        margin: 5px 0;        padding: 10px 40px;        white-space: pre-wrap;    }    .error_widget.ace_error, .error_widget_arrow.ace_error{        border-color: #ff5a5a    }    .error_widget.ace_warning, .error_widget_arrow.ace_warning{        border-color: #F1D817    }    .error_widget.ace_info, .error_widget_arrow.ace_info{        border-color: #5a5a5a    }    .error_widget.ace_ok, .error_widget_arrow.ace_ok{        border-color: #5aaa5a    }    .error_widget_arrow {        position: absolute;        border: solid 5px;        border-top-color: transparent!important;        border-right-color: transparent!important;        border-left-color: transparent!important;        top: -5px;    }</style>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/ext-language_tools-2f6a227ee47345c6837125ffe3f71b1c.js.다운로드"></script><style>.ace_snippet-marker {    -moz-box-sizing: border-box;    box-sizing: border-box;    background: rgba(194, 193, 208, 0.09);    border: 1px dotted rgba(211, 208, 235, 0.62);    position: absolute;}</style><style>.ace_editor.ace_autocomplete .ace_marker-layer .ace_active-line {    background-color: #CAD6FA;    z-index: 1;}.ace_editor.ace_autocomplete .ace_line-hover {    border: 1px solid #abbffe;    margin-top: -1px;    background: rgba(233,233,253,0.4);}.ace_editor.ace_autocomplete .ace_line-hover {    position: absolute;    z-index: 2;}.ace_editor.ace_autocomplete .ace_scroller {   background: none;   border: none;   box-shadow: none;}.ace_rightAlignedText {    color: gray;    display: inline-block;    position: absolute;    right: 4px;    text-align: right;    z-index: -1;}.ace_editor.ace_autocomplete .ace_completion-highlight{    color: #000;    text-shadow: 0 0 0.01em;}.ace_editor.ace_autocomplete {    width: 280px;    z-index: 200000;    background: #fbfbfb;    color: #444;    border: 1px lightgray solid;    position: fixed;    box-shadow: 2px 3px 5px rgba(0,0,0,.2);    line-height: 1.4;}</style>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/ace_editor-c794729f1bfa18c5e197a7c657ff4fe9.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/programming_bs-c4039fb1c1b57645788f7b63c7c46b91.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/challenge_codeform_submitted-d42a705093d80e24862876f32b1bc8dd.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/challenge_result-05f03e705b142cbfd97225f39c2e86d3.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/challenge_codeform_bs-472cedaf63736c71070c03ba2a0b8cbe.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/challenges-a6ccfc597ed0772f610c3243e9d30dff.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/notice_balloon-ccea0681b3356c3cf03b165a520e77eb.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/editor_ext-b67c1ce43c2070491540204d36a74b1e.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/temporary_codes-2483ed953b11788c8995695a08ba7cb1.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/prefecture-3e8545f07dbe3f92662c6a2c5a5ab81f.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/neko_sensei-dbb78f738a1885cd8a2454bacdf9f165.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/jquery.counter.js.다운로드"></script>
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/challenge_result_part-efae9ccf70a1a4d8b5395d4b5f33b4bc.js.다운로드"></script>
+
+<meta name="csrf-param" content="authenticity_token">
+<meta name="csrf-token" content="mn+Tvb/s4WWfnuyCBa/g/svNYgpRmkz984Gpor+8jyDInu31xQpYQ8Q2b9iBE3LVyXpXaPLFDuojpSowM+SoFw==">
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-42027263-1', 'auto');
+ga('set', 'userId', '644a8a2d1545e1d5');
+ga('set', 'dimension1', '1');
+ga('set', 'dimension2', '2000');
+ga('set', 'dimension3', '1805');
+ga('set', 'dimension4', 'career');
+ga('send', 'pageview');
+</script>
+<script>
+  (function() {
+    this.gaq_push = function(args) {
+      var hit_type, mkargs;
+      if (args == null) {
+        args = [];
+      }
+      mkargs = {};
+      hit_type = '';
+      $.each(args, function(i, n) {
+        if (i === 0) {
+          if (n === '_trackEvent') {
+            hit_type = 'event';
+          } else if (n === '_trackPageview') {
+            hit_type = 'pageview';
+          }
+          return $.extend(mkargs, {
+            'hitType': hit_type
+          });
+        } else if (i === 1) {
+          if (hit_type === 'event') {
+            return $.extend(mkargs, {
+              'eventCategory': n.toString()
+            });
+          } else if (hit_type === 'pageview') {
+            return $.extend(mkargs, {
+              'page': n.toString()
+            });
+          }
+        } else if (i === 2) {
+          return $.extend(mkargs, {
+            'eventAction': n.toString()
+          });
+        } else if (i === 3) {
+          return $.extend(mkargs, {
+            'eventLabel': n.toString()
+          });
+        } else if (i === 4) {
+          return $.extend(mkargs, {
+            'eventValue': parseInt(n)
+          });
+        }
+      });
+      if (typeof ga !== "undefined" && ga !== null) {
+        return ga('send', mkargs);
+      } else {
+        return console.log(mkargs);
+      }
+    };
+  
+  }).call(this);
+</script>
+
+<script src="./ITプログラマー・エンジニア転職のpaiza転職_files/text.js.다운로드"></script><script src="./ITプログラマー・エンジニア転職のpaiza転職_files/theme-solarized_light.js.다운로드"></script><script type="text/javascript" charset="utf-8" async="" src="./ITプログラマー・エンジニア転職のpaiza転職_files/button.5f64a1a5864e1229f84c8defd65341b4.js.다운로드"></script><link rel="stylesheet" type="text/css" href="./ITプログラマー・エンジニア転職のpaiza転職_files/slimfaq-reset.css"><style id="ace-solarized-light">.ace-solarized-light .ace_gutter {background: #fbf1d3;color: #333}.ace-solarized-light .ace_print-margin {width: 1px;background: #e8e8e8}.ace-solarized-light {background-color: #FDF6E3;color: #586E75}.ace-solarized-light .ace_cursor {color: #000000}.ace-solarized-light .ace_marker-layer .ace_selection {background: rgba(7, 54, 67, 0.09)}.ace-solarized-light.ace_multiselect .ace_selection.ace_start {box-shadow: 0 0 3px 0px #FDF6E3;}.ace-solarized-light .ace_marker-layer .ace_step {background: rgb(255, 255, 0)}.ace-solarized-light .ace_marker-layer .ace_bracket {margin: -1px 0 0 -1px;border: 1px solid rgba(147, 161, 161, 0.50)}.ace-solarized-light .ace_marker-layer .ace_active-line {background: #EEE8D5}.ace-solarized-light .ace_gutter-active-line {background-color : #EDE5C1}.ace-solarized-light .ace_marker-layer .ace_selected-word {border: 1px solid #073642}.ace-solarized-light .ace_invisible {color: rgba(147, 161, 161, 0.50)}.ace-solarized-light .ace_keyword,.ace-solarized-light .ace_meta,.ace-solarized-light .ace_support.ace_class,.ace-solarized-light .ace_support.ace_type {color: #859900}.ace-solarized-light .ace_constant.ace_character,.ace-solarized-light .ace_constant.ace_other {color: #CB4B16}.ace-solarized-light .ace_constant.ace_language {color: #B58900}.ace-solarized-light .ace_constant.ace_numeric {color: #D33682}.ace-solarized-light .ace_fold {background-color: #268BD2;border-color: #586E75}.ace-solarized-light .ace_entity.ace_name.ace_function,.ace-solarized-light .ace_entity.ace_name.ace_tag,.ace-solarized-light .ace_support.ace_function,.ace-solarized-light .ace_variable,.ace-solarized-light .ace_variable.ace_language {color: #268BD2}.ace-solarized-light .ace_storage {color: #073642}.ace-solarized-light .ace_string {color: #2AA198}.ace-solarized-light .ace_string.ace_regexp {color: #D30102}.ace-solarized-light .ace_comment,.ace-solarized-light .ace_entity.ace_other.ace_attribute-name {color: #93A1A1}.ace-solarized-light .ace_indent-guide {background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAEklEQVQImWNgYGBgYHjy8NJ/AAjgA5fzQUmBAAAAAElFTkSuQmCC) right repeat-y}
+/*# sourceURL=ace/css/ace-solarized-light */</style><script src="./ITプログラマー・エンジニア転職のpaiza転職_files/mode-python.js.다운로드"></script><style type="text/css">.fb_hidden{position:absolute;top:-10000px;z-index:10001}.fb_reposition{overflow:hidden;position:relative}.fb_invisible{display:none}.fb_reset{background:none;border:0;border-spacing:0;color:#000;cursor:auto;direction:ltr;font-family:"lucida grande", tahoma, verdana, arial, "hiragino kaku gothic pro",meiryo,"ms pgothic",sans-serif;font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}.fb_reset>div{overflow:hidden}.fb_link img{border:none}@keyframes fb_transform{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}.fb_animate{animation:fb_transform .3s forwards}
+.fb_dialog{background:rgba(82, 82, 82, .7);position:absolute;top:-10000px;z-index:10001}.fb_reset .fb_dialog_legacy{overflow:visible}.fb_dialog_advanced{padding:10px;-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}.fb_dialog_content{background:#fff;color:#333}.fb_dialog_close_icon{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px}.fb_dialog_mobile .fb_dialog_close_icon{top:5px;left:5px;right:auto}.fb_dialog_padding{background-color:transparent;position:absolute;width:1px;z-index:-1}.fb_dialog_close_icon:hover{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent}.fb_dialog_close_icon:active{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent}.fb_dialog_loader{background-color:#f6f7f9;border:1px solid #606060;font-size:24px;padding:20px}.fb_dialog_top_left,.fb_dialog_top_right,.fb_dialog_bottom_left,.fb_dialog_bottom_right{height:10px;width:10px;overflow:hidden;position:absolute}.fb_dialog_top_left{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 0;left:-10px;top:-10px}.fb_dialog_top_right{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -10px;right:-10px;top:-10px}.fb_dialog_bottom_left{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -20px;bottom:-10px;left:-10px}.fb_dialog_bottom_right{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -30px;right:-10px;bottom:-10px}.fb_dialog_vert_left,.fb_dialog_vert_right,.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{position:absolute;background:#525252;filter:alpha(opacity=70);opacity:.7}.fb_dialog_vert_left,.fb_dialog_vert_right{width:10px;height:100%}.fb_dialog_vert_left{margin-left:-10px}.fb_dialog_vert_right{right:0;margin-right:-10px}.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{width:100%;height:10px}.fb_dialog_horiz_top{margin-top:-10px}.fb_dialog_horiz_bottom{bottom:0;margin-bottom:-10px}.fb_dialog_iframe{line-height:0}.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #365899;color:#fff;font-size:14px;font-weight:bold;margin:0}.fb_dialog_content .dialog_title>span{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yd/r/Cou7n-nqK52.gif) no-repeat 5px 50%;float:left;padding:5px 0 7px 26px}body.fb_hidden{-webkit-transform:none;height:100%;margin:0;overflow:visible;position:absolute;top:-10000px;left:0;width:100%}.fb_dialog.fb_dialog_mobile.loading{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ya/r/3rhSv5V8j3o.gif) white no-repeat 50% 50%;min-height:100%;min-width:100%;overflow:hidden;position:absolute;top:0;z-index:10001}.fb_dialog.fb_dialog_mobile.loading.centered{width:auto;height:auto;min-height:initial;min-width:initial;background:none}.fb_dialog.fb_dialog_mobile.loading.centered #fb_dialog_loader_spinner{width:100%}.fb_dialog.fb_dialog_mobile.loading.centered .fb_dialog_content{background:none}.loading.centered #fb_dialog_loader_close{color:#fff;display:block;padding-top:20px;clear:both;font-size:18px}#fb-root #fb_dialog_ipad_overlay{background:rgba(0, 0, 0, .45);position:absolute;bottom:0;left:0;right:0;top:0;width:100%;min-height:100%;z-index:10000}#fb-root #fb_dialog_ipad_overlay.hidden{display:none}.fb_dialog.fb_dialog_mobile.loading iframe{visibility:hidden}.fb_dialog_content .dialog_header{-webkit-box-shadow:white 0 1px 1px -1px inset;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#738ABA), to(#2C4987));border-bottom:1px solid;border-color:#1d4088;color:#fff;font:14px Helvetica, sans-serif;font-weight:bold;text-overflow:ellipsis;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0;vertical-align:middle;white-space:nowrap}.fb_dialog_content .dialog_header table{-webkit-font-smoothing:subpixel-antialiased;height:43px;width:100%}.fb_dialog_content .dialog_header td.header_left{font-size:12px;padding-left:5px;vertical-align:middle;width:60px}.fb_dialog_content .dialog_header td.header_right{font-size:12px;padding-right:5px;vertical-align:middle;width:60px}.fb_dialog_content .touchable_button{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#4966A6), color-stop(.5, #355492), to(#2A4887));border:1px solid #29487d;-webkit-background-clip:padding-box;-webkit-border-radius:3px;-webkit-box-shadow:rgba(0, 0, 0, .117188) 0 1px 1px inset, rgba(255, 255, 255, .167969) 0 1px 0;display:inline-block;margin-top:3px;max-width:85px;line-height:18px;padding:4px 12px;position:relative}.fb_dialog_content .dialog_header .touchable_button input{border:none;background:none;color:#fff;font:12px Helvetica, sans-serif;font-weight:bold;margin:2px -12px;padding:2px 6px 3px 6px;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog_content .dialog_header .header_center{color:#fff;font-size:16px;font-weight:bold;line-height:18px;text-align:center;vertical-align:middle}.fb_dialog_content .dialog_content{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat 50% 50%;border:1px solid #555;border-bottom:0;border-top:0;height:150px}.fb_dialog_content .dialog_footer{background:#f6f7f9;border:1px solid #555;border-top-color:#ccc;height:40px}#fb_dialog_loader_close{float:left}.fb_dialog.fb_dialog_mobile .fb_dialog_close_button{text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog.fb_dialog_mobile .fb_dialog_close_icon{visibility:hidden}#fb_dialog_loader_spinner{animation:rotateSpinner 1.2s linear infinite;background-color:transparent;background-image:url(https://static.xx.fbcdn.net/rsrc.php/v3/yD/r/t-wz8gw1xG1.png);background-repeat:no-repeat;background-position:50% 50%;height:24px;width:24px}@keyframes rotateSpinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.fb_iframe_widget{display:inline-block;position:relative}.fb_iframe_widget span{display:inline-block;position:relative;text-align:justify}.fb_iframe_widget iframe{position:absolute}.fb_iframe_widget_fluid_desktop,.fb_iframe_widget_fluid_desktop span,.fb_iframe_widget_fluid_desktop iframe{max-width:100%}.fb_iframe_widget_fluid_desktop iframe{min-width:220px;position:relative}.fb_iframe_widget_lift{z-index:1}.fb_hide_iframes iframe{position:relative;left:-10000px}.fb_iframe_widget_loader{position:relative;display:inline-block}.fb_iframe_widget_fluid{display:inline}.fb_iframe_widget_fluid span{width:100%}.fb_iframe_widget_loader iframe{min-height:32px;z-index:2;zoom:1}.fb_iframe_widget_loader .FB_Loader{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat;height:32px;width:32px;margin-left:-16px;position:absolute;left:50%;z-index:4}
+.fb_customer_chat_bounce_in{animation-duration:250ms;animation-name:fb_bounce_in}.fb_customer_chat_bounce_out{animation-duration:250ms;animation-name:fb_fade_out}.fb_invisible_flow{display:inherit;height:0;overflow-x:hidden;width:0}.fb_mobile_overlay_active{height:100%;overflow:hidden;position:fixed;width:100%}@keyframes fb_fade_out{from{opacity:1}to{opacity:0}}@keyframes fb_bounce_in{0%{opacity:0;transform:scale(.8, .8);transform-origin:100% 100%}10%{opacity:.1}20%{opacity:.2}30%{opacity:.3}40%{opacity:.4}50%{opacity:.5}60%{opacity:.6}70%{opacity:.7}80%{opacity:.8;transform:scale(1.03, 1.03)}90{opacity:.9}100%{opacity:1;transform:scale(1, 1)}}</style></head>
+<body><input type="hidden" name="myself_url" id="myself_url" value="https://paiza.jp">
+
+<div id="fb-root" class=" fb_reset"><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div><iframe name="fb_xdm_frame_https" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" id="fb_xdm_frame_https" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" src="./ITプログラマー・エンジニア転職のpaiza転職_files/lY4eZXm_YWu.html" style="border: none;"></iframe></div></div><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div></div></div></div>
+<div class="header header--career" id="header">
+<div class="header-row header-row__vertical">
+<div class="header--career-global">
+<div class="header-container header-row header-row__thin">
+<div class="header-row header-row__70 header-row__nested">
+<a class="p-nav__item p-nav__item__global p-nav__item--career-global" href="https://paiza.jp/student"><div class="p-nav__label p-nav__label--global">新卒就活</div>
+</a><a class="p-nav__item p-nav__item__global p-nav__item--career-global" href="https://paiza.jp/en_try"><div class="p-nav__label p-nav__label--global">エンジニア未経験歓迎</div>
+</a><a class="p-nav__item p-nav__item__global p-nav__item--career-global is-on" href="https://paiza.jp/career"><div class="p-nav__label p-nav__label--global is-on">エンジニア転職</div>
+</a><a class="p-nav__item p-nav__item__global p-nav__item--career-global" href="https://paiza.jp/works"><div class="p-nav__label p-nav__label--global">プログラミング学習</div>
+</a><a class="p-nav__item p-nav__item__global p-nav__item--career-global" href="https://paiza.jp/guide/career?service_id=career"><div class="p-nav__label p-nav__label--global">paizaとは？</div>
+</a></div>
+<div class="header-row header-row__pull-right header-row__30">
+<div class="p-nav__btn js-recommend-messages">
+<a class="p-nav__btn__inner" href="https://paiza.jp/messages"><div class="p-nav__btn__inner__wrap">
+<div class="c-flex c-flex--center">
+<span class="fa fa-envelope p-nav__btn__text p-nav__btn__icon"></span>
+<span class="p-nav__btn__text">メッセージ一覧</span>
+<i class="p-nav__badge p-nav__badge--red p-nav__badge--animate fa fa-exclamation"></i>
+</div>
+</div>
+</a></div>
+
+<div class="p-nav__btn c-popover__container js-popover__container">
+<div class="p-nav__btn__inner">
+<div class="p-nav__btn__inner__wrap">
+<div class="c-flex c-flex--center">
+<span class="fa fa-cog p-nav__btn__text p-nav__btn__icon"></span>
+<span class="p-nav__btn__text">設定</span>
+<i class="p-nav__badge p-nav__badge--red p-nav__badge--animate fa fa-exclamation"></i>
+</div>
+<ul class="c-popover__list js-popover__list">
+<li class="c-popover__item">
+<a class="c-popover__text" href="https://paiza.jp/users/basic_profile">基本情報設定</a>
+</li>
+<li class="c-popover__item">
+<div class="c-flex--center">
+<a class="c-popover__text" href="https://paiza.jp/profile"><span>スキルPR・希望条件</span>
+<i class="p-nav__badge p-nav__badge--red p-nav__badge--animate fa fa-exclamation"></i>
+</a></div>
+</li>
+<li class="c-popover__item">
+<a class="c-popover__text" href="https://paiza.jp/account">アカウント設定</a>
+</li>
+<li class="c-popover__item">
+<a class="c-popover__text" href="https://paiza.jp/logout">ログアウト</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+<div class="header-container header-row header-row__thick">
+<div class="header-row header-row__20">
+<a class="p-nav__logo" href="https://paiza.jp/career"><img class="p-nav__logo__image p-nav__logo__image--career" alt="paiza転職ロゴ" src="./ITプログラマー・エンジニア転職のpaiza転職_files/white-359a7fd38a852633f1babd6c775033a5.png">
+</a></div>
+<div class="header-row header-row__80 header-row__nested">
+<a class="p-nav__item p-nav__item--career" target="_self" href="https://paiza.jp/career/mypage"><div class="p-nav__label">
+<div class="c-flex c-flex--space-around">
+マイページ
+</div>
+</div>
+</a><a class="p-nav__item p-nav__item--career" target="_self" href="https://paiza.jp/career/job_offers"><div class="p-nav__label">
+<div class="c-flex c-flex--space-around">
+エンジニア求人
+</div>
+</div>
+</a><a class="p-nav__item p-nav__item--career" target="_self" href="https://paiza.jp/career/bookmarks"><div class="p-nav__label">
+<div class="c-flex c-flex--space-around">
+気になるリスト
+<span class="notification_box"><span class="notification_num">8</span></span>
+</div>
+</div>
+</a><a class="p-nav__item p-nav__item--career" target="_self" href="https://paiza.jp/challenges"><div class="p-nav__label">
+<div class="c-flex c-flex--space-around">
+スキルチェック
+</div>
+</div>
+</a><a class="p-nav__item p-nav__item--career" target="_self" href="https://paiza.jp/career/features"><div class="p-nav__label">
+<div class="c-flex c-flex--space-around">
+特集
+</div>
+</div>
+</a><a class="p-nav__item p-nav__item--career" target="_self" href="https://paiza.jp/career/advice"><div class="p-nav__label">
+<div class="c-flex c-flex--space-around">
+転職成功ガイド
+</div>
+</div>
+</a>
+</div>
+</div>
+</div>
+
+</div>
+
+<noscript>
+&lt;p style='text-align:center;'&gt;javascriptを有効にして下さい。&lt;/p&gt;
+</noscript>
+<div class="disnon" data-status="2000" id="user_info"></div>
+<div id="pagebody">
+
+<textarea name="submit_code" id="submit_code" style="display: none"># coding: utf-8
+# 自分の得意な言語で
+# Let's チャレンジ！！
+
+
+first_line = input()
+lines = []
+data_size = [int(x) for x in first_line.split()]
+
+
+
+print(int(data_size[0] * data_size[1] / 2))
+</textarea>
+<input type="hidden" name="submit_programming_language_id" id="submit_programming_language_id" value="2321">
+<input type="hidden" name="tab_name" id="tab_name" value="problem">
+<input type="hidden" name="part_url" id="part_url" value="/challenges/result_part">
+<input type="hidden" name="uid" id="uid" value="223">
+<input type="hidden" name="token" id="token" value="">
+<div class="boxSkillcheck mb5">
+<h1 class="ttlStyle1a">
+<span>S018:天気の予報</span>
+</h1>
+<div id="problem-tab" style="clear: both" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
+<li class="ui-state-default ui-corner-top ui-tabs-active ui-state-active" role="tab" tabindex="0" aria-controls="tab-problem" aria-labelledby="ui-id-1" aria-selected="true"><a href="https://paiza.jp/career/challenges/223/page/problem#tab-problem" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-1">問題文確認・再チャレンジ</a></li>
+<li class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="tab-results" aria-labelledby="ui-id-2" aria-selected="false"><a href="https://paiza.jp/career/challenges/223/page/problem#tab-results" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-2">評価結果詳細</a></li>
+</ul>
+<div id="tab-problem" aria-labelledby="ui-id-1" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-expanded="true" aria-hidden="false">
+<div class="section3">
+<div class="inr">
+<div class="inr">
+<h2 class="cfix code3 ttl">
+<span>S018:天気の予報</span>
+</h2>
+<div class="inr1">
+    <p class="mb15">
+</p><p>あなたは宇宙に浮かぶ惑星 "PAIZA" の天気予報士です。PAIZA は「区域」と呼ばれる n×m のグリッドに分割されており、以下の図のように区域に座標が割り振られています。</p>
+
+<p><img alt="図1" src="./ITプログラマー・エンジニア転職のpaiza転職_files/image1.png"></p>
+
+<p>また、PAIZA は球でなくドーナツの形状をしている惑星なので、一番上の区域と一番下の区域、ならびに一番左の区域と一番右の区域はそれぞれ隣接しています。<br>つまり、全ての整数 j (1 ≦ j ≦ m) について、区域 (1, j) と区域 (n, j) は隣接しており、また全ての整数 i (1 ≦ i ≦ n) について、区域 (i, 1) と区域 (i, m) は隣接しています。</p>
+
+
+<p>PAIZA は厚い大気を持つ惑星であり、PAIZA の各区域は、一日中「晴れ」または「曇り」のどちらかの天気の状態を取ります。<br>PAIZA では、以下のルールに従って、今日の天気から翌日の天気が決まります。</p>
+
+<p>・区域 (i, j) を中心とした 3 × 3 の 9 区域のうち、今日「晴れ」となっている区域の数が偶数だったら翌日の区域 (i, j) の天気は「曇り」。同様に奇数だったら翌日の区域 (i, j) の天気は「晴れ」。</p>
+
+<p>例えば、入力例 1 の場合、各区域の天気は以下のように変化していきます。</p>
+
+<p><img alt="図2" src="./ITプログラマー・エンジニア転職のpaiza転職_files/image2.png"></p>
+
+
+<p>今日の惑星 PAIZA の各区域の天気が入力されるので、t 日後に晴れている区域の数を出力するプログラムを作成してください。</p>
+   <p></p>
+
+</div>
+  <div class="inr2">
+    <div class="box2">
+      <dl class="txt1">
+      <dt class="icon1">評価ポイント</dt>
+      <dd>
+      10個のテストケースを入力し、正答数と解答の提出までに要した時間を測定し得点が決まります。 <br>
+      ※提出いただいたコードは複数回実行され、一度の実行では1つのテストケースのみ入力<br>
+      ※制限時間を超えるとテストケースが通っても失格(0点)となります。<br>
+      得点の計算方法：正解数得点(50点) ＋ 正解率×回答時間得点(2時間以内で50点、4時間以内で25点、6時間で0点と線形に点数が落ちます)<br>
+      <ol>
+      <li>10個のテストケースで正しい出力がされるか評価 (50点)</li>
+      <li>解答の提出までに要した時間による評価 (50点)</li>
+      </ol>
+      </dd>
+      </dl>
+    </div>
+    <div class="box3">
+      <dl class="txt1">
+      <dt class="icon2">入力される値</dt>
+      <dd>入力は次のフォーマットで与えられます。<br></dd>
+    <div class="box1">
+      <dl class="txt2">
+    <dd>n m t</dd>
+    <dd>w_{1,1}w_{1,2}...w_{1,m}</dd>
+    <dd>w_{2,1}w_{2,2}...w_{2,m}</dd>
+    <dd>:</dd>
+    <dd>w_{n,1}w_{n,2}...w_{n,m}</dd>
+      </dl>
+    </div>
+<br>
+・1 行目には、惑星 PAIZA の区域の行数を表す整数 n, 列数を表す整数 m と天気予報の対象となる日を表す整数 t がこの順で半角スペース区切りで入力されます。<br>
+・続く n 行のうちの i 行目 (1 ≦ i ≦ n) には、'S' または 'C' からなる長さ m の文字列 w_{i,1}w_{i,2}...w_{i,m} が入力されます。この文字列の j 文字目 w_{i,j} (1 ≦ j ≦ m) が 'S' ならば、今日の区域 (i, j) は晴れており、'C' ならば曇っていることを表します。<br>
+・入力は n+1 行となり、入力値最終行の末尾に改行が 1 つ入ります。<br>
+<br>
+  文字列は標準入力から渡されます。<a class="targetBlank" href="https://paiza.jp/guide/samplecode.html" target="_blank">標準入力からの値取得方法はこちらをご確認ください</a>
+      
+      </dl>
+    </div>
+    <div class="box3">
+      <dl class="txt1">
+      <dt class="icon3">期待する出力</dt>
+<dd>期待する出力は 1 行から成ります。t 日後に晴れている区域の数を出力してください。</dd>
+
+<dd>最後は改行し、余計な文字、空行を含んではいけません。</dd>
+        </dl>
+    </div>
+
+    <div class="box3">
+      <dl class="txt1">
+      <dt class="icon4">条件</dt>
+      <dd>すべてのテストケースにおいて、以下の条件をみたします。</dd>
+      <br>
+      <dd>・3 ≦ n, m ≦ 200</dd>
+      <dd>・0 ≦ t ≦ 1,000,000,000</dd>
+      <dd>・任意の i, j (1 ≦ i ≦ n, 1 ≦ j ≦ m) に対して，w_{i,j} は 'S' または 'C'</dd>
+      <dd>ただし，3 個のテストケースについては以下の制約をみたします。</dd>
+      <dd>・0 ≦ t ≦ 200</dd>
+      <dd>また，4 個のテストケースについては以下の制約をみたします。</dd>
+      <dd>・3 ≦ n, m ≦ 15</dd>
+      <br>
+      言語別実行時間制限の詳細は
+      <a href="https://paiza.jp/guide/language.html" target="_blank">
+      こちら
+      </a>
+      をご確認ください。
+      
+      </dl>
+    </div>
+    <div class="box1">
+      <dl class="txt2">
+      <dt>入力例1</dt>
+      <dd>4 4 2</dd>
+      <dd>SCSC</dd>
+      <dd>CSSS</dd>
+      <dd>CCCC</dd>
+      <dd>SSSC</dd>
+      </dl>
+    </div>
+    <div class="box1">
+      <dl class="txt2">
+      <dt>出力例1</dt>
+<dd>8</dd>
+      </dl>
+    </div>
+<br>
+    <div class="box1">
+      <dl class="txt2">
+      <dt>入力例2</dt>
+      <dd>7 5 18</dd>
+      <dd>CCCSS</dd>
+      <dd>SCSCC</dd>
+      <dd>SSCCS</dd>
+      <dd>CSSSC</dd>
+      <dd>CCCSS</dd>
+      <dd>SSSSS</dd>
+      <dd>CCCCS</dd>
+      </dl>
+    </div>
+    <div class="box1">
+      <dl class="txt2">
+      <dt>出力例2</dt>
+<dd>16</dd>
+      </dl>
+    </div>
+
+
+    <div class="box1">
+      <dl class="txt2">
+      <dt>入力例3</dt>
+      <dd>10 15 12345678</dd>
+      <dd>CCCSSCSSSCCSCCS</dd>
+      <dd>CCCCCSSCSSSSSCS</dd>
+      <dd>CSSSSSCSCCCCCSC</dd>
+      <dd>SSSCCSSSSCCSCSS</dd>
+      <dd>SCCCCCSCCCCCCSC</dd>
+      <dd>CCCSSCCCCSSSCCC</dd>
+      <dd>CSSCSCSCSSSCSSS</dd>
+      <dd>SSSSCSSCCSSSSSS</dd>
+      <dd>CSSCCSCSCCSSCSS</dd>
+      <dd>CCCSCCSSCCCSSCC</dd>
+      </dl>
+    </div>
+    <div class="box1">
+      <dl class="txt2">
+      <dt>出力例3</dt>
+<dd>75</dd>
+      </dl>
+    </div>
+
+  </div>
+</div>
+</div>
+</div>
+<div class="boxEditor">
+<h3 class="ttlStyle2">解答欄</h3>
+<p>上記の問題の解答コードを下記入力欄に記入し提出してください。</p>
+<p class="color">複数のテストケースでテスト致しますので、サンプル入力だけでなく入力値を可変させてデバッグしていただく事をお勧めいたします。</p>
+<p class="mb10">標準入力の値の取得方法は下記ページのサンプルコードを参照ください。</p>
+<ul class="mb20">
+<li class="icon">
+<a target="_blank" class="targetBlank" href="https://paiza.jp/guide/samplecode.html">値取得・出力のサンプルコード</a>
+</li>
+<li class="icon">
+<a target="_blank" class="targetBlank" href="https://paiza.jp/guide/language.html">各言語のバージョン、環境情報</a>
+</li>
+</ul>
+<div class="editor_container">
+<input type="hidden" name="recovery_key" id="recovery_key">
+<div class="answer_wrap">
+<div class="title_wrap mb15">
+<h3 class="h3_title">
+解答欄
+</h3>
+<div class="answer_wrap_option">
+<select class="box form-control" name="language[id]" id="language_id"><option value="">使用する言語</option>
+<option value="2300">Java</option>
+<option value="2301">PHP</option>
+<option value="2302">Ruby</option>
+<option value="2303">Python2</option>
+<option value="2321">Python3</option>
+<option value="2304">Perl</option>
+<option value="2305">C</option>
+<option value="2306">C++</option>
+<option value="2307">C#</option>
+<option value="2308">JavaScript</option>
+<option value="2309">Objective-C</option>
+<option value="2310">Scala</option>
+<option value="2311">Go</option>
+<option value="2324">Swift</option>
+<option value="2312">Haskell(Beta)</option>
+<option value="2313">CoffeeScript(Beta)</option>
+<option value="2314">Bash(Beta)</option>
+<option value="2315">Erlang(Beta)</option>
+<option value="2316">R(Beta)</option>
+<option value="2318">COBOL(Beta)</option>
+<option value="2319">VB(Beta)</option>
+<option value="2320">F#(Beta)</option>
+<option value="2322">Clojure(Beta)</option>
+<option value="2323">D(Beta)</option>
+<option value="2325">Kotlin(Beta)</option>
+<option value="2326">Elixir(Beta)</option>
+<option value="2327">Rust(Beta)</option>
+<option value="2328">Scheme(Beta)</option></select>
+</div>
+</div>
+<form id="code_hand_in" novalidate="novalidate" class="simple_form new_retry_result" action="https://paiza.jp/challenges/223/retry_submit" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="2Om+VMu9M/V4bZCcvIqutJPXKPRM4RwVD9dhGtJbsoqKCMAcsVuK0yPFE8Y4NjyfkWAdlu++XgLf8+KIXgOVvQ=="><input id="programming_language_id" type="hidden" name="retry_result[programming_language_id]">
+<input id="code" type="hidden" name="retry_result[code]">
+</form>
+<div class="editor_wrap">
+<div class="editor_area">
+<div class="editor_ctr_btn_wrap">
+<div class="editor_ctr_btn m-t-10">
+<button class="btn btn-default btn-xs m-r-5" data-placement="bottom" data-toggle="tooltip" id="code_zoom" title="" data-original-title="拡大する" style="user-select: auto;">
+<i class="fa fa-search-plus"></i>
+</button>
+</div>
+<div class="editor_ctr_btn">
+<button class="btn btn-default btn-xs m-r-5" data-placement="bottom" data-toggle="tooltip" id="code_zoom_out" title="" data-original-title="縮小する" style="user-select: auto;">
+<i class="fa fa-search-minus"></i>
+</button>
+</div>
+<div class="editor_ctr_btn m-t-10">
+<button class="theme_color_box dark" data-placement="bottom" data-theme="dark" data-toggle="tooltip" title="" data-original-title="エディターテーマを黒にする"></button>
+</div>
+<div class="editor_ctr_btn">
+<button class="theme_color_box white" data-placement="bottom" data-theme="white" data-toggle="tooltip" title="" data-original-title="エディターテーマを白にする"></button>
+</div>
+<div class="editor_ctr_btn">
+<button class="theme_color_box orange" data-placement="bottom" data-theme="orange" data-toggle="tooltip" title="" data-original-title="エディターテーマを黄色にする"></button>
+</div>
+</div>
+<div id="editor-div" style="height: 280px; width: 100%;" class=" ace_editor ace-solarized-light"><textarea class="ace_text-input" wrap="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="opacity: 0; height: 14px; width: 6.59781px; left: 195.75px; top: 14px;"></textarea><div class="ace_gutter" style="user-select: auto;"><div class="ace_layer ace_gutter-layer ace_folding-enabled" style="margin-top: 0px; height: 308px; width: 40px;"><div class="ace_gutter-cell " style="height: 14px;">1</div><div class="ace_gutter-cell " style="height: 14px;">2</div></div><div class="ace_gutter-active-line" style="top: 14px; height: 14px;"></div></div><div class="ace_scroller" style="left: 40px; right: 0px; bottom: 0px; user-select: auto;"><div class="ace_content" style="margin-top: 0px; width: 888px; height: 308px; margin-left: 0px;"><div class="ace_layer ace_print-margin-layer"><div class="ace_print-margin" style="left: 531.825px; visibility: visible;"></div></div><div class="ace_layer ace_marker-layer"><div class="ace_active-line" style="height:14px;top:14px;left:0;right:0;"></div></div><div class="ace_layer ace_text-layer" style="padding: 0px 4px;"><div class="ace_line" style="height:14px">// <span class="ace_cjk" style="width:13.195625px">自</span><span class="ace_cjk" style="width:13.195625px">分</span><span class="ace_cjk" style="width:13.195625px">の</span><span class="ace_cjk" style="width:13.195625px">得</span><span class="ace_cjk" style="width:13.195625px">意</span><span class="ace_cjk" style="width:13.195625px">な</span><span class="ace_cjk" style="width:13.195625px">言</span><span class="ace_cjk" style="width:13.195625px">語</span><span class="ace_cjk" style="width:13.195625px">で</span></div><div class="ace_line" style="height:14px">// Let's <span class="ace_cjk" style="width:13.195625px">チ</span><span class="ace_cjk" style="width:13.195625px">ャ</span><span class="ace_cjk" style="width:13.195625px">レ</span><span class="ace_cjk" style="width:13.195625px">ン</span><span class="ace_cjk" style="width:13.195625px">ジ</span><span class="ace_cjk" style="width:13.195625px">！</span><span class="ace_cjk" style="width:13.195625px">！</span></div></div><div class="ace_layer ace_marker-layer"></div><div class="ace_layer ace_cursor-layer ace_hidden-cursors"><div class="ace_cursor" style="left: 155.75px; top: 14px; width: 6.59781px; height: 14px;"></div></div></div></div><div class="ace_scrollbar ace_scrollbar-v" style="display: none; width: 22px; bottom: 0px;"><div class="ace_scrollbar-inner" style="width: 22px; height: 28px;"></div></div><div class="ace_scrollbar ace_scrollbar-h" style="display: none; height: 22px; left: 40px; right: 0px;"><div class="ace_scrollbar-inner" style="height: 22px; width: 928px;"></div></div><div style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; overflow: hidden;"><div style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; overflow: visible;"></div><div style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; font-style: inherit; font-variant: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; overflow: visible;">XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</div></div></div>
+</div>
+<div class="text-center" style="height: 66px;">
+<a id="do_compile" onclick="compile_ang_test(&#39;/challenges/223/compile_and_test&#39;)" class="btn btn-primary m-r-5" href="https://paiza.jp/career/challenges/223/page/problem#editor-div" style="user-select: auto;"><i class="fa fa-gear"></i>
+提出前動作確認
+</a></div>
+</div>
+</div>
+<div class="loadingBox" style="display:none">
+<img alt="判定中…" class="center-block" src="./ITプログラマー・エンジニア転職のpaiza転職_files/txt_02.gif" width="200" height="140">
+</div>
+<div class="output_wrap"></div>
+<p class="text-center">
+<a id="handin" onclick="remove_stored_history(); hand_in_code();" class="btn btn-warning btn-lg m-r-5" href="javascript:void(0)" style="user-select: auto;"><i class="fa fa-file pull-left"></i>
+コードを提出する
+</a></p>
+</div>
+
+</div>
+</div>
+
+<div id="tab-results" aria-labelledby="ui-id-2" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-expanded="false" aria-hidden="true" style="display: none;">
+<div class="resultBlock1">
+<div class="mb30">
+<span class="backLink">
+<a class="ch_button green" href="https://paiza.jp/career/mypage/results">&lt; 評価結果一覧へ戻る</a>
+</span>
+</div>
+<div class="mb30" id="result_summary">
+<h2 class="ttlStyle2">
+受験結果サマリ
+<img class="mb5" alt="paizaランクE" src="./ITプログラマー・エンジニア転職のpaiza転職_files/list_rank_e.png" width="35" height="35">
+</h2>
+<div class="basicBox mb10">
+<div class="boxM">
+<div class="lBox">
+<div class="inrTxt2">
+<h2 class="ttlStyle4 mb10">
+<a class="c-link--inline" target="_blank" href="https://paiza.jp/users/basic_profile">初心者だもん</a>
+さんの受験結果
+<a class="c-link--inline u-font--size--16" target="_blank" href="https://paiza.jp/users/basic_profile"><i class="fa fa-arrow-circle-right"></i>
+ニックネームを設定する
+</a></h2>
+<div class="strong mb5">
+問題：S018:天気の予報
+</div>
+</div>
+<div>
+<span class="ml10 strong font14">受験結果</span>
+<span class="ml10"></span>
+<span class="ml10 font12">受験言語：</span>
+<span class="strong font16">Python3</span>
+<span class="ml10 font12">回答時間：</span>
+<span class="strong font16">35分12秒</span>
+<span class="ml10 font12">バイト数：</span>
+<span class="strong font16">186 Byte</span>
+<span class="ml10 font12">スコア：</span>
+<span class="strong font16">0点</span>
+</div>
+<div class="boxB2">
+<span class="ml10 strong font10">問題集計</span>
+<span class="ml20 font10">受験者数：</span>
+<span class="strong font13">206人</span>
+<span class="ml10 font10">正解率：</span>
+<span class="strong font13">34.56％</span>
+<span class="ml10 font10">平均回答時間：</span>
+<span class="strong font13">96分20秒</span>
+<span class="ml10 font10">平均スコア：</span>
+<span class="strong font13">32.63点</span>
+<span class="ml10"><img alt="score 32.63" src="./ITプログラマー・エンジニア転職のpaiza転職_files/score_025.png" width="25" height="25"></span>
+</div>
+</div>
+<div class="rBox">
+<div class="inrTxt2">
+<img alt="見習いコーダー" src="./ITプログラマー・エンジニア転職のpaiza転職_files/img_rank_e.jpg" width="200" height="150">
+</div>
+</div>
+<div style="clear: both"></div>
+</div>
+</div>
+<div class="social_button">
+<dl class="txt5">
+<dt>
+<img src="./ITプログラマー・エンジニア転職のpaiza転職_files/share.jpg" alt="Share" width="960" height="40">
+</dt>
+<dd>
+<ul class="sbList cfix">
+<li class="twitter">
+<div class="twitter-button-wrapper" data-social-target="/career/challenges/223/page/result">
+<iframe id="twitter-widget-0" scrolling="no" frameborder="0" allowtransparency="true" class="twitter-share-button twitter-share-button-rendered twitter-tweet-button" style="position: static; visibility: visible; width: 75px; height: 20px;" title="Twitter Tweet Button" src="./ITプログラマー・エンジニア転職のpaiza転職_files/tweet_button.36c0c29c73929bf937f4c70adb1a29e4.ja.html" data-url="https://paiza.jp/challenges/share/NFfX7HYkp1rUbUkwaavS7vk09pg4hqoORP7tAawnDj8?source=social"></iframe>
+</div>
+<script>
+  if (!!window.twttr && !!window.twttr.widgets) {
+    twttr.widgets.load();
+  }
+</script>
+
+</li>
+<li class="facebook">
+<div class="fb-like fb_iframe_widget" data-action="like" data-colorscheme="light" data-href="https://paiza.jp/challenges/share/NFfX7HYkp1rUbUkwaavS7vk09pg4hqoORP7tAawnDj8?source=social" data-layout="button_count" data-share="false" data-show-faces="true" fb-xfbml-state="rendered" fb-iframe-plugin-query="action=like&amp;app_id=177441089097247&amp;color_scheme=light&amp;container_width=0&amp;href=https%3A%2F%2Fpaiza.jp%2Fchallenges%2Fshare%2FNFfX7HYkp1rUbUkwaavS7vk09pg4hqoORP7tAawnDj8%3Fsource%3Dsocial&amp;layout=button_count&amp;locale=ja_JP&amp;sdk=joey&amp;share=false&amp;show_faces=true"><span style="vertical-align: bottom; width: 83px; height: 20px;"><iframe name="f385b481ff7f4" width="1000px" height="1000px" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" title="fb:like Facebook Social Plugin" src="./ITプログラマー・エンジニア転職のpaiza転職_files/like.html" class="" style="border: none; visibility: visible; width: 83px; height: 20px;"></iframe></span></div>
+<script>
+  if (!!window.FB && !!window.FB.XFBML) {
+    FB.XFBML.parse();
+  }
+</script>
+
+</li>
+<li class="url">
+<span class="font8">
+URL：
+<a target="_blank" href="https://paiza.jp/challenges/share/NFfX7HYkp1rUbUkwaavS7vk09pg4hqoORP7tAawnDj8?source=social">https://paiza.jp/challenges/share/NFfX7HYkp1rUbUkwaavS7vk09pg4hqoORP7tAawnDj8?source=social</a>
+</span>
+</li>
+
+</ul>
+</dd>
+</dl>
+</div>
+
+<div class="notice-balloon disnon" style="overflow: hidden; display: block; height: 0.335567px; margin: 0px; padding: 0px; width: 0.335567px; opacity: 0.664433;">
+<div class="notice-balloon-text" onclick="$(this).hide(&quot;slow&quot;)" style="padding-top: 15px">
+<div class="left notice-balloon-box top">
+「ツイート」ボタンから受験結果をシェアしましょう！
+
+</div>
+</div>
+</div>
+
+</div>
+<h2 class="ttlStyle2">提出コード結果詳細</h2>
+<div class="font12">
+<table class="txt2 mb15">
+<tbody><tr>
+<th class="cell1 tableLine strong alnL">テスト番号</th>
+<th class="tableLine strong" colspan="2">
+<table class="txt2 innerTable">
+<tbody><tr>
+<th class="caseTitle strong alnL">入力ケース番号</th>
+<th class="cell2 strong alnL">
+<span style="padding-left: 15px">ジャッジ結果</span>
+</th>
+<th class="cell3 strong alnL">実行時間</th>
+</tr>
+</tbody></table>
+</th>
+</tr>
+<tr id="test_1">
+<th class="cell1 tableLine alnL">
+テスト 1
+</th>
+<td class="tableLine" colspan="2">
+<table class="innerTable test_case_1 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 1（基本データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.03 秒</p>
+</td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+<tr id="test_2">
+<th class="cell1 tableLine alnL">
+テスト 2
+</th>
+<td class="tableLine" colspan="2">
+<table class="innerTable test_case_1 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 1（基本データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.04 秒</p>
+</td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+<tr id="test_3">
+<th class="cell1 tableLine alnL">
+テスト 3
+</th>
+<td class="tableLine" colspan="2">
+<table class="innerTable test_case_1 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 1（基本データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.04 秒</p>
+</td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+<tr id="test_4">
+<th class="cell1 tableLine alnL">
+テスト 4
+</th>
+<td class="tableLine" colspan="2">
+<table class="innerTable test_case_1 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 1（基本データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.04 秒</p>
+</td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+<tr id="test_5">
+<th class="cell1 tableLine alnL">
+テスト 5
+</th>
+<td class="tableLine" colspan="2">
+<table class="innerTable test_case_1 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 1（基本データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.04 秒</p>
+</td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+<tr id="test_6">
+<th class="cell1 tableLine alnL">
+テスト 6
+</th>
+<td class="tableLine" colspan="2">
+<table class="innerTable test_case_1 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 1（境界値データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.03 秒</p>
+</td>
+</tr>
+</tbody></table>
+<table class="innerTable test_case_2 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 2（境界値データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.04 秒</p>
+</td>
+</tr>
+</tbody></table>
+<table class="innerTable test_case_3 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 3（境界値データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.04 秒</p>
+</td>
+</tr>
+</tbody></table>
+<table class="innerTable test_case_4 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 4（基本データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.04 秒</p>
+</td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+<tr id="test_7">
+<th class="cell1 tableLine alnL">
+テスト 7
+</th>
+<td class="tableLine" colspan="2">
+<table class="innerTable test_case_1 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 1（基本データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.03 秒</p>
+</td>
+</tr>
+</tbody></table>
+<table class="innerTable test_case_2 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 2（境界値データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.03 秒</p>
+</td>
+</tr>
+</tbody></table>
+<table class="innerTable test_case_3 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 3（境界値データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.04 秒</p>
+</td>
+</tr>
+</tbody></table>
+<table class="innerTable test_case_4 txt2">
+<tbody><tr class="pass">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 4（境界値データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>通過</span>
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.04 秒</p>
+</td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+<tr id="test_8">
+<th class="cell1 tableLine alnL">
+テスト 8
+</th>
+<td class="tableLine" colspan="2">
+<table class="innerTable test_case_1 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 1（境界値データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.04 秒</p>
+</td>
+</tr>
+</tbody></table>
+<table class="innerTable test_case_2 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 2（基本データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.03 秒</p>
+</td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+<tr id="test_9">
+<th class="cell1 tableLine alnL">
+テスト 9
+</th>
+<td class="tableLine" colspan="2">
+<table class="innerTable test_case_1 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 1（大規模データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.04 秒</p>
+</td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+<tr id="test_10">
+<th class="cell1 tableLine alnL">
+テスト 10
+</th>
+<td class="tableLine" colspan="2">
+<table class="innerTable test_case_1 txt2">
+<tbody><tr class="error">
+<th class="caseTitle alnL">
+<p class="txt1">ケース 1（大規模データ）</p>
+</th>
+<td class="cell2 alnL">
+<p>
+<span>失敗</span>
+（出力結果が間違っています）
+</p>
+</td>
+<td class="cell3 font12">
+<p>0.03 秒</p>
+</td>
+</tr>
+</tbody></table>
+</td>
+</tr>
+</tbody></table>
+
+</div>
+<div class="tagBadgeArea">
+<div id="rank-up-field" style="display: none;">
+<div class="boxMember">
+<div class="section1 rankup_wrap">
+<div class="dialog_close">
+<a class="dialog_close_btn" onclick="dialog_close()" href="javascript:void(0)">✖</a>
+</div>
+<h3 class="strong">
+<img src="./ITプログラマー・エンジニア転職のpaiza転職_files/img_01_01.gif" alt="Img 01 01" width="42" height="33">
+paizaランク
+</h3>
+<div class="inr1 cfix">
+<div class="lBox">
+<p class="mb5">南基雄さんのpaizaランク</p>
+<table class="txt1">
+<tbody><tr class="bg1">
+<th>
+<span>paizaランク</span>
+</th>
+<td>
+<span id="before_my_rank">
+E
+</span>
+<span id="after_my_rank" style="display: none;">
+S
+</span>
+</td>
+</tr>
+<tr class="bg2">
+<th>
+<span>paiza査定</span>
+</th>
+<td style="color: #ff6600;">
+年収
+<span data-after="0" data-before="0" id="paiza-income">
+0
+</span>
+万円※
+</td>
+</tr>
+</tbody></table>
+<ul class="txtList1 txt2">
+<li><span>※</span>paiza査定は現在β版のため参考値です。<br>年収の保証をするものでありません。
+</li>
+</ul>
+</div>
+<div class="rBox">
+<p>
+<img id="rank-up-before" class="js-turning-target" alt="見習いコーダー" src="./ITプログラマー・エンジニア転職のpaiza転職_files/img_rank_e.jpg" width="200" height="150">
+<img id="rank-up-after" style="display: none;" alt="見習いコーダー" src="./ITプログラマー・エンジニア転職のpaiza転職_files/img_rank_e.jpg" width="200" height="150">
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="tag tagGood" style="display:none;">
+<p><img alt="Good!! CONGRATULATION!" src="./ITプログラマー・エンジニア転職のpaiza転職_files/tag_good.png" width="320" height="320"></p>
+</div>
+</div>
+
+</div>
+<h2 class="ttlStyle2">提出コード</h2>
+言語：Python3
+<div class="u-mb--30 ace_editor ace-tm" id="editor-handin-div" style="height: 250px; width: 100%"><textarea class="ace_text-input" wrap="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="opacity: 0;"></textarea><div class="ace_gutter" style="user-select: auto;"><div class="ace_layer ace_gutter-layer ace_folding-enabled"></div><div class="ace_gutter-active-line"></div></div><div class="ace_scroller" style="user-select: auto;"><div class="ace_content"><div class="ace_layer ace_print-margin-layer"><div class="ace_print-margin" style="left: 4px; visibility: visible;"></div></div><div class="ace_layer ace_marker-layer"></div><div class="ace_layer ace_text-layer" style="padding: 0px 4px;"></div><div class="ace_layer ace_marker-layer"></div><div class="ace_layer ace_cursor-layer ace_hidden-cursors"><div class="ace_cursor"></div></div></div></div><div class="ace_scrollbar ace_scrollbar-v" style="display: none; width: 22px;"><div class="ace_scrollbar-inner" style="width: 22px;"></div></div><div class="ace_scrollbar ace_scrollbar-h" style="display: none; height: 22px;"><div class="ace_scrollbar-inner" style="height: 22px;"></div></div><div style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; overflow: hidden;"><div style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; overflow: visible;"></div><div style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; font-size: inherit; line-height: inherit; font-family: inherit; overflow: visible;">XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX</div></div></div>
+<div id="result_suggest_area">
+<div class="c-flex c-flex--center u-mb--5">
+<div class="u-font--bold u-font--size--18"><span class="u-color--orange">再チャレンジは何度でもチャレンジ可能です。</span>高得点を目指して再度チャレンジしよう！
+</div>
+</div>
+<div class="c-flex c-flex--center u-mb--30">
+<div class="c-flex-item u-mr--10">
+<a class="ch_button blue" href="https://paiza.jp/career/challenges/223/page/problem">再チャレンジする</a>
+</div>
+<div class="c-flex-item u-ml--10">
+<a class="ch_button green" href="https://paiza.jp/challenges">&lt; スキルチェック一覧ヘ</a>
+</div>
+</div>
+
+</div>
+</div>
+
+
+</div>
+</div>
+<a class="js-dev_language colorbox_fit_width_neko disable_overlay_click disable_esc_key" hidden="hidden" href="https://paiza.jp/users/skill_pr/edit_conversion?association=pr_dev_languages&amp;type=with_experience_year">プログラミング言語経験</a>
+<a class="js-income colorbox_fit_width_neko disable_overlay_click disable_esc_key" hidden="hidden" href="https://paiza.jp/users/profile_part/edit?sensei_prefix=income_conversion&amp;sensei_script=%E5%B9%B4%E5%8F%8E%E3%82%92%E7%99%BB%E9%8C%B2%E3%81%99%E3%82%8B%E3%81%A8paiza%E6%9F%BB%E5%AE%9A%E3%82%84%E6%B1%82%E4%BA%BA%E3%83%AC%E3%82%B3%E3%83%A1%E3%83%B3%E3%83%89%E3%81%AE%E7%B2%BE%E5%BA%A6%E3%81%8C%E9%AB%98%E3%81%BE%E3%82%8B%E3%81%9E%E3%80%82%E4%BC%81%E6%A5%AD%E3%81%8B%E3%82%89%E3%81%AE%E3%82%88%E3%81%84%E3%82%AA%E3%83%95%E3%82%A1%E3%83%BC%E3%81%8C%E5%B1%8A%E3%81%8D%E3%82%84%E3%81%99%E3%81%8F%E3%81%AA%E3%82%8B%E3%81%9E%E3%80%82&amp;type=income">年収</a>
+<a class="js-hope_work_location colorbox_fit_width_neko disable_overlay_click disable_esc_key" hidden="hidden" href="https://paiza.jp/users/skill_pr/edit_conversion?association=hope_work_locations&amp;type=prefecture">希望勤務地</a>
+<a class="js-hope_dev_language colorbox_fit_width_neko disable_overlay_click disable_esc_key" hidden="hidden" href="https://paiza.jp/users/skill_pr/edit_conversion?association=hope_dev_languages&amp;type=check_box">希望言語</a>
+<a class="js-hope_dev_contents_type colorbox_fit_width_neko disable_overlay_click disable_esc_key" hidden="hidden" href="https://paiza.jp/users/skill_pr/edit_conversion?association=hope_dev_contents_types&amp;type=check_box">希望開発内容タイプ</a>
+
+
+</div>
+<div id="footer">
+<div class="inr">
+<div class="inrBlock1 cfix">
+<div class="boxCompanyInfo">
+<p class="footerTtl">
+<span class="footer-logo-area">
+<span class="footer-logo-area-img">
+<img height="30" alt="コーディング転職のパイザ　IT／WEBエンジニアがスキルアップできる求人情報" src="./ITプログラマー・エンジニア転職のpaiza転職_files/white-359a7fd38a852633f1babd6c775033a5.png">
+</span>
+<span class="footer-logo-area-text">
+コーディング転職のパイザ　IT／WEBエンジニアがスキルアップできる求人情報
+</span>
+</span>
+</p>
+
+<div class="footerNav cfix">
+<div class="boxL">
+<ul class="nav1">
+<li><a href="https://paiza.jp/">総合トップ</a></li>
+<li><a href="https://paiza.jp/guide/guide">paizaとは</a></li>
+<li><a href="https://paiza.jp/career/job_offers">エンジニア転職求人</a></li>
+<li><a href="https://paiza.jp/student/job_offers">エンジニア新卒求人</a></li>
+<li><a href="https://paiza.jp/en_try/job_offers">エンジニア未経験求人</a></li>
+<li><a href="https://paiza.jp/challenges">スキルチェック</a></li>
+</ul>
+<ul class="nav1">
+<li><a href="https://paiza.jp/career/features">転職成功者の声</a></li>
+<li><a href="https://paiza.jp/student/features">就活成功者の声</a></li>
+<li><a href="https://paiza.jp/en_try/features">未経験からの転職者の声</a></li>
+</ul>
+</div>
+<div class="boxL">
+<ul class="nav1">
+<li><a href="https://paiza.jp/works">プログラミング学習</a></li>
+<li><a target="_blank" href="https://paiza.jp/paiza_game_history">ハッカソン</a></li>
+</ul>
+<ul class="nav1">
+<li><a href="https://paiza.jp/guide/faq">よくあるご質問</a></li>
+<li><a href="https://paiza.jp/guide/kiyaku">利用規約</a></li>
+<li><a href="https://paiza.jp/guide/policy">プライバシーポリシー</a></li>
+<li><a target="_blank" class="targetBlank" rel="noopener" href="http://gi-no.jp/">運営会社</a></li>
+</ul>
+<ul>
+<li><a href="https://paiza.jp/guide/sitemap">サイトマップ</a></li>
+</ul>
+</div>
+<div class="boxL">
+<ul class="nav1 nav1-strong">
+<li>
+<a href="https://paiza.jp/guide/keisai">エンジニア採用ご担当者の方
+</a></li>
+</ul>
+</div>
+<div class="boxL">
+<ul class="nav4">
+<li class="blog footer-blog-area">
+<a class="targetBlank" href="http://paiza.hatenablog.com/" rel="noopener" target="_blank">paiza公式ブログ</a>
+<p class="blog-caption">平日毎日更新中！</p>
+<ul class="blog mb10 footer-blog-area__ul">
+<li><a target="_blank" class="targetBlank" rel="noopener" href="http://paiza.hatenablog.com/archive/category/IT%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%8B%E3%82%A2%E3%81%AE%E8%BB%A2%E8%81%B7">┣転職者向け情報</a></li>
+<li><a target="_blank" class="targetBlank" rel="noopener" href="http://paiza.hatenablog.com/archive/category/%E6%96%B0%E5%8D%92%2F%E5%B0%B1%E6%B4%BB">┣就活生向け情報</a></li>
+<li><a target="_blank" class="targetBlank" rel="noopener" href="http://paiza.hatenablog.com/archive/category/%E7%AC%AC%E4%BA%8C%E6%96%B0%E5%8D%92">┣第二新卒向け情報</a></li>
+<li><a target="_blank" class="targetBlank" rel="noopener" href="http://paiza.hatenablog.com/archive/category/%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0%E5%AD%A6%E7%BF%92">┣プログラミング学習</a></li>
+<li><a target="_blank" class="targetBlank" rel="noopener" href="http://paiza.hatenablog.com/archive/category/%E9%96%8B%E7%99%BA%E3%83%8D%E3%82%BF">┗開発ネタ</a></li>
+</ul>
+</li>
+<li class="facebook"><a target="_blank" class="targetBlank" rel="noopener" href="https://www.facebook.com/pages/paiza/116685535171645">公式Facebookページ</a></li>
+<li class="twitter"><a target="_blank" class="targetBlank" rel="noopener" href="https://twitter.com/paiza_official">公式Twitterアカウント</a></li>
+<li class="blog">
+<a class="targetBlank" href="https://paiza.io/" rel="noopener" target="_blank">オンライン実行環境</a>
+</li>
+</ul>
+</div>
+</div>
+<ul class="font12 mb20">
+<li class="color_white">
+お問い合わせ先：
+mail:
+<a href="mailto:info@paiza.jp">
+info@paiza.jp
+</a>
+／tel: 03-6384-8050
+</li>
+</ul>
+<ul class="sbList cf">
+<li class="twitter">
+<div class="twitter-button-wrapper" data-social-target="paiza_footer">
+<iframe id="twitter-widget-1" scrolling="no" frameborder="0" allowtransparency="true" class="twitter-share-button twitter-share-button-rendered twitter-tweet-button" style="position: static; visibility: visible; width: 75px; height: 20px;" title="Twitter Tweet Button" src="./ITプログラマー・エンジニア転職のpaiza転職_files/tweet_button.36c0c29c73929bf937f4c70adb1a29e4.ja(1).html"></iframe>
+</div>
+<script>
+  if (!!window.twttr && !!window.twttr.widgets) {
+    twttr.widgets.load();
+  }
+</script>
+
+</li>
+<li class="facebook">
+<div class="fb-like fb_iframe_widget" data-action="like" data-colorscheme="light" data-href="https://www.facebook.com/official.paiza" data-layout="button_count" data-share="false" data-show-faces="true" fb-xfbml-state="rendered" fb-iframe-plugin-query="action=like&amp;app_id=177441089097247&amp;color_scheme=light&amp;container_width=650&amp;href=https%3A%2F%2Fwww.facebook.com%2Fofficial.paiza&amp;layout=button_count&amp;locale=ja_JP&amp;sdk=joey&amp;share=false&amp;show_faces=true"><span style="vertical-align: bottom; width: 104px; height: 20px;"><iframe name="f3d9d5ce46031f4" width="1000px" height="1000px" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" title="fb:like Facebook Social Plugin" src="./ITプログラマー・エンジニア転職のpaiza転職_files/like(1).html" style="border: none; visibility: visible; width: 104px; height: 20px;" class=""></iframe></span></div>
+<script>
+  if (!!window.FB && !!window.FB.XFBML) {
+    FB.XFBML.parse();
+  }
+</script>
+
+</li>
+</ul>
+</div>
+<script>
+  !function(a,b,c,d,e,f){e=b.createElement("script"),e.type="text/javascript",e.async=!0,e.src="https://cdn.slimfaq.com/widget/widget.js",f=b.getElementsByTagName("script")[0],f.parentNode.insertBefore(e,f),e.onload=function(){Slimfaq.init(c,d);Slimfaq.SlimfaqButton.hide();}}
+  (window,document,"paiza",{});
+</script>
+<script>
+  (function() {
+    $(function() {
+      return $(document).on('click', '.slimfaq-close-button', function() {
+        return Slimfaq.SlimfaqButton.hide();
+      });
+    });
+  
+  }).call(this);
+</script>
+<noscript>
+&lt;a href='https://slimfaq.com/paiza' target='_blank'&gt;FAQ on SlimFAQ&lt;/a&gt;
+</noscript>
+<div class="boxOpinion">
+<h2 style="margin: 0 0 0 0;">お困りの方はこちらから</h2>
+<p>
+<a onclick="show_side_help()" href="javascript:void(0)"><img height="38" width="296" class="rollover-image__on mb20" data-rollover-path="https://paiza.jp/images/footer_btn2_o.png" onmouseover="this.src=&#39;https://paiza.jp/images/footer_btn2_o.png&#39;" onmouseout="this.src=&#39;https://paiza.jp/images/footer_btn2.png&#39;" src="./ITプログラマー・エンジニア転職のpaiza転職_files/footer_btn2.png" alt="Footer btn2">
+</a></p>
+<h2 style="margin: 0 0 0 0;">paizaについてご意見をお願いいたします</h2>
+<input type="hidden" name="current_url" id="current_url" value="https://paiza.jp/career/challenges/223/page/problem">
+<div id="opinionAreaThanks" style="color: #FFFFFF; background-color: #525252; padding: 20px; display: none;">
+<b>ご意見ありがとうございました。</b>
+<br>
+<br>
+頂いたご意見には必ずスタッフが目を通します。個々のご意見に返信できない旨、予めご了承ください。
+<br>
+<br>
+返信が必要な場合は下記のお問い合わせフォームからご連絡をお願い致します。
+<p style="text-align: center; margin-top: 20px;">
+<a class="c-btn c-btn--white color_black" id="opinion_btn" href="https://paiza.jp/career/challenges/223/page/problem" style="user-select: auto;">お問い合わせフォーム</a>
+</p>
+</div>
+<div id="opinionArea" style="color: #FFFFFF;">
+<textarea class="placeholder fontSizeS" id="opinion" style="height: 122px; width: 274px;" title="気になる点等、ご意見を頂けると助かります！"></textarea>
+<span id="opinionError"></span>
+<p>
+<a onclick="submit_opinion()" href="javascript:void(0)"><img alt="paizaに意見を送る" height="38" width="296" class="rollover-image__on " data-rollover-path="https://paiza.jp/images/footer_btn_o.gif" onmouseover="this.src=&#39;https://paiza.jp/images/footer_btn_o.gif&#39;" onmouseout="this.src=&#39;https://paiza.jp/images/footer_btn.gif&#39;" src="./ITプログラマー・エンジニア転職のpaiza転職_files/footer_btn.gif">
+</a></p>
+</div>
+</div>
+
+</div>
+<div class="inrBlock2">
+<p class="txt font15">【エンジニア転職求人】</p>
+<div class="ml20">
+<ul class="navf cfix">
+<li>
+<a href="https://paiza.jp/job_offers/choice">言語、環境一覧から探す</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_language/PHP">PHP</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_language/Java">Java</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_language/Ruby">Ruby</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_language/Python2">Python2</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_language/Python3">Python3</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_language/C">C</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_language/C%EF%BC%83">C＃</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_language/C++">C++</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_language/Perl">Perl</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_language/JavaScript">JavaScript</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_language/Objective-C">Objective-C</a>
+</li>
+</ul>
+</div>
+<div class="ml20">
+<ul class="navf cfix">
+<li>
+<span>フレームワーク別求人</span>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_frameworks/Struts">Struts</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_frameworks/Seasar2">Seasar2</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_frameworks/Spring">Spring</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_frameworks/CakePHP">CakePHP</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_frameworks/Symfony">Symfony</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_frameworks/Ruby%20on%20Rails">Ruby on Rails</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_frameworks/Django">Django</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_frameworks/.NET%20Framework">.NET Framework</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_frameworks/Unity">Unity</a>
+</li>
+<li>
+<a href="https://paiza.jp/career/job_offers/dev_frameworks/jQuery">jQuery</a>
+</li>
+</ul>
+</div>
+</div>
+<div class="inrBlock2">
+<p class="txt font15">【エンジニア就活求人】</p>
+<div class="ml20">
+<ul class="navf cfix">
+<li>
+<a href="https://paiza.jp/job_offers/choice">言語、環境一覧から探す</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_language/PHP">PHP</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_language/Java">Java</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_language/Ruby">Ruby</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_language/Python2">Python2</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_language/Python3">Python3</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_language/C">C</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_language/C%EF%BC%83">C＃</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_language/C++">C++</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_language/Perl">Perl</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_language/JavaScript">JavaScript</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_language/Objective-C">Objective-C</a>
+</li>
+</ul>
+</div>
+<div class="ml20">
+<ul class="navf cfix">
+<li>
+<span>フレームワーク別求人</span>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Struts">Struts</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Seasar2">Seasar2</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Spring">Spring</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/CakePHP">CakePHP</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Symfony">Symfony</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Ruby%20on%20Rails">Ruby on Rails</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Django">Django</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/.NET%20Framework">.NET Framework</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Unity">Unity</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/jQuery">jQuery</a>
+</li>
+</ul>
+</div>
+</div>
+<div class="inrBlock2">
+<p class="txt font15">【エンジニア未経験求人】</p>
+<div class="ml20">
+<ul class="navf cfix">
+<li>
+<a href="https://paiza.jp/job_offers/choice">言語、環境一覧から探す</a>
+</li>
+<li>
+<a href="https://paiza.jp/en_try/job_offers/dev_language/PHP">PHP</a>
+</li>
+<li>
+<a href="https://paiza.jp/en_try/job_offers/dev_language/Java">Java</a>
+</li>
+<li>
+<a href="https://paiza.jp/en_try/job_offers/dev_language/Ruby">Ruby</a>
+</li>
+<li>
+<a href="https://paiza.jp/en_try/job_offers/dev_language/Python2">Python2</a>
+</li>
+<li>
+<a href="https://paiza.jp/en_try/job_offers/dev_language/Python3">Python3</a>
+</li>
+<li>
+<a href="https://paiza.jp/en_try/job_offers/dev_language/C">C</a>
+</li>
+<li>
+<a href="https://paiza.jp/en_try/job_offers/dev_language/C%EF%BC%83">C＃</a>
+</li>
+<li>
+<a href="https://paiza.jp/en_try/job_offers/dev_language/C++">C++</a>
+</li>
+<li>
+<a href="https://paiza.jp/en_try/job_offers/dev_language/Perl">Perl</a>
+</li>
+<li>
+<a href="https://paiza.jp/en_try/job_offers/dev_language/JavaScript">JavaScript</a>
+</li>
+<li>
+<a href="https://paiza.jp/en_try/job_offers/dev_language/Objective-C">Objective-C</a>
+</li>
+</ul>
+</div>
+<div class="ml20">
+<ul class="navf cfix">
+<li>
+<span>フレームワーク別求人</span>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Struts">Struts</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Seasar2">Seasar2</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Spring">Spring</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/CakePHP">CakePHP</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Symfony">Symfony</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Ruby%20on%20Rails">Ruby on Rails</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Django">Django</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/.NET%20Framework">.NET Framework</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/Unity">Unity</a>
+</li>
+<li>
+<a href="https://paiza.jp/student/job_offers/dev_frameworks/jQuery">jQuery</a>
+</li>
+</ul>
+</div>
+</div>
+<div class="inrBlock2">
+<p class="txt font15">【プログラミング初心者向け講座】</p>
+<div class="ml20">
+<ul class="navf cfix">
+<li>
+講座一覧から探す
+</li>
+<li>
+<a href="https://paiza.jp/works/search_courses/2000">PHP</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_courses/2001">Ruby</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_courses/2002">Python</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_courses/2004">C言語</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_courses/2005">JavaScript</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_courses/2100">HTML/CSS/Bootstrap</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_courses/2101">DB/SQL</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_courses/2102">LAMP</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_courses/2103">キャリア</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_courses/2104">アルゴリズム</a>
+</li>
+</ul>
+</div>
+<div class="ml20">
+<ul class="navf cfix">
+<li>
+タグ一覧から探す
+</li>
+<li>
+<a href="https://paiza.jp/works/search_chapters/3000">アルゴリズム解説</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_chapters/3002">配列</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_chapters/3010">HelloWorld</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_chapters/3013">HTML</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_chapters/3019">演算子</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_chapters/3024">条件分岐</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_chapters/3027">比較演算子</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_chapters/3030">日付処理</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_chapters/3045">AWS</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_chapters/3046">MySQL</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_chapters/3049">Bootstrap</a>
+</li>
+<li>
+<a href="https://paiza.jp/works/search_chapters/3053">再帰</a>
+</li>
+</ul>
+</div>
+</div>
+<div class="container">
+<div class="inrBlock2 mb30">
+<p class="txt font16">サービス一覧</p>
+<div class="row">
+<div class="col-sm-2">
+<a class="ml20 txt" href="https://paiza.jp/">paiza</a>
+</div>
+<div class="col-sm-4">
+<span>…サービス総合トップ</span>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-2">
+<a class="ml20 txt" href="https://paiza.jp/career">paiza転職</a>
+</div>
+<div class="col-sm-4">
+<span>…コーディング転職</span>
+</div>
+<div class="col-sm-2">
+<a class="ml20 txt" href="https://paiza.jp/student">paiza新卒</a>
+</div>
+<div class="col-sm-4">
+<span>…コーディング就活</span>
+</div>
+</div>
+<div class="row">
+<div class="col-sm-2">
+<a class="ml20 txt" href="https://paiza.jp/works">paizaラーニング</a>
+</div>
+<div class="col-sm-4">
+<span>…プログラミング動画学習</span>
+</div>
+<div class="col-sm-2">
+<a class="ml20 txt" href="https://paiza.jp/en_try">EN:TRY</a>
+</div>
+<div class="col-sm-4">
+<span>…未経験向けコーディング転職</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="pagetop">
+<p class="rollover">
+<a href="https://paiza.jp/career/challenges/223/page/problem#header"><img alt="ページの先頭へ戻る" src="./ITプログラマー・エンジニア転職のpaiza転職_files/pagetop.png" width="60" height="60"></a>
+</p>
+</div>
+
+
+
+
+<div id="cboxOverlay" style="display: none;"></div><div id="colorbox" class="" role="dialog" tabindex="-1" style="display: none;"><div id="cboxWrapper"><div><div id="cboxTopLeft" style="float: left;"></div><div id="cboxTopCenter" style="float: left;"></div><div id="cboxTopRight" style="float: left;"></div></div><div style="clear: left;"><div id="cboxMiddleLeft" style="float: left;"></div><div id="cboxContent" style="float: left;"><div id="cboxTitle" style="float: left;"></div><div id="cboxCurrent" style="float: left;"></div><button type="button" id="cboxPrevious"></button><button type="button" id="cboxNext"></button><button type="button" id="cboxSlideshow"></button><div id="cboxLoadingOverlay" style="float: left;"></div><div id="cboxLoadingGraphic" style="float: left;"></div></div><div id="cboxMiddleRight" style="float: left;"></div></div><div style="clear: left;"><div id="cboxBottomLeft" style="float: left;"></div><div id="cboxBottomCenter" style="float: left;"></div><div id="cboxBottomRight" style="float: left;"></div></div></div><div style="position: absolute; width: 9999px; visibility: hidden; display: none; max-width: none;"></div></div><iframe scrolling="no" frameborder="0" allowtransparency="true" src="./ITプログラマー・エンジニア転職のpaiza転職_files/widget_iframe.36c0c29c73929bf937f4c70adb1a29e4.html" style="display: none;"></iframe><iframe id="rufous-sandbox" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" style="position: absolute; visibility: hidden; display: none; width: 0px; height: 0px; padding: 0px; border: none;" title="Twitter analytics iframe" src="./ITプログラマー・エンジニア転職のpaiza転職_files/saved_resource.html"></iframe><div id="slimfaq" class="slimfaq-reset intercom-disabled"><style id="slimfaq-style">#intercom-container .intercom-launcher-button,#intercom-launcher{z-index:20000 !important}#intercom-container{z-index:20000 !important}#slimfaq.intercom-enabled .slimfaq-launcher-icon{background-image:url("https://cdn.slimfaq.com/widget/icon-intercom-launcher.png") !important}#slimfaq.intercom-disabled .slimfaq-launcher-icon{background-image:url("https://cdn.slimfaq.com/widget/icon-launcher.png") !important}#slimfaq a.slimfaq-button{position:fixed !important;bottom:20px !important;text-indent:-9999px !important;z-index:2147483007 !important}@media screen and (max-device-width: 480px){#slimfaq .slimfaq-sidebar{overflow-y:auto !important}}#slimfaq .slimfaq-sidebar{position:fixed !important;top:0 !important;display:block !important;z-index:2147483006 !important;border-left:1px solid #dadee2 !important;box-shadow:0 0 4px 1px rgba(0,0,0,0.08) !important;background-color:#FFF !important;-webkit-overflow-scrolling:touch !important}#slimfaq .slimfaq-sidebar iframe{height:100% !important;width:368px !important}#slimfaq .slimfaq-launcher-icon{background-size:22px 22px !important;background-repeat:no-repeat !important;position:absolute !important;top:14px !important;left:14px !important;width:25px !important;height:25px !important}#slimfaq div.slimfaq-launcher-icon-container{border-radius:50% !important;box-shadow:0 2px 4px 0 rgba(0,0,0,0.2) !important;position:absolute !important;bottom:0 !important;right:0 !important;width:50px !important;height:50px !important;cursor:pointer !important;background-color:#333333 !important;border-color:#0b0b0b !important}#slimfaq div.slimfaq-launcher-icon-container.slimfaq-invisible{background-color:transparent !important;box-shadow:none !important;border:none !important;width:60px !important;height:60px !important}#slimfaq div.slimfaq-launcher-icon-container.slimfaq-invisible i{display:none !important}#slimfaq .slimfaq-close-button{cursor:pointer !important;position:fixed !important;right:20px !important;top:0 !important;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAq0lEQVR42o2RMQoCMRBFcwQ776C11upOekHEnaC47sQbWomIlWfRSm+wZiBFIAzfgYEw/PeKfLdYdyNiuSz5OHV/TLM9TTSvnPMsVx/ikPadBQh8aZ6C3Fyz62bp8SkFEOT4XQWZ670SaBCCeWwBBm0Bcb+xQSwYEFgLOO5L2LdyAEj9ObpGC7gOavuz0QLu0WoBgqhGCEJBOtwBWAly/qG1jInlWYJIoHnlfhcTzX2HEVUjAAAAAElFTkSuQmCC) !important;background-size:13px 13px !important;background-repeat:no-repeat !important;background-position:center !important;width:16px !important;height:48px !important;opacity:.4 !important;z-index:2147483006 !important}#slimfaq .slimfaq-close-button:hover{opacity:1 !important;transition:opacity .2s linear !important}#slimfaq .slimfaq-hide{display:none !important}#slimfaq .slimfaq-contact-support-container{width:100% !important;height:48px !important;text-align:center !important;border-top:1px solid #dadee2 !important;background-color:#f7f7f8 !important}#slimfaq .slimfaq-contact-support-link{text-align:center !important;text-decoration:none !important;padding:0 18px !important;margin:8px !important;color:#fff !important;height:32px !important;box-shadow:inset 0 1px 0 0 rgba(255,255,255,0.17) !important;background:#333333 !important;background-image:linear-gradient(to bottom, #474747, #333) !important;border-radius:3px !important;text-shadow:0 -1px rgba(0,0,0,0.2) !important;transition:background-color .1s linear !important;line-height:30px !important;font-size:14px !important;display:inline-block !important;border:1px solid #1f1f1f !important;font-weight:500 !important;font-family:"Helvetica Neue", Helvetica, Arial, sans-serif !important;-webkit-font-smoothing:antialiased !important}#slimfaq .slimfaq-contact-support-link:focus,#slimfaq .slimfaq-contact-support-link:hover{background:#1f1f1f !important;background-image:linear-gradient(to bottom, #333, #1f1f1f) !important;border-color:#0b0b0b !important;transition:background-color .1s linear !important}@media (max-width: 460px){#slimfaq .slimfaq-sidebar{width:100% !important}#slimfaq .slimfaq-sidebar iframe{width:100% !important}} </style><div class="slimfaq-hide slimfaq-sidebar" style="height:1020px !important; right: 0px !important;"><iframe frameborder="0" src="./ITプログラマー・エンジニア転職のpaiza転職_files/saved_resource(1).html"></iframe></div><div class="slimfaq-close-button slimfaq-hide"></div><a href="https://paiza.jp/career/challenges/223/page/problem" class="slimfaq-button slimfaq-hide" style="right: 20px !important"><div class="slimfaq-launcher-icon-container slimfaq-invisible"><i class="slimfaq-launcher-icon"></i></div></a></div></body></html>

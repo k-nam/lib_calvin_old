@@ -1,0 +1,15 @@
+// member side navigation onclic script
+$(document).ready(function() {
+	$('table.sideNav td').not('.on').each(function() {
+		var url = $(this).find('a').attr('href');
+
+		$(this).hover(function(){
+			$(this).addClass('over');
+		},function(){
+			$(this).removeClass('over');
+		});
+		$(this).on('click', function(){
+			location.href = url;
+		});
+	});
+});

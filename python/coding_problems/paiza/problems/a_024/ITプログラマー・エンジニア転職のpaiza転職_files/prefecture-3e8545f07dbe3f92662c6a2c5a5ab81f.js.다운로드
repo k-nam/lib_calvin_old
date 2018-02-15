@@ -1,0 +1,1 @@
+(function(){this.work_location_clear_all=function(){return $("#work_location input[type=checkbox]").attr("checked",!1)},$(document).on("ready page:load pz-vex:loadComplete",function(){return $(".check_all_area").on("change",function(){var t;return t=$(this).attr("id"),$(".js-"+t).find("input[type=checkbox]").attr("checked",$(this).is(":checked"))})})}).call(this);
