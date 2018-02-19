@@ -5,9 +5,9 @@ module RegexTest
             result = input =~ regex
             print input
             if result
-                print " matched (position: #{result})"
+                puts " matched (position: #{result})"
             else
-                print ' didnt match '
+                puts ' didnt match '
             end
         end
         check_with_regex('Calvin', /C.+n/)

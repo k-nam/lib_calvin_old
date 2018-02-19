@@ -9,12 +9,22 @@ module ContainerTest
 
     def ContainerTest.test_02()
         apple = 'apple'
-        dictionary = { apple: 'リンゴ', "melon" => 'スイカ'  }
+        dictionary = { apple => 'リンゴ' }
+        puts dictionary['apple']
+        puts dictionary['pear'].inspect
+    end
+
+    def ContainerTest.test_03()
+        apple = 'apple'
+        # Colon means key is symbol
+        dictionary = { apple: 'リンゴ' }
+        puts dictionary['apple'].inspect
+        puts dictionary[:apple]
+    end
+
+    def ContainerTest.test_04()
         data = Hash.new(0)      #default value
         data['height'] = 7
-        dictionary[2] = 5
-        puts dictionary[:apple]
-        puts dictionary['pear']
         puts data['width']
     end
 end
