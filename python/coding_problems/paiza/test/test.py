@@ -3,13 +3,13 @@ import importlib
 def run_test():
 	# s_011, s_013 are unfinished
 	problems = ["a_024", "b_044", "s_002", "s_004", "s_006", "s_007", "s_008", "s_009", "s_010", "s_011", \
-		"s_014", "s_015", "s_016", "s_017", "s_018"];
+		"s_013","s_014", "s_015", "s_016", "s_017", "s_018"];
 
 	num_success = 0
 	num_failure = 0
 	print("Starting tests")
 	for problem in problems:
-		print("\tStarting to test: " + problem, end="...")
+		print("\tStarting to test: " + problem.upper(), end="...")
 		problem_module = importlib.import_module(problem)
 		test_case_module = importlib.import_module(problem + "_test")
 		test_cases = getattr(test_case_module, "test_case")

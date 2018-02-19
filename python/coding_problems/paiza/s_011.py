@@ -1,5 +1,4 @@
 # 追いかけっこ
-# unfinished
 
 # Reflecting board won't affect the structure of this game
 # Reflect so that enemy is on the upper-right corner of me
