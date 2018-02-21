@@ -226,7 +226,7 @@ int testWithRandomData();
 
 void printContainer(vector<pair<int, int>> const &container) {
 	//cout << "b" << container.size();
-	for (int i = 0; i < container.size(); i++) {
+	for (size_t i = 0; i < container.size(); i++) {
 		cout << container[i].first << ", " << container[i].second << "\n";
 	}
 }
@@ -314,7 +314,7 @@ int main() {
 	} else {
 		int maxTestDataLength = 1000;
 		auto testData = getTestData();
-		for (int i = 0; i < testData.size(); i++) {
+		for (size_t i = 0; i < testData.size(); i++) {
 			HighlightBook book(maxTestDataLength);
 			if (book.processData(getDataFromString(testData[i][0])) == stoi(testData[i][1])) {
 				cout << "OK\n";

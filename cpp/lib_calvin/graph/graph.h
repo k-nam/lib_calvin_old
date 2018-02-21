@@ -225,10 +225,11 @@ template <typename V, typename E = null_edge, typename K = V, typename ExtractKe
 	private:
 		// additional data structure for algorithms
 		// graph algorithms are performed only with size_tegers (not V type)
-		mutable lib_calvin::matrix<lib_calvin_graph::Tail<W>> matrixData_; // For matrix computation.
-																		   // SSSP solution; not solved if size is 0.
-																		   //vector<vector<Tail<W>>> SSSP_; 
-																		   // Apsp solution; not solved if size is 1.
+		// For matrix computation:
+		// SSSP solution; not solved if size is 0.
+		// vector<vector<Tail<W>>> SSSP_; 
+		// Apsp solution; not solved if size is 1.
+		mutable lib_calvin::matrix<lib_calvin_graph::Tail<W>> matrixData_; 
 		mutable lib_calvin::matrix<lib_calvin_graph::Tail<W>> apspSolution_;
 };
 
@@ -808,22 +809,26 @@ graph_base<V, E, K, ExtractKey>::get_vertices_to(K const &dest) const {
 	return result;
 }
 
-/*------------- prsize_t -------------*/  /*
-										  // assuming the V and E can be prsize_ted with cout
-										  template <typename V, typename E, typename K, typename ExtractKey, typename W, typename ExtractWeight>
-										  void graph<V, E, ExtractWeight>::prsize_t() const {
-										  for (size_t i = 0; i < numV_; ++i) { // for each source vertex
-										  cout <<  mapping_[i] << ": ";
-										  // prsize_t all edges
-										  map<size_t, E> const &temp = dynamicData_[i];
-										  typename map<size_t, E>::const_iterator iter;
-										  for (iter = temp.begin(); iter != temp.end(); ++iter) {
-										  cout << mapping_[iter->first]; // target vertex
-										  cout << "(" << iter->second << ")  "; // weight
-										  }
-										  cout << endl;
-										  }
-										  }*/
+/*------------- prsize_t -------------*/  
+
+/*
+// assuming the V and E can be prsize_ted with cout
+template <typename V, typename E, typename K, typename ExtractKey, typename W, typename ExtractWeight>
+void graph<V, E, ExtractWeight>::prsize_t() const {
+	for (size_t i = 0; i < numV_; ++i) { // for each source vertex
+		cout << mapping_[i] << ": ";
+		// prsize_t all edges
+		map<size_t, E> const &temp = dynamicData_[i];
+		typename map<size_t, E>::const_iterator iter;
+		for (iter = temp.begin(); iter != temp.end(); ++iter) {
+			cout << mapping_[iter->first]; // target vertex
+			cout << "(" << iter->second << ")  "; // weight
+		}
+		cout << endl;
+
+	}
+}
+*/
 
 template <typename V, typename E, typename K, typename ExtractKey>
 void graph_base<V, E, K, ExtractKey>::goStatic() const {
