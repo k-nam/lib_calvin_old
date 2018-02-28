@@ -1,1 +1,0 @@
-(function(){window.onload=function(){return window.editor_handin=ace.edit("editor-handin-div"),ace_editor_change_language($("#submit_programming_language_id").val(),editor_handin,"",!1),editor_handin.setReadOnly(!0),editor_handin.insert($("#submit_code").val())}}).call(this);
