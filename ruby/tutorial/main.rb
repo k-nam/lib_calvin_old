@@ -12,13 +12,14 @@ def run_test(category, number)
 end
 
 #run_test('container', '01')
-#run_test('container', '02')
+run_test('container', '02')
 #run_test('container', '03')
 #run_test('container', '04')
 
+#run_test('iteration', '02')
 #run_test('iteration', '03')
 
-run_test('regex', '01')
+#run_test('regex', '01')
 #run_test('regex', '02')
 
 #run_test('block', '01')
