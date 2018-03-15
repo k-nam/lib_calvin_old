@@ -1,33 +1,26 @@
-// util.cpp : Defines the entry point for the console application.
-//
-
 #include <iostream>
 #include <memory>
 
-namespace lib_calvin_util
-{
-class myClass {
-public:
-	myClass() { std::cout << "ctor\n"; }
-	~myClass() { std::cout << "dtor\n"; }
-	void nonConstMethod() { std::cout << "non-const method\n"; }
-	void constMethod() const { std::cout << "const method\n"; }
-};
-}
+#include "save_bench.h"
 
 int main(int argc, char* argv[])
 {
-	using std::shared_ptr;
-	using lib_calvin_util::myClass;
-	shared_ptr<myClass> a(new myClass());
-	shared_ptr<myClass> const b(new myClass());
-	shared_ptr<myClass> c(a);
+	using namespace std;
 
-	a->nonConstMethod();
-	a->constMethod();
-	//b->nonConstMethod();
-	b->constMethod();
-	c->constMethod();
+	string title = "stable sorting";
+	float time = 12312321;
+	string testEnvironment = "Intel 4790K";
+	string comment = "Not bad~";
+	vector<string> tags = { };
+	vector<string> algorithmNames = { "lib_calvin", "std::stable_sort", "boost" };
+	vector<vector<double>> results = { { 1.5, 10.0 },{ 2, 11 },{ 1.7, 10.5 } };
+	vector<string> testCases = { "small arrya", "big array" };
+	auto unit = "N/sec";
+
+
+	lib_calvin_util::save_bench(title, time, testEnvironment, comment,
+		tags, algorithmNames, results,
+		testCases, unit);
 
 	return 0;
 }

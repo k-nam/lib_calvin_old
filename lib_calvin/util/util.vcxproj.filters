@@ -21,6 +21,9 @@
     <ClCompile Include="random.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="save_bench.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utility.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="factory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="save_bench.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
