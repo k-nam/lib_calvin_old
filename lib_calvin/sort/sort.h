@@ -255,7 +255,7 @@ namespace lib_calvin_sort
 	public:
 		IntroSort(Comparator comp = Comparator()) : comp_(comp) { }
 		void operator()(pair<Iterator, Iterator> const &inArray) {
-			introSort(inArray.first, inArray.second, comp_);
+			introSort2(inArray.first, inArray.second, comp_);
 		}
 	private:
 		Comparator comp_;
@@ -742,16 +742,14 @@ void lib_calvin_sort::introSortParallelSub0(
 	Iterator first, Iterator last, Comparator comp, int thread_limit)
 {
 	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE / 4 || thread_limit <= 0) {
-		introSort(first, last, comp);
-		//introSort2(first, last, comp);
+		introSort2(first, last, comp);
 		return;
 	}
 	Iterator left = hoarePartition(first, last, comp);
 	QuickSortThreadArg<Iterator, Comparator> argLeft(first, left, comp, thread_limit - 1, NULL);
 	QuickSortThreadArg<Iterator, Comparator> argRight(left, last, comp, thread_limit - 1, NULL);
 	lib_calvin_thread::thread_type leftThread, rightThread;
-	leftThread =
-		create_thread(introSortParallelSub0ThreadFunction<Iterator, Comparator>, &argLeft);
+	leftThread = create_thread(introSortParallelSub0ThreadFunction<Iterator, Comparator>, &argLeft);
 	//SetThreadAffinityMask(leftThread, 1 << 0);
 	// For unbalancing left and right sub-threads, thereby letting left sub-thread
 	// reach bottom, and start CPU-intensive-thread quickly. 
