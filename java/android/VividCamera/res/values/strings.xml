@@ -1,8 +1,0 @@
-<resources>
-	<string name="app_name">VividCamera</string>
-	<string name="vivid_camera__test_camera_button_text">Test camera</string>
-	<string name="vivid_camera__open_camera_button_text">Click to take a picture</string>
-	<string name="vividcamera__preview__title">Preview</string>
-	<string name="vividcamera__take_picture_button_text">Picture</string>
-	<string name="vividcamera__take_screenshot_button_text">Capture</string>
-</resources>

@@ -1,6 +1,0 @@
-DROP TABLE IF EXISTS temp; 
-
-CREATE TEMPORARY TABLE temp AS ( 
-SELECT word, rank FROM web.eng_100k
-WHERE word LIKE 'ab%' ORDER BY  (CASE WHEN rank IS NULL THEN 1 ELSE 0 END), rank ASC LIMIT 20);
-SELECT word, rank FROM temp ORDER BY word;
