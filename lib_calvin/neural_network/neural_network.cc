@@ -188,7 +188,6 @@ neural_network::randomize() {
 
 void
 neural_network::saveJson() const {
-	// 
 	using json = nlohmann::json;
 	json layersJson = json::array();
 	for (auto const &layer : layers_) {
