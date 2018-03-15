@@ -35,7 +35,7 @@ namespace lib_calvin_sort
 	int const CACHE_LINE_SIZE = 64;
 
 	typedef unsigned char Introsort2IndexType;
-	size_t const introSortBufferSize = 128;
+	size_t const introSortBufferSize = 192;
 
 	// Used for pointer sorting method
 	template <typename T, typename Comparator>
@@ -556,7 +556,6 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 		if (right - left + 1 < 2 * introSortBufferSize) {
 			mustBreak = true;
 			ptrdiff_t numRemainingElements = right - left + 1;
-			//std::cout << (int)numRemainingElements << "\n";
 			ptrdiff_t numUnprocessed = numRemainingElements - introSortBufferSize;
 
 			if (isLeftEmpty && isRightEmpty) {
@@ -612,41 +611,17 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 		// Do swap now
 		ptrdiff_t swapCount = min(l_end - l_begin, r_end - r_begin);
 		if (swapCount != 0) {
-			int i = 0;
-			auto store = *(left + leftBuffer[l_begin + i]);
-			*(left + leftBuffer[l_begin + i]) = std::move(*(right - rightBuffer[r_begin + i]));
-			if (swapCount - 1 < 32 || false) {
-				while (i < swapCount - 1) {
-					*(right - rightBuffer[r_begin + i]) = std::move(*(left + leftBuffer[l_begin + i + 1]));
-					*(left + leftBuffer[l_begin + i + 1]) = std::move(*(right - rightBuffer[r_begin + i + 1]));
-					i++;
-				}
-			} else {
-				int loopUnroll = 4;
-				int remainder = (swapCount - 1) % loopUnroll;
-				for (int count = 0; count < remainder; count++) {
-					*(right - rightBuffer[r_begin + i]) = std::move(*(left + leftBuffer[l_begin + i + 1]));
-					*(left + leftBuffer[l_begin + i + 1]) = std::move(*(right - rightBuffer[r_begin + i + 1]));
-					i++;
-				}
-				while (i < swapCount - 1) {
-					*(right - rightBuffer[r_begin + i]) = std::move(*(left + leftBuffer[l_begin + i + 1]));
-					*(left + leftBuffer[l_begin + i + 1]) = std::move(*(right - rightBuffer[r_begin + i + 1]));
+			ptrdiff_t l_temp = l_begin;
+			ptrdiff_t l_temp_end = l_begin + swapCount;
+			ptrdiff_t r_temp = r_begin;
 
-					*(right - rightBuffer[r_begin + i + 1]) = std::move(*(left + leftBuffer[l_begin + i + 2]));
-					*(left + leftBuffer[l_begin + i + 2]) = std::move(*(right - rightBuffer[r_begin + i + 2]));
-
-					*(right - rightBuffer[r_begin + i + 2]) = std::move(*(left + leftBuffer[l_begin + i + 3]));
-					*(left + leftBuffer[l_begin + i + 3]) = std::move(*(right - rightBuffer[r_begin + i + 3]));
-
-					*(right - rightBuffer[r_begin + i + 3]) = std::move(*(left + leftBuffer[l_begin + i + 4]));
-					*(left + leftBuffer[l_begin + i + 4]) = std::move(*(right - rightBuffer[r_begin + i + 4]));
-
-					i += loopUnroll;
-				}
+			auto store = *(left + leftBuffer[l_temp]);
+			*(left + leftBuffer[l_temp++]) = std::move(*(right - rightBuffer[r_temp]));
+			while (l_temp < l_temp_end) {
+				*(right - rightBuffer[r_temp++]) = std::move(*(left + leftBuffer[l_temp]));
+				*(left + leftBuffer[l_temp++]) = std::move(*(right - rightBuffer[r_temp]));
 			}
-
-			*(right - rightBuffer[r_begin + i]) = std::move(store);
+			*(right - rightBuffer[r_temp]) = std::move(store);
 		}
 		l_begin += swapCount;
 		r_begin += swapCount;
@@ -703,9 +678,7 @@ void lib_calvin_sort::introSortSub(Iterator first, Iterator last, Comparator com
 		return;
 	}
 	Iterator left = hoarePartition(first, last, comp);
-	if (last - first > 1000 && static_cast<double>(left - first) / (last - first) < 0.01) {
-		//std::cout << "fuck\n";
-	}
+
 	introSortSub(first, left, comp, remainingDepth - 1);
 	introSortSub(left + 1, last, comp, remainingDepth - 1);
 }
@@ -719,14 +692,12 @@ void lib_calvin_sort::introSort2Sub(Iterator first, Iterator last,
 		return;
 	}
 	if (remainingDepth == 0) {
-		std::cout << "heapsort\n";
+		//std::cout << "heapsort\n";
 		heapSort(first, last, comp);
 		return;
 	}
 	Iterator left = betterPartition(first, last, leftBuffer, rightBuffer, comp);
-	if (last - first > 1000 && static_cast<double>(left - first) / (last - first) < 0.01) {
-		//std::cout << "fuck\n";
-	}
+
 	introSort2Sub(first, left, leftBuffer, rightBuffer, comp, remainingDepth - 1);
 	introSort2Sub(left + 1, last, leftBuffer, rightBuffer, comp, remainingDepth - 1);
 }
@@ -890,18 +861,14 @@ void lib_calvin_sort::merge2(SrcIterator first, SrcIterator middle, SrcIterator 
 			left += opposite;
 			right += result;
 		}
-		//std::cout << "fukc\n";
 		for (ptrdiff_t i = 0; i < bufferIndex; i++) {
-			//std::cout << "fukc3\n";
 			if (buffer[i]) {
 				*target++ = *first++;
 			} else {
 				*target++ = *middle++;
 			}
 		}
-		//std::cout << "fukc4\n";
 		if (left == leftEnd || right == rightEnd) {
-			//std::cout << "fukc6\n";
 			break;
 		}
 	}
