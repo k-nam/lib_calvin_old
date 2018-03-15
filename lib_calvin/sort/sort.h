@@ -613,15 +613,39 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 		ptrdiff_t swapCount = min(l_end - l_begin, r_end - r_begin);
 		if (swapCount != 0) {
 			int i = 0;
-			int j = 1;
 			auto store = *(left + leftBuffer[l_begin + i]);
 			*(left + leftBuffer[l_begin + i]) = std::move(*(right - rightBuffer[r_begin + i]));
-			while (i < swapCount - 1) {
-				*(right - rightBuffer[r_begin + i]) = std::move(*(left + leftBuffer[l_begin + j]));
-				*(left + leftBuffer[l_begin + j]) = std::move(*(right - rightBuffer[r_begin + j]));
-				i++;
-				j++;
+			if (swapCount - 1 < 32 || false) {
+				while (i < swapCount - 1) {
+					*(right - rightBuffer[r_begin + i]) = std::move(*(left + leftBuffer[l_begin + i + 1]));
+					*(left + leftBuffer[l_begin + i + 1]) = std::move(*(right - rightBuffer[r_begin + i + 1]));
+					i++;
+				}
+			} else {
+				int loopUnroll = 4;
+				int remainder = (swapCount - 1) % loopUnroll;
+				for (int count = 0; count < remainder; count++) {
+					*(right - rightBuffer[r_begin + i]) = std::move(*(left + leftBuffer[l_begin + i + 1]));
+					*(left + leftBuffer[l_begin + i + 1]) = std::move(*(right - rightBuffer[r_begin + i + 1]));
+					i++;
+				}
+				while (i < swapCount - 1) {
+					*(right - rightBuffer[r_begin + i]) = std::move(*(left + leftBuffer[l_begin + i + 1]));
+					*(left + leftBuffer[l_begin + i + 1]) = std::move(*(right - rightBuffer[r_begin + i + 1]));
+
+					*(right - rightBuffer[r_begin + i + 1]) = std::move(*(left + leftBuffer[l_begin + i + 2]));
+					*(left + leftBuffer[l_begin + i + 2]) = std::move(*(right - rightBuffer[r_begin + i + 2]));
+
+					*(right - rightBuffer[r_begin + i + 2]) = std::move(*(left + leftBuffer[l_begin + i + 3]));
+					*(left + leftBuffer[l_begin + i + 3]) = std::move(*(right - rightBuffer[r_begin + i + 3]));
+
+					*(right - rightBuffer[r_begin + i + 3]) = std::move(*(left + leftBuffer[l_begin + i + 4]));
+					*(left + leftBuffer[l_begin + i + 4]) = std::move(*(right - rightBuffer[r_begin + i + 4]));
+
+					i += loopUnroll;
+				}
 			}
+
 			*(right - rightBuffer[r_begin + i]) = std::move(store);
 		}
 		l_begin += swapCount;
