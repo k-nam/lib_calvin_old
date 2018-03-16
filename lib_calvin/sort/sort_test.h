@@ -66,6 +66,17 @@ namespace lib_calvin_sort
 		StringStruct(StringStruct const &rhs): SimpleStruct(rhs), str_(rhs.str_) {
 			//std::cout << "copy con\n";
 		}
+		StringStruct(StringStruct const &&rhs) : SimpleStruct(rhs), str_(std::move(rhs.str_)) {
+			//std::cout << "copy con\n";
+		}
+		StringStruct & operator=(StringStruct &&rhs) {
+			str_ = std::move(rhs.str_);
+			return *this;
+		}
+		StringStruct & operator=(StringStruct const &rhs) {
+			str_ = rhs.str_;
+			return *this;
+		}
 		operator std::string() const { return str_; }
 		std::string str_;
 	};
