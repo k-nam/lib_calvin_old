@@ -614,7 +614,8 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 			ptrdiff_t l_temp = l_begin;
 			ptrdiff_t l_temp_end = l_begin + swapCount;
 			ptrdiff_t r_temp = r_begin;
-
+			
+			// Zig-zag swapping
 			auto store = *(left + leftBuffer[l_temp]);
 			*(left + leftBuffer[l_temp++]) = std::move(*(right - rightBuffer[r_temp]));
 			while (l_temp < l_temp_end) {
@@ -622,6 +623,13 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 				*(left + leftBuffer[l_temp++]) = std::move(*(right - rightBuffer[r_temp]));
 			}
 			*(right - rightBuffer[r_temp]) = std::move(store);
+			
+			/*
+			// 1:1 Swap version
+			while (l_temp < l_temp_end) {
+				std::iter_swap(left + leftBuffer[l_temp++], right - rightBuffer[r_temp++]);
+			}
+			*/
 		}
 		l_begin += swapCount;
 		r_begin += swapCount;
@@ -979,7 +987,7 @@ void lib_calvin_sort::insertionSort(Iterator first, Iterator last, Comparator co
 				p--;
 			}
 			while (first < p && comp(store, *(p - 1)));
-			*p = store;
+			*p = std::move(store);
 		}
 	}
 }
