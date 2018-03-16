@@ -29,13 +29,10 @@ being the original software.
 #include <utility>
 #include <iterator>
 
-#if __cplusplus >= 201103L
+
 #include <cstdint>
 #include <type_traits>
 #define PDQSORT_PREFER_MOVE(x) std::move(x)
-#else
-#define PDQSORT_PREFER_MOVE(x) (x)
-#endif
 
 
 namespace pdqsort_detail
