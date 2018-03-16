@@ -2,7 +2,7 @@
 #define LIB_CALVIN__SUBCC__SYMBOL_TABLE_H
 
 #include "abstract_string.h"
-#include "subcc_lexer.h" // to use my own string implementation
+#include "subcc_lexer.h" // to use my own c_string implementation
 #include "type.h"
 #include <iostream>
 #include <stdio.h>
@@ -15,7 +15,7 @@ using std::shared_ptr;
 namespace subcc {
 extern int symtabCount;
 extern int symbolCount;
-using lib_calvin::string;
+using lib_calvin::c_string;
 int const SYMBOL_VAR_MAX = 10; // below this are variables
 int const SYMBOL_TEMP_MAX = 20; // belw this are temporaries
 int const SYMBOL_CONST_MAX = 40; // below this are constants
@@ -46,9 +46,9 @@ enum SymbolKinds {
 
 class Symbol {
 public:
-  Symbol(enum SymbolKinds symbolKind, string const &lexeme, shared_ptr<Type const> type);
+  Symbol(enum SymbolKinds symbolKind, c_string const &lexeme, shared_ptr<Type const> type);
 	virtual ~Symbol();
-  string const &getLexeme() const { return lexeme_; }
+  c_string const &getLexeme() const { return lexeme_; }
   shared_ptr<Type const> getType() const { return type_; }
   enum SymbolKinds getSymbolKind() const { return symbolKind_; }
   // Returns whether the symbol occupies space on stack or not
@@ -63,7 +63,7 @@ public:
 	static void countObjects();
 protected:
   enum SymbolKinds symbolKind_;
-  string lexeme_; // also becomes constant value for string constants
+  c_string lexeme_; // also becomes constant value for c_string constants
 private:
   shared_ptr<Type const> type_; // type of the object the symbol refers
   int offset_; // offset in the stack frame 
@@ -76,7 +76,7 @@ public:
   Constant(char charValue);
   Constant(short shortValue);
   Constant(int intValue);
-  Constant(string const &lexeme); // string constant
+  Constant(c_string const &lexeme); // c_string constant
 	~Constant();
   char getCharValue() const { return constant_.charValue_; }
   short getShortValue() const { return constant_.shortValue_; }
@@ -92,7 +92,7 @@ private:
 
 class Temporary: public Symbol {
 public:
-  Temporary(string const &lexeme, shared_ptr<Type const> type): 
+  Temporary(c_string const &lexeme, shared_ptr<Type const> type): 
     Symbol(SYMBOL_TEMPORARY, lexeme, type) { }
 	~Temporary();
 	//virtual void print() { std::cout << "temmp symbol\n"; }
@@ -114,9 +114,9 @@ public:
   SymbolTable(GlobalSymbolTable const &globalTable);
 	~SymbolTable();    
 	// Returns index if declared, -1 if not
-  int findIndex(string const &) const;
+  int findIndex(c_string const &) const;
   // Look only into this symbol table(not ancestors)
-  shared_ptr<Type const> getTypeOf(string const &field) const;
+  shared_ptr<Type const> getTypeOf(c_string const &field) const;
   // Assuming this symbol has not been declared
   void insert(shared_ptr<Symbol>, int index);
   int getOffset() const { return offset_; }
@@ -132,7 +132,7 @@ public:
 	static void countObjects();
 private:
   // Integer value is the index to the global table
-  map<string, int> mapping_;
+  map<c_string, int> mapping_;
   GlobalSymbolTable const &globalTable_;
   SymbolTable *parent_;
   vector<SymbolTable const *> children_;
@@ -152,7 +152,7 @@ public:
   bool popTable(); // escape from nested scope: '}'
   // Find out whether we are in global scope or not
   bool isInGlobal() { return root_ == curTable_; }
-  int findIndex(string const &lexeme) const; // returns negative when faulty
+  int findIndex(c_string const &lexeme) const; // returns negative when faulty
   shared_ptr<Symbol const> lookUp(int index) const;
   // Prepared for record type declarations: returns finished symbol table
   SymbolTable const &getEnvironment();

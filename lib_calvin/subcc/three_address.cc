@@ -59,11 +59,11 @@ int Instruction::objectCount_ = 0;
 
 /*** FunctionStartInstrucion ***/
 
-FunctionStartInstruction::FunctionStartInstruction(string const &functionName, int stackSize): 
+FunctionStartInstruction::FunctionStartInstruction(c_string const &functionName, int stackSize): 
   Instruction(Instruction_Function_Start), functionName_(functionName),
   stackSize_(stackSize) { }
 
-subcc::string const &
+subcc::c_string const &
 FunctionStartInstruction::getFunctionName() const { return functionName_; }
 
 int FunctionStartInstruction::getStackSize() const { return stackSize_; }
@@ -71,11 +71,11 @@ int FunctionStartInstruction::getStackSize() const { return stackSize_; }
 /*** FunctionEndInstrucion ***/
 
 FunctionEndInstruction::FunctionEndInstruction(
-    string const &functionName, int stackSize): 
+    c_string const &functionName, int stackSize): 
   Instruction(Instruction_Function_End), functionName_(functionName),
   stackSize_(stackSize) { }
 
-subcc::string const &
+subcc::c_string const &
 FunctionEndInstruction::getFunctionName() const { return functionName_; }
 
 int FunctionEndInstruction::getStackSize() const { return stackSize_; }
@@ -432,7 +432,7 @@ void ThreeAdressCode::print(Address const &address) const {
     return;
   }
   int index = address.getSymbolTableIndex();
-  string const &lexeme = symbolTable_->lookUp(index)->getLexeme();
+  c_string const &lexeme = symbolTable_->lookUp(index)->getLexeme();
   lexeme.printToCout();
 }
 
@@ -918,7 +918,7 @@ void ThreeAdressCodeGenerator::translateExpression(ExprNode const *node, bool sa
         LvalueNode *lvalueNode = dynamic_cast<LvalueNode *> (node->getChild(0));
         IdNode *idNode = dynamic_cast<IdNode *> (node->getChild(1));
         // Get offset of the field named ID
-        string const &field = idNode->getLexeme();
+        c_string const &field = idNode->getLexeme();
         int fieldIndex = dynamic_pointer_cast<RecordType const>(
             lvalueNode->getType())->getIndexOf(field);
         int recordOffset = symbolTable_->lookUp(fieldIndex)->getOffset();

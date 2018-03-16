@@ -35,7 +35,7 @@ using std::shared_ptr;
 // Contains the lexer and builds syntax tree and does static checking.
 class Parser {
 public:
-  Parser(string const &inText); // start parsing 
+  Parser(c_string const &inText); // start parsing 
   ~Parser();
   void test();
   // build syntax tree with type checking     
@@ -58,7 +58,7 @@ private:
   void printError(IdNode const &identifier, std::string const &) const;
   void printWarning(std::string const &warningMessage) const;
     
-  string getTempName(); // return "t1", "t2", ...
+  c_string getTempName(); // return "t1", "t2", ...
 
   void makeLanguage(lib_calvin_parser::ContextFreeLanguage &);
   void makeParser(lib_calvin_parser::LalrParserGenerator &);

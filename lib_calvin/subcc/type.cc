@@ -1,6 +1,7 @@
 /* Type.cc */
 
 #include <iostream>
+#include <deque>
 #include "type.h"
 #include "symbol_table.h"
 
@@ -132,7 +133,7 @@ bool FuncType::operator!= (Type const &rhs) const  {
 
 /******  RecordType methods ****/
 
-RecordType::RecordType(string const &name, SymbolTable const &environment):
+RecordType::RecordType(c_string const &name, SymbolTable const &environment):
   Type(TYPE_RECORD), name_(name), environment_(environment) {
     width_ = environment.getOffset();
 }
@@ -155,7 +156,7 @@ bool RecordType::operator!= (Type const &rhs) const  {
 }
 
 shared_ptr<Type const>
-RecordType::getTypeOf(string const &field) const {
+RecordType::getTypeOf(c_string const &field) const {
   int index = environment_.findIndex(field);
   if (index < 0) // does not have that field
     return shared_ptr<Type const>(new ErrorType());
@@ -163,7 +164,7 @@ RecordType::getTypeOf(string const &field) const {
     return environment_.getTypeOf(field);
 }
 
-int RecordType::getIndexOf(string const &field) const {
+int RecordType::getIndexOf(c_string const &field) const {
   int index = environment_.findIndex(field);
   if (index < 0) {
     cout << "RecordType::getOffsetOf(): field non-existent\n";

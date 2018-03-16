@@ -9,7 +9,7 @@
 
 namespace subcc {
 
-using lib_calvin::string;
+using lib_calvin::c_string;
 using lib_calvin::stopwatch;
 
 class Lexer {
@@ -18,7 +18,7 @@ public:
 	typedef lib_calvin_lexer::NfaLexerGenerator<> NFA;
   typedef lib_calvin_lexer::DfaLexerGenerator<> DFA;
   typedef lib_calvin_lexer::NfaLexerGenerator<>::Token Token; 
-  Lexer(string const &inText): text_(inText), index_(0), lineNum_(1) {
+  Lexer(c_string const &inText): text_(inText), index_(0), lineNum_(1) {
     stopwatch watch;
     watch.start();
     build();
@@ -33,17 +33,17 @@ public:
   int getLineNum() const { // return current line number
     return lineNum_;
   }
-  string getLexeme() const { // return matched string
+  c_string getLexeme() const { // return matched c_string
     return curLexeme_;
   }
 private:
   void build();
   NFA nfa;
   DFA dfa;
-  string const &text_; // input source code to lex
+  c_string const &text_; // input source code to lex
   int index_; // current position of reading
   int lineNum_; // count current line number from start
-  string curLexeme_; // store currently matched string
+  c_string curLexeme_; // store currently matched c_string
 };
 
 enum Tokens {

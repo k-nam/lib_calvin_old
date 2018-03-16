@@ -52,7 +52,7 @@ using std::cout;
 using std::endl;
 
 int const kDollarMarker = 0;  // $: mark the end of input tokens
-int const kEpsilonMarker = -1; // empty string
+int const kEpsilonMarker = -1; // empty c_string
 int const kEndMarker = -2; // for variable length fuction arguments (mark end of Production body or input text)
 
 // Model of a formal language: a concrete class to be instantiated!
@@ -116,7 +116,7 @@ class ContextFreeLanguage {
     map<int, Production> keyToProduction_;
     // index of each Production is identifier to it.
     vector<Production> productions_; 
-    // epsilon (empty string) represented by null token.
+    // epsilon (empty c_string) represented by null token.
     map<int, set<int>> firstSets_;
     map<int, set<int>> followSets_;
 

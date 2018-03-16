@@ -70,7 +70,7 @@ private:
 		size_t endIndex_; // one past end notation; 0 if this link points to leaf node
 	};
 	// specifies a point in tree. point correspoinds to substring(s) of text.
-	// endIndex is the past-end index of that substring of string represented by the containing link
+	// endIndex is the past-end index of that substring of c_string represented by the containing link
 	// textId of a Point is determined by the edge between src and dest
 	struct Point {
 		Point(NodeKey src, NodeKey dest, size_t endIndex);
@@ -154,7 +154,7 @@ void suffix_tree<Alphabet>::init(vector<abstract_string<Alphabet>> const &texts)
 	// we need $ char at the tail for the correctness of the following routine
 	// otherwise, some suffix may not have corresponding leaf node
 	for (size_t i = 0; i < texts_.size(); i++) {
-		texts_[i] += Alphabet(dollor_); // each string must have unique $
+		texts_[i] += Alphabet(dollor_); // each c_string must have unique $
 		dollor_--;
 	}
 	internalNodeId_ = 0;

@@ -2,7 +2,7 @@
 #define LIB_CALVIN__STRING__ABSTRACT_STRING_H
 
 /*
-* 2008-03-11: string algorithms
+* 2008-03-11: c_string algorithms
 * 2008-10-19: revised to eliminate alphabet class
 */
 
@@ -33,13 +33,13 @@ namespace lib_calvin
 		operator+ (abstract_string<Alphabet> &&, abstract_string<Alphabet> const &);
 
 	// Maintains its own data (value semantic) and immutable
-	// Do not use 'string' for its name to avoid collision with std::string 
+	// Do not use 'c_string' for its name to avoid collision with std::c_string 
 	template <typename Alphabet = char>
 	class abstract_string {
 	public:
 		typedef Alphabet CharType;
 		abstract_string();
-		abstract_string(Alphabet const &); // one letter string
+		abstract_string(Alphabet const &); // one letter c_string
 		abstract_string(Alphabet const *instring, size_t len);
 		abstract_string(Alphabet const *instring);
 		abstract_string(abstract_string<Alphabet> const &);
@@ -57,7 +57,7 @@ namespace lib_calvin
 		bool operator!= (abstract_string<Alphabet> const &) const;
 		// Does not include end index
 		abstract_string<Alphabet> substr(size_t startIndex, size_t endIndex) const;
-		// To the end of string
+		// To the end of c_string
 		abstract_string<Alphabet> substr(size_t startIndex) const;
 		// reverse
 		abstract_string<Alphabet> reverse() const;
@@ -91,17 +91,17 @@ namespace lib_calvin
 		return Alphabet(0);
 	}
 
-	// string is normal ascii string
-	typedef abstract_string<char> string;
+	// c_string is normal ascii c_string
+	typedef abstract_string<char> c_string;
 
 	// itoa function
-	string itoa(int number);
+	c_string itoa(int number);
 
-	// Conversion methods are only for ascii string
-	char    charOf(string const &); // works for 'a', '\n', ...
-	int     intOfDec(string const &);
-	int     intOfHex(string const &);
-	float   floatOf(string const &);
+	// Conversion methods are only for ascii c_string
+	char    charOf(c_string const &); // works for 'a', '\n', ...
+	int     intOfDec(c_string const &);
+	int     intOfHex(c_string const &);
+	float   floatOf(c_string const &);
 
 } // end namespace lib_calvin
 
@@ -116,7 +116,7 @@ std::ostream & operator<< (std::ostream& os, lib_calvin::abstract_string<Alphabe
 
 namespace lib_calvin
 {
-	/*********************** string <Alphabet> definition **************************/
+	/*********************** c_string <Alphabet> definition **************************/
 
 	template <typename Alphabet>
 	void abstract_string<Alphabet>::init(Alphabet const *string, size_t length) {

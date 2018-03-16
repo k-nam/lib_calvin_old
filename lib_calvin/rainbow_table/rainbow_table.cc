@@ -65,7 +65,7 @@ hacking__rainbow_table::Md5Hash::copyDataFrom(unsigned char const source[MD5_HAS
 
 std::string
 hacking__rainbow_table::Md5Hash::toHexString() const {
-	// method for converting bit data to hex string
+	// method for converting bit data to hex c_string
 	static char const * const lut = "0123456789ABCDEF";
 	std::string output;
 	output.reserve(32);
@@ -148,7 +148,7 @@ hacking__rainbow_table::getFirstAndLast(std::string password, int chainLength) {
 	}
 
 	passwordBuffer[passwordLength] = 0;
-	//std::cout << std::string(passwordBuffer) << "\n";
+	//std::cout << std::c_string(passwordBuffer) << "\n";
 	return std::make_pair(password, std::string(passwordBuffer));
 }
 
@@ -256,8 +256,8 @@ hacking__rainbow_table::getCrackedPassword(
 		}
 		auto words = hacking__lib::split(line, '\t');
 		auto iterator = words.begin();
-		auto stringHex = *iterator; // first word is hex string
-		hash = Md5Hash(stringHex); // read hex string
+		auto stringHex = *iterator; // first word is hex c_string
+		hash = Md5Hash(stringHex); // read hex c_string
 		outStream << stringHex;
 		outStream << "\t";
 		for (iterator++; iterator != words.end(); iterator++) {

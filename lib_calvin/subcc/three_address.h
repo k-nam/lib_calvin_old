@@ -122,22 +122,22 @@ private:
 // foo:
 class FunctionStartInstruction: public Instruction {
 public:
-  FunctionStartInstruction(string const &functionName, int stackSize);
-  string const &getFunctionName() const;
+  FunctionStartInstruction(c_string const &functionName, int stackSize);
+  c_string const &getFunctionName() const;
   int getStackSize() const;
 protected:
-  string functionName_;
+  c_string functionName_;
   int stackSize_;
 };
 
 // Just for convenience; mark the end of a function
 class FunctionEndInstruction: public Instruction {
 public:
-  FunctionEndInstruction(string const &functionName, int stackSize);
-  string const &getFunctionName() const;
+  FunctionEndInstruction(c_string const &functionName, int stackSize);
+  c_string const &getFunctionName() const;
   int getStackSize() const;
 protected:
-  string functionName_;
+  c_string functionName_;
   int stackSize_;
 };
 

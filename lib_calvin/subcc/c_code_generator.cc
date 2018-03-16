@@ -40,7 +40,7 @@ void CCodeGenerator::printCCode(Instruction const &instruction) const {
           dynamic_cast<FunctionStartInstruction const &>(instruction);
         int stackSize = inst.getStackSize();
         cout << "void ";
-        if (inst.getFunctionName() == subcc::string("main")) {
+        if (inst.getFunctionName() == "main") {
           cout << "_";
         }
         inst.getFunctionName().printToCout();

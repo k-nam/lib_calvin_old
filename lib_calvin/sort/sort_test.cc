@@ -9,8 +9,8 @@ void lib_calvin_sort::sortTest() {
 	std::cout << "---------------- Beginning sort test -----------------\n\n";
 	using namespace lib_calvin_sort;
 	//typedef int ElemType;
-	typedef SimpleStruct ElemType;
-	//typedef StringStruct ElemType;
+	//typedef SimpleStruct ElemType;
+	typedef StringStruct ElemType;
 	//binSearchTest();
 	//binSearchTest2();
 	//getSamplesTest();
@@ -19,34 +19,21 @@ void lib_calvin_sort::sortTest() {
 	//sortTest<ElemType>(cacheTest2, "cacheTest2");
 	//sortTest<ElemType>(cacheTest3, "cacheTest3");
 
-	auto comparator = [](ElemType const &a, ElemType const & b) { return b < a; };
-
 	//sortTest<ElemType>(introSortPointerSorting, "introSort pointer");
 	//sortTest<ElemType>(introSort, "introSort");
 	sortTest<ElemType>(introSort2, "introSort2");
 	//sortTest<ElemType>(introSortParallel, "Parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced, "Advanced parallel introSort");
-	sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
-	sortTest<ElemType>(mergeSort, "mergeSort");
+	//sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
+	//sortTest<ElemType>(mergeSort, "mergeSort");
 	//sortTest<ElemType>(mergeSortParallel, "Parallel mergeSort");
 	//sortTest<ElemType>(heapSort, "heapSort");
 	//sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");
-	//sortTest<ElemType>(std::sort, "std::sort");
+	sortTest<ElemType>(std::sort, "std::sort");
 	//sortTest<ElemType>(std::stable_sort, "std::stable_sort");
 	//sortTest<ElemType>(pdqsort, "pdqsort");
 	sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
 
-	/*
-	sortTest<ElemType>(introSortPointerSorting, std::string("introSort pointer / reverse"), comparator);
-	sortTest<ElemType>(introSort, std::string("introSort / reverse"), comparator);
-	sortTest<ElemType>(introSortParallel, std::string("Parallel introSort / reverse"), comparator);
-	sortTest<ElemType>(introSortParallelAdvanced, std::string("Advanced parallel introSort / reverse"), comparator);
-	sortTest<ElemType>(introSortParallelAdvanced2, std::string("Advanced2 parallel introSort / reverse"), comparator);
-	sortTest<ElemType>(mergeSort, std::string("mergeSort / reverse"), comparator);
-	sortTest<ElemType>(mergeSortParallel, std::string("Parallel mergeSort / reverse"), comparator);
-	sortTest<ElemType>(heapSort, std::string("heapSort / reverse"), comparator);
-	sortTest<ElemType>(inPlaceMergeSort, std::string("inPlaceMergeSort / reverse"), comparator);
-	*/
 	//sortTest<ElemType>(bucketSort, "bucketSort");
 	//sortTest<ElemType>(countingSort, "countingSort");
 	//sortTest<ElemType>(introSort2, "introSort+");

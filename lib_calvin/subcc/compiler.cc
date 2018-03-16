@@ -8,7 +8,7 @@
 #include "three_address.h"
 #include "c_code_generator.h"
 
-void subcc::compile(string sourceCode, std::ostream &file) {
+void subcc::compile(c_string sourceCode, std::ostream &file) {
 	// Compilation steps are: 
 	// Step 1. Parser: source code --> SyntaxTree(IR, with SymbolTable)  
 	// Step 2. ThreeAdressCodeGenerator: SyntaxTree --> ThreeAddressCode(IR, with SymbolTable)

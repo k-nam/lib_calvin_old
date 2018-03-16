@@ -121,7 +121,7 @@ void ContextFreeLanguage::getFirst (vector<int> const &inSymbolstring,
     if (!hasEpsilon)
       break;
   }
-  if (i == stringLength) // entire string can derive empty string!
+  if (i == stringLength) // entire c_string can derive empty c_string!
     result.insert(kEpsilonMarker);
 }
 
@@ -176,7 +176,7 @@ void ContextFreeLanguage::calculateFirstSets() {
         if (!hasEpsilon)
           break;
       }
-      if (j == curPro.body_.size()) { // body can derive empty string!
+      if (j == curPro.body_.size()) { // body can derive empty c_string!
         if (firstSets_[curPro.head_].count(kEpsilonMarker) == 0) {
           firstSets_[curPro.head_].insert(kEpsilonMarker);
           finished = false; // this is also an addition!
@@ -213,7 +213,7 @@ void ContextFreeLanguage::calculateFollowSets() {
 					exit(0);
         }
         set<int>::const_iterator iter;
-        // Get first set of remaining symbol string
+        // Get first set of remaining symbol c_string
         set<int> curFollow;
         if (j < curPro.body_.size() - 1) // Not rightmost
           getFirst(curPro.body_, j + 1, 
@@ -867,7 +867,7 @@ void Lr1ParserGenerator::getClosure(set<LR1Item> const &kernels,
       // Skip terminal
       if (curSymbol <= language_.terminalEnd_) 
         continue;
-      // first set of the remaining symbol string is important
+      // first set of the remaining symbol c_string is important
       set<int> firstSet;
       vector<int> remaining = iter->production_.body_;
       remaining.push_back(iter->lookahead_); 

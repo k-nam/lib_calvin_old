@@ -6,7 +6,7 @@
 namespace subcc 
 {
 	// Compiler and send output to stdout
-	void compile(lib_calvin::string sourceCode, std::ostream &file);
+	void compile(lib_calvin::c_string sourceCode, std::ostream &file);
 }
 
 #endif

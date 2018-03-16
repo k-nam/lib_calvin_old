@@ -4,9 +4,9 @@
 
 using namespace std;
 
-void lib_calvin_util::save_bench(string title, string time, string comment,
+void lib_calvin_util::save_bench(string title, string time, string comment, string unit,
 		vector<string> tags, map<string, vector<double>> results,
-		vector<string> testCases, string unit) {
+		vector<string> testCases) {
 
 	using json = nlohmann::json;
 	json benchData;

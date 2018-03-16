@@ -14,7 +14,7 @@ void lexerTest(std::string const &inputText) {
   typedef RegularExpression<>::ParseTreeNode Node;
   typedef NfaLexerGenerator<> Nfa;
   typedef DfaLexerGenerator<> Dfa;
-  typedef lib_calvin::string string;
+  typedef lib_calvin::c_string string;
   typedef NfaLexerGenerator<>::Token Token;   
 
 	/*
@@ -41,7 +41,7 @@ void lexerTest(std::string const &inputText) {
     cout << "too big file...please use smaller source file ^^\n";
     return 0;
   }
-  string sourceFile(buffer, fileSize); // entire input
+  c_string sourceFile(buffer, fileSize); // entire input
 	*/
 
 	string sourceFile(inputText);
@@ -72,7 +72,7 @@ void lexerTest(std::string const &inputText) {
   shared_ptr<Node> cCommentNode, cppCommentNode, commentsNode;
   // ' can not be inside a char literal! ( \' is fine)
   shared_ptr<Node> escapeCharNode, charLiteralNode;
-  // " or newline can not be inside a string literal! ( \" is fine)
+  // " or newline can not be inside a c_string literal! ( \" is fine)
   shared_ptr<Node> stringLiteralNode;
   shared_ptr<Node> decimalNode, hexNode;
   

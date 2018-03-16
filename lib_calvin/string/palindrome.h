@@ -5,8 +5,8 @@
 
 namespace lib_calvin_string
 {
-	// return a vector of size 2n - 1, where n is the length of input string.
-	// for even indices, the half of it denotes the index in the input string.
+	// return a vector of size 2n - 1, where n is the length of input c_string.
+	// for even indices, the half of it denotes the index in the input c_string.
 	// odd indices denotes the position between letters.
 	// ex) for 'abc', 0=>'a', 1=>between 'a' &'b', 2=>'b' ...
 	// the values of returned vector are the length of maximal palindrome centered

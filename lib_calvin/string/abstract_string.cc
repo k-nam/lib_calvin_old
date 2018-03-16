@@ -7,7 +7,7 @@ using std::deque;
 
 
 /************************* Global functions definition ***********************/
-string 
+c_string 
 lib_calvin::itoa(int number) {
   bool minus = false;
   if (number < 0) {
@@ -27,10 +27,10 @@ lib_calvin::itoa(int number) {
   char *pString = new char[len];
   for (int i = 0; i < len; ++i)
     pString[i] = digits[i];
-  return string(pString, static_cast<int>(len));
+  return c_string(pString, static_cast<int>(len));
 }
 
-char lib_calvin::charOf(string const &string) {
+char lib_calvin::charOf(c_string const &string) {
 	using std::cout;
   if(string.size() == 3) { // normal character
     return string[1];
@@ -70,7 +70,7 @@ char lib_calvin::charOf(string const &string) {
   }
 }
 
-int lib_calvin::intOfDec(string const &string) {
+int lib_calvin::intOfDec(c_string const &string) {
   int value = 0;
   for (size_t i = 0; i < string.size(); ++i) {
     value *= 10;
@@ -79,7 +79,7 @@ int lib_calvin::intOfDec(string const &string) {
   return value;
 }
 
-int lib_calvin::intOfHex(string const &string) {
+int lib_calvin::intOfHex(c_string const &string) {
 	using std::cout;
   if (string[0] != '0' || (string[1] != 'x' && string[1] != 'X')) {
     cout << "intOfHex: error, input is not hex constant\n";
@@ -101,7 +101,7 @@ int lib_calvin::intOfHex(string const &string) {
   return value;
 }
 
-float lib_calvin::floatOf(string const &string) {
+float lib_calvin::floatOf(c_string const &string) {
   return static_cast<float>(1.1);
 }
 

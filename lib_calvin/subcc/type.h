@@ -6,7 +6,7 @@
 #include <iostream>
 #include "abstract_string.h"
 //#include "symbol_table.h"
-#include "subcc_lexer.h" // for string<>
+#include "subcc_lexer.h" // for c_string<>
 
 using std::deque;
 using std::shared_ptr;
@@ -38,7 +38,7 @@ enum BaseTypes {
   BASETYPE_INT             = 4,
   BASETYPE_FLOAT           = 5,
   BASETYPE_DOUBLE          = 6,
-  BASETYPE_STRING          = 11, // only for string constant
+  BASETYPE_STRING          = 11, // only for c_string constant
   BASETYPE_VOID            = 21  // for return value, arg type, and pointers
 };
 
@@ -86,18 +86,18 @@ protected:
 // Equality holds only for identical types: not structural equality!
 class RecordType: public Type {
 public:
-  RecordType(string const &name, SymbolTable const &environment);
+  RecordType(c_string const &name, SymbolTable const &environment);
 	~RecordType();
   bool operator== (Type const &) const;
   bool operator!= (Type const &) const;
-  string const &getName() const { return name_; }
+  c_string const &getName() const { return name_; }
   // type of given field; return TYPE_ERROR if faulty
-  shared_ptr<Type const> getTypeOf(string const &field) const;
+  shared_ptr<Type const> getTypeOf(c_string const &field) const;
   // Returns symbol table index
-  int getIndexOf(string const &field) const;
+  int getIndexOf(c_string const &field) const;
   bool isVarDeclarable() const { return true; }
 protected:
-  string name_;
+  c_string name_;
   SymbolTable const &environment_; // basis of type equivalence
 };
 
@@ -107,7 +107,7 @@ public:
     Type(TYPE_ARRAY, elementType->getWidth() * arraySize), 
     arraySize_(arraySize), elementType_(elementType) { }
   // make in one shot; should not be called with empty deque!
-  ArrayType(deque<int> const &, shared_ptr<Type const>); 
+  ArrayType(std::deque<int> const &, shared_ptr<Type const>); 
 	~ArrayType(); // should destruct recursively
   bool operator== (Type const &) const;
   bool operator!= (Type const &) const;

@@ -42,7 +42,7 @@ void lib_calvin_string::matchingAlgorithmTest() {
 	std::cout << "--------------- matchingAlgorithmTest finished --------------\n\n";
 }
 
-// string class is generic with alphabet type, but we can not unit-test unless
+// c_string class is generic with alphabet type, but we can not unit-test unless
 // ... Alphabet is of numerical type. So just test with characters.
 template <typename Alphabet>
 void lib_calvin_string::matchingTest(void(*matchingCharAlg)

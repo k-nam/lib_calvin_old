@@ -8,7 +8,7 @@
 
 namespace subcc {
 
-using lib_calvin::string;
+using lib_calvin::c_string;
 using std::cout;
 using std::endl;
 using std::dynamic_pointer_cast;
@@ -16,7 +16,7 @@ using namespace lib_calvin_parser;
 
 typedef SlrParserGenerator::Production Production;
 
-Parser::Parser(string const &inText): 
+Parser::Parser(c_string const &inText): 
   lexer_(inText), 
   subcc_(250, 500), subccParser_(subcc_), 
   symbolTable_(shared_ptr<GlobalSymbolTable>(new GlobalSymbolTable)), 
@@ -40,7 +40,7 @@ Parser::~Parser() {
 	//delete syntaxTree_;
 }
 
-// Check input string for syntax
+// Check input c_string for syntax
 void Parser::test() {
   pair<Action, int> curPair;
   int curToken = lexer_.getNextToken(); // starting Token
@@ -89,7 +89,7 @@ void Parser::parse() {
         // Be careful of USERDEFTYPE: we must manually look at the symbol table
         if (curToken == ID) { 
           //cout << "shifting ID:  ";
-          string const &lexeme = lexer_.getLexeme();
+          c_string const &lexeme = lexer_.getLexeme();
           //lexeme.printToCout(); cout << "  ";
           int index = symbolTable_->findIndex(lexeme);
           if (index >= 0) {
@@ -132,7 +132,7 @@ void Parser::parse() {
 
 // Put only necessary things onto the parsing stack
 void Parser::shiftWith(int curToken) {
-  string const &lexeme = lexer_.getLexeme();
+  c_string const &lexeme = lexer_.getLexeme();
   switch(curToken) { // discards all trivial tokens
     case ID: // set symbolTableIndex regardless of validity
       {
@@ -198,7 +198,7 @@ void Parser::shiftWith(int curToken) {
       }
     case STRING_LITERAL:
       {
-        //cout << "Making string constant Node with ";
+        //cout << "Making c_string constant Node with ";
         //lexeme.printToCout();
         //cout << endl;
         // We need a function to get numeric value from a char constant
@@ -247,7 +247,7 @@ void Parser::reduceWith(int productionKey) {
         TypedNode *typeSpecNode = 
           dynamic_cast<TypedNode *>(stack_[stack_.size() - 2]);
         IdNode *idNode = dynamic_cast<IdNode *>(stack_.back());
-        string const &lexeme = idNode->getLexeme();
+        c_string const &lexeme = idNode->getLexeme();
         shared_ptr<Type const> type = typeSpecNode->getType();
         shared_ptr<Symbol> newSymbol(new Symbol(SYMBOL_TYPENAME, lexeme, type));
         int index = symbolTable_->insert(newSymbol);
@@ -264,7 +264,7 @@ void Parser::reduceWith(int productionKey) {
         TypedNode *typeSpecNode = 
           dynamic_cast<TypedNode *>(stack_[stack_.size() - 2]);
         IdNode *idNode = dynamic_cast<IdNode *>(stack_.back());
-        string const &lexeme = idNode->getLexeme();
+        c_string const &lexeme = idNode->getLexeme();
         shared_ptr<Type const> type = typeSpecNode->getType();
         if (!type->isVarDeclarable()) { // type error
           printError(*idNode, "can not declare a variable with the type\n");
@@ -286,7 +286,7 @@ void Parser::reduceWith(int productionKey) {
         popAndPush(2, varDeclNode);
         break;
       } 
-    case 32: // VarDecl -> Typespec, ID, ArrayDecl, 'string constant'
+    case 32: // VarDecl -> Typespec, ID, ArrayDecl, 'c_string constant'
       {
         // Actually this is a declaration + assignment, and we do not implement
         // ..assignment yet (will be done in code generation)
@@ -296,7 +296,7 @@ void Parser::reduceWith(int productionKey) {
         IdNode *idNode = dynamic_cast<IdNode *>(stack_[stack_.size() - 3]);
         ArrayDeclNode *arrayNode = 
           dynamic_cast<ArrayDeclNode *> (stack_[stack_.size() - 2]);
-        string const &lexeme = idNode->getLexeme();
+        c_string const &lexeme = idNode->getLexeme();
         shared_ptr<Type const> type = typeSpecNode->getType();
         int dimension = arrayNode->getDimension();
         // Check invalid assignment
@@ -327,7 +327,7 @@ void Parser::reduceWith(int productionKey) {
         IdNode *idNode = dynamic_cast<IdNode *>(stack_[stack_.size() - 2]);
         ArrayDeclListNode *arrayNode = 
           dynamic_cast<ArrayDeclListNode *> (stack_[stack_.size() - 1]);
-        string const &lexeme = idNode->getLexeme();
+        c_string const &lexeme = idNode->getLexeme();
         shared_ptr<Type const> type = typeSpecNode->getType();
         if (!type->isVarDeclarable()) { // type error
           printError(*idNode, "can not declare a variable with the type\n");
@@ -413,7 +413,7 @@ void Parser::reduceWith(int productionKey) {
       { // Using the symbol table itself as record type
         // All struct declaration
         IdNode *idNode = dynamic_cast<IdNode *> (stack_[stack_.size() - 2]);
-        string const &lexeme = idNode->getLexeme();
+        c_string const &lexeme = idNode->getLexeme();
         SymbolTable const &environment = symbolTable_->getEnvironment();
         shared_ptr<RecordType> recordType(new RecordType(lexeme, environment));
         TypedNode *structTypeNode = new TypedNode(52, recordType);
@@ -515,7 +515,7 @@ void Parser::reduceWith(int productionKey) {
         TypedNode *typeSpecNode = 
           dynamic_cast<TypedNode *> (stack_[stack_.size() - 3]);
         IdNode *idNode = dynamic_cast<IdNode *> (stack_[stack_.size() - 2]);
-        string const &lexeme = idNode->getLexeme();
+        c_string const &lexeme = idNode->getLexeme();
         ParamListNode *paramListNode = 
           dynamic_cast<ParamListNode *> (stack_.back());
         shared_ptr<Type const> returnType = typeSpecNode->getType();
@@ -550,7 +550,7 @@ void Parser::reduceWith(int productionKey) {
         TypedNode *typeSpecNode = 
           dynamic_cast<TypedNode *> (stack_[stack_.size() - 3]);
         IdNode *idNode = dynamic_cast<IdNode *> (stack_[stack_.size() - 2]);
-        string const &lexeme = idNode->getLexeme();
+        c_string const &lexeme = idNode->getLexeme();
         ParamListNode *paramListNode = 
           dynamic_cast<ParamListNode *> (stack_.back());
         shared_ptr<Type const> returnType = typeSpecNode->getType();
@@ -615,7 +615,7 @@ void Parser::reduceWith(int productionKey) {
         TypedNode *typeSpecNode = 
           dynamic_cast<TypedNode *>(stack_[stack_.size() - 2]);
         IdNode *idNode = dynamic_cast<IdNode *>(stack_.back());
-        string const &lexeme = idNode->getLexeme();
+        c_string const &lexeme = idNode->getLexeme();
         shared_ptr<Type const> type = typeSpecNode->getType();
         TypedNode *paramNode = new TypedNode(96, type);
         shared_ptr<Symbol> newSymbol(new Symbol(SYMBOL_PARAMETER, lexeme, type));
@@ -631,7 +631,7 @@ void Parser::reduceWith(int productionKey) {
         IdNode *idNode = dynamic_cast<IdNode *>(stack_[stack_.size() - 2]);
         ArrayDeclListNode *arrayNode = 
           dynamic_cast<ArrayDeclListNode *> (stack_[stack_.size() - 1]);
-        string const &lexeme = idNode->getLexeme();
+        c_string const &lexeme = idNode->getLexeme();
         shared_ptr<Type const> type = typeSpecNode->getType();
         deque<int> dimensions = arrayNode->getDimensions();
         shared_ptr<Type const> newType(new ArrayType(dimensions, type));
@@ -1086,7 +1086,7 @@ void Parser::reduceWith(int productionKey) {
         IdNode const *fieldNameNode = 
           dynamic_cast<IdNode const *> (stack_.back());
         shared_ptr<Type const> exprType = lvalueNode->getType();
-        string const &field = fieldNameNode->getLexeme();
+        c_string const &field = fieldNameNode->getLexeme();
         if (exprType->getType() != TYPE_RECORD) {
           printError("dot selector can only be used with struct type.");
         }
@@ -1396,11 +1396,11 @@ void Parser::printWarning(std::string const &warningMessage) const {
     warningMessage << endl;
 }
 
-subcc::string 
+subcc::c_string 
 Parser::getTempName() {
   int number = curTemporaryNumber_++;
-  string temp("_t");
-  string num = lib_calvin::itoa(number);
+  c_string temp("_t");
+  c_string num = lib_calvin::itoa(number);
   return temp + num;
 }
 

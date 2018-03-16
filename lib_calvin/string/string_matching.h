@@ -13,7 +13,7 @@ using lib_calvin::vector;
 using std::cout;
 using std::endl;
 
-// Z(i) = the length of the string that starts at index i and matches
+// Z(i) = the length of the c_string that starts at index i and matches
 // ...the prefix of pattern
 template <typename Alphabet>
 void calculateZ(abstract_string<Alphabet> const &pattern, vector<size_t> &record);
@@ -65,7 +65,7 @@ void suffixTreeMatching(abstract_string<Alphabet> const &text,
 /************************ Global functions *******************************/
 
 // Z(k) is the length of longest substring that starts at index k, which is
-// ...also prefix of the entire string. 
+// ...also prefix of the entire c_string. 
 template <typename Alphabet>
 void lib_calvin_string::calculateZ (
     abstract_string<Alphabet> const &pattern, vector<size_t> &record) {
@@ -117,7 +117,7 @@ void lib_calvin_string::calculateZ (
   }
 }
 
-// f(k) is the length of longest prefix of the string P which is also suffix of
+// f(k) is the length of longest prefix of the c_string P which is also suffix of
 //  P[0...k-1]   so, f(len) should be determined.
 // f(k) value determines the jump length when pattern does not match at index k
 //  in KMP algorithm. f(len) denotes the jump length when a match has been found.
@@ -131,7 +131,7 @@ void lib_calvin_string::calculateF (
   record.clear();
   record.resize(len + 1);
   f[0] = 0; // this value is not used, but convenient for below procedure
-  f[1] = 0; //string of length 1 can not have proper prefix
+  f[1] = 0; //c_string of length 1 can not have proper prefix
   for (k = 2; k <= len; k++) { // include past-end char
     m = f[k - 1]; // m is the index to consider f[m] value
 		bool didReachZero = false;
@@ -185,7 +185,7 @@ void lib_calvin_string::strongGoodSuffix (
   size_t len = pattern.size();
   record.clear();
   record.resize(len + 1, len);
-  // use Z algorithm in reverse string
+  // use Z algorithm in reverse c_string
   vector<size_t> Z;
   calculateZ (pattern.reverse(), Z);
   for (size_t i = 1; i < len; ++i) {
@@ -198,7 +198,7 @@ void lib_calvin_string::strongGoodSuffix (
   // additional processing 
   size_t left = len; // possible leftmost element not marked
   for (size_t i = 1; i < len; ++i) {
-    if (i + Z[i] == len) { // match goes through the end of string
+    if (i + Z[i] == len) { // match goes through the end of c_string
       for (size_t j = left; j > len - i; j--) {
 				// we must not overwrite, like above.
 				if (record[j] == len) {

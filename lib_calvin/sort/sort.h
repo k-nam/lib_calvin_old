@@ -12,7 +12,6 @@
 #include <algorithm>
 #include <inttypes.h>
 
-#include "vector.h"
 #include "common_thread.h"
 #include "factory.h"
 
@@ -20,7 +19,7 @@ namespace lib_calvin_sort
 {
 
 	namespace Library = std;
-	using lib_calvin::vector;
+	using std::vector;
 	using std::pair;
 	using std::iterator_traits;
 	using namespace lib_calvin_thread;
@@ -1337,7 +1336,7 @@ void lib_calvin_sort::cacheTest2(Iterator first, Iterator last) {
 	typedef typename iterator_traits<Iterator>::value_type elemType;
 	int const ways = 32;
 	int index = 0;
-	using lib_calvin::vector;
+	using std::vector;
 	vector<vector<elemType>> queues(ways);
 	for (Iterator source = first; source != last; ++source) {
 		queues[index++].push_back(*source);
