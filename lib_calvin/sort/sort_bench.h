@@ -13,15 +13,15 @@ namespace lib_calvin
 namespace lib_calvin_sort
 {
 	size_t const benchTestSize = 1000 * 1000;
-	size_t const benchNumIter = 10;
+	size_t const benchNumIter = 3;
 
 	template <typename T>
 	std::map<std::string, double> sortBenchTemplate();
 
 	template <typename T>
-	double sortBenchTemplateSub(void(*sorter[])(T *first, T *last, std::less<T>));
+	double sortBenchTemplateSub(void(*sorter)(T *first, T *last, std::less<T>));
 
-	std::map<std::string, double>
+	std::map<std::string, std::vector<double>>
 		combineResults(std::vector<std::map<std::string, double>>);
 }
 #endif
