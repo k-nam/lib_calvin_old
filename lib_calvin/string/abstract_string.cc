@@ -1,7 +1,10 @@
+#include <deque>
 #include "abstract_string.h"
 
 using namespace lib_calvin;
 using lib_calvin::stopwatch;
+using std::deque;
+
 
 /************************* Global functions definition ***********************/
 string 
