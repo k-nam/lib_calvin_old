@@ -2,7 +2,7 @@
 #define LIB_CALVIN__UTIL__FACTORY_H 
 
 #include "common_thread.h"
-#include "vector.h"
+#include <vector>
 
 namespace lib_calvin
 {
@@ -18,7 +18,7 @@ public:
 	void close() { isClosed_ = true; } // close the factory
 protected:
 	lib_calvin_thread::lock_type lock_;
-	lib_calvin::vector<Argument> workQueue_;
+	std::vector<Argument> workQueue_;
 	bool isClosed_;
 private:
 };
