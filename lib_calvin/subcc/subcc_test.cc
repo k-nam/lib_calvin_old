@@ -16,26 +16,25 @@ void subcc::subccTest() {
 	char *inputFileName = "../subcc/subc_code/a1.c";
 	string sourceText;
 
-
 	std::ifstream stream(inputFileName);
-	stream.seekg(std::ios::end);   
+	stream.seekg(std::ios::end);
 	sourceText.reserve(static_cast<size_t>(stream.tellg()));
 	stream.seekg(std::ios::beg);
 	sourceText.assign((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
 	stream.close();
 
 	cout << "input size is: " << sourceText.size() << "\n";
-  string header("void printStr( char s[80] ); \n void printInt ( int a ); \n\
+	string header("void printStr( char s[80] ); \n void printInt ( int a ); \n\
       void printNewLine(); \n");
-  string inputToCompiler = header + sourceText;
+	string inputToCompiler = header + sourceText;
 	cout << "\n";
 
 	/* Uncomment below line to save output to a file (which can be run in subcc_run project) */
 	std::ofstream file("../subcc/output/threeaddr.cc");
 	//std::ostream &file = std::cout;
 
-	//while(true) {
-		compile(inputToCompiler, file);
+	//while(true) { // loop to check memory leak
+	compile(inputToCompiler, file);
 	//}
 
 	SymbolTable::countObjects();

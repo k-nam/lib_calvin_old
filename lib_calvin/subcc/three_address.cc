@@ -273,7 +273,7 @@ void ThreeAdressCode::print(Instruction const &instruction) const {
       {
         FunctionStartInstruction const &inst = 
           dynamic_cast<FunctionStartInstruction const &> (instruction);
-        inst.getFunctionName().printToCout();
+        cout << inst.getFunctionName();
         cout << ":" << endl;
         break;
       }
@@ -433,7 +433,7 @@ void ThreeAdressCode::print(Address const &address) const {
   }
   int index = address.getSymbolTableIndex();
   c_string const &lexeme = symbolTable_->lookUp(index)->getLexeme();
-  lexeme.printToCout();
+  cout << lexeme;
 }
 
 void ThreeAdressCode::print(enum UniOp op) const {

@@ -58,7 +58,7 @@ void Parser::test() {
       case Action::Error:
         cout << "Symtax error in line " << lexer_.getLineNum() << endl;
         cout << "Token was " ;
-        lexer_.getLexeme().printToCout();
+		cout << lexer_.getLexeme();
         return;
       case Action::Accept:
         cout << "ACCEPTED\n";
@@ -90,7 +90,6 @@ void Parser::parse() {
         if (curToken == ID) { 
           //cout << "shifting ID:  ";
           c_string const &lexeme = lexer_.getLexeme();
-          //lexeme.printToCout(); cout << "  ";
           int index = symbolTable_->findIndex(lexeme);
           if (index >= 0) {
             //cout << "this is declared ID\n";
@@ -108,7 +107,7 @@ void Parser::parse() {
       case Action::Error:
         cout << "Syntax error: in line " << lexer_.getLineNum();
         cout << ", Token was '" ;
-        lexer_.getLexeme().printToCout();
+        cout << lexer_.getLexeme();
         cout << "'\n";
         exit(0);
       case Action::Accept:
@@ -137,7 +136,6 @@ void Parser::shiftWith(int curToken) {
     case ID: // set symbolTableIndex regardless of validity
       {
         //cout << "Making IdNode with ";
-        //lexeme.printToCout();
         //cout << endl;
         IdNode *idNode = new IdNode(lexeme, lexer_.getLineNum());
         stack_.push_back(idNode);
@@ -148,7 +146,6 @@ void Parser::shiftWith(int curToken) {
     case USERDEFTYPE: // same as ID, but it should have symtab entry already
       {
         //cout << "Making IdNode(USERDEFTYPE) with ";
-        //lexeme.printToCout();
         //cout << endl;
         IdNode *typeNameNode = new IdNode(lexeme, lexer_.getLineNum());
         int index = symbolTable_->findIndex(lexeme);
@@ -164,7 +161,6 @@ void Parser::shiftWith(int curToken) {
     case CHAR_LITERAL:
       {
         //cout << "Making Alphabet constant Node with ";
-        //lexeme.printToCout();
         //cout << endl;
         // We need a function to get numeric value from a char constant
         // ..like 'a', '\n'...
@@ -187,7 +183,6 @@ void Parser::shiftWith(int curToken) {
     case HEXADECIMAL_LITERAL:
       {
         //cout << "Making int constant Node with ";
-        //lexeme.printToCout();
         //cout << endl;
         int intValue = intOfHex(lexeme); // atoi function
         //cout << "\tintValue is " << intValue << endl;
@@ -199,7 +194,6 @@ void Parser::shiftWith(int curToken) {
     case STRING_LITERAL:
       {
         //cout << "Making c_string constant Node with ";
-        //lexeme.printToCout();
         //cout << endl;
         // We need a function to get numeric value from a char constant
         // ..like 'a', '\n'...
@@ -1386,7 +1380,7 @@ void Parser::printError(int lineNum,
 void Parser::printError(IdNode const &idNode,
     std::string const &errorMessage) const {
   cout <<  "error (in line " << idNode.getLineNum() << ", '";
-  idNode.getLexeme().printToCout();
+  cout << idNode.getLexeme();
   cout << "'): " << errorMessage << endl;
   exit(0);
 }

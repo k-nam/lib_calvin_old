@@ -33,7 +33,6 @@ namespace lib_calvin
 		operator+ (abstract_string<Alphabet> &&, abstract_string<Alphabet> const &);
 
 	// Maintains its own data (value semantic) and immutable
-	// Do not use 'c_string' for its name to avoid collision with std::c_string 
 	template <typename Alphabet = char>
 	class abstract_string {
 	public:
@@ -68,7 +67,6 @@ namespace lib_calvin
 		abstract_string & operator+= (abstract_string<Alphabet> const &rhs);
 		friend std::ostream & ::operator<< (std::ostream & os, abstract_string<Alphabet> const &);
 	public:
-		void printToCout() const;
 		void print() const;
 		void println() const;
 	private:
@@ -91,7 +89,7 @@ namespace lib_calvin
 		return Alphabet(0);
 	}
 
-	// c_string is normal ascii c_string
+	// c_string is normal ascii string
 	typedef abstract_string<char> c_string;
 
 	// itoa function
@@ -231,13 +229,6 @@ namespace lib_calvin
 			reverse[i] = vector_[vector_.size() - 1 - i];
 		}
 		return abstract_string<Alphabet>(std::move(reverse));
-	}
-
-	template <typename Alphabet>
-	void abstract_string<Alphabet>::printToCout() const {
-		for (size_t i = 0; i < size(); ++i) {
-			std::cout << vector_[i];
-		}
 	}
 
 	template <typename Alphabet>

@@ -14,8 +14,8 @@ void lexerTest(std::string const &inputText) {
   typedef RegularExpression<>::ParseTreeNode Node;
   typedef NfaLexerGenerator<> Nfa;
   typedef DfaLexerGenerator<> Dfa;
-  typedef lib_calvin::c_string string;
   typedef NfaLexerGenerator<>::Token Token;   
+  using lib_calvin::c_string;
 
 	/*
 	// 10MB will be enough for a source file
@@ -44,26 +44,26 @@ void lexerTest(std::string const &inputText) {
   c_string sourceFile(buffer, fileSize); // entire input
 	*/
 
-	string sourceFile(inputText);
+	c_string sourceFile(inputText);
   
   /******** Configuring Lexer Generator *******/
   Nfa nfa; // create an instance of Nfa simulator for regex
   Dfa dfa; 
   // As I don't have regex parser, I need to do some manual setting
   // prepare intermediate expressions
-  string letterString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-  string digitString("0123456789");
-  string underscoreString("_");
-  string esc_a("\\a");
-  string esc_b("\\b");
-  string esc_f("\\f");
-  string esc_n("\\n");
-  string esc_r("\\r");
-  string esc_v("\\v");
-  string esc_sq("\\\'"); // single quote
-  string esc_dq("\\\""); // double quote
-  string esc_bs("\\\\"); // backslash
-  string esc_null("\\0");
+  c_string letterString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  c_string digitString("0123456789");
+  c_string underscoreString("_");
+  c_string esc_a("\\a");
+  c_string esc_b("\\b");
+  c_string esc_f("\\f");
+  c_string esc_n("\\n");
+  c_string esc_r("\\r");
+  c_string esc_v("\\v");
+  c_string esc_sq("\\\'"); // single quote
+  c_string esc_dq("\\\""); // double quote
+  c_string esc_bs("\\\\"); // backslash
+  c_string esc_null("\\0");
   
   shared_ptr<Node> whitespaceNode;
   shared_ptr<Node> letterNode, digitNode;
@@ -76,103 +76,103 @@ void lexerTest(std::string const &inputText) {
   shared_ptr<Node> stringLiteralNode;
   shared_ptr<Node> decimalNode, hexNode;
   
-  whitespaceNode = PLUS(ONEOF(string(" \t\n")));
+  whitespaceNode = PLUS(ONEOF(c_string(" \t\n")));
   letterNode = ONEOF(letterString);
   digitNode = ONEOF(digitString);
   idNode = CAT(OR(letterNode, LITERAL(underscoreString)), 
         STAR(OR(letterNode, digitNode)));
-  cppCommentNode = CAT(LITERAL(string("//")), 
-      CAT(STAR(NOTOF(string("\n"))), 
-        LITERAL(string("\n"))));
+  cppCommentNode = CAT(LITERAL(c_string("//")), 
+      CAT(STAR(NOTOF(c_string("\n"))), 
+        LITERAL(c_string("\n"))));
   // \/*([^*]|(*)+[^*/])*(*)+\/
-  cCommentNode = CAT(LITERAL(string("/*")),
-      CAT(STAR(OR(NOTOF(string("*")), 
-        CAT(PLUS(LITERAL(string("*"))), NOTOF(string("/*"))))),
-      CAT(PLUS(LITERAL(string("*"))), LITERAL(string("/")))));
+  cCommentNode = CAT(LITERAL(c_string("/*")),
+      CAT(STAR(OR(NOTOF(c_string("*")), 
+        CAT(PLUS(LITERAL(c_string("*"))), NOTOF(c_string("/*"))))),
+      CAT(PLUS(LITERAL(c_string("*"))), LITERAL(c_string("/")))));
   commentsNode = OR(cCommentNode, cppCommentNode);
   escapeCharNode = OR(LITERAL(esc_a), OR(LITERAL(esc_b), OR(LITERAL(esc_f),
             OR(LITERAL(esc_n), OR(LITERAL(esc_r), OR(LITERAL(esc_v),
               OR(LITERAL(esc_sq), OR(LITERAL(esc_dq), 
                   OR(LITERAL(esc_bs),
                     LITERAL(esc_null))))))))));
-  charLiteralNode =   CAT(LITERAL(string("\'")),
-            CAT(OR(NOTOF(string("\'")), escapeCharNode),
-              LITERAL(string("\'"))));
+  charLiteralNode =   CAT(LITERAL(c_string("\'")),
+            CAT(OR(NOTOF(c_string("\'")), escapeCharNode),
+              LITERAL(c_string("\'"))));
   //  \"([^\"\n]|[\t\n\r...]|(\\\n))*\"
-  stringLiteralNode = CAT(LITERAL(string("\"")),
-            CAT(STAR(OR(OR(NOTOF(string("\"\n")), escapeCharNode),
-                LITERAL(string("\\\n")))),
-              LITERAL(string("\""))));
-  decimalNode = CAT(ONEORZERO(ONEOF(string("+-"))),
-          CAT(PLUS(digitNode), ONEORZERO(CAT(LITERAL(string(".")),
+  stringLiteralNode = CAT(LITERAL(c_string("\"")),
+            CAT(STAR(OR(OR(NOTOF(c_string("\"\n")), escapeCharNode),
+                LITERAL(c_string("\\\n")))),
+              LITERAL(c_string("\""))));
+  decimalNode = CAT(ONEORZERO(ONEOF(c_string("+-"))),
+          CAT(PLUS(digitNode), ONEORZERO(CAT(LITERAL(c_string(".")),
                 PLUS(digitNode)))));  
-  hexNode   =   CAT(ONEORZERO(ONEOF(string("+-"))),
-          CAT(LITERAL(string("0x")),
-            PLUS(OR(digitNode, ONEOF(string("abcdefABCDEF"))))));
+  hexNode   =   CAT(ONEORZERO(ONEOF(c_string("+-"))),
+          CAT(LITERAL(c_string("0x")),
+            PLUS(OR(digitNode, ONEOF(c_string("abcdefABCDEF"))))));
 
   // Insert each regex into Nfa simulator
   // First entered regex has higher priority than later entered ones
   nfa.addRegularExpression(-5, whitespaceNode);
   nfa.addRegularExpression(15, commentsNode); 
-  nfa.addRegularExpression(0, LITERAL(string("void"))); 
-  nfa.addRegularExpression(1, LITERAL(string("short")));
-  nfa.addRegularExpression(2, LITERAL(string("int")));
-  nfa.addRegularExpression(3, LITERAL(string("struct")));
-  nfa.addRegularExpression(4, LITERAL(string("sizeof")));
-  nfa.addRegularExpression(5, LITERAL(string("typedef")));
-  nfa.addRegularExpression(6, LITERAL(string("if")));
-  nfa.addRegularExpression(7, LITERAL(string("else")));
-  nfa.addRegularExpression(8, LITERAL(string("while")));
-  nfa.addRegularExpression(9, LITERAL(string("switch")));
-  nfa.addRegularExpression(10, LITERAL(string("case")));
-  nfa.addRegularExpression(11, LITERAL(string("default")));
-  nfa.addRegularExpression(12, LITERAL(string("break")));
-  nfa.addRegularExpression(13, LITERAL(string("return"))); 
-  nfa.addRegularExpression(14, LITERAL(string("char"))); 
+  nfa.addRegularExpression(0, LITERAL(c_string("void"))); 
+  nfa.addRegularExpression(1, LITERAL(c_string("short")));
+  nfa.addRegularExpression(2, LITERAL(c_string("int")));
+  nfa.addRegularExpression(3, LITERAL(c_string("struct")));
+  nfa.addRegularExpression(4, LITERAL(c_string("sizeof")));
+  nfa.addRegularExpression(5, LITERAL(c_string("typedef")));
+  nfa.addRegularExpression(6, LITERAL(c_string("if")));
+  nfa.addRegularExpression(7, LITERAL(c_string("else")));
+  nfa.addRegularExpression(8, LITERAL(c_string("while")));
+  nfa.addRegularExpression(9, LITERAL(c_string("switch")));
+  nfa.addRegularExpression(10, LITERAL(c_string("case")));
+  nfa.addRegularExpression(11, LITERAL(c_string("default")));
+  nfa.addRegularExpression(12, LITERAL(c_string("break")));
+  nfa.addRegularExpression(13, LITERAL(c_string("return"))); 
+  nfa.addRegularExpression(14, LITERAL(c_string("char"))); 
   nfa.addRegularExpression(100, idNode);
   nfa.addRegularExpression(16, charLiteralNode);
   nfa.addRegularExpression(17, stringLiteralNode);
   nfa.addRegularExpression(18, decimalNode);
   nfa.addRegularExpression(19, hexNode);
-  nfa.addRegularExpression(20, LITERAL(string("+")));
-  nfa.addRegularExpression(21, LITERAL(string("++")));
-  nfa.addRegularExpression(22, LITERAL(string("-")));
-  nfa.addRegularExpression(23, LITERAL(string("--")));
-  nfa.addRegularExpression(24, LITERAL(string("*")));
-  nfa.addRegularExpression(25, LITERAL(string("/")));
-  nfa.addRegularExpression(26, LITERAL(string("%")));
-  nfa.addRegularExpression(27, LITERAL(string("&")));
-  nfa.addRegularExpression(28, LITERAL(string("|")));
-  nfa.addRegularExpression(29, LITERAL(string("^")));
-  nfa.addRegularExpression(30, LITERAL(string("~")));
-  nfa.addRegularExpression(31, LITERAL(string("&&")));
-  nfa.addRegularExpression(32, LITERAL(string("||")));
-  nfa.addRegularExpression(33, LITERAL(string("!")));
-  nfa.addRegularExpression(34, LITERAL(string("==")));
-  nfa.addRegularExpression(35, LITERAL(string(">")));
-  nfa.addRegularExpression(36, LITERAL(string("<")));
-  nfa.addRegularExpression(37, LITERAL(string(">=")));
-  nfa.addRegularExpression(38, LITERAL(string("<=")));
-  nfa.addRegularExpression(39, LITERAL(string("!=")));
-  nfa.addRegularExpression(40, LITERAL(string("=")));
-  nfa.addRegularExpression(41, LITERAL(string("+=")));
-  nfa.addRegularExpression(42, LITERAL(string("-=")));
-  nfa.addRegularExpression(43, LITERAL(string("*=")));
-  nfa.addRegularExpression(44, LITERAL(string("/=")));
-  nfa.addRegularExpression(45, LITERAL(string("%=")));
-  nfa.addRegularExpression(46, LITERAL(string("^=")));
-  nfa.addRegularExpression(47, LITERAL(string("&=")));
-  nfa.addRegularExpression(48, LITERAL(string("|=")));
-  nfa.addRegularExpression(49, LITERAL(string(".")));
-  nfa.addRegularExpression(50, LITERAL(string(",")));
-  nfa.addRegularExpression(51, LITERAL(string(":")));
-  nfa.addRegularExpression(52, LITERAL(string(";")));
-  nfa.addRegularExpression(53, LITERAL(string("(")));
-  nfa.addRegularExpression(54, LITERAL(string(")")));
-  nfa.addRegularExpression(55, LITERAL(string("{")));
-  nfa.addRegularExpression(56, LITERAL(string("}")));
-  nfa.addRegularExpression(57, LITERAL(string("[")));
-  nfa.addRegularExpression(58, LITERAL(string("]")));
+  nfa.addRegularExpression(20, LITERAL(c_string("+")));
+  nfa.addRegularExpression(21, LITERAL(c_string("++")));
+  nfa.addRegularExpression(22, LITERAL(c_string("-")));
+  nfa.addRegularExpression(23, LITERAL(c_string("--")));
+  nfa.addRegularExpression(24, LITERAL(c_string("*")));
+  nfa.addRegularExpression(25, LITERAL(c_string("/")));
+  nfa.addRegularExpression(26, LITERAL(c_string("%")));
+  nfa.addRegularExpression(27, LITERAL(c_string("&")));
+  nfa.addRegularExpression(28, LITERAL(c_string("|")));
+  nfa.addRegularExpression(29, LITERAL(c_string("^")));
+  nfa.addRegularExpression(30, LITERAL(c_string("~")));
+  nfa.addRegularExpression(31, LITERAL(c_string("&&")));
+  nfa.addRegularExpression(32, LITERAL(c_string("||")));
+  nfa.addRegularExpression(33, LITERAL(c_string("!")));
+  nfa.addRegularExpression(34, LITERAL(c_string("==")));
+  nfa.addRegularExpression(35, LITERAL(c_string(">")));
+  nfa.addRegularExpression(36, LITERAL(c_string("<")));
+  nfa.addRegularExpression(37, LITERAL(c_string(">=")));
+  nfa.addRegularExpression(38, LITERAL(c_string("<=")));
+  nfa.addRegularExpression(39, LITERAL(c_string("!=")));
+  nfa.addRegularExpression(40, LITERAL(c_string("=")));
+  nfa.addRegularExpression(41, LITERAL(c_string("+=")));
+  nfa.addRegularExpression(42, LITERAL(c_string("-=")));
+  nfa.addRegularExpression(43, LITERAL(c_string("*=")));
+  nfa.addRegularExpression(44, LITERAL(c_string("/=")));
+  nfa.addRegularExpression(45, LITERAL(c_string("%=")));
+  nfa.addRegularExpression(46, LITERAL(c_string("^=")));
+  nfa.addRegularExpression(47, LITERAL(c_string("&=")));
+  nfa.addRegularExpression(48, LITERAL(c_string("|=")));
+  nfa.addRegularExpression(49, LITERAL(c_string(".")));
+  nfa.addRegularExpression(50, LITERAL(c_string(",")));
+  nfa.addRegularExpression(51, LITERAL(c_string(":")));
+  nfa.addRegularExpression(52, LITERAL(c_string(";")));
+  nfa.addRegularExpression(53, LITERAL(c_string("(")));
+  nfa.addRegularExpression(54, LITERAL(c_string(")")));
+  nfa.addRegularExpression(55, LITERAL(c_string("{")));
+  nfa.addRegularExpression(56, LITERAL(c_string("}")));
+  nfa.addRegularExpression(57, LITERAL(c_string("[")));
+  nfa.addRegularExpression(58, LITERAL(c_string("]")));
 
   stopwatch watch;
   // Let the Nfa do the Thompson construction

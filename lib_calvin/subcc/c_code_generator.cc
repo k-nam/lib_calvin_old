@@ -43,7 +43,7 @@ void CCodeGenerator::printCCode(Instruction const &instruction) const {
         if (inst.getFunctionName() == "main") {
           cout << "_";
         }
-        inst.getFunctionName().printToCout();
+		cout << inst.getFunctionName();
         cout << "() {\n\n";
         // Calle's stack manipulation
         cout << "\tSTORE ( FP, STACK, SP - 4, 4);\n";
@@ -62,7 +62,7 @@ void CCodeGenerator::printCCode(Instruction const &instruction) const {
         cout << "\tSP = SP + 4;\n";
         cout << "\tRETURN;\n";
         cout << "} // end of( ";
-        inst.getFunctionName().printToCout();
+        cout << inst.getFunctionName();
         cout << " )\n\n";
         break;
       }
@@ -298,13 +298,13 @@ void CCodeGenerator::printCCode (
     }
     if (target == M0) { // special case
       cout << "*((int *)M0) = ";
-      symbol->getLexeme().printToCout();
+      cout << symbol->getLexeme();
       cout << ";\n";
       return;
     }
     printCCode(target);
     cout << " = ";
-    symbol->getLexeme().printToCout();
+    cout << symbol->getLexeme();
     cout << ";\n";
     return;
   }

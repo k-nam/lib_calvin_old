@@ -15,7 +15,6 @@ Symbol::~Symbol() {
 	--objectCount_; 
 	//std::cout << "Symbol destructed: " << symbolCount << "\n"; 
 	if (type_->getType() != TYPE_BASE && type_->getType() != TYPE_RECORD) {
-		//type_.printToCout();
 		// Cannot implement memory management of Type object by using Symbol;
 		// because for array Types, there are Temporary types for
 		// each level of arrays, and this results in multiple deletes
@@ -133,7 +132,7 @@ void SymbolTable::insert(shared_ptr<Symbol> symbol, int index) {
     if (mapping_.count(symbol->getLexeme()) != 0) { // already declared symbol
       cout << "SymbolTable insert error\n";
       cout << "lexeme is ";
-      symbol->getLexeme().printToCout();
+      cout << symbol->getLexeme();
       exit(0);
     }
     mapping_[symbol->getLexeme()] = index;
@@ -148,7 +147,6 @@ void SymbolTable::insert(shared_ptr<Symbol> symbol, int index) {
     typeWidth = 4 * ((typeWidth - 1) / 4 + 1);
     offset_ += typeWidth;
     //cout << "symbol: ";
-    //symbol.getLexeme().printToCout();
     //cout << " offset is " << symbol.getOffset() << endl;
     const_cast<GlobalSymbolTable &>(globalTable_).updateMaxStackSize(offset_);
   }

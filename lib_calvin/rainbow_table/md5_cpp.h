@@ -26,7 +26,7 @@
 
 // The original md5 implementation avoids external libraries.
 // This version has dependency on stdio.h for file input and
-// c_string.h for memcpy.
+// string.h for memcpy.
 #include <stdio.h>
 #include <string.h>
 
@@ -372,7 +372,7 @@ public:
     return digestChars ;
   }
 
-  // Digests a c_string and prints the result.
+  // Digests a string and prints the result.
   char* digestString( char *string )
   {
     Init() ;
