@@ -2,26 +2,26 @@
 #include "json/json.hpp"
 #include <ctime>
 
-void lib_calvin_util::save_bench(std::string title, float time, std::string testEnvironment, std::string comment,
-		std::vector<std::string> tags, std::vector<std::string> algorithmNames,
-		std::vector<std::vector<double>> results,
-		std::vector<std::string> testCases, std::string unit) {
+using namespace std;
+
+void lib_calvin_util::save_bench(string title, string time, string comment,
+		vector<string> tags, map<string, vector<double>> results,
+		vector<string> testCases, string unit) {
 
 	using json = nlohmann::json;
 	json benchData;
 	benchData["title"] = title;
 	benchData["time"] = time;
-	benchData["test_environment"] = testEnvironment;
+	benchData["test_environment"] = lib_calvin_util::environment;
 	benchData["comment"] = comment;
+	benchData["unit"] = unit;
 	benchData["tags"] = tags;
-	benchData["algorithmNames"] = algorithmNames;
 	benchData["results"] = results;
 	benchData["test_cases"] = testCases;
-	benchData["unit"] = unit;
 
-	std::cout << benchData.dump();
+	cout << benchData.dump();
 
-	std::ofstream jsonFile(saveFilePath + std::to_string(std::time(nullptr)) + ".json");
+	ofstream jsonFile(saveFilePath + to_string(std::time(nullptr)) + ".json");
 	jsonFile << benchData.dump() << ";";
 	jsonFile.close();
 }
