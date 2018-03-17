@@ -778,7 +778,7 @@ void lib_calvin_sort::introSortParallelSub1(
 	Iterator left = hoarePartition(first, last, comp);
 	QuickSortThreadArg<Iterator, Comparator> argLeft(first, left, comp, thread_limit - 1, &factoryLoader);
 	QuickSortThreadArg<Iterator, Comparator> argRight(left, last, comp, thread_limit - 1, &factoryLoader);
-	thread_type leftThread, rightThread;
+	lib_calvin_thread::thread_type leftThread, rightThread;
 	leftThread =
 		create_thread(introSortParallelSub1ThreadFunction<Iterator, Comparator>, &argLeft);
 	//SetThreadAffinityMask(leftThread, 1 << 2);
@@ -1027,7 +1027,7 @@ void lib_calvin_sort::heapSort(Iterator first, Iterator last, Comparator comp) {
 	// sorting
 	while (size > 1) {
 		// swap first and last
-		std::swap(*first, *(first + size - 1));
+		std::iter_swap(first, (first + size - 1));
 		size--;
 		percolateDown(first, comp, 0, size);
 	}
@@ -1064,6 +1064,7 @@ void lib_calvin_sort::introSortParallelAdvanced(Iterator first, Iterator last, C
 	introSortParallelSub1(first, last, comp, 4, factory);
 	// Create 4 threads for sorting small arrays in L2 cache
 	unsigned numCores = 4;
+	typedef lib_calvin_thread::thread_type thread_type;
 	thread_type *handleArray = new thread_type[numCores];
 	for (unsigned i = 0; i < numCores; ++i) {
 		handleArray[i] = create_thread(lib_calvin::factoryThreadFunction<pair<Iterator, Iterator>,
@@ -1085,6 +1086,7 @@ void lib_calvin_sort::introSortParallelAdvanced2(Iterator first, Iterator last, 
 	Factory<pair<Iterator, Iterator>, IntroSort<Iterator, Comparator>> factory(sorter);
 	// Create n threads for sorting small arrays in L2 cache
 	unsigned numCores = 4;
+	typedef lib_calvin_thread::thread_type thread_type;
 	thread_type *handleArray = new thread_type[numCores];
 	for (unsigned i = 0; i < numCores; ++i) {
 		// We can change how to sort small sub-array simply by choosing IntroSort or

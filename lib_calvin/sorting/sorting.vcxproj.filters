@@ -7,62 +7,44 @@
     </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="file_sort">
-      <UniqueIdentifier>{133972da-4f94-4bb0-abc2-fb8debfdfe66}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="bench">
-      <UniqueIdentifier>{2de39921-e4d8-4cc9-9e19-ae0e6f5618ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="test">
-      <UniqueIdentifier>{7e96e5de-1e5f-46ec-b4c2-3da6f0a59abd}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="sort.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="pdqsort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="file_sort_test.h">
-      <Filter>file_sort</Filter>
-    </ClInclude>
-    <ClInclude Include="file_sort.h">
-      <Filter>file_sort</Filter>
+    <ClInclude Include="sort.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="sort_bench.h">
-      <Filter>bench</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="sort_test.h">
-      <Filter>test</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\thread\common_thread.cc">
-      <Filter>Resource Files</Filter>
+    <ClCompile Include="sort_bench.cc">
+      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sort_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\util\random.cc">
+    <ClCompile Include="sort_test.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\thread\common_thread.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="file_sort_test.cc">
-      <Filter>file_sort</Filter>
-    </ClCompile>
-    <ClCompile Include="sort_bench.cc">
-      <Filter>bench</Filter>
-    </ClCompile>
-    <ClCompile Include="sort_test.cc">
-      <Filter>test</Filter>
-    </ClCompile>
     <ClCompile Include="..\util\save_bench.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\random.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
