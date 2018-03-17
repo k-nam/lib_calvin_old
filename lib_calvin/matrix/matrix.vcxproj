@@ -181,7 +181,7 @@
     <ClInclude Include="matrix_test.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\thread\common_thread.cc" />
+    <ClCompile Include="..\util\thread.cc" />
     <ClCompile Include="matrix.cc" />
     <ClCompile Include="matrix_main.cc" />
     <ClCompile Include="matrix_test.cc" />

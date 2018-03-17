@@ -17,7 +17,7 @@ public:
 	void add(Argument const &); // add additional work to do
 	void close() { isClosed_ = true; } // close the factory
 protected:
-	lib_calvin_util::lock_type lock_;
+	lock_type lock_;
 	std::vector<Argument> workQueue_;
 	bool isClosed_;
 private:

@@ -199,7 +199,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\matrix\matrix.cc" />
-    <ClCompile Include="..\thread\common_thread.cc" />
     <ClCompile Include="graph.cc" />
     <ClCompile Include="graph_main.cc" />
     <ClCompile Include="graph_test.cc" />

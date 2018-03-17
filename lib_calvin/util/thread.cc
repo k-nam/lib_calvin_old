@@ -5,7 +5,7 @@
 
 // Windows version
 #include <Windows.h>
-namespace lib_calvin_util
+namespace lib_calvin
 {
 	thread_type create_thread(thread_function_type function, void *arg) {
 		return CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)function, (LPVOID)arg, 0, NULL);
@@ -38,7 +38,7 @@ namespace lib_calvin_util
 
 #else
 // Unix version
-namespace lib_calvin_thread 
+namespace lib_calvin
 {
 	thread_type create_thread(thread_function_type function, void * arg) {
 		pthread newThread;

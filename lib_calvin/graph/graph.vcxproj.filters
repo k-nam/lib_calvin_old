@@ -24,9 +24,6 @@
     <ClCompile Include="..\container\adt.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\thread\common_thread.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="graph_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>

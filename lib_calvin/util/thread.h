@@ -8,7 +8,7 @@
 
 // Windows version
 #include <Windows.h>
-namespace lib_calvin_util
+namespace lib_calvin
 {
 	typedef HANDLE thread_type;
 	typedef HANDLE lock_type;
@@ -16,7 +16,7 @@ namespace lib_calvin_util
 
 #else
 // Unix version
-namespace lib_calvin_thread 
+namespace lib_calvin
 {
 	typedef ptheard_t thread_type;
 	typedef pthread_mutex_lock *lock_type;
@@ -25,7 +25,7 @@ namespace lib_calvin_thread
 #endif
 
 //Common part
-namespace lib_calvin_util
+namespace lib_calvin
 {
 	typedef void *(*thread_function_type)(void *) ;
 	thread_type create_thread(thread_function_type function, void *arg);

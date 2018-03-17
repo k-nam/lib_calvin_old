@@ -26,14 +26,14 @@
     <ClCompile Include="matrix_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\thread\common_thread.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="matrix_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="matrix.cc">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\thread.cc">
+      <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
