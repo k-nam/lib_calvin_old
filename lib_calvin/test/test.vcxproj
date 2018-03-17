@@ -187,7 +187,7 @@
     <ClCompile Include="..\matrix\matrix_test.cc" />
     <ClCompile Include="..\parser\parser.cc" />
     <ClCompile Include="..\parser\parser_test.cc" />
-    <ClCompile Include="..\sort\sort_test.cc" />
+    <ClCompile Include="..\sorting\sort_test.cc" />
     <ClCompile Include="..\string\abstract_string.cc" />
     <ClCompile Include="..\string\string_test.cc" />
     <ClCompile Include="..\string\suffix_tree_test.cc" />
@@ -203,8 +203,8 @@
     <ClCompile Include="..\subc_interpreter\subc_interpreter.cc" />
     <ClCompile Include="..\subc_interpreter\subc_interpreter_test.cc" />
     <ClCompile Include="..\subc_interpreter\threeaddr.cc" />
-    <ClCompile Include="..\thread\common_thread.cc" />
     <ClCompile Include="..\util\random.cc" />
+    <ClCompile Include="..\util\thread.cc" />
     <ClCompile Include="test_main.cc" />
   </ItemGroup>
   <ItemGroup>

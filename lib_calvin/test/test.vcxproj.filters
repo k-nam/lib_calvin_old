@@ -36,9 +36,6 @@
     <ClCompile Include="..\container\adt.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\thread\common_thread.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\graph\graph.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
@@ -87,9 +84,6 @@
     <ClCompile Include="..\subcc\type.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\sort\sort_test.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="test_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -109,6 +103,12 @@
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="..\subc_interpreter\subc_interpreter_test.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sorting\sort_test.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\thread.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,7 +1,7 @@
 #ifndef LIB_CALVIN__UTIL__FACTORY_H
 #define LIB_CALVIN__UTIL__FACTORY_H 
 
-#include "common_thread.h"
+#include "thread.h"
 #include <vector>
 
 namespace lib_calvin
@@ -11,13 +11,13 @@ template <typename Argument>
 class FactoryLoader
 {
 public:
-	FactoryLoader() : lock_(lib_calvin_thread::create_lock()), workQueue_(),
+	FactoryLoader() : lock_(lib_calvin_util::create_lock()), workQueue_(),
 		isClosed_(false) { }
 	virtual ~FactoryLoader() { }
 	void add(Argument const &); // add additional work to do
 	void close() { isClosed_ = true; } // close the factory
 protected:
-	lib_calvin_thread::lock_type lock_;
+	lib_calvin_util::lock_type lock_;
 	std::vector<Argument> workQueue_;
 	bool isClosed_;
 private:

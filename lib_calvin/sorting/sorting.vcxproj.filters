@@ -38,13 +38,13 @@
     <ClCompile Include="sort_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\thread\common_thread.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\util\save_bench.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="..\util\random.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\util\thread.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>

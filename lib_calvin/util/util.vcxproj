@@ -198,11 +198,13 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="thread.cc" />
     <ClCompile Include="random.cc" />
     <ClCompile Include="save_bench.cc" />
     <ClCompile Include="util_main.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="thread.h" />
     <ClInclude Include="factory.h" />
     <ClInclude Include="random.h" />
     <ClInclude Include="save_bench.h" />

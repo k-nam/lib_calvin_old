@@ -12,7 +12,7 @@
 #include <algorithm>
 #include <inttypes.h>
 
-#include "common_thread.h"
+#include "thread.h"
 #include "factory.h"
 
 namespace lib_calvin_sort
@@ -22,7 +22,6 @@ namespace lib_calvin_sort
 	using std::vector;
 	using std::pair;
 	using std::iterator_traits;
-	using namespace lib_calvin_thread;
 	using lib_calvin::Factory;
 	using lib_calvin::FactoryLoader;
 
@@ -750,7 +749,7 @@ void lib_calvin_sort::introSortParallelSub0(
 	Iterator left = hoarePartition(first, last, comp);
 	QuickSortThreadArg<Iterator, Comparator> argLeft(first, left, comp, thread_limit - 1, NULL);
 	QuickSortThreadArg<Iterator, Comparator> argRight(left, last, comp, thread_limit - 1, NULL);
-	lib_calvin_thread::thread_type leftThread, rightThread;
+	lib_calvin_util::thread_type leftThread, rightThread;
 	leftThread = create_thread(introSortParallelSub0ThreadFunction<Iterator, Comparator>, &argLeft);
 	//SetThreadAffinityMask(leftThread, 1 << 0);
 	// For unbalancing left and right sub-threads, thereby letting left sub-thread
@@ -759,9 +758,9 @@ void lib_calvin_sort::introSortParallelSub0(
 	rightThread =
 		create_thread(introSortParallelSub0ThreadFunction<Iterator, Comparator>, &argRight);
 	//SetThreadAffinityMask(rightThread, 1 << 1);
-	lib_calvin_thread::wait_for_thread(leftThread);
+	lib_calvin_util::wait_for_thread(leftThread);
 	//CloseHandle(leftThread);
-	lib_calvin_thread::wait_for_thread(rightThread);
+	lib_calvin_util::wait_for_thread(rightThread);
 	//CloseHandle(rightThread);
 }
 
@@ -778,7 +777,7 @@ void lib_calvin_sort::introSortParallelSub1(
 	Iterator left = hoarePartition(first, last, comp);
 	QuickSortThreadArg<Iterator, Comparator> argLeft(first, left, comp, thread_limit - 1, &factoryLoader);
 	QuickSortThreadArg<Iterator, Comparator> argRight(left, last, comp, thread_limit - 1, &factoryLoader);
-	lib_calvin_thread::thread_type leftThread, rightThread;
+	lib_calvin_util::thread_type leftThread, rightThread;
 	leftThread =
 		create_thread(introSortParallelSub1ThreadFunction<Iterator, Comparator>, &argLeft);
 	//SetThreadAffinityMask(leftThread, 1 << 2);
@@ -959,13 +958,13 @@ void lib_calvin_sort::mergeSortParallelSub0(SrcIterator first, SrcIterator last,
 		target, targetMiddle, first, comp, thread_limit - 1);
 	MergeSortRThreadArg<SrcIterator, TargetIterator, Comparator> argRight(
 		targetMiddle, targetLast, middle, comp, thread_limit - 1);
-	lib_calvin_thread::thread_type leftThread, rightThread;
+	lib_calvin_util::thread_type leftThread, rightThread;
 	leftThread = create_thread(
 		mergeSortParallelSub0ThreadFunction<SrcIterator, TargetIterator, Comparator>, &argLeft);
 	rightThread = create_thread(
 		mergeSortParallelSub0ThreadFunction<SrcIterator, TargetIterator, Comparator>, &argRight);
-	lib_calvin_thread::wait_for_thread(leftThread);
-	lib_calvin_thread::wait_for_thread(rightThread);
+	lib_calvin_util::wait_for_thread(leftThread);
+	lib_calvin_util::wait_for_thread(rightThread);
 	lib_calvin_sort::merge(first, middle, last, target, comp);
 }
 
@@ -1064,7 +1063,7 @@ void lib_calvin_sort::introSortParallelAdvanced(Iterator first, Iterator last, C
 	introSortParallelSub1(first, last, comp, 4, factory);
 	// Create 4 threads for sorting small arrays in L2 cache
 	unsigned numCores = 4;
-	typedef lib_calvin_thread::thread_type thread_type;
+	typedef lib_calvin_util::thread_type thread_type;
 	thread_type *handleArray = new thread_type[numCores];
 	for (unsigned i = 0; i < numCores; ++i) {
 		handleArray[i] = create_thread(lib_calvin::factoryThreadFunction<pair<Iterator, Iterator>,
@@ -1086,7 +1085,7 @@ void lib_calvin_sort::introSortParallelAdvanced2(Iterator first, Iterator last, 
 	Factory<pair<Iterator, Iterator>, IntroSort<Iterator, Comparator>> factory(sorter);
 	// Create n threads for sorting small arrays in L2 cache
 	unsigned numCores = 4;
-	typedef lib_calvin_thread::thread_type thread_type;
+	typedef lib_calvin_util::thread_type thread_type;
 	thread_type *handleArray = new thread_type[numCores];
 	for (unsigned i = 0; i < numCores; ++i) {
 		// We can change how to sort small sub-array simply by choosing IntroSort or

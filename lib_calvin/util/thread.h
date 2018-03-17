@@ -8,7 +8,7 @@
 
 // Windows version
 #include <Windows.h>
-namespace lib_calvin_thread 
+namespace lib_calvin_util
 {
 	typedef HANDLE thread_type;
 	typedef HANDLE lock_type;
@@ -25,7 +25,7 @@ namespace lib_calvin_thread
 #endif
 
 //Common part
-namespace lib_calvin_thread
+namespace lib_calvin_util
 {
 	typedef void *(*thread_function_type)(void *) ;
 	thread_type create_thread(thread_function_type function, void *arg);
@@ -37,7 +37,6 @@ namespace lib_calvin_thread
 	void acquire_lock(lock_type);
 	void release_lock(lock_type);
 	void destroy_lock(lock_type);
-
 }
 
 

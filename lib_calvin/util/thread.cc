@@ -1,11 +1,11 @@
-#include "common_thread.h"
+#include "thread.h"
 // abc
 
 #ifdef _WIN32
 
 // Windows version
 #include <Windows.h>
-namespace lib_calvin_thread 
+namespace lib_calvin_util
 {
 	thread_type create_thread(thread_function_type function, void *arg) {
 		return CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)function, (LPVOID)arg, 0, NULL);

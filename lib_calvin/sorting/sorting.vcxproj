@@ -125,9 +125,9 @@
     <ClInclude Include="sort_test.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\thread\common_thread.cc" />
     <ClCompile Include="..\util\random.cc" />
     <ClCompile Include="..\util\save_bench.cc" />
+    <ClCompile Include="..\util\thread.cc" />
     <ClCompile Include="sort_bench.cc" />
     <ClCompile Include="sort_main.cc" />
     <ClCompile Include="sort_test.cc" />

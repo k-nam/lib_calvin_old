@@ -7,7 +7,7 @@
 #include <thread>
 #include "utility.h" 
 #include "stopwatch.h"
-#include "common_thread.h"
+#include "thread.h"
 #include "factory.h"
 
 // type T should have default constructor as initializer
@@ -1315,7 +1315,7 @@ void lib_calvin_matrix::recursiveMultiAddParallelSubRoutine(T const *A, T const 
 		C + (l / 2)*n + (l - l / 2)*(n / 2),
 		l - l / 2, m - m / 2, n - n / 2, remainingRecursion - 1, parallelDepth - 1, nullptr);
 
-	using namespace lib_calvin_thread;
+	using namespace lib_calvin_util;
 	thread_type thread1 = create_thread(recursiveMultiThreadFunc<T>, &arg1);
 	thread_type thread3 = create_thread(recursiveMultiThreadFunc<T>, &arg3);
 	thread_type thread5 = create_thread(recursiveMultiThreadFunc<T>, &arg5);
@@ -1531,7 +1531,7 @@ void lib_calvin_matrix::strassenMultiAddParallel(T const *A, T const *B, T *C,
 	StrassenThreadArg<T> arg7(lhs7, rhs7, p7, n / 2,
 		remainingRecursion - 1, parallelDepth - 1);
 
-	using namespace lib_calvin_thread;
+	using namespace lib_calvin_util;
 	thread_type thread1 = create_thread(strassenThreadFunc<T>, &arg1);
 	thread_type thread2 = create_thread(strassenThreadFunc<T>, &arg2);
 	thread_type thread3 = create_thread(strassenThreadFunc<T>, &arg3);
