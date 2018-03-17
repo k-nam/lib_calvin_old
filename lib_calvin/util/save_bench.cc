@@ -23,5 +23,5 @@ void lib_calvin_util::save_bench(string title, string time, string comment, stri
 
 	ofstream jsonFile(saveFilePath + to_string(std::time(nullptr)) + ".json");
 	jsonFile << benchData.dump();
-	jsonFile.close();
+	jsonFile.close(); 
 }

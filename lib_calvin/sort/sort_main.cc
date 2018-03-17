@@ -7,7 +7,7 @@
 
 int main(int argc, char* argv[])	
 {
-	lib_calvin_sort::sortTest();
+	//lib_calvin_sort::sortTest();
 
 	lib_calvin::sort_bench();
 	return 0;

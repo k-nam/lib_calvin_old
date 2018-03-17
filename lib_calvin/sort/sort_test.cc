@@ -8,9 +8,9 @@
 void lib_calvin_sort::sortTest() {
 	std::cout << "---------------- Beginning sort test -----------------\n\n";
 	using namespace lib_calvin_sort;
-	//typedef int ElemType;
+	typedef int ElemType;
 	//typedef SimpleStruct ElemType;
-	typedef StringStruct ElemType;
+	//typedef StringStruct ElemType;
 	//binSearchTest();
 	//binSearchTest2();
 	//getSamplesTest();
@@ -25,7 +25,7 @@ void lib_calvin_sort::sortTest() {
 	//sortTest<ElemType>(introSortParallel, "Parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced, "Advanced parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
-	//sortTest<ElemType>(mergeSort, "mergeSort");
+	sortTest<ElemType>(mergeSort, "mergeSort");
 	//sortTest<ElemType>(mergeSortParallel, "Parallel mergeSort");
 	//sortTest<ElemType>(heapSort, "heapSort");
 	//sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");

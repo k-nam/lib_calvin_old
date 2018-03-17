@@ -62,5 +62,8 @@
     <ClCompile Include="sort_test.cc">
       <Filter>test</Filter>
     </ClCompile>
+    <ClCompile Include="..\util\save_bench.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
