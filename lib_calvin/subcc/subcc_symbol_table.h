@@ -3,7 +3,7 @@
 
 #include "abstract_string.h"
 #include "subcc_lexer.h" // to use my own c_string implementation
-#include "type.h"
+#include "subcc_type.h"
 #include <iostream>
 #include <stdio.h>
 #include <memory>

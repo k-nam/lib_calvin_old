@@ -2,8 +2,8 @@
 #define LIB_CALVIN__SUBCC__SYNTAX_TREE_H
 
 #include "subcc_lexer.h" // for c_string
-#include "type.h"
-#include "symbol_table.h"
+#include "subcc_type.h"
+#include "subcc_symbol_table.h"
 
 #include <iostream>
 #include <deque>

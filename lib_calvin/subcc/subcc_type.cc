@@ -2,8 +2,8 @@
 
 #include <iostream>
 #include <deque>
-#include "type.h"
-#include "symbol_table.h"
+#include "subcc_type.h"
+#include "subcc_symbol_table.h"
 
 namespace subcc
 {

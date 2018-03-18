@@ -123,14 +123,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="subc_interpreter.cc" />
-    <ClCompile Include="subc_interpreter_main.cc" />
-    <ClCompile Include="subc_interpreter_test.cc" />
-    <ClCompile Include="threeaddr.cc" />
+    <ClCompile Include="assembly.cc" />
+    <ClCompile Include="subcc_interpreter.cc" />
+    <ClCompile Include="subcc_interpreter_main.cc" />
+    <ClCompile Include="subcc_interpreter_test.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="subc_interpreter.h" />
-    <ClInclude Include="subc_interpreter_test.h" />
+    <ClInclude Include="subcc_interpreter.h" />
+    <ClInclude Include="subcc_interpreter_test.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

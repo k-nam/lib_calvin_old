@@ -1,5 +1,5 @@
 #include <iostream>
-#include "three_address.h"
+#include "subcc_three_address.h"
 
 // Label which can not exist: indicating error with 'break' or 'continue'
 

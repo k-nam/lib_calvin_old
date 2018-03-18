@@ -3,7 +3,7 @@
 
 /* 2008-06-08 */
 
-#include "three_address.h"
+#include "subcc_three_address.h"
 
 namespace subcc {
 

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="subcc assembly">
+      <UniqueIdentifier>{dd307fb3-f74c-42d1-ba27-c955e3bc8efe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\string\abstract_string.cc">
@@ -24,42 +27,36 @@
     <ClCompile Include="subcc_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="c_code_generator.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="subcc_lexer.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="subcc_parser.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="symbol_table.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="syntax_tree.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="three_address.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="compiler.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="type.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="subcc_main.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="subcc_symbol_table.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="subcc_code_generator.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="subcc_compiler.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="subcc_syntax_tree.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="subcc_three_address.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="subcc_type.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="subcc_test.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="c_code_generator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="compiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="subcc_lexer.h">
@@ -68,16 +65,22 @@
     <ClInclude Include="subcc_parser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="symbol_table.h">
+    <ClInclude Include="subcc_symbol_table.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="syntax_tree.h">
+    <ClInclude Include="subcc_code_generator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="three_address.h">
+    <ClInclude Include="subcc_compiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="type.h">
+    <ClInclude Include="subcc_syntax_tree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="subcc_three_address.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="subcc_type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

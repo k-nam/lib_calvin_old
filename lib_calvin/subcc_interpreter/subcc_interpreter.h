@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-namespace subc_interpreter
+namespace subcc_interpreter
 {
 	void _main();
 

@@ -2,10 +2,10 @@
 #include <fstream>
 #include <streambuf>
 #include "subcc_test.h"
-#include "compiler.h"
-#include "symbol_table.h"
-#include "type.h"
-#include "syntax_tree.h"
+#include "subcc_compiler.h"
+#include "subcc_symbol_table.h"
+#include "subcc_type.h"
+#include "subcc_syntax_tree.h"
 
 void subcc::subccTest() {
 	using namespace subcc;
@@ -13,10 +13,16 @@ void subcc::subccTest() {
 	using std::cout;
 	std::cout << "---------------- Beginning subcc test -----------------\n\n";
 	// Adding "../subcc/" to make this path compatible with other projects
-	char *inputFileName = "../subcc/subc_code/a1.c";
+	//char *inputFileName = "../subcc/subc_code/a1.c";
+	char *inputFileName = "../subcc/subc_code/test.c";
+
 	string sourceText;
 
 	std::ifstream stream(inputFileName);
+	if (!stream) {
+		cout << "subccTest error: cannot open input file\n";
+		exit(0);
+	}
 	stream.seekg(std::ios::end);
 	sourceText.reserve(static_cast<size_t>(stream.tellg()));
 	stream.seekg(std::ios::beg);
@@ -30,7 +36,7 @@ void subcc::subccTest() {
 	cout << "\n";
 
 	/* Uncomment below line to save output to a file (which can be run in subcc_run project) */
-	std::ofstream file("../subcc/output/threeaddr.cc");
+	std::ofstream file("../subcc/output/assembly.cc");
 	//std::ostream &file = std::cout;
 
 	//while(true) { // loop to check memory leak

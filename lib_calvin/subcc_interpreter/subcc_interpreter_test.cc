@@ -1,15 +1,15 @@
 #include <iostream>
-#include "subc_interpreter.h"
-#include "subc_interpreter_test.h"
+#include "subcc_interpreter.h"
+#include "subcc_interpreter_test.h"
 
-void subc_interpreter::subcInterpreterTest() {
+void subcc_interpreter::subccInterpreterTest() {
 	std::cout << "---------- Beginning subcc_interpreter test -----------\n\n";
-	subc_interpreter::test();
+	subcc_interpreter::test();
 	std::cout << "---------- subcc_interpreter test finished -----------\n\n\n";
 
 }
 
-void subc_interpreter::test()
+void subcc_interpreter::test()
 {
 	/* initialize stack pointer (SP) */
 	SP = STACK_SIZE;

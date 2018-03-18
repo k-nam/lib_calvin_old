@@ -1,6 +1,6 @@
 /* SymbolTable.cc */
-#include "symbol_table.h"
-#include "type.h"
+#include "subcc_symbol_table.h"
+#include "subcc_type.h"
 
 namespace subcc
 {

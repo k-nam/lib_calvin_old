@@ -15,24 +15,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="subc_interpreter_main.cc">
+    <ClCompile Include="subcc_interpreter_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="threeaddr.cc">
+    <ClCompile Include="subcc_interpreter.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="subc_interpreter_test.cc">
+    <ClCompile Include="subcc_interpreter_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="subc_interpreter.cc">
+    <ClCompile Include="assembly.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="subc_interpreter_test.h">
+    <ClInclude Include="subcc_interpreter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="subc_interpreter.h">
+    <ClInclude Include="subcc_interpreter_test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,4 +1,4 @@
-#include "syntax_tree.h"
+#include "subcc_syntax_tree.h"
 
 namespace subcc
 {

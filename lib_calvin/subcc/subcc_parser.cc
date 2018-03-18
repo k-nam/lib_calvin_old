@@ -2,7 +2,7 @@
 
 #include "stopwatch.h" // for performance measuring
 #include "subcc_parser.h" 
-#include "type.h"
+#include "subcc_type.h"
 #include <iostream>
 
 

@@ -2,11 +2,11 @@
 #include <fstream>
 #include <streambuf>
 
-#include "compiler.h"
+#include "subcc_compiler.h"
 #include "subcc_parser.h" 
 #include "stopwatch.h"
-#include "three_address.h"
-#include "c_code_generator.h"
+#include "subcc_three_address.h"
+#include "subcc_code_generator.h"
 
 void subcc::compile(c_string sourceCode, std::ostream &file) {
 	// Compilation steps are: 

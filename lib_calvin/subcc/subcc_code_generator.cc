@@ -1,6 +1,6 @@
 #include <iostream>
 #include <memory>
-#include "c_code_generator.h"
+#include "subcc_code_generator.h"
 
 namespace subcc
 {
@@ -13,8 +13,8 @@ void CCodeGenerator::printCCode() const {
   vector<Instruction const *>::const_iterator iter;
   // For other declarations
   cout << "#include <stdio.h> \n";
-  cout << "#include \"subc_interpreter.h\"\n\n";
-  cout << "namespace subc_interpreter\n{\n";
+  cout << "#include \"subcc_interpreter.h\"\n\n";
+  cout << "namespace subcc_interpreter\n{\n";
   // Data segment (Stack segment is declared in homework spec)
   cout << "char DATA[1024];\n";
   // General registers

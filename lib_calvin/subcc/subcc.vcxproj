@@ -200,29 +200,29 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="compiler.cc" />
-    <ClCompile Include="c_code_generator.cc" />
+    <ClCompile Include="subcc_compiler.cc" />
+    <ClCompile Include="subcc_code_generator.cc" />
     <ClCompile Include="subcc_main.cc" />
     <ClCompile Include="subcc_lexer.cc" />
     <ClCompile Include="subcc_parser.cc" />
     <ClCompile Include="subcc_test.cc" />
-    <ClCompile Include="symbol_table.cc" />
-    <ClCompile Include="syntax_tree.cc" />
-    <ClCompile Include="three_address.cc" />
+    <ClCompile Include="subcc_symbol_table.cc" />
+    <ClCompile Include="subcc_syntax_tree.cc" />
+    <ClCompile Include="subcc_three_address.cc" />
     <ClCompile Include="..\string\abstract_string.cc" />
     <ClCompile Include="..\parser\parser.cc" />
-    <ClCompile Include="type.cc" />
+    <ClCompile Include="subcc_type.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="compiler.h" />
-    <ClInclude Include="c_code_generator.h" />
+    <ClInclude Include="subcc_compiler.h" />
+    <ClInclude Include="subcc_code_generator.h" />
     <ClInclude Include="subcc_lexer.h" />
     <ClInclude Include="subcc_parser.h" />
     <ClInclude Include="subcc_test.h" />
-    <ClInclude Include="symbol_table.h" />
-    <ClInclude Include="syntax_tree.h" />
-    <ClInclude Include="three_address.h" />
-    <ClInclude Include="type.h" />
+    <ClInclude Include="subcc_symbol_table.h" />
+    <ClInclude Include="subcc_syntax_tree.h" />
+    <ClInclude Include="subcc_three_address.h" />
+    <ClInclude Include="subcc_type.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

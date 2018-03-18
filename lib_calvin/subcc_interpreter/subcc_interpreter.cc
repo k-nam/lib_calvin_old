@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include "subc_interpreter.h"
+#include "subcc_interpreter.h"
 
 /* stack 8KB */
- char subc_interpreter::STACK[ 8096];
- int  subc_interpreter::SP = 0;
- int  subc_interpreter::FP = 0;
+ char subcc_interpreter::STACK[ 8096];
+ int  subcc_interpreter::SP = 0;
+ int  subcc_interpreter::FP = 0;
 
 /* stack structure for a function call */
 /*
@@ -17,7 +17,7 @@
  *   +------------------------+ <-- SP
  */
 
-void subc_interpreter::printInt()
+void subcc_interpreter::printInt()
 {
 	// --------------------------------------------------------------------
 	// declarations of formal parameters
@@ -52,7 +52,7 @@ void subc_interpreter::printInt()
 	// --------------------------------------------------------------------
 }
 
-void subc_interpreter::printStr()
+void subcc_interpreter::printStr()
 {
 	// --------------------------------------------------------------------
 	// declarations of formal parameters
@@ -87,7 +87,7 @@ void subc_interpreter::printStr()
 	// --------------------------------------------------------------------
 }
 
-void subc_interpreter::printNewLine()
+void subcc_interpreter::printNewLine()
 {
 	// --------------------------------------------------------------------
 	// declarations of formal parameters
