@@ -186,6 +186,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <CompileAsManaged>false</CompileAsManaged>
       <CompileAs>CompileAsCpp</CompileAs>
+      <AdditionalIncludeDirectories>../../../lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

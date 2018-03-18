@@ -13,8 +13,8 @@ void subcc::subccTest() {
 	using std::cout;
 	std::cout << "---------------- Beginning subcc test -----------------\n\n";
 	// Adding "../subcc/" to make this path compatible with other projects
-	//char *inputFileName = "../subcc/subc_code/a1.c";
-	char *inputFileName = "../subcc/subc_code/test.c";
+	char *inputFileName = "../subcc/subc_code/a2.c";
+	//char *inputFileName = "../subcc/subc_code/test.c";
 
 	string sourceText;
 
@@ -36,8 +36,8 @@ void subcc::subccTest() {
 	cout << "\n";
 
 	/* Uncomment below line to save output to a file (which can be run in subcc_run project) */
-	std::ofstream file("../subcc/output/assembly.cc");
-	//std::ostream &file = std::cout;
+	//std::ofstream file("../subcc/output/assembly.cc");
+	std::ostream &file = std::cout;
 
 	//while(true) { // loop to check memory leak
 	compile(inputToCompiler, file);

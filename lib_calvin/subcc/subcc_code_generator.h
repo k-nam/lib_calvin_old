@@ -12,8 +12,7 @@ class CCodeGenerator {
 public:
   CCodeGenerator(shared_ptr<ThreeAdressCode const> threeAddrCode):
     threeAddrCode_(threeAddrCode),
-		symbolTable_(threeAddrCode->getSymbolTable()),
-		instructions_(threeAddrCode->getInstructions()) { }
+		symbolTable_(threeAddrCode->getSymbolTable()) { }
 
   // For compiler homework...
   void printCCode() const; 
@@ -32,7 +31,6 @@ private:
   
   shared_ptr<ThreeAdressCode const> threeAddrCode_;
   shared_ptr<GlobalSymbolTable const> symbolTable_;
-  vector<Instruction const *> const *instructions_;
 };
 
 }

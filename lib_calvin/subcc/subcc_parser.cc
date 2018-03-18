@@ -294,9 +294,8 @@ void Parser::reduceWith(int productionKey) {
         shared_ptr<Type const> type = typeSpecNode->getType();
         int dimension = arrayNode->getDimension();
         // Check invalid assignment
-        if (!isCharType(type)) {
-          printError(*idNode, 
-              "string constant should be assigned to one-dimensional array of char");
+        if (!isCharType(type) || dimension != 80) {
+          printError(*idNode, "string constant should be assigned to char[80]");
         }
         shared_ptr<Type const> newType(new ArrayType(dimension, type));
         shared_ptr<Symbol> newSymbol;
@@ -836,13 +835,21 @@ void Parser::reduceWith(int productionKey) {
         shared_ptr<Type const> lhsType = unaryExprNode->getType();
         shared_ptr<Type const> rhsType = exprNode->getType();
         bool isValidAssignment = false;
-        if (lhsType->isNumeric() && rhsType->isNumeric()) // OK
-          isValidAssignment = true;
-        if (lhsType->getType() == TYPE_RECORD && 
-            rhsType->getType() == TYPE_RECORD) { // same struct type
-          if (*lhsType == *rhsType)
-            isValidAssignment = true;
-        }
+		if (*lhsType == *rhsType && lhsType->getWidth() == rhsType->getWidth()) {
+			// Normal case
+			isValidAssignment = true;
+		} else if (lhsType->isArrayType() && rhsType->isArrayType()) {
+			auto lhsArray = dynamic_pointer_cast<ArrayType const>(lhsType);
+			auto rhsArray = dynamic_pointer_cast<ArrayType const>(rhsType);
+			if (*lhsArray->getElementType() == *rhsArray->getElementType()) {
+				if (lhsArray->getArraySize() >= rhsArray->getArraySize()) {
+					isValidAssignment = true;
+				}
+			}
+		} else if (lhsType->isNumeric() && rhsType->isNumeric()) {
+			isValidAssignment = true;
+		}
+
         if (!isValidAssignment) {
           printError("assign statement type error");
         }
@@ -870,15 +877,15 @@ void Parser::reduceWith(int productionKey) {
 				//ExprNode *newNode = new ExprNode(*unaryExprNode);
         ExprNode *exprNode = 
           dynamic_cast<ExprNode *> (stack_[stack_.size() - 1]);
-        // x += y  ---> x = x + y
-        stack_.pop_back(); // x +=
-				stack_.pop_back(); // 
-				stack_.push_back(unaryExprNode); // x = 
-        stack_.push_back(unaryExprNode); // x = x
-        stack_.push_back(exprNode); // x = x + y
-        reduceWith(productionKey + 89); // reduce binary operator
-        reduceWith(191); // reduce assignment
-        break;
+		// x += y  ---> x = x + y
+		stack_.pop_back(); // x +=
+		stack_.pop_back(); // 
+		stack_.push_back(unaryExprNode); // x = 
+		stack_.push_back(unaryExprNode); // x = x
+		stack_.push_back(exprNode); // x = x + y
+		reduceWith(productionKey + 89); // reduce binary operator
+		reduceWith(191); // reduce assignment
+		break;
       }
     case 211: // expr -> unaryExpr
     case 212: // expr -> binaryExpr
@@ -1025,7 +1032,6 @@ void Parser::reduceWith(int productionKey) {
         // Setting memory for temporary
         constExpr->setRvalueIndex(index);
         popAndPush(1, constExpr);
-        break;
       }
     case 237: // integerLiteral -> DECIMAL_LITERAL
     case 238: // integerLiteral -> HEXADECIMAL_LITERAL
@@ -1467,8 +1473,10 @@ void Parser::makeLanguage(ContextFreeLanguage &subcc) {
   subcc.add(17, Declaration, NormalDeclaration, kEndMarker); // non-functions decls
   subcc.add(21, TypedefDeclaration, TYPEDEF, TypeSpecifier, ID, kEndMarker);
   subcc.add(31, VarDeclaration, TypeSpecifier, ID, PUNC_SEMICOLON, kEndMarker);
-  subcc.add(32, VarDeclaration, TypeSpecifier, ID, ArrayDeclaration, ASSIGN, 
-      STRING_LITERAL, PUNC_SEMICOLON, kEndMarker);
+  // ex: char name[80] = "calvin";
+  // subcc doesn't have pointer, so I will implement this as simple assign of type 'char[80]'
+  //subcc.add(32, VarDeclaration, TypeSpecifier, ID, ArrayDeclaration, ASSIGN, 
+    //  STRING_LITERAL, PUNC_SEMICOLON, kEndMarker);
   subcc.add(33, VarDeclaration, TypeSpecifier, ID, ArrayDeclarationList, PUNC_SEMICOLON, kEndMarker);
   subcc.add(41, ArrayDeclarationList, ArrayDeclarationList, ArrayDeclaration, kEndMarker);
   subcc.add(42, ArrayDeclarationList, ArrayDeclaration, kEndMarker);

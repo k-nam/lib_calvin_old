@@ -56,6 +56,7 @@ public:
   virtual bool isError() const { return false; }
 	bool isBaseType() const { return typeType_ == TYPE_BASE; }
 	bool isRecordType() const { return typeType_ == TYPE_RECORD; }
+	bool isArrayType() const { return typeType_ == TYPE_ARRAY; }
 public:
 	static void countObjects();
 protected:

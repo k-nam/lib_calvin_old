@@ -60,28 +60,10 @@
     <ClCompile Include="..\string\abstract_string.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\subcc\c_code_generator.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\subcc\compiler.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\subcc\subcc_lexer.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="..\subcc\subcc_parser.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\subcc\symbol_table.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\subcc\syntax_tree.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\subcc\three_address.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\subcc\type.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="test_main.cc">
@@ -96,20 +78,38 @@
     <ClCompile Include="..\matrix\matrix.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\subc_interpreter\threeaddr.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\subc_interpreter\subc_interpreter.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\subc_interpreter\subc_interpreter_test.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\sorting\sort_test.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="..\util\thread.cc">
       <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\subcc\subcc_code_generator.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\subcc\subcc_compiler.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\subcc\subcc_symbol_table.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\subcc\subcc_syntax_tree.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\subcc\subcc_three_address.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\subcc\subcc_type.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\subcc_interpreter\assembly.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\subcc_interpreter\subcc_interpreter.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\subcc_interpreter\subcc_interpreter_test.cc">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

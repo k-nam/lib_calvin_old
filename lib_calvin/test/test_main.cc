@@ -6,7 +6,7 @@
 #include "sort_test.h"
 #include "string_test.h"
 #include "subcc_test.h"
-#include "subc_interpreter_test.h"
+#include "subcc_interpreter_test.h"
 
 int main(int argc, char* argv[]) {
 	lib_calvin_container::containerTest();

@@ -7,7 +7,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>../subc_interpreter;../../../lib;../container;../string;../graph;../util;../matrix;../sorting;../lexer;../parser;../subcc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../subcc_interpreter;../../../lib;../container;../string;../graph;../util;../matrix;../sorting;../lexer;../parser;../subcc</AdditionalIncludeDirectories>
       <WarningLevel>Level3</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <DisableSpecificWarnings>4503</DisableSpecificWarnings>

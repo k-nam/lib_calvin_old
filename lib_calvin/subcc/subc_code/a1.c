@@ -96,7 +96,6 @@ int main(int argc, char argv[3]) {
   intType d[3];
   int sum1;
   int sum2;
-  char cc[80] = "1232";
   s1Type ss1[2];
 	struct s2 ss2;
 	struct bb {
