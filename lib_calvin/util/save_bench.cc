@@ -11,13 +11,16 @@ void lib_calvin_util::save_bench(string title, string time, string comment, stri
 	using json = nlohmann::json;
 	json benchData;
 	benchData["title"] = title;
-	benchData["time"] = time;
-	benchData["test_environment"] = lib_calvin_util::environment;
-	benchData["comment"] = comment;
-	benchData["unit"] = unit;
+	benchData["date"] = time;
+	benchData["env"] = lib_calvin_util::environment;
 	benchData["tags"] = tags;
-	benchData["results"] = results;
-	benchData["test_cases"] = testCases;
+	benchData["comment"] = comment;
+
+	json data;
+	data["results"] = results;
+	data["test_cases"] = testCases;
+	data["unit"] = unit;
+	benchData["data"] = data;
 
 	cout << benchData.dump();
 
