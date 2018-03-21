@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 	auto unit = "N/sec";
 
 
-	lib_calvin_util::save_bench(title, time, comment, unit,
+	lib_calvin_util::save_bench(title, comment, unit,
 		tags, results, testCases);
 
 	return 0;

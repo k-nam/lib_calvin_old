@@ -4,14 +4,23 @@
 
 using namespace std;
 
-void lib_calvin_util::save_bench(string title, string time, string comment, string unit,
+std::string lib_calvin_util::getDatetime() {
+	time_t rawtime;
+	time(&rawtime);
+	struct tm timeinfo;
+	localtime_s(&timeinfo, &rawtime);
+	char buffer[80];
+	strftime(buffer, sizeof(buffer), "%d-%m-%Y %I:%M:%S", &timeinfo);
+	return buffer;
+}
+
+void lib_calvin_util::save_bench(string title, string comment, string unit,
 		vector<string> tags, map<string, vector<double>> results,
 		vector<string> testCases) {
-
 	using json = nlohmann::json;
 	json benchData;
 	benchData["title"] = title;
-	benchData["date"] = time;
+	benchData["datetime"] = getDatetime();
 	benchData["env"] = lib_calvin_util::environment;
 	benchData["tags"] = tags;
 	benchData["comment"] = comment;

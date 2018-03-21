@@ -1,6 +1,5 @@
 #include <utility>
 #include <vector>
-#include <ctime>
 #include <string>
 
 #include "sort_bench.h"
@@ -18,9 +17,6 @@ lib_calvin::sort_bench() {
 	string comment = "block_qsort is my implementation of BlockQuickSort. pdqsort is the official one.";
 	string unit = "M/s (higher is better)";
 	vector<string> tags = { "sorting" };
-	string time = to_string(std::time(nullptr));
-	//cout << to_string(time);
-		
 
 	vector<map<string, double>> results;
 	results.push_back(sortBenchTemplate<int>());
@@ -32,7 +28,7 @@ lib_calvin::sort_bench() {
 	vector<string> testCases = { "int", "16Byte (key:int)", "24Byte (key:string)" };
 
 
-	lib_calvin_util::save_bench(title, time, comment, unit, tags, combinedResults, testCases);
+	lib_calvin_util::save_bench(title, comment, unit, tags, combinedResults, testCases);
 }
 
 template <typename T>
