@@ -11,7 +11,7 @@ template <typename Argument>
 class FactoryLoader
 {
 public:
-	FactoryLoader() : lock_(lib_calvin_util::create_lock()), workQueue_(),
+	FactoryLoader() : lock_(lib_calvin::create_lock()), workQueue_(),
 		isClosed_(false) { }
 	virtual ~FactoryLoader() { }
 	void add(Argument const &); // add additional work to do
@@ -29,7 +29,11 @@ template <typename Argument, typename Operation>
 class Factory : public FactoryLoader<Argument>
 {
 public:
-	Factory(Operation const &op) : FactoryLoader(), index_(0), op_(op) { }
+	using FactoryLoader<Argument>::lock_;
+	using FactoryLoader<Argument>::workQueue_;
+	using FactoryLoader<Argument>::isClosed_;
+
+	Factory(Operation const &op) : FactoryLoader<Argument>(), index_(0), op_(op) { }
 	// work() does not return until all work is done AND the factory is closed
 	void work(); // includes critical section	
 private:
@@ -47,7 +51,6 @@ void *factoryThreadFunction(void *lpParam);
 template <typename Argument>
 void lib_calvin::FactoryLoader<Argument>::add(Argument const &newWork)
 {
-	using namespace lib_calvin_thread;
 	acquire_lock(lock_);
 	if (isClosed_) { // can not add work if closed
 		release_lock(lock_);
@@ -60,7 +63,9 @@ void lib_calvin::FactoryLoader<Argument>::add(Argument const &newWork)
 
 template <typename Argument, typename Operation>
 void lib_calvin::Factory<Argument, Operation>::work() {
-	using namespace lib_calvin_thread;
+	using namespace lib_calvin;
+
+
 	// data mambers should be accessed only in the critical section
 	while (true) {
 		acquire_lock(lock_);
