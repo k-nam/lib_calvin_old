@@ -1,5 +1,6 @@
 #include "save_bench.h"
 #include "json/json.hpp"
+#include "random.h"
 #include <ctime>
 
 using namespace std;
@@ -14,26 +15,31 @@ std::string lib_calvin_util::getDatetime() {
 	return buffer;
 }
 
-void lib_calvin_util::save_bench(string title, string comment, string unit,
-		vector<string> tags, map<string, vector<double>> results,
-		vector<string> testCases) {
+void lib_calvin_util::save_bench(std::string category, std::string subCategory, 
+		string title, string comment,
+		vector<vector<string>> algorithms, 
+		vector<vector<double>> results, vector<string> testCases, string unit) {
 	using json = nlohmann::json;
 	json benchData;
+	benchData["category"] = category;
+	benchData["sub_category"] = subCategory;
 	benchData["title"] = title;
 	benchData["datetime"] = getDatetime();
 	benchData["env"] = lib_calvin_util::environment;
-	benchData["tags"] = tags;
 	benchData["comment"] = comment;
 
 	json data;
+	data["algorithms"] = algorithms;
 	data["results"] = results;
 	data["test_cases"] = testCases;
 	data["unit"] = unit;
 	benchData["data"] = data;
 
-	cout << benchData.dump();
+	//cout << benchData.dump();
+	lib_calvin::random_number_generator gen;
 
-	ofstream jsonFile(saveFilePath + to_string(std::time(nullptr)) + ".json");
+	ofstream jsonFile(saveFilePath + to_string(std::time(nullptr)) + "_" + 
+					  std::to_string(gen()) + ".json");
 	jsonFile << benchData.dump();
 	jsonFile.close(); 
 }

@@ -4,19 +4,51 @@
 #include <map>
 #include <vector>
 
-namespace lib_calvin
-{
-	void sort_bench();
-
-}
 
 namespace lib_calvin_sort
 {
 	size_t const benchTestSize = 1000 * 1000;
 	size_t const benchNumIter = 1;
 
+	enum Algorithm {
+		PDQSORT,
+
+		STD_SORT,
+		STD_STABLE_SORT,
+
+		LIB_CALVIN_QSORT,
+		LIB_CALVIN_BLOCK_QSORT,
+		LIB_CALVIN_MERGESORT,
+		LIB_CALVIN_HEAPSORT,
+
+		LIB_CALVIN_COUNTINGSORT,
+		LIB_CALVIN_BUCKETSORT,
+
+		LIB_CALVIN_BLOCK_QSORT_PARALLEL,
+		LIB_CALVIN_MERGESORT_PARALLEL
+	};
+
+	enum SubCategory {
+		COMPARISON_SORT,
+		LINEAR_COMPLEXITY_SORT
+	};
+
+	std::vector<std::string> getAlgorithmNamesAndTags(Algorithm);
+
+	std::vector<std::vector<std::string>> getAlgorithmNamesAndTagsVector(std::vector<Algorithm>);
+
+	void sortBench();
+	void sortBenchComparison();
+	void sortBenchLinearComplexity();
+
+	std::vector<double>
+		sortBenchSub(Algorithm, SubCategory);
+
 	template <typename T>
-	std::map<std::string, double> sortBenchTemplate();
+	double sortBenchSub2(Algorithm);
+
+	template <typename T>
+	double sortBenchSub3(Algorithm);
 
 	template <typename T>
 	double sortBenchTemplateSub(void(*sorter)(T *first, T *last, std::less<T>));

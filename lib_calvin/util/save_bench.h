@@ -13,10 +13,11 @@ namespace lib_calvin_util
 
 	std::string getDatetime();
 
-	void save_bench(std::string title, std::string comment, std::string unit,
-		std::vector<std::string> tags, 
-		std::map<std::string, std::vector<double>> results, 
-		std::vector<std::string> testCases);
+	// algorithms: [["qsort", "unstable", "std"], ["parallel_block_qsort", "unstable", "lib_calvin"], ...]
+	void save_bench(std::string category, std::string subCategory, std::string title, std::string comment,
+					std::vector<std::vector<std::string>> algorithms,
+					std::vector<std::vector<double>> results,
+					std::vector<std::string> testCases, std::string unit);
 }
 
 #endif
