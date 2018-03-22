@@ -235,8 +235,8 @@ namespace lib_calvin_sort
 
 	/*** Linear time sorting algorithms ***/
 	// Assumes that int Iterator->get_value() is defined
-	template <typename Iterator>
-	void countingSort(Iterator first, Iterator last);
+	template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+	void countingSort(Iterator first, Iterator last, Comparator const comp = Comparator());
 
 	// Combination of introsort and counting sort
 	template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
@@ -244,8 +244,8 @@ namespace lib_calvin_sort
 
 	// Comparison sort with sampling, binary search, and buckets
 	// Not in-place, stable. Cache optimal. 
-	template <typename Iterator>
-	void bucketSort(Iterator first, Iterator last);
+	template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+	void bucketSort(Iterator first, Iterator last, Comparator const comp = Comparator());
 
 	// Function object version of introsort (for multi-threading)
 	template <typename Iterator, typename Comparator>
@@ -779,15 +779,15 @@ void lib_calvin_sort::introSortParallelSub1(
 	QuickSortThreadArg<Iterator, Comparator> argRight(left, last, comp, thread_limit - 1, &factoryLoader);
 	lib_calvin::thread_type leftThread, rightThread;
 	leftThread =
-		create_thread(introSortParallelSub1ThreadFunction<Iterator, Comparator>, &argLeft);
+		lib_calvin::create_thread(introSortParallelSub1ThreadFunction<Iterator, Comparator>, &argLeft);
 	//SetThreadAffinityMask(leftThread, 1 << 2);
 	//Sleep(10);
 	rightThread =
-		create_thread(introSortParallelSub1ThreadFunction<Iterator, Comparator>, &argRight);
+		lib_calvin::create_thread(introSortParallelSub1ThreadFunction<Iterator, Comparator>, &argRight);
 	//SetThreadAffinityMask(leftThread, 1 << 3);
-	wait_for_thread(leftThread);
+	lib_calvin::wait_for_thread(leftThread);
 	CloseHandle(leftThread);
-	wait_for_thread(rightThread);
+	lib_calvin::wait_for_thread(rightThread);
 	CloseHandle(rightThread);
 }
 
@@ -959,9 +959,9 @@ void lib_calvin_sort::mergeSortParallelSub0(SrcIterator first, SrcIterator last,
 	MergeSortRThreadArg<SrcIterator, TargetIterator, Comparator> argRight(
 		targetMiddle, targetLast, middle, comp, thread_limit - 1);
 	lib_calvin::thread_type leftThread, rightThread;
-	leftThread = create_thread(
+	leftThread = lib_calvin::create_thread(
 		mergeSortParallelSub0ThreadFunction<SrcIterator, TargetIterator, Comparator>, &argLeft);
-	rightThread = create_thread(
+	rightThread = lib_calvin::create_thread(
 		mergeSortParallelSub0ThreadFunction<SrcIterator, TargetIterator, Comparator>, &argRight);
 	lib_calvin::wait_for_thread(leftThread);
 	lib_calvin::wait_for_thread(rightThread);
@@ -1071,7 +1071,7 @@ void lib_calvin_sort::introSortParallelAdvanced(Iterator first, Iterator last, C
 	}
 	factory.close();
 	for (unsigned i = 0; i < numCores; ++i) {
-		wait_for_thread(handleArray[i]);
+		lib_calvin::wait_for_thread(handleArray[i]);
 		//CloseHandle(handleArray[i]);
 	}
 	delete[] handleArray;
@@ -1099,7 +1099,7 @@ void lib_calvin_sort::introSortParallelAdvanced2(Iterator first, Iterator last, 
 
 	factory.close();
 	for (unsigned i = 0; i < numCores; ++i) {
-		wait_for_thread(handleArray[i]);
+		lib_calvin::wait_for_thread(handleArray[i]);
 		//CloseHandle(handleArray[i]);
 	}
 	delete[] handleArray;
@@ -1158,17 +1158,17 @@ void lib_calvin_sort::mergeSortParallel(Iterator first, Iterator last, Comparato
 	operator delete(tempArray);
 }
 
-template <typename Iterator>
-void lib_calvin_sort::countingSort(Iterator first, Iterator last) {
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::countingSort(Iterator first, Iterator last, Comparator comp) {
 	size_t num = last - first;
 	if (num < 20) {
 		insertionSort(first, last);
 		return;
 	}
-	ptrdiff_t min = first->get_value();
+	ptrdiff_t min = *first;
 	ptrdiff_t max = min;
 	for (Iterator iter = first + 1; iter < last; ++iter) {
-		ptrdiff_t curValue = iter->get_value();
+		ptrdiff_t curValue = *iter;
 		if (curValue < min) {
 			min = curValue;
 		} else if (curValue > max) {
@@ -1178,12 +1178,14 @@ void lib_calvin_sort::countingSort(Iterator first, Iterator last) {
 	if (min == max)
 		return;
 	size_t avgBucketPop = 5;
-	size_t numOfBucket = num / avgBucketPop; // at least 2
-	size_t bucketSize = (max - min) / numOfBucket; // set bucketSize
+	// at least 2
+	size_t numOfBucket = num / avgBucketPop; 
+	// set bucketSize									 
+	size_t bucketSize = (max - min) / numOfBucket; 
 
-												   //std::cout << "max = " << max << "min = " << min << "\n";
-												   //std::cout << "num of bucket is " << numOfBucket << "\n";
-												   //std::cout << "bucketSize is " << bucketSize << "\n";;
+	//std::cout << "max = " << max << "min = " << min << "\n";
+	//std::cout << "num of bucket is " << numOfBucket << "\n";
+	//std::cout << "bucketSize is " << bucketSize << "\n";;											   
 	if (bucketSize == 0) { // almost all elements are equal
 		introSort(first, last);
 		return;
@@ -1205,7 +1207,7 @@ void lib_calvin_sort::countingSort(Iterator first, Iterator last) {
 
 	// counting elements for each bucket
 	for (Iterator iter = first; iter < last; ++iter)
-		countArray[(iter->get_value() - min) / bucketSize]++;
+		countArray[(*iter - min) / bucketSize]++;
 	// accumulate counters to startArray
 	size_t sum = 0;
 	for (size_t i = 0; i <= numOfBucket; ++i) {
@@ -1250,7 +1252,7 @@ void lib_calvin_sort::countingSort(Iterator first, Iterator last) {
 		while (true) {
 			//cout << "piont B\n";
 			// decide which bucket and position to put into
-			size_t bucketNum = (store.get_value() - min) / bucketSize;
+			size_t bucketNum = (store - min) / bucketSize;
 			size_t targetIndex = countArray[bucketNum];
 			++countArray[bucketNum];
 			if (targetIndex == initialIndex) { // got around to start position
@@ -1274,8 +1276,8 @@ void lib_calvin_sort::introSort2(Iterator first, Iterator last, Comparator comp)
 	introSort2Sub(first, last, leftBuffer, rightBuffer, comp, lib_calvin_util::log(last - first) * 3);
 }
 
-template <typename Iterator>
-void lib_calvin_sort::bucketSort(Iterator first, Iterator last) {
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::bucketSort(Iterator first, Iterator last, Comparator comp) {
 	typedef typename iterator_traits<Iterator>::value_type elemType;
 	typedef typename iterator_traits<Iterator>::pointer pointerType;
 	vector<elemType> partitioners;
