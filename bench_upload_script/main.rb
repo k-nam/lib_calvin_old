@@ -1,6 +1,6 @@
 require_relative 'test.rb'
 
-server_url = "http://13.125.53.10:3000/runs/api"
+server_url = "http://bench.minami.im/runs/api"
 
 #test_upload(server_url)
 
