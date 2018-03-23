@@ -18,7 +18,7 @@ std::string lib_calvin_util::getDatetime() {
 void lib_calvin_util::save_bench(std::string category, std::string subCategory, 
 		string title, string comment,
 		vector<vector<string>> algorithms, 
-		vector<vector<double>> results, vector<string> testCases, string unit) {
+		vector<vector<double>> results, vector<string> testCases, string unit, int order) {
 	using json = nlohmann::json;
 	json benchData;
 	benchData["category"] = category;
@@ -34,6 +34,8 @@ void lib_calvin_util::save_bench(std::string category, std::string subCategory,
 	data["test_cases"] = testCases;
 	data["unit"] = unit;
 	benchData["data"] = data;
+
+	benchData["order"] = order;
 
 	//cout << benchData.dump();
 	lib_calvin::random_number_generator gen;
