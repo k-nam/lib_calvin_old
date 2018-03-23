@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "sort.h"
+#include "stopwatch.h"
 
 // This is test for Windows and Linux file sharing
 
@@ -11,6 +12,8 @@ using std::endl;
 
 namespace lib_calvin_sort
 {
+	using lib_calvin::stopwatch;
+
 	void sortTest();
 	void binSearchTest();
 	void binSearchTest2();

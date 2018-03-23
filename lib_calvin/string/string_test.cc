@@ -78,7 +78,7 @@ void lib_calvin_string::matchingTest(void(*matchingCharAlg)
 		cout << "Running time: " << watch.read() << endl;
 		cout << "# of match was: " << record.size() << endl;
 		// sorting is needed as suffix tree's result is not in ascending order
-		lib_calvin::introSort(record.begin(), record.end());
+		lib_calvin::sort(record.begin(), record.end());
 		if (answer == record)
 			cout << "Matching is correct.\n";
 		else {

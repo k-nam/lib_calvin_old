@@ -11,17 +11,13 @@ void lib_calvin_sort::sortTest() {
 	typedef int ElemType;
 	//typedef SimpleStruct ElemType;
 	//typedef StringStruct ElemType;
+	
 	//binSearchTest();
 	//binSearchTest2();
 	//getSamplesTest();
 
-	//sortTest<ElemType>(cacheTest1, "cacheTest1");
-	//sortTest<ElemType>(cacheTest2, "cacheTest2");
-	//sortTest<ElemType>(cacheTest3, "cacheTest3");
-
-	//sortTest<ElemType>(introSortPointerSorting, "introSort pointer");
-	//sortTest<ElemType>(introSort, "introSort");
-	sortTest<ElemType>(introSort2, "introSort2");
+	sortTest<ElemType>(introSort, "introSort");
+	sortTest<ElemType>(blockIntroSort, "blockIntroSort");
 	//sortTest<ElemType>(introSortParallel, "Parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced, "Advanced parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
@@ -32,11 +28,11 @@ void lib_calvin_sort::sortTest() {
 	//sortTest<ElemType>(std::sort, "std::sort");
 	//sortTest<ElemType>(std::stable_sort, "std::stable_sort");
 	//sortTest<ElemType>(pdqsort, "pdqsort");
-	//sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
+	sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
 
-	sortTest<ElemType>(bucketSort, "bucketSort");
+	//sortTest<ElemType>(sampleSort, "sampleSort");
 	sortTest<ElemType>(countingSort, "countingSort");
-	//sortTest<ElemType>(introSort2, "introSort+");
+	sortTest<ElemType>(introCountingSort, "introCountingSort");
 
 	//sortTest2();
 
