@@ -3,12 +3,14 @@
 
 #include <map>
 #include <vector>
-
+#include <string>
 
 namespace lib_calvin_sort
 {
-	size_t const benchTestSize = 1000 * 1000;
-	size_t const benchNumIter = 1;
+	size_t const benchTestSize = 10 * 1000 * 1000;
+	size_t const benchNumIter = 3;
+	std::string const benchTitle = "Sorting 10M objects";
+	int const benchOrder = 5;
 
 	enum Algorithm {
 		PDQSORT,
@@ -38,11 +40,9 @@ namespace lib_calvin_sort
 	std::vector<std::vector<std::string>> getAlgorithmNamesAndTagsVector(std::vector<Algorithm>);
 
 	void sortBench();
-	void sortBenchComparison();
-	void sortBenchLinearComplexity();
 
 	std::vector<double>
-		sortBenchSub(Algorithm, SubCategory);
+		sortBenchSub(Algorithm);
 
 	template <typename T>
 	double sortBenchSub2(Algorithm);
