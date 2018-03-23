@@ -137,6 +137,9 @@ public:
 
 	ConstIterator const operator+(difference_type offset) const { return ConstIterator(impl_ + offset); }
 	ConstIterator const operator-(difference_type offset) const { return ConstIterator(impl_ - offset); }
+	
+	ConstIterator & operator+=(difference_type offset) { impl_ += offset; return *this; }
+	ConstIterator & operator-=(difference_type offset) { impl_ -= offset; return *this; }
 
 	ConstIterator & operator++() { ++impl_; return *this; }
 	ConstIterator & operator--() { --impl_; return *this; }
@@ -180,6 +183,9 @@ public:
 	Iterator const operator+(difference_type offset) const { return Iterator(impl_ + offset); }
 	Iterator const operator-(difference_type offset) const { return Iterator(impl_ - offset); }
 
+	Iterator & operator+=(difference_type offset) { impl_ += offset; return *this; }
+	Iterator & operator-=(difference_type offset) { impl_ -= offset; return *this; }
+
 	Iterator & operator++() { ConstIterator::operator++(); return *this; }
 	Iterator & operator--() { ConstIterator::operator--(); return *this; }
 	Iterator const operator++(int) { Iterator temp = *this; ++(*this); return temp; }
@@ -209,8 +215,11 @@ public:
 	reference operator*() const { Impl copy(impl_); return (--copy).operator*(); }
 	pointer operator->() const { Impl copy(impl_); return (--copy).operator->(); }
 
-	ConstReverseIterator const operator+(difference_type offset) const { return ConstReverseIterator(impl_ + offset); }
-	ConstReverseIterator const operator-(difference_type offset) const { return ConstReverseIterator(impl_ - offset); }
+	ConstReverseIterator const operator+(difference_type offset) const { return ConstReverseIterator(impl_ - offset); }
+	ConstReverseIterator const operator-(difference_type offset) const { return ConstReverseIterator(impl_ + offset); }
+
+	ConstReverseIterator & operator+=(difference_type offset) { impl_ -= offset; return *this; }
+	ConstReverseIterator & operator-=(difference_type offset) { impl_ += offset; return *this; }
 
 	ConstReverseIterator & operator++() { --impl_; return *this; }
 	ConstReverseIterator & operator--() { ++impl_; return *this; }
@@ -253,6 +262,9 @@ public:
 
 	ReverseIterator const operator+(difference_type offset) const { return ReverseIterator(impl_ + offset); }
 	ReverseIterator const operator-(difference_type offset) const { return ReverseIterator(impl_ - offset); }
+
+	ReverseIterator & operator+=(difference_type offset) { impl_ -= offset; return *this; }
+	ReverseIterator & operator-=(difference_type offset) { impl_ += offset; return *this; }
 
 	ReverseIterator & operator++() { ConstReverseIterator::operator++(); return *this; }
 	ReverseIterator & operator--() { ConstReverseIterator::operator--(); return *this; }
