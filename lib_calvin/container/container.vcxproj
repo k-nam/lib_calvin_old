@@ -173,15 +173,12 @@
       <TargetEnvironment>X64</TargetEnvironment>
     </Midl>
     <ClCompile>
-      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
-      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <BrowseInformation>false</BrowseInformation>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <OmitFramePointers>false</OmitFramePointers>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <CompileAsManaged>false</CompileAsManaged>
       <CompileAs>CompileAsCpp</CompileAs>
@@ -204,6 +201,7 @@
     <ClCompile Include="b_tree_test.cc" />
     <ClCompile Include="container_main.cc" />
     <ClCompile Include="container_test.cc" />
+    <ClCompile Include="container_test_types.cc" />
     <ClCompile Include="map_test.cc" />
     <ClCompile Include="set_test.cc" />
     <ClCompile Include="vector_test.cc" />
@@ -216,6 +214,7 @@
     <ClInclude Include="b_tree_base.h" />
     <ClInclude Include="container_test.h" />
     <ClInclude Include="blocked_array.h" />
+    <ClInclude Include="container_test_types.h" />
     <ClInclude Include="hash_table.h" />
     <ClInclude Include="hash_table2.h" />
     <ClInclude Include="ordered_array.h" />

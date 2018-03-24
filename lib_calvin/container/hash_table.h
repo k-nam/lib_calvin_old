@@ -405,7 +405,7 @@ HashTable<T, K, ExtractKey, HashFunc>::insert(T1 &&elem) {
 	}
 	if (count > 9) {
 		//cout << "count was " << count << " size was " << size_ << " table size was " << tableSize_ << "\n";
-		exit(0);
+		//exit(0);
 	}
 	size_++;
 	return std::pair<iterator, bool>(iterator(

@@ -39,6 +39,9 @@
     <ClCompile Include="..\util\random.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="container_test_types.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="adt.h">
@@ -102,6 +105,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="hash_table2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="container_test_types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

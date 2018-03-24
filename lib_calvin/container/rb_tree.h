@@ -11,6 +11,7 @@ enum class RbColor { Black, Red };
 template <typename T>
 class RbTreeNode: public BinTreeNode<T> {
 public:
+
 	// Node is created with its color set to red
 	RbTreeNode(T const &key);
 	RbTreeNode(T &&key);
@@ -55,12 +56,14 @@ public:
 	size_t erase(K const &);
 	
 private: 
+	using BinTree<T, K, Comp, ExtractKey>::root_;
+	using BinTree<T, K, Comp, ExtractKey>::empty;
+
 	template <typename T1>
 		std::pair<typename BinTree<T, K, Comp, ExtractKey>::iterator, bool> insert_(T1 &&elem);
 	BinTreeNode<T> *makeNewNode(T const &elem) const override;
 	BinTreeNode<T> *makeNewNode(T &&elem) const override;
 	BinTreeNode<T> *makeNewNode(BinTreeNode<T> const *rhs) const override;
-	typedef typename BinTreeNode<T>::Direction Direction;;
 	RbTreeNode<T> *rotate(RbTreeNode<T> *node, Direction direction);
 	RbTreeNode<T> *rbRotate(RbTreeNode<T> *node, Direction direction );
 
@@ -74,13 +77,13 @@ private:
 //-------------------------- RbTreeNode public methods --------------------------//
 
 template <typename T>
-RbTreeNode<T>::RbTreeNode(T const &key): BinTreeNode(key), color_(RbColor::Red) { }
+RbTreeNode<T>::RbTreeNode(T const &key): BinTreeNode<T>(key), color_(RbColor::Red) { }
 
 template <typename T>
-RbTreeNode<T>::RbTreeNode(T &&key): BinTreeNode(std::forward<T>(key)), color_(RbColor::Red) { }
+RbTreeNode<T>::RbTreeNode(T &&key): BinTreeNode<T>(std::forward<T>(key)), color_(RbColor::Red) { }
 
 template <typename T>
-RbTreeNode<T>::RbTreeNode(T const &key, RbColor color): BinTreeNode(key), color_(color) { }
+RbTreeNode<T>::RbTreeNode(T const &key, RbColor color): BinTreeNode<T>(key), color_(color) { }
 
 template <typename T>
 RbTreeNode<T>::~RbTreeNode() { 
@@ -107,7 +110,8 @@ template <typename T1>
 std::pair<typename BinTree<T, K, Comp, ExtractKey>::iterator, bool> 
 RbTree<T, K, Comp, ExtractKey>::insert_(T1 &&elem) {
 	//std::cout << "rb insert called\n";
-	std::pair<BinTreeNode<T> *, bool> result = BinTree::insert_impl(std::forward<T1>(elem));
+	std::pair<BinTreeNode<T> *, bool> result = 
+		BinTree<T, K, Comp, ExtractKey>::insert_impl(std::forward<T1>(elem));
 	BinTreeNode<T> *insertedNode = result.first;
 	bool isInserted = result.second;
 	// RbTree maintenance

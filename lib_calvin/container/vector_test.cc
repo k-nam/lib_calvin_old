@@ -1,3 +1,8 @@
+#include <utility>
+#include <iostream>
+#include <vector>
+#include <list>
+
 #include "vector_test.h"
 #include "vector.h"
 #include "stopwatch.h"
@@ -5,11 +10,8 @@
 #include "blocked_array.h"
 #include "container_test.h"
 #include "rb_tree.h"
+#include "container_test_types.h"
 
-#include <utility>
-#include <iostream>
-#include <vector>
-#include <list>
 
 using std::pair;
 
@@ -179,7 +181,7 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 	
 	typedef decltype(intSet.begin())::iterator_category tag;
 	Impl impl4(intSet.begin(), intSet.end());
-	std::vector<int> temp(intSet.begin(), intSet.end());
+	std::vector<size_t> temp(intSet.begin(), intSet.end());
 	if (containerEqual(impl4.begin(), impl4.end(), intSet.begin(), intSet.end())) {
 		cout << "vector iterator ctor OK!\n";
 	} else {

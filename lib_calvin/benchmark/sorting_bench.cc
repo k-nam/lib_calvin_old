@@ -2,31 +2,15 @@
 #include <vector>
 #include <string>
 
-#include "sort_bench.h"
+#include "sorting_bench.h"
 #include "sort.h"
 #include "sort_test.h"
 #include "pdqsort.h"
-#include "save_bench.h"
+#include "bench.h"
 #include "random.h"
 
-
-enum Algorithm {
-	PDQSORT,
-
-	STD_SORT,
-	STD_STABLE_SORT,
-
-	LIB_CALVIN_QSORT,
-	LIB_CALVIN_BLOCK_QSORT,
-	LIB_CALVIN_MERGESORT,
-	LIB_CALVIN_HEAPSORT,
-
-	LIB_CALVIN_BLOCK_QSORT_PARALLEL,
-	LIB_CALVIN_MERGESORT_PARALLEL
-};
-
 std::vector<std::string>
-lib_calvin_sort::getAlgorithmNamesAndTags(Algorithm algo) {
+lib_calvin_benchmark::sorting::getAlgorithmNamesAndTags(Algorithm algo) {
 	switch (algo) {
 	case PDQSORT:
 		return { "pdqsort" };
@@ -56,7 +40,7 @@ lib_calvin_sort::getAlgorithmNamesAndTags(Algorithm algo) {
 }
 
 std::vector<std::vector<std::string>>
-lib_calvin_sort::getAlgorithmNamesAndTagsVector(std::vector<Algorithm> algorithms) {
+lib_calvin_benchmark::sorting::getAlgorithmNamesAndTagsVector(std::vector<Algorithm> algorithms) {
 	using namespace std;
 	vector<vector<string>> algorithmNamesAndTags = {};
 	std::for_each(algorithms.begin(), algorithms.end(),
@@ -65,7 +49,7 @@ lib_calvin_sort::getAlgorithmNamesAndTagsVector(std::vector<Algorithm> algorithm
 	return algorithmNamesAndTags;
 }
 
-void lib_calvin_sort::sortBench() {
+void lib_calvin_benchmark::sorting::sortBench() {
 	using namespace std;
 	using namespace lib_calvin_sort;
 	string category = "Sorting";
@@ -85,18 +69,20 @@ void lib_calvin_sort::sortBench() {
 		results.push_back(sortBenchSub(algorithm));
 	}
 
-	lib_calvin_util::save_bench(category, subCategory, benchTitle, comment,
+	lib_calvin_benchmark::save_bench(category, subCategory, benchTitle, comment,
 								getAlgorithmNamesAndTagsVector(algorithms), results, testCases, unit, benchOrder);
 }
 
 std::vector<double>
-lib_calvin_sort::sortBenchSub(Algorithm algo) {
+lib_calvin_benchmark::sorting::sortBenchSub(Algorithm algo) {
+	using namespace lib_calvin_sort;
 	return std::vector<double> { sortBenchSub2<int>(algo), sortBenchSub2<SimpleStruct>(algo),
 		sortBenchSub2<StringStruct>(algo) };
 }
 
 template <typename T>
-double lib_calvin_sort::sortBenchSub2(Algorithm algo) {
+double lib_calvin_benchmark::sorting::sortBenchSub2(Algorithm algo) {
+	using namespace lib_calvin_sort;
 	using std::less;
 	std::cout << "Now benchmarking: " << getAlgorithmNamesAndTags(algo)[0] << "\n";
 	switch (algo) {
@@ -129,7 +115,7 @@ double lib_calvin_sort::sortBenchSub2(Algorithm algo) {
 }
 
 template <typename T>
-double lib_calvin_sort::sortBenchSub3(Algorithm algo) {
+double lib_calvin_benchmark::sorting::sortBenchSub3(Algorithm algo) {
 	using std::less;
 	std::cout << "Now benchmarking: " << getAlgorithmNamesAndTags(algo)[0] << "\n";
 	switch (algo) {
@@ -151,8 +137,9 @@ double lib_calvin_sort::sortBenchSub3(Algorithm algo) {
 
 template <typename T>
 double
-lib_calvin_sort::sortBenchTemplateSub(void(*sorter)(T *first, T *last, std::less<T>)) {
-	stopwatch watch;
+lib_calvin_benchmark::sorting::sortBenchTemplateSub(void(*sorter)(T *first, T *last, std::less<T>)) {
+	using namespace lib_calvin_sort;
+	lib_calvin::stopwatch watch;
 	size_t numIter = benchNumIter;
 	size_t testSize = benchTestSize;
 	size_t seed = 1232; // reset seed to give identical input to algorithms
@@ -181,7 +168,7 @@ lib_calvin_sort::sortBenchTemplateSub(void(*sorter)(T *first, T *last, std::less
 }
 
 std::map<std::string, std::vector<double>>
-lib_calvin_sort::combineResults(std::vector<std::map<std::string, double>> results) {
+lib_calvin_benchmark::sorting::combineResults(std::vector<std::map<std::string, double>> results) {
 	using namespace std;
 	map<string, vector<double>> combined;
 	for (auto result : results) {

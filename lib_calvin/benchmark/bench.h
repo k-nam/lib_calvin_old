@@ -6,7 +6,7 @@
 #include <map>
 #include <fstream>
 
-namespace lib_calvin_util
+namespace lib_calvin_benchmark
 {
 	std::string const saveFilePath = "../../../bench_result/";
 	std::string const environment = "Intel 4790K with 16GB ram, Windows 10, Visual C++ v141";
@@ -18,6 +18,7 @@ namespace lib_calvin_util
 					std::vector<std::vector<std::string>> algorithms,
 					std::vector<std::vector<double>> results,
 					std::vector<std::string> testCases, std::string unit, int order);
+
 }
 
 #endif

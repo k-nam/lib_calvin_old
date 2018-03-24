@@ -71,15 +71,7 @@ void lib_calvin_sort::sortTest2() {
 
 }
 
-std::string lib_calvin_sort::getRandomString(int length) {
-	char *charArray = new char[length];
-	for (int i = 0; i < length; ++i) {
-		charArray[i] = 'a' + rand() % 26;
-	}
-	std::string result(charArray, length);
-	delete[] charArray;
-	return result;
-}
+
 
 
 void lib_calvin_sort::binSearchTest() {

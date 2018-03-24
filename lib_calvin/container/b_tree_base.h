@@ -106,6 +106,10 @@ private:
 	public:
 		FullNode();
 		virtual ~FullNode();
+	public:
+		using Node::capacity_;
+		using Node::isDynamic_;
+		using Node::elements_;
 	private:
 		friend B_TREE_BASE;
 	private:
@@ -120,11 +124,25 @@ private:
 	private:
 		friend B_TREE_BASE;
 	public:
+		using Node::getSize;
+		using Node::isLeafNode_;
+		using Node::getParent;
+		using Node::indexInParent_;
+		using Node::size_;
+		using Node::eraseElement;
+		using Node::eraseFirstElement;
+		using Node::eraseLastElement;
+		using Node::insertFirstElement;
+		using Node::insertLastElement;
+
+	public:
 		size_t getTreeSize() const;	
 		void setTreeSize(size_t);
 		void refreshTreeSize();
 		void increaseTreeSizeByOne(size_t childIndex);
 		void decreaseTreeSizeByOne(size_t childIndex);
+	public:
+		using Node::insertElement;
 	public:
 		// 0 <= index <= size_
 		Node *getChild(int index);

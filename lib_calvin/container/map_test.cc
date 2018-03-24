@@ -1,12 +1,14 @@
+#include <cstdlib>
+#include <map>
+#include <unordered_map>
+
 #include "container_test.h"
+#include "container_test_types.h"
 #include "map_test.h"
 #include "utility.h"
 #include "stopwatch.h"
 #include "random.h"
 #include "map.h"
-#include <cstdlib>
-#include <map>
-#include <unordered_map>
 #include "boost/unordered_map.hpp"
 
 using lib_calvin::stopwatch;

@@ -4,6 +4,7 @@
 #include <iostream>
 #include "sort.h"
 #include "stopwatch.h"
+#include "container_test_types.h"
 
 // This is test for Windows and Linux file sharing
 
@@ -57,13 +58,13 @@ namespace lib_calvin_sort
 		static size_t assignCount_;
 	};
 
-	std::string getRandomString(int length);
+	
 
 	struct StringStruct : public SimpleStruct {
 		//StringStruct(): value(getRandomString(5)) {
 			//std::cout << "default con\n";
 		//}
-		StringStruct(int value) : SimpleStruct(value), str_(getRandomString(5)) {
+		StringStruct(int value) : SimpleStruct(value), str_(lib_calvin_container::getRandomString(5)) {
 			//std::cout << "default con\n";
 		}
 		StringStruct(StringStruct const &rhs): SimpleStruct(rhs), str_(rhs.str_) {
