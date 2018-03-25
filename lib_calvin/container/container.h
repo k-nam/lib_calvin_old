@@ -249,16 +249,16 @@ public:
 	typedef ptrdiff_t difference_type;
 	typedef typename Impl::iterator_category iterator_category;
 
-	ReverseIterator(): ConstReverseIterator() { }
-	ReverseIterator(Impl impl): ConstReverseIterator(impl) { }
-	ReverseIterator(ReverseIterator const &rhs): ConstReverseIterator(rhs) { }
-	ReverseIterator & operator=(ReverseIterator const &rhs) { ConstReverseIterator::operator=(rhs); return *this; }
+	ReverseIterator(): ConstReverseIterator<Impl>() { }
+	ReverseIterator(Impl impl): ConstReverseIterator<Impl>(impl) { }
+	ReverseIterator(ReverseIterator const &rhs): ConstReverseIterator<Impl>(rhs) { }
+	ReverseIterator & operator=(ReverseIterator const &rhs) { ConstReverseIterator<Impl>::operator=(rhs); return *this; }
 
 	operator Iterator<Impl>() const { return Iterator<Impl>(impl_); }
 	operator ConstIterator<Impl>() const { return ConstIterator<Impl>(impl_); }
 
-	reference operator*() const { return const_cast<reference>(ConstReverseIterator::operator*()); }
-	pointer operator->() const { return const_cast<pointer>(ConstReverseIterator::operator->()); }
+	reference operator*() const { return const_cast<reference>(ConstReverseIterator<Impl>::operator*()); }
+	pointer operator->() const { return const_cast<pointer>(ConstReverseIterator<Impl>::operator->()); }
 
 	ReverseIterator const operator+(difference_type offset) const { return ReverseIterator(impl_ + offset); }
 	ReverseIterator const operator-(difference_type offset) const { return ReverseIterator(impl_ - offset); }
@@ -266,8 +266,8 @@ public:
 	ReverseIterator & operator+=(difference_type offset) { impl_ -= offset; return *this; }
 	ReverseIterator & operator-=(difference_type offset) { impl_ += offset; return *this; }
 
-	ReverseIterator & operator++() { ConstReverseIterator::operator++(); return *this; }
-	ReverseIterator & operator--() { ConstReverseIterator::operator--(); return *this; }
+	ReverseIterator & operator++() { ConstReverseIterator<Impl>::operator++(); return *this; }
+	ReverseIterator & operator--() { ConstReverseIterator<Impl>::operator--(); return *this; }
 	ReverseIterator const operator++(int) { ReverseIterator temp = *this; ++(*this); return temp; }
 	ReverseIterator const operator--(int) { ReverseIterator temp = *this; --(*this); return temp; }
 };

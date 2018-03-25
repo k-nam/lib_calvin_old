@@ -7,8 +7,6 @@ lib_calvin_container::HeavyObject::HeavyObject(size_t size) {
 		value_.push_back(size % 100);
 		size = std::hash<size_t>()(size);
 	}
-	dummy_[0] = size;
-	dummy_[1] = size / 10;
 }
 
 

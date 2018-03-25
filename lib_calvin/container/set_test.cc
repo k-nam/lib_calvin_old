@@ -35,7 +35,7 @@ void lib_calvin_container::setTest() {
 	
 	int const testSize = 1000;
 	int const smallSize = 1000;
-	int const mediumSize = 100000;
+	int const mediumSize = 10000;
 	int const largeSize = 1000000;	
 
 	//setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
@@ -45,16 +45,16 @@ void lib_calvin_container::setTest() {
 	//setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
 	//setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
 	//setFunctionTest(PtrSet<int>(), testSize, "lib_calvin_container::PtrSet"); // unfinished
-	//setFunctionTest<HashTable<Numeric>>(testSize,	"lib_calvin_container::HashTable"); // cannot iterate
-	//setFunctionTest<HashTable2<Numeric>>(testSize,	"lib_calvin_container::HashTable2"); // cannot iterate
+	setFunctionTest<HashTable<Numeric>>(testSize,	"lib_calvin_container::HashTable"); // cannot iterate
+	setFunctionTest<HashTable2<Numeric>>(testSize,	"lib_calvin_container::HashTable2"); // cannot iterate
 	
 	//setFunctionTest2<BTree<Numeric>>(testSize, "lib_calvin_container::BTree");
 	//setFunctionTest2<BPlusTree<Numeric>>(testSize, "lib_calvin_container::BPlusTree");
 
 	//setIteratorTest<RbTree<Numeric>>("RbTree iterator");
 	//setIteratorTest<BTree<Numeric>>("BTree iterator");
-	//setIteratorTest<HashTable<Numeric>>("HashTable iterator");
-	//setIteratorTest<HashTable2<Numeric>>("HashTable2 iterator");
+	setIteratorTest<HashTable<Numeric>>("HashTable iterator");
+	setIteratorTest<HashTable2<Numeric>>("HashTable2 iterator");
 
 	//setPerformanceTest<std::set<Numeric>>(largeSize, "std::set / Numeric");
 	//setPerformanceTest<boost::container::set<Numeric>>(largeSize, "boost::set / Numeric");
@@ -63,8 +63,8 @@ void lib_calvin_container::setTest() {
 	//setPerformanceTest<BTree<Numeric>>(largeSize, "BTree / Numeric");
 	//setPerformanceTest<BPlusTree<Numeric>>(largeSize, "BPlusTree / Numeric");
 	//setPerformanceTest<OrderedArray<Numeric>>(largeSize, "OrderedArray / Numeric");
-	setPerformanceTest<std::unordered_set<Numeric>>(largeSize, "std::unordered_set / Numeric");
-	setPerformanceTest<boost::unordered_set<Numeric>>(largeSize, "boost::unordered_set / Numeric");
+	//setPerformanceTest<std::unordered_set<Numeric>>(largeSize, "std::unordered_set / Numeric");
+	//setPerformanceTest<boost::unordered_set<Numeric>>(largeSize, "boost::unordered_set / Numeric");
 	setPerformanceTest<HashTable<Numeric>>(largeSize, "HashTable / Numeric");
 	setPerformanceTest<HashTable2<Numeric>>(largeSize, "HashTable2 / Numeric");
 
@@ -359,7 +359,8 @@ void lib_calvin_container::setPerformanceTest_(std::vector<Key> &data,
 	double insertTime = 0;
 	for (size_t i = 0; i < n*0.5; ++i) {
 		watch.start();
-		impl.insert((data[i]));
+		impl.insert(data[i]);
+		//cout << data[i] << "\n";
 		watch.stop();
 		if (watch.read() > insertTime) {
 			insertTime = watch.read();
@@ -376,41 +377,11 @@ void lib_calvin_container::setPerformanceTest_(std::vector<Key> &data,
 	watch.start();
 	typename Impl::value_type iteratorCheckSum = 0;
 	//int iteratorCheckSum = 0;
+	
+
 	for (int i = 0; i < numIter; ++i) {
-		auto iter = impl.begin();
-		//for (typename Impl::iterator iter = impl.begin(); iter != impl.end(); ++iter) {
-		for (int j = 0; j < static_cast<int>(impl.size()) - 10; j++) {
+		for (auto iter = impl.begin(); iter != impl.end(); ++iter) {
 			iteratorCheckSum = *iter;
-			/*
-			auto copy = iter;
-			auto next = ++copy;
-			auto next2 = ++copy;
-			auto next3 = ++copy;
-			auto next4 = ++copy;
-			char *currentAddress = (char *)&(*iter);
-			char *nextAddress = (char *)&(*next);
-			char *next2Address = (char *)&(*next2);
-			char *next3Address = (char *)&(*next3);
-			char *next4Address = (char *)&(*next4);
-			if (std::abs(currentAddress - nextAddress) < 100) {
-				numCacheHit++;
-			} 
-			if (std::abs(currentAddress - next2Address) < 100) {
-				numCacheHit2++;
-			} 
-			if (std::abs(currentAddress - next3Address) < 100) {
-				numCacheHit3++;
-			} 
-			if (std::abs(currentAddress - next4Address) < 100) {
-				numCacheHit4++;
-			} 
-			int thisDistance = std::abs((char *)&(*iter) - (char *)&(*next));
-			if (thisDistance < 100 && j < 10) {
-				std::cout << "pointer distance: " << thisDistance << "\n";
-			}
-			//jumpDistance += thisDistance*thisDistance;
-			*/
-			++iter;
 		}
 	}
 	watch.stop();
@@ -419,7 +390,7 @@ void lib_calvin_container::setPerformanceTest_(std::vector<Key> &data,
 	//cout << "avaerage jump distance is " << sqrt(jumpDistance / numIter*impl.size()) << "\n";
 	//cout << "num cache hit " << numCacheHit << " num cache hit 2 " << numCacheHit2 << "\n";
 	//cout << "num cache hit3 " << numCacheHit3 << " num cache hit 4 " << numCacheHit4 << "\n";
-
+	
 	watch.start();
 	for (size_t i = static_cast<size_t>(n*0.4); i < static_cast<size_t>(n*0.6); ++i) {
 		impl.insert((data[i])); 

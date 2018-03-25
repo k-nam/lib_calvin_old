@@ -14,7 +14,7 @@ class B_TREE_BASE
 private:
 	// all leaf nodes are full except leaf root 
 	// only leaf root grows (by reserve())
-	static int const B_TREE_FULL_NODE_CAPACITY = 127; // must be odd
+	static int const B_TREE_FULL_NODE_CAPACITY = 63; // must be odd
 	static int const B_TREE_ROOT_INIT_CAPACITY = 4;
 	static int const B_TREE_NODE_REALLOC_MULTIPLIER = 2;
 	static bool const USE_BINARY_SEARCH = true;

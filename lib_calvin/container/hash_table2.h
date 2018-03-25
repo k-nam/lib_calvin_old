@@ -42,7 +42,7 @@ namespace lib_calvin_container
 			// copy ctor	
 			IteratorImpl(IteratorImpl const &rhs);
 			IteratorImpl & operator=(IteratorImpl const &rhs);
-			IteratorImpl & operator++(); // prefix
+			inline IteratorImpl & operator++(); // prefix
 			IteratorImpl & operator--();
 			IteratorImpl const operator++(int) {
 				IteratorImpl returnValue(*this);
@@ -187,13 +187,19 @@ namespace lib_calvin_container
 			ptrdiff_t a = bucket_ - table_;
 			ptrdiff_t b = tableSize_;
 			//std::cout << a << " " << b << "\n";
-			while (true) {				
+			while (true) {		
+				auto endPoint = table_ + tableSize_;
+				//std::cout << "distance: " << bucket_ - table_ << "\n";
 				if (bucket_ - table_ == tableSize_) { // reached the end of table
+					//std::cout << "x\n";
 					node_ = bucket_; // to make operator--() faster by reducing index comparison
 					break;
 				} else if (bucket_->next_ == nullptr) { // empty bucket
+					//std::cout << "y bucket: " << bucket_ << "\n";
+					//std::cout << "y table: " << table_ << "\n";
 					bucket_++;
 				} else {
+					//std::cout << "z\n";
 					node_ = bucket_;
 					break;
 				}

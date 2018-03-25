@@ -26,7 +26,7 @@ namespace lib_calvin_container
 		operator size_t () const { return value_; }
 	private:
 		ptrdiff_t value_;
-		size_t dummy_[2];
+		size_t dummy_;
 	};
 
 	struct LinkNodeObject {
@@ -61,7 +61,6 @@ namespace lib_calvin_container
 		static void countThisObject();
 	private:
 		ContainerType value_;
-		size_t dummy_[2];
 		size_t sanityCheckNumber;
 		static size_t objectCount;
 		static void objectCreated();
