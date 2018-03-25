@@ -38,13 +38,12 @@ void lib_calvin_container::setTest() {
 	int const mediumSize = 10000;
 	int const largeSize = 1000000;	
 
-	//setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
-	//setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
-	//setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
-	//setFunctionTest<BTree<HeavyObject>>(testSize, "lib_calvin_container::BTree");
-	//setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
+	setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
+	setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
+	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
+	setFunctionTest<BTree<HeavyObject>>(testSize, "lib_calvin_container::BTree");
+	setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
 	//setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
-	//setFunctionTest(PtrSet<int>(), testSize, "lib_calvin_container::PtrSet"); // unfinished
 	setFunctionTest<HashTable<Numeric>>(testSize,	"lib_calvin_container::HashTable"); // cannot iterate
 	setFunctionTest<HashTable2<Numeric>>(testSize,	"lib_calvin_container::HashTable2"); // cannot iterate
 	
@@ -129,7 +128,8 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 		std::pair<std::set<T>::iterator, bool> b = stdSet.insert(temp);
 		size_t count1 = impl.count(temp);
 		size_t count2 = stdSet.count(temp);
-		if (a.second != b.second || impl.size() != stdSet.size() || count1 != count2) {			
+		if (a.second != b.second || impl.size() != stdSet.size() || count1 != count2 ||
+			*(a.first) != *(b.first)) {
 			correct = false;
 			cout << "inserting error\n";
 			exit(0); 

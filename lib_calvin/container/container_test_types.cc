@@ -3,7 +3,7 @@
 
 lib_calvin_container::HeavyObject::HeavyObject(size_t size) {
 	init();
-	for (size_t i = 0; i < 10; ++i) {
+	for (size_t i = 0; i < 5; ++i) {
 		value_.push_back(size % 100);
 		size = std::hash<size_t>()(size);
 	}
@@ -13,7 +13,7 @@ lib_calvin_container::HeavyObject::HeavyObject(size_t size) {
 lib_calvin_container::HeavyObject::operator size_t() const {
 	size_t hash = 0;
 	for (auto number : value_) {
-		hash *= 10;
+		hash *= 100;
 		hash += number;
 	}
 	return hash;

@@ -14,20 +14,27 @@
 template <typename ElemType>
 std::string
 lib_calvin_benchmark::container::getTitle(OperationType operation) {
-	return getString(operation) + " " + std::to_string(sizeof(ElemType)) + "bytes objets";
+	auto title = getString(operation) + " (" + std::to_string(sizeof(ElemType)) + "byte";
+	if (sizeof(ElemType) >= 24) {
+		title += ", key:vector";
+	} else {
+		//title += ", key: int";
+	}
+	title += ")";
+	return title;
 }
 
 std::string
 lib_calvin_benchmark::container::getString(OperationType operation) {
 	switch (operation) {
-	case INSERTING:
-		return "Inserting";
+	case GROWING:
+		return "Growing";
+	case INSERT_DELETE:
+		return "Insert/Delete";
 	case SEARCHING:
 		return "Searching";
 	case ITERATING:
 		return "Iterating";
-	case DELETING:
-		return "Deleting";
 	default:
 		std::cout << "getString error!\n";
 		exit(0);
@@ -42,13 +49,13 @@ lib_calvin_benchmark::container::getString(ContainerType container) {
 int
 lib_calvin_benchmark::container::getOrder(OperationType operation) {
 	switch (operation) {
-	case INSERTING:
+	case GROWING:
 		return 0;
-	case SEARCHING:
+	case INSERT_DELETE:
 		return 1;
-	case ITERATING:
+	case SEARCHING:
 		return 2;
-	case DELETING:
+	case ITERATING:
 		return 3;
 	default:
 		std::cout << "getOrder error!\n";
@@ -61,25 +68,25 @@ std::vector<std::string>
 lib_calvin_benchmark::container::getContainerNamesAndTags(ContainerType container) {
 	switch (container) {
 	case STD_SET:
-		return { "std::set", "std", "tree" };
+		return { "std::set"};
 	case BOOST_SET:
-		return { "boost::set", "boost", "tree" };
+		return { "boost::set" };
 
 	case LIB_CALVIN_RB_TREE:
-		return { "lib_calvin::rb_tree", "lib_calvin", "tree" };
+		return { "lib_calvin::rb_tree" };
 	case LIB_CALVIN_BTREE:
-		return { "lib_calvin::b_tree", "lib_calvin", "tree" };
+		return { "lib_calvin::b_tree" };
 	case LIB_CALVIN_BPLUS_TREE:
-		return { "lib_calvin::b_plus_tree", "lib_calvin", "tree" };
+		return { "lib_calvin::b_plus_tree" };
 
 	case STD_UNORDERED_SET:
-		return { "std::unordered_set", "std", "hash table" };
+		return { "std::unordered_set", "hash table" };
 	case BOOST_UNORDERED_SET:
-		return { "boost::unordered_set", "boost", "hash table" };
+		return { "boost::unordered_set", "hash table" };
 	case LIB_CALVIN_HASH_TABLE:
-		return { "lib_calvin::hash_table", "lib_calvin", "hash table" };
+		return { "lib_calvin::hash_table",  "hash table" };
 	case LIB_CALVIN_HASH_TABLE2:
-		return { "lib_calvin::hash_table2", "lib_calvin", "hash table" };
+		return { "lib_calvin::hash_table2",  "hash table" };
 	default:
 		std::cout << "getString error!\n";
 		exit(0);
@@ -102,17 +109,17 @@ lib_calvin_benchmark::container::getAllContainerNamesAndTags() {
 
 void
 lib_calvin_benchmark::container::containerBench() {
-	//containerBenchTemplate<lib_calvin_container::Numeric>();
-	containerBenchTemplate<lib_calvin_container::LightObject>();
-	containerBenchTemplate<lib_calvin_container::HeavyObject>();
+	containerBenchTemplate<lib_calvin_container::Numeric>();
+	//containerBenchTemplate<lib_calvin_container::LightObject>();
+	//containerBenchTemplate<lib_calvin_container::HeavyObject>();
 }
 
 template <typename ElemType>
 void lib_calvin_benchmark::container::containerBenchTemplate() {
-	containerBenchTemplate<ElemType>(INSERTING);
+	containerBenchTemplate<ElemType>(GROWING);
+	containerBenchTemplate<ElemType>(INSERT_DELETE);
 	containerBenchTemplate<ElemType>(SEARCHING);
 	containerBenchTemplate<ElemType>(ITERATING);
-	containerBenchTemplate<ElemType>(DELETING);
 }
 
 template <typename ElemType>
@@ -166,17 +173,28 @@ lib_calvin_benchmark::container::containerBenchSub(OperationType operation) {
 			for (size_t i = 0; i < testSize; i++) {	
 				ElemType elem(gen());
 				dataArray.push_back(elem);	
-				container.insert(elem);
-				newValues.push_back(gen());
+				if (operation != GROWING) {
+					container.insert(elem);
+				}
 			}		
 
 			watch.start();
 			switch (operation)
 			{
-			case INSERTING:
+			case GROWING:
 				for (size_t i = 0; i < testSize; i++) {
-					container.insert(newValues[i]);
+					container.insert(std::move(dataArray[i]));
 					checkSum += container.size();
+				}
+				break;
+			case INSERT_DELETE:
+				for (size_t i = 0; i < testSize; i++) {
+					if (i % 100 < 50) {
+						container.insert(std::move(dataArray[i]));
+						checkSum += container.size();
+					} else {
+						checkSum += container.erase(dataArray[i]);
+					}					
 				}
 				break;
 			case SEARCHING:
@@ -184,22 +202,11 @@ lib_calvin_benchmark::container::containerBenchSub(OperationType operation) {
 					checkSum += container.count(dataArray[i]);
 				}
 				break;
-			case ITERATING: {
-				auto iter = container.begin();
-				for (size_t i = 0; i < container.size(); i++) {
-				//for (auto iter = container.begin(); iter != container.end(); ++iter) {
+			case ITERATING: 
+				for (auto iter = container.begin(); iter != container.end(); ++iter) {
 					checkSum += size_t(*iter);
-					if (i < testSize - 1) {
-						++iter;
-					}
-				}
-				break;
-			}
-			case DELETING:
-				for (size_t i = 0; i < testSize; i++) {
-					checkSum += container.erase(dataArray[i]);;
-				}
-				break;
+				}				
+				break;			
 			default:
 				std::cout << "containerBenchSub error!" + std::to_string(checkSum);
 				exit(0);

@@ -151,7 +151,6 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 
 	// These buffers contain index of elements to be swapped
 	// Buffer size MUST be a multiple of loop-unrolling count (typically 8)
-
 	ptrdiff_t l_begin = 0;
 	ptrdiff_t l_end = 0;
 	ptrdiff_t r_begin = 0;
@@ -162,7 +161,6 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 
 	bool isLeftEmpty = true;
 	bool isRightEmpty = true;
-
 	bool mustBreak = false;
 
 	while (true) {
@@ -182,8 +180,7 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 			} else {
 				rightBatchSize = numUnprocessed;
 			}
-		} else {
-		}
+		} 
 
 		if (isLeftEmpty) {
 			auto tempIter = left;
@@ -239,14 +236,8 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 				*(left + leftBuffer[l_temp++]) = std::move(*(right - rightBuffer[r_temp]));
 			}
 			*(right - rightBuffer[r_temp]) = std::move(store);
-
-			/*
-			// 1:1 Swap version
-			while (l_temp < l_temp_end) {
-			std::iter_swap(left + leftBuffer[l_temp++], right - rightBuffer[r_temp++]);
-			}
-			*/
 		}
+
 		l_begin += swapCount;
 		r_begin += swapCount;
 

@@ -269,6 +269,8 @@ Array<T>::operator= (Array<T> &&rhs) {
 
 template <typename T>
 void Array<T>::swap (Array<T> &rhs) {
+	//std::cout << "vector swap\n";
+
 	T *tempArray = array_;
 	size_t tempCapacity = capacity_;
 	size_t tempSize = size_;

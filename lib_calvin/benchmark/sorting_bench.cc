@@ -16,27 +16,32 @@ lib_calvin_benchmark::sorting::getAlgorithmNamesAndTags(Algorithm algo) {
 		return { "pdqsort" };
 
 	case STD_SORT:
-		return { "std::sort", "std" };
+		return { "std::sort" };
 	case STD_STABLE_SORT:
-		return { "std::stable_sort", "std", "stable" };
+		return { "std::stable_sort", "stable" };
 
 	case LIB_CALVIN_QSORT:
-		return { "lib_calvin::qsort", "lib_calvin" };
+		return { "lib_calvin::qsort" };
 	case LIB_CALVIN_BLOCK_QSORT:
-		return { "lib_calvin::block_qsort", "lib_calvin" };
+		return { "lib_calvin::block_qsort" };
 	case LIB_CALVIN_MERGESORT:
-		return { "lib_calvin::mergesort", "lib_calvin", "stable" };
+		return { "lib_calvin::mergesort", "stable" };
 	case LIB_CALVIN_HEAPSORT:
-		return { "lib_calvin::heapsort", "lib_calvin" };
+		return { "lib_calvin::heapsort" };
 
 	case LIB_CALVIN_BLOCK_QSORT_PARALLEL:
-		return { "lib_calvin::block_qsort_parallel", "lib_calvin", "parallel" };
+		return { "lib_calvin::block_qsort_parallel", "parallel" };
 	case LIB_CALVIN_MERGESORT_PARALLEL:
-		return { "lib_calvin::mergesort_parallel", "lib_calvin", "stable", "parallel" };
+		return { "lib_calvin::mergesort_parallel", "stable", "parallel" };
 
 	default:
 		return { "getAlgorithmName error!" };
 	}
+}
+
+std::string
+lib_calvin_benchmark::sorting::getTitle(size_t num) {
+	return category + " " + testCases[num] + " " + benchTitleSuffix;
 }
 
 std::vector<std::vector<std::string>>
@@ -50,6 +55,12 @@ lib_calvin_benchmark::sorting::getAlgorithmNamesAndTagsVector(std::vector<Algori
 }
 
 void lib_calvin_benchmark::sorting::sortBench() {
+	for (size_t i = 0; i < benchNumCases; i++) {
+		sortBench(i);
+	}
+}
+
+void lib_calvin_benchmark::sorting::sortBench(size_t num) {
 	using namespace std;
 	using namespace lib_calvin_sort;
 	string category = "Sorting";
@@ -57,7 +68,7 @@ void lib_calvin_benchmark::sorting::sortBench() {
 	string comment = "block_qsort is my implementation of BlockQuickSort. pdqsort is the official one.";
 	string unit = "M/s (higher is better)";
 	vector<string> tags = { "sorting" };
-	vector<string> testCases = { "4Byte (int)", "16Byte (key:int)", "24Byte (key:string)" };
+	vector<string> testCases = { "4Byte (int)", "16Byte (key:int)", "48Byte (key:string)" };
 	vector<Algorithm> algorithms{ STD_SORT, STD_STABLE_SORT,
 		PDQSORT,
 		LIB_CALVIN_QSORT,LIB_CALVIN_BLOCK_QSORT, LIB_CALVIN_MERGESORT, LIB_CALVIN_HEAPSORT,
@@ -66,68 +77,51 @@ void lib_calvin_benchmark::sorting::sortBench() {
 
 	vector<vector<double>> results;
 	for (auto algorithm : algorithms) {
-		results.push_back(sortBenchSub(algorithm));
+		results.push_back(sortBenchSub(algorithm, benchTestSize[num], benchNumIter[num]));
 	}
 
-	lib_calvin_benchmark::save_bench(category, subCategory, benchTitle, comment,
-								getAlgorithmNamesAndTagsVector(algorithms), results, testCases, unit, benchOrder);
+	lib_calvin_benchmark::save_bench(category, subCategory, getTitle(num), comment,
+								getAlgorithmNamesAndTagsVector(algorithms), 
+									 results, testCases, unit, benchOrder[num]);
 }
 
 std::vector<double>
-lib_calvin_benchmark::sorting::sortBenchSub(Algorithm algo) {
+lib_calvin_benchmark::sorting::sortBenchSub(Algorithm algo, size_t testSize, size_t numIter) {
 	using namespace lib_calvin_sort;
-	return std::vector<double> { sortBenchSub2<int>(algo), sortBenchSub2<SimpleStruct>(algo),
-		sortBenchSub2<StringStruct>(algo) };
+	return std::vector<double> { 
+		sortBenchSub2<int>(algo, testSize, numIter),
+		sortBenchSub2<SimpleStruct>(algo, testSize, numIter),
+		sortBenchSub2<StringStruct>(algo, testSize, numIter) };
 }
 
 template <typename T>
-double lib_calvin_benchmark::sorting::sortBenchSub2(Algorithm algo) {
+double lib_calvin_benchmark::sorting::sortBenchSub2(Algorithm algo, size_t testSize, size_t numIter) {
 	using namespace lib_calvin_sort;
 	using std::less;
-	std::cout << "Now benchmarking: " << getAlgorithmNamesAndTags(algo)[0] << "\n";
+	std::cout << "Now benchmarking: " << testSize << " " << "object size: " << sizeof(T) << 
+		" " << getAlgorithmNamesAndTags(algo)[0] <<  "\n";
 	switch (algo) {
 	case PDQSORT:
-		return sortBenchTemplateSub(pdqsort_branchless<T *, less<T>>);
+		return sortBenchTemplateSub(pdqsort_branchless<T *, less<T>>, testSize, numIter);
 
 	case STD_SORT:
-		return sortBenchTemplateSub(std::sort<T *, less<T>>);
+		return sortBenchTemplateSub(std::sort<T *, less<T>>, testSize, numIter);
 	case STD_STABLE_SORT:
-		return sortBenchTemplateSub(std::stable_sort<T *, less<T>>);
+		return sortBenchTemplateSub(std::stable_sort<T *, less<T>>, testSize, numIter);
 
 	case LIB_CALVIN_QSORT:
-		return sortBenchTemplateSub(introSort<T *, less<T>>);
+		return sortBenchTemplateSub(introSort<T *, less<T>>, testSize, numIter);
 	case LIB_CALVIN_BLOCK_QSORT:
-		return sortBenchTemplateSub(blockIntroSort<T *, less<T>>);
+		return sortBenchTemplateSub(blockIntroSort<T *, less<T>>, testSize, numIter);
 	case LIB_CALVIN_MERGESORT:
-		return sortBenchTemplateSub(mergeSort<T *, less<T>>);
+		return sortBenchTemplateSub(mergeSort<T *, less<T>>, testSize, numIter);
 	case LIB_CALVIN_HEAPSORT:
-		return sortBenchTemplateSub(heapSort<T *, less<T>>);
+		return sortBenchTemplateSub(heapSort<T *, less<T>>, testSize, numIter);
 
 	case LIB_CALVIN_BLOCK_QSORT_PARALLEL:
-		return sortBenchTemplateSub(introSortParallel<T *, less<T>>);
+		return sortBenchTemplateSub(introSortParallel<T *, less<T>>, testSize, numIter);
 	case LIB_CALVIN_MERGESORT_PARALLEL:
-		return sortBenchTemplateSub(mergeSortParallel<T *, less<T>>);
-
-	default:
-		cout << "sortBenchSub2 error!";
-		exit(0);
-	}
-}
-
-template <typename T>
-double lib_calvin_benchmark::sorting::sortBenchSub3(Algorithm algo) {
-	using std::less;
-	std::cout << "Now benchmarking: " << getAlgorithmNamesAndTags(algo)[0] << "\n";
-	switch (algo) {
-	case STD_SORT:
-		return sortBenchTemplateSub(std::sort<T *, less<T>>);
-	case STD_STABLE_SORT:
-		return sortBenchTemplateSub(std::stable_sort<T *, less<T>>);
-
-	case LIB_CALVIN_COUNTINGSORT:
-		return sortBenchTemplateSub(countingSort<T *, less<T>>);
-	case LIB_CALVIN_BUCKETSORT:
-		return sortBenchTemplateSub(sampleSort<T *, less<T>>);
+		return sortBenchTemplateSub(mergeSortParallel<T *, less<T>>, testSize, numIter);
 
 	default:
 		cout << "sortBenchSub2 error!";
@@ -137,11 +131,10 @@ double lib_calvin_benchmark::sorting::sortBenchSub3(Algorithm algo) {
 
 template <typename T>
 double
-lib_calvin_benchmark::sorting::sortBenchTemplateSub(void(*sorter)(T *first, T *last, std::less<T>)) {
+lib_calvin_benchmark::sorting::sortBenchTemplateSub(void(*sorter)(T *first, T *last, std::less<T>),
+													size_t testSize, size_t numIter) {
 	using namespace lib_calvin_sort;
 	lib_calvin::stopwatch watch;
-	size_t numIter = benchNumIter;
-	size_t testSize = benchTestSize;
 	size_t seed = 1232; // reset seed to give identical input to algorithms
 	std::srand(1232); // reset seed to give identical input to algorithms
 
@@ -164,18 +157,5 @@ lib_calvin_benchmark::sorting::sortBenchTemplateSub(void(*sorter)(T *first, T *l
 		}
 	}
 	operator delete(testSet);
-	return testSize / min / 1000 / 1000;
-}
-
-std::map<std::string, std::vector<double>>
-lib_calvin_benchmark::sorting::combineResults(std::vector<std::map<std::string, double>> results) {
-	using namespace std;
-	map<string, vector<double>> combined;
-	for (auto result : results) {
-		for (auto testCase : result) {
-			// algorithm name => measurement
-			combined[testCase.first].push_back(testCase.second);
-		}
-	}
-	return combined;
+	return testSize * std::log(testSize) / min / 1000 / 1000;
 }

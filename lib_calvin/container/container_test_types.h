@@ -41,13 +41,13 @@ namespace lib_calvin_container
 		HeavyObject() : value_() { init(); }
 		HeavyObject(size_t size);
 		HeavyObject(HeavyObject const &rhs) : value_(rhs.value_) { init(); }
-		HeavyObject(HeavyObject &&rhs) :value_(std::forward<ContainerType>(rhs.value_)) { init(); }
+		HeavyObject(HeavyObject &&rhs) :value_(std::move(rhs.value_)) { init(); }
 		~HeavyObject();
 		void init();
 		HeavyObject &operator=(HeavyObject const &rhs) { value_ = rhs.value_; return *this; }
 		HeavyObject &operator=(HeavyObject &&rhs)
 		{
-			value_ = std::forward<ContainerType>(rhs.value_); return *this;
+			value_ = std::move(rhs.value_); return *this;
 		}
 		HeavyObject &operator+=(HeavyObject const &rhs) { return *this; }
 		bool operator==(HeavyObject const &rhs) const { return value_ == rhs.value_; }

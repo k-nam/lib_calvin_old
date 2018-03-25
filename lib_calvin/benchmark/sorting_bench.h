@@ -9,10 +9,14 @@ namespace lib_calvin_benchmark
 {
 	namespace sorting
 	{
-		size_t const benchTestSize = 1000 * 1000;
-		size_t const benchNumIter = 3;
-		std::string const benchTitle = "Sorting 10M objects";
-		int const benchOrder = 5;
+		size_t const benchNumCases = 6;
+		std::vector<size_t> const benchTestSize = { 100, 1000, 10*1000, 100*1000, 1000*1000, 10*1000*1000 };
+		std::vector<std::string> const testCases = { "100", "1K", "10K", "100K", "1M", "10M" };
+		std::vector<size_t> const benchNumIter = { 10000, 1000, 100, 10, 3, 1 };
+		std::vector<int> const benchOrder = { 0, 1, 2, 3, 4, 5 };
+		std::string const unit = "M/s (higher is better)";
+		std::string const category = "Sorting";
+		std::string const benchTitleSuffix = "objects";
 
 		enum Algorithm {
 			PDQSORT,
@@ -37,26 +41,25 @@ namespace lib_calvin_benchmark
 			LINEAR_COMPLEXITY_SORT
 		};
 
+		std::string getTitle(size_t num);
+
 		std::vector<std::string> getAlgorithmNamesAndTags(Algorithm);
 
 		std::vector<std::vector<std::string>> getAlgorithmNamesAndTagsVector(std::vector<Algorithm>);
 
 		void sortBench();
+		void sortBench(size_t num);
 
 		std::vector<double>
-			sortBenchSub(Algorithm);
+			sortBenchSub(Algorithm, size_t testSize, size_t numIter);
 
 		template <typename T>
-		double sortBenchSub2(Algorithm);
+		double sortBenchSub2(Algorithm, size_t testSize, size_t numIter);
 
 		template <typename T>
-		double sortBenchSub3(Algorithm);
+		double sortBenchTemplateSub(void(*sorter)(T *first, T *last, std::less<T>), 
+									size_t testSize, size_t numIter);
 
-		template <typename T>
-		double sortBenchTemplateSub(void(*sorter)(T *first, T *last, std::less<T>));
-
-		std::map<std::string, std::vector<double>>
-			combineResults(std::vector<std::map<std::string, double>>);
 	}
 }
 #endif

@@ -21,10 +21,10 @@ namespace lib_calvin_benchmark
 		std::string const category = "Container";
 
 		enum OperationType {
-			INSERTING,
+			GROWING,
+			INSERT_DELETE,
 			SEARCHING,
-			ITERATING,
-			DELETING
+			ITERATING
 		};
 
 		enum ContainerType {
@@ -51,21 +51,6 @@ namespace lib_calvin_benchmark
 				return std::hash<size_t>()(size_t(elem));
 			}
 		};
-		/*
-		template <>
-		struct myHasher<lib_calvin_container::LightObject> {
-			size_t operator() (lib_calvin_container::LightObject const &elem) const {
-				return boost::hash<size_t>()(size_t(elem));
-			}
-		};
-
-		template <>
-		struct myHasher<lib_calvin_container::HeavyObject> {
-			size_t operator() (lib_calvin_container::HeavyObject const &) const {
-				return boost::hash(size_t(elem));
-			}
-		};
-		*/
 
 		template <typename ElemType>
 		std::string getTitle(OperationType);

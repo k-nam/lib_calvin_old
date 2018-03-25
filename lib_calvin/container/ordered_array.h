@@ -158,6 +158,7 @@ OrderedArray<T, K, Comp, ExtractKey, VectorImpl>::insert(T1 &&elem) {
 		elements, elements + size(), ExtractKey()(elem), true);
 	if (result.second == true) { // does not exist
 		vectorImpl_.insert(vectorImpl_.begin() + result.first, elem);
+		// This is not correct because vector might have called reserve() inside insert()
 		return std::pair<iterator, bool>(iterator(elements + result.first), true);
 	} else { // exists
 		return std::pair<iterator, bool>(iterator(elements + result.first), false);

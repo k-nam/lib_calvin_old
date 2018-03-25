@@ -23,6 +23,7 @@ namespace lib_calvin_container
 	private:
 		struct Node {
 			Node(T const &elem, Node *next) : elem_(elem), next_(next) { }
+			Node(T &&elem, Node *next) : elem_(std::forward<T>(elem)), next_(next) { }
 			T elem_;
 			Node *next_; // empty bucket points to nullptr, and the last Node points to the fist Node
 		};
@@ -88,6 +89,7 @@ namespace lib_calvin_container
 		iterator find(K const &);
 		size_t count(K const &elem) const;
 		std::pair<iterator, bool> insert(T const &elem);
+		std::pair<iterator, bool> insert(T &&elem);
 		size_t erase(K const &elem);
 		void clear();
 		bool empty() const { return size_ == 0; }
@@ -99,7 +101,9 @@ namespace lib_calvin_container
 		void initTable(size_t);
 		void deleteTable(Node *, size_t);
 	private: // insert given elem or Node into the bucket without checking (only used in rehasing)
-		void addToFirst(T const &elem);
+		template <typename U>
+		std::pair<iterator, bool> insert_(U &&elem);
+		void addToFirst(T &&elem);
 		void addToFirst(Node *Node);
 	private:
 		IteratorImpl getBeginIterator() const;
@@ -394,15 +398,33 @@ namespace lib_calvin_container
 	template <typename T, typename K, typename ExtractKey, typename HashFunc>
 	std::pair<typename HashTable2<T, K, ExtractKey, HashFunc>::iterator, bool>
 		HashTable2<T, K, ExtractKey, HashFunc>::insert(T const &elem) {
+		return insert_(elem);
+	}
+
+	template <typename T, typename K, typename ExtractKey, typename HashFunc>
+	std::pair<typename HashTable2<T, K, ExtractKey, HashFunc>::iterator, bool>
+		HashTable2<T, K, ExtractKey, HashFunc>::insert(T &&elem) {
+		return insert_(std::forward<T>(elem));
+	}
+
+	template <typename T, typename K, typename ExtractKey, typename HashFunc>
+	template <typename U>
+	std::pair<typename HashTable2<T, K, ExtractKey, HashFunc>::iterator, bool>
+		HashTable2<T, K, ExtractKey, HashFunc>::insert_(U &&elem) {
 		if (empty()) {
 			tableSize_ = HASH_SET_SIZES[hashSetSizeIndex_];
 			initTable(tableSize_ + 1);
 		}
+
+		if ((double)size_ / tableSize_ > REHASH_THRESHOLD) {
+			rehash();
+		}
+
 		Node *bucket = getBucket(ExtractKey()(elem));
 		Node *thisNode = bucket;
 		int count = 0;
 		if (bucket->next_ == nullptr) { // empty bucket, just insert
-			new (&bucket->elem_) T(elem);
+			new (&bucket->elem_) T(std::forward<U>(elem));
 			bucket->next_ = bucket;
 		} else {
 			while (true) {
@@ -417,18 +439,18 @@ namespace lib_calvin_container
 					}
 				}
 			}
-			Node *newNode = new Node(elem, bucket->next_);
+			Node *newNode = new Node(std::forward<U>(elem), bucket->next_);
 			bucket->next_ = newNode;
 		}
 		size_++;
-		if ((double)size_ / tableSize_ > REHASH_THRESHOLD) {
-			rehash();
-		}
+
 		if (count > 9) {
 			//std::cout << "count was " << count << " size was " << size_ << " table size was " << tableSize_ << "\n";
 			//exit(0);
 		}
-		return std::pair<iterator, bool>(iterator(findIterator(ExtractKey()(elem))), true);
+		//return std::pair<iterator, bool>(iterator(findIterator(ExtractKey()(elem))), true);
+		return std::pair<iterator, bool>(iterator(
+			IteratorImpl(table_, tableSize_, bucket, bucket->next_)), true);
 	}
 
 	template <typename T, typename K, typename ExtractKey, typename HashFunc>
@@ -488,7 +510,7 @@ namespace lib_calvin_container
 			if (sourceBucket->next_ == nullptr) {
 				continue;
 			}
-			addToFirst(sourceBucket->elem_); // special case for bucket Node
+			addToFirst(std::move(sourceBucket->elem_)); // special case for bucket Node
 			while (true) {
 				if (sourceBucket->next_ == sourceBucket) {
 					break;
@@ -503,13 +525,13 @@ namespace lib_calvin_container
 	}
 
 	template <typename T, typename K, typename ExtractKey, typename HashFunc>
-	void HashTable2<T, K, ExtractKey, HashFunc>::addToFirst(T const &elem) {
+	void HashTable2<T, K, ExtractKey, HashFunc>::addToFirst(T &&elem) {
 		HashTable2<T, K, ExtractKey, HashFunc>::Node *bucket = getBucket(ExtractKey()(elem));
 		if (bucket->next_ == nullptr) {
-			new (&bucket->elem_) T(elem);
+			new (&bucket->elem_) T(std::forward<T>(elem));
 			bucket->next_ = bucket;
 		} else {
-			Node *newNode = new Node(elem, bucket->next_);
+			Node *newNode = new Node(std::forward<T>(elem), bucket->next_);
 			bucket->next_ = newNode;
 		}
 	}
@@ -518,7 +540,7 @@ namespace lib_calvin_container
 	void HashTable2<T, K, ExtractKey, HashFunc>::addToFirst(Node *Node) {
 		HashTable2<T, K, ExtractKey, HashFunc>::Node *bucket = getBucket(ExtractKey()(Node->elem_));
 		if (bucket->next_ == nullptr) {
-			new (&bucket->elem_) T(Node->elem_);
+			new (&bucket->elem_) T(std::move(Node->elem_));
 			bucket->next_ = bucket;
 			delete Node;
 		} else {
