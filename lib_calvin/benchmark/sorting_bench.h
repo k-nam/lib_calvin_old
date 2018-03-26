@@ -9,24 +9,29 @@ namespace lib_calvin_benchmark
 {
 	namespace sorting
 	{
-		size_t const benchNumCases = 6;
-		std::vector<size_t> const benchTestSize = { 100, 1000, 10*1000, 100*1000, 1000*1000, 10*1000*1000 };
-		std::vector<std::string> const testCases = { "100", "1K", "10K", "100K", "1M", "10M" };
-		std::vector<size_t> const benchNumIter = { 10000, 1000, 100, 10, 3, 1 };
-		std::vector<int> const benchOrder = { 0, 1, 2, 3, 4, 5 };
+		size_t const benchNumCases = 4;
+		std::vector<size_t> const benchTestSize = { 1000, 10*1000, 100*1000, 1000*1000};
+		std::vector<std::string> const testCases = { "1K", "10K", "100K", "1M" };
+		std::vector<size_t> const benchNumIter = { 1000, 100, 10, 3};
+		std::vector<int> const benchOrder = { 0, 1, 2, 3 };
 		std::string const unit = "M/s (higher is better)";
 		std::string const category = "Sorting";
 		std::string const benchTitleSuffix = "objects";
 
 		enum Algorithm {
-			PDQSORT,
-
 			STD_SORT,
 			STD_STABLE_SORT,
 
+			PDQSORT,
+
 			LIB_CALVIN_QSORT,
 			LIB_CALVIN_BLOCK_QSORT,
+
 			LIB_CALVIN_MERGESORT,
+			LIB_CALVIN_IN_PLACE_MERGESORT,
+			LIB_CALVIN_IN_PLACE_MERGESORT2,
+			LIB_CALVIN_IN_PLACE_MERGESORT3,
+
 			LIB_CALVIN_HEAPSORT,
 
 			LIB_CALVIN_COUNTINGSORT,
@@ -37,21 +42,22 @@ namespace lib_calvin_benchmark
 		};
 
 		enum SubCategory {
-			COMPARISON_SORT,
-			LINEAR_COMPLEXITY_SORT
+			BYTE_4, BYTE_16, BYTE_48
 		};
 
 		std::string getTitle(size_t num);
+
+		std::string getSubCategory(SubCategory);
 
 		std::vector<std::string> getAlgorithmNamesAndTags(Algorithm);
 
 		std::vector<std::vector<std::string>> getAlgorithmNamesAndTagsVector(std::vector<Algorithm>);
 
 		void sortBench();
-		void sortBench(size_t num);
+		void sortBench(size_t num, SubCategory);
 
 		std::vector<double>
-			sortBenchSub(Algorithm, size_t testSize, size_t numIter);
+			sortBenchSub(Algorithm, size_t testSize, size_t numIter, SubCategory);
 
 		template <typename T>
 		double sortBenchSub2(Algorithm, size_t testSize, size_t numIter);

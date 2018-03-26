@@ -1,10 +1,22 @@
 #ifndef LIB_CALVIN__SORT__IN_PLACE_MERGE_SORT_H
 #define LIB_CALVIN__SORT__IN_PLACE_MERGE_SORT_H
 
+#include "merge_sort.h"
+
 namespace lib_calvin_sort
 {
 	template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
 	void inPlaceMergeSort(Iterator first, Iterator last, Comparator const comp = Comparator());
+
+	template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+	void inPlaceMergeSort2(Iterator first, Iterator last, Comparator const comp = Comparator());
+
+	template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+	void inPlaceMergeSort3(Iterator first, Iterator last, Comparator const comp = Comparator());
+
+	template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+	void inPlaceMergeSortSub(Iterator first, Iterator last, 
+							 Comparator const comp = Comparator(), ptrdiff_t threshold = 0);
 
 	template <typename Iterator, typename Comparator>
 	void inPlaceMerge(Iterator first, Iterator middle, Iterator last, Comparator comp);
@@ -22,29 +34,77 @@ void lib_calvin_sort::inPlaceMergeSort(Iterator first, Iterator last, Comparator
 		insertionSort(first, last, comp);
 		return;
 	}
+	double const ratio = 0.0;
+	ptrdiff_t threshold = static_cast<size_t>(ratio * (last - first));
+	inPlaceMergeSortSub(first, last, comp, threshold);
+}
+
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::inPlaceMergeSort2(Iterator first, Iterator last, Comparator comp) {
+	if (last - first < MERGESORT_THRESHOLD) {
+		insertionSort(first, last, comp);
+		return;
+	}
+	double const ratio = 0.01;
+	ptrdiff_t threshold = static_cast<size_t>(ratio * (last - first));
+	inPlaceMergeSortSub(first, last, comp, threshold);
+}
+
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::inPlaceMergeSort3(Iterator first, Iterator last, Comparator comp) {
+	if (last - first < MERGESORT_THRESHOLD) {
+		insertionSort(first, last, comp);
+		return;
+	}
+	double const ratio = 0.1;
+	ptrdiff_t threshold = static_cast<size_t>(ratio * (last - first));
+	inPlaceMergeSortSub(first, last, comp, threshold);
+}
+
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::inPlaceMergeSortSub(Iterator first, Iterator last,
+									  Comparator comp, ptrdiff_t threshold) {
+	if (last - first < 100) {
+		insertionSort(first, last, comp);
+		return;
+	}
+	if (last - first < threshold) {
+		mergeSort(first, last, comp);
+		return;
+	}
 	Iterator middle = first + (last - first) / 2;
-	inPlaceMergeSort(first, middle, comp);
-	inPlaceMergeSort(middle, last, comp);
+	inPlaceMergeSortSub(first, middle, comp, threshold);
+	inPlaceMergeSortSub(middle, last, comp, threshold);
 	inPlaceMerge(first, middle, last, comp);
 }
 
 template <typename Iterator, typename Comparator>
-void lib_calvin_sort::inPlaceMerge(Iterator first, Iterator middle, Iterator last, Comparator comp) {
-	if (middle - first < MERGESORT_THRESHOLD || last - middle < MERGESORT_THRESHOLD) {
+void lib_calvin_sort::inPlaceMerge(Iterator first, Iterator middle, Iterator last,
+										  Comparator comp) {
+	ptrdiff_t size = last - first;
+	if (last - middle < MERGESORT_THRESHOLD || middle - first < MERGESORT_THRESHOLD) {
 		insertionSort(first, last, comp);
 		return;
 	}
+	std::inplace_merge(first, middle, last, comp);
+	/*
 	Iterator leftMiddle = first + (middle - first) / 2;
 	Iterator rightMiddle = middle + binSearch(*leftMiddle, middle, last, comp);
 	exchange(leftMiddle, middle, rightMiddle);
 	inPlaceMerge(first, leftMiddle, leftMiddle + (rightMiddle - middle), comp);
 	inPlaceMerge(leftMiddle + (rightMiddle - middle), rightMiddle, last, comp);
+
+	ptrdiff_t next1 = leftMiddle - first;
+	ptrdiff_t next2 = leftMiddle + (rightMiddle - middle) - leftMiddle;
+	ptrdiff_t next3 = rightMiddle - leftMiddle + (rightMiddle - middle);
+	ptrdiff_t nextL4 = last - rightMiddle;
+
 	for (Iterator iter = first; iter < last - 1; iter++) {
 		if (comp(*(iter + 1), *iter)) {
 			std::cout << "inPlaceMerge error: " << middle - first << " " << last - middle << "\n";
 			exit(0);
 		}
-	}
+	}*/
 }
 
 template <typename Iterator>

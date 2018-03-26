@@ -16,15 +16,15 @@ void lib_calvin_sort::sortTest() {
 	//binSearchTest2();
 	//getSamplesTest();
 
-	sortTest<ElemType>(introSort, "introSort");
-	sortTest<ElemType>(blockIntroSort, "blockIntroSort");
+	//sortTest<ElemType>(introSort, "introSort");
+	//sortTest<ElemType>(blockIntroSort, "blockIntroSort");
 	//sortTest<ElemType>(introSortParallel, "Parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced, "Advanced parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
 	//sortTest<ElemType>(mergeSort, "mergeSort");
 	//sortTest<ElemType>(mergeSortParallel, "Parallel mergeSort");
 	//sortTest<ElemType>(heapSort, "heapSort");
-	//sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");
+	sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");
 	//sortTest<ElemType>(std::sort, "std::sort");
 	//sortTest<ElemType>(std::stable_sort, "std::stable_sort");
 	//sortTest<ElemType>(pdqsort, "pdqsort");
