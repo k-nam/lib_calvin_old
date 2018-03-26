@@ -55,6 +55,9 @@ namespace lib_calvin_benchmark
 		template <typename ElemType>
 		std::string getTitle(OperationType);
 
+		template <typename ElemType>
+		std::string getSubCategory(OperationType);
+
 		std::string getString(OperationType);
 		std::string getString(ContainerType);
 		int getOrder(OperationType);

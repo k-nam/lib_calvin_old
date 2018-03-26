@@ -14,14 +14,17 @@
 template <typename ElemType>
 std::string
 lib_calvin_benchmark::container::getTitle(OperationType operation) {
-	auto title = getString(operation) + " (" + std::to_string(sizeof(ElemType)) + "byte";
+	return getString(operation);
+}
+
+template <typename ElemType>
+std::string 
+lib_calvin_benchmark::container::getSubCategory(OperationType operation) {
+	auto result = std::string("Object size: ") + std::to_string(sizeof(ElemType)) + std::string("byte");
 	if (sizeof(ElemType) >= 24) {
-		title += ", key:vector";
-	} else {
-		//title += ", key: int";
+		result += " (vector)";
 	}
-	title += ")";
-	return title;
+	return result;
 }
 
 std::string
@@ -109,9 +112,9 @@ lib_calvin_benchmark::container::getAllContainerNamesAndTags() {
 
 void
 lib_calvin_benchmark::container::containerBench() {
-	containerBenchTemplate<lib_calvin_container::Numeric>();
-	//containerBenchTemplate<lib_calvin_container::LightObject>();
-	//containerBenchTemplate<lib_calvin_container::HeavyObject>();
+	//containerBenchTemplate<lib_calvin_container::Numeric>();
+	containerBenchTemplate<lib_calvin_container::LightObject>();
+	containerBenchTemplate<lib_calvin_container::HeavyObject>();
 }
 
 template <typename ElemType>
@@ -141,8 +144,7 @@ void lib_calvin_benchmark::container::containerBenchTemplate(OperationType opera
 	results.push_back(containerBenchSub<lib_calvin_container::HashTable2<ElemType, ElemType, Identity<ElemType>, myHasher<ElemType>>>(operation));
 	results.push_back(containerBenchSub<std::unordered_set<ElemType, myHasher<ElemType>>>(operation));
 
-	string subCategory(std::string("Object size: ") + std::to_string(sizeof(ElemType)) + std::string("bytes"));
-	lib_calvin_benchmark::save_bench(category, subCategory,
+	lib_calvin_benchmark::save_bench(category, getSubCategory<ElemType>(operation),
 									 getTitle<ElemType>(operation), "",
 									 getAllContainerNamesAndTags(),
 									 results, testCases, unit, getOrder(operation));
