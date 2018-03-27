@@ -12,12 +12,15 @@ template <typename T, typename K = T, typename Comp = std::less<K>, typename Ext
 class B_TREE_BASE 
 {
 private:
+	static int const NODE_BYTES = 500;
 	// all leaf nodes are full except leaf root 
 	// only leaf root grows (by reserve())
-	static int const B_TREE_FULL_NODE_CAPACITY = 63; // must be odd
+	// B_TREE_FULL_NODE_CAPACITY must be odd
+	static int const B_TREE_FULL_NODE_CAPACITY = 
+		NODE_BYTES / sizeof(T) > 1 ? NODE_BYTES / sizeof(T) + (NODE_BYTES / sizeof(T)) % 2 + 1 : 3;
 	static int const B_TREE_ROOT_INIT_CAPACITY = 4;
 	static int const B_TREE_NODE_REALLOC_MULTIPLIER = 2;
-	static bool const USE_BINARY_SEARCH = true;
+	static bool const USE_BINARY_SEARCH = false;
 	class InternalNode;
 	// btree node. number of links in a node: t ~ 2t, number of elements in a node:
 	// t-1 ~ 2t-1. Therefore, maxNumKeys = 2t-1
