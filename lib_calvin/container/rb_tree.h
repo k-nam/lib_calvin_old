@@ -58,6 +58,7 @@ public:
 private: 
 	using BinTree<T, K, Comp, ExtractKey>::root_;
 	using BinTree<T, K, Comp, ExtractKey>::empty;
+	using BinTree<T, K, Comp, ExtractKey>::copyFrom;
 
 	template <typename T1>
 		std::pair<typename BinTree<T, K, Comp, ExtractKey>::iterator, bool> insert_(T1 &&elem);

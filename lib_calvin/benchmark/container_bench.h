@@ -12,11 +12,17 @@
 namespace lib_calvin_benchmark
 {
 	namespace container
-	{	
+	{
 		size_t const numCases = 3;
 		std::vector<size_t> const benchTestSize = { 1000, 10*1000, 1000*1000 };
 		std::vector<std::string> const testCases = { "1K", "10K", "1M" };
-		std::vector<size_t> const benchNumIter = { 1000, 10, 3 };
+		std::vector<size_t> const benchNumIter = { 1, 1, 1 };
+
+		size_t const numWorkingSetCases = 2;
+		// This much mega-bytes of memory will be working area
+		std::vector<size_t> const workingSetSize = { 0, 32*1000*1000 };
+		static size_t currentWorkingSetSize;
+
 		std::string const unit = "M/s (higher is better)";
 		std::string const category = "Container";
 
@@ -27,6 +33,8 @@ namespace lib_calvin_benchmark
 			ITERATING
 		};
 
+		static OperationType currentOperation;
+
 		enum ContainerType {
 			STD_SET,
 			BOOST_SET,
@@ -34,7 +42,7 @@ namespace lib_calvin_benchmark
 			LIB_CALVIN_RB_TREE,
 			LIB_CALVIN_BTREE,
 			LIB_CALVIN_BPLUS_TREE,
-			
+
 			BOOST_UNORDERED_SET,
 			LIB_CALVIN_HASH_TABLE,
 			LIB_CALVIN_HASH_TABLE2,
@@ -47,7 +55,7 @@ namespace lib_calvin_benchmark
 
 		template <typename ElemType>
 		struct myHasher {
-			size_t operator() (ElemType const &elem) const { 
+			size_t operator() (ElemType const &elem) const {
 				return std::hash<size_t>()(size_t(elem));
 			}
 		};
@@ -56,7 +64,7 @@ namespace lib_calvin_benchmark
 		std::string getTitle(OperationType);
 
 		template <typename ElemType>
-		std::string getSubCategory(OperationType);
+		std::string getSubCategory();
 
 		std::string getString(OperationType);
 		std::string getString(ContainerType);
@@ -70,6 +78,8 @@ namespace lib_calvin_benchmark
 
 		void containerBench();
 
+		void containerBench(size_t workingSetSize);
+
 		template <typename ElemType>
 		void containerBenchTemplate();
 
@@ -78,7 +88,7 @@ namespace lib_calvin_benchmark
 
 		template <typename ContainerType>
 		std::vector<double>
-			containerBenchSub(OperationType);
+			containerBenchSub();
 	}
 }
 #endif
