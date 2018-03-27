@@ -19,6 +19,9 @@
     <Filter Include="container">
       <UniqueIdentifier>{4e72d6d9-64b7-41f1-9676-dde72694fd19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="other">
+      <UniqueIdentifier>{bd1e374a-48d8-4c1b-a963-1e4b2fcb8ece}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bench_main.cc">
@@ -55,6 +58,15 @@
     </ClInclude>
     <ClInclude Include="container_bench.h">
       <Filter>container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\container\google_btree.h">
+      <Filter>other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\container\google_btree_container.h">
+      <Filter>other</Filter>
+    </ClInclude>
+    <ClInclude Include="..\container\google_btree_set.h">
+      <Filter>other</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

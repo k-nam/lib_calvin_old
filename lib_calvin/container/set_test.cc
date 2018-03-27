@@ -21,6 +21,7 @@
 #include "ordered_array.h"
 #include "random.h"
 #include "container_test_types.h"
+#include "google_btree_set.h"
 
 using lib_calvin::stopwatch;
 using std::cout;
@@ -60,27 +61,29 @@ void lib_calvin_container::setTest() {
 	//setPerformanceTest<BinTree<Numeric>>(largeSize, "RbTree / Numeric");
 	//setPerformanceTest<RbTree<Numeric>>(largeSize, "RbTree / Numeric");
 	//setPerformanceTest<BTree<Numeric>>(largeSize, "BTree / Numeric");
-	//setPerformanceTest<BPlusTree<Numeric>>(largeSize, "BPlusTree / Numeric");
+	setPerformanceTest<BPlusTree<Numeric>>(largeSize, "BPlusTree / Numeric");
 	//setPerformanceTest<OrderedArray<Numeric>>(largeSize, "OrderedArray / Numeric");
 	//setPerformanceTest<std::unordered_set<Numeric>>(largeSize, "std::unordered_set / Numeric");
 	//setPerformanceTest<boost::unordered_set<Numeric>>(largeSize, "boost::unordered_set / Numeric");
-	setPerformanceTest<HashTable<Numeric>>(largeSize, "HashTable / Numeric");
-	setPerformanceTest<HashTable2<Numeric>>(largeSize, "HashTable2 / Numeric");
+	//setPerformanceTest<HashTable<Numeric>>(largeSize, "HashTable / Numeric");
+	//setPerformanceTest<HashTable2<Numeric>>(largeSize, "HashTable2 / Numeric");
+	setPerformanceTest<btree::btree_set<Numeric>>(largeSize, "Google Btree / Numeric");
 
 	//setPerformanceTest<std::set<LightObject>>(largeSize, "std::set / LightObject");
 	//setPerformanceTest<boost::container::set<LightObject>>(largeSize, "boost::set / LightObject");
 	//setPerformanceTest<RbTree<LightObject>>(largeSize, "RbTree / LightObject");
 	//setPerformanceTest<BTree<LightObject>>(largeSize, "BTree / LightObject");
-	//setPerformanceTest<BPlusTree<LightObject>>(largeSize, "BPlusTree / LightObject");
+	setPerformanceTest<BPlusTree<LightObject>>(largeSize, "BPlusTree / LightObject");
 	//setPerformanceTest<OrderedArray<LightObject>>(largeSize, "OrderedArray / LightObject");
 	//setPerformanceTest<lib_calvin::hash_set<LightObject, GenericHash<LightObject>>>(
 	// largeSize, "hash_set / LightObject");
+	setPerformanceTest<btree::btree_set<LightObject>>(largeSize, "Google Btree / LightObject");
 
 	//setPerformanceTest<std::set<HeavyObject>>(mediumSize, "std::set / HeavyObject");
 	//setPerformanceTest<boost::container::set<HeavyObject>>(mediumSize, "boost::set / HeavyObject");
 	//setPerformanceTest<RbTree<HeavyObject>>(mediumSize, "RbTree / HeavyObject");
 	//setPerformanceTest<BTree<HeavyObject>>(mediumSize, "BTree / HeavyObject");
-	//setPerformanceTest<BPlusTree<HeavyObject>>(mediumSize, "BPlusTree / HeavyObject");
+	setPerformanceTest<BPlusTree<HeavyObject>>(mediumSize, "BPlusTree / HeavyObject");
 	//setPerformanceTest<set_ref<HeavyObject>>(mediumSize, "set_ref / HeavyObject");
 	//setPerformanceTest<boost::unordered_set<HeavyObject, GenericHash<HeavyObject>>>(
 		//mediumSize, "boost::unordered_set / HeavyObject");
@@ -88,7 +91,8 @@ void lib_calvin_container::setTest() {
 		//mediumSize, "HashTable / HeavyObject");
 	//setPerformanceTest<std::unordered_set<HeavyObject, boost::hash<HeavyObject>>>(mediumSize, "std::unordered_set / HeavyObject");
 	//setPerformanceTest<PtrSet<HeavyObject>>(mediumSize, "PtrSet / HeavyObject");
-	
+	setPerformanceTest<btree::btree_set<HeavyObject>>(mediumSize, "Google Btree / HeavyObject");
+
 	//setIntegratedSpeedTest<std::set<HeavyObject>>(smallSize, "std::set");
 	//setIntegratedSpeedTest<boost::container::set<HeavyObject>>(smallSize, "boost:set");
 	//setIntegratedSpeedTest<RbTree<HeavyObject>>(smallSize, "RbTree");
@@ -97,6 +101,9 @@ void lib_calvin_container::setTest() {
 	//setIntegratedSpeedTest<OrderedArray<HeavyObject>>(smallSize, "OrderedArray");
 	//setIntegratedSpeedTest<boost::unordered_set<int>>(smallSize, "boost::unordered_set");
 	//setIntegratedSpeedTest<HashTable<int>>(smallSize, "HashTable");
+	//setIntegratedSpeedTest<btree::btree_set<HeavyObject>>(smallSize, "Google Btree");
+
+
 
 	//setMemoryTest<std::set<std::set<HeavyObject>>>("std::set");
 	//setMemoryTest<BinTree<BinTree<HeavyObject>>>("BinTree");
@@ -108,6 +115,9 @@ void lib_calvin_container::setTest() {
 	
 	HeavyObject::countThisObject();
 
+	std::cout << "my btree size: " << sizeof(BTree<HeavyObject>) << "\n";
+
+	std::cout << "google set size: " << sizeof(btree::btree_set<HeavyObject>) << "\n";
 	std::cout << "set test completed\n\n";
 }
 
@@ -369,7 +379,7 @@ void lib_calvin_container::setPerformanceTest_(std::vector<Key> &data,
 	cout << "Building MAX: " << insertTime << " sec\n";
 	
 	double jumpDistance = 0;
-	int numIter = 10;
+	int numIter = 20;
 	int numCacheHit = 0;
 	int numCacheHit2 = 0;
 	int numCacheHit3 = 0;

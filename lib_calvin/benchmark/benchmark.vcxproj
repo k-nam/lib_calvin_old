@@ -132,6 +132,9 @@
     <ClCompile Include="bench.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\container\google_btree.h" />
+    <ClInclude Include="..\container\google_btree_container.h" />
+    <ClInclude Include="..\container\google_btree_set.h" />
     <ClInclude Include="container_bench.h" />
     <ClInclude Include="sorting_bench.h" />
     <ClInclude Include="bench.h" />

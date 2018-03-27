@@ -2,8 +2,11 @@
 #include <set>
 #include <unordered_set>
 #include <algorithm>
+
 #include "boost/unordered_set.hpp"
 #include "boost/container/set.hpp"
+
+#include "google_btree_set.h"
 
 #include "container_test_types.h"
 #include "bench.h"
@@ -82,9 +85,11 @@ lib_calvin_benchmark::container::getContainerNamesAndTags(ContainerType containe
 		return { "std::set"};
 	case BOOST_SET:
 		return { "boost::set" };
-
 	case LIB_CALVIN_RB_TREE:
 		return { "lib_calvin::rb_tree" };
+
+	case GOOGLE_BTREE:
+		return { "google::b_tree" };
 	case LIB_CALVIN_BTREE:
 		return { "lib_calvin::b_tree" };
 	case LIB_CALVIN_BPLUS_TREE:
@@ -128,7 +133,6 @@ lib_calvin_benchmark::container::containerBench() {
 void
 lib_calvin_benchmark::container::containerBench(size_t workingSetSize) {
 	currentWorkingSetSize = workingSetSize;
-
 	//containerBenchTemplate<lib_calvin_container::Numeric>();
 	containerBenchTemplate<lib_calvin_container::LightObject>();
 	containerBenchTemplate<lib_calvin_container::HeavyObject>();
@@ -152,16 +156,17 @@ void lib_calvin_benchmark::container::containerBenchTemplate(OperationType opera
 	currentOperation = operation;
 
 	results.push_back(containerBenchSub<std::set<ElemType>>());
-	results.push_back(containerBenchSub<boost::container::set<ElemType>>());
-	
+	results.push_back(containerBenchSub<boost::container::set<ElemType>>());	
 	results.push_back(containerBenchSub<lib_calvin_container::RbTree<ElemType>>());
+	
+	results.push_back(containerBenchSub<btree::btree_set<ElemType>>());
 	results.push_back(containerBenchSub<lib_calvin_container::BTree<ElemType>>());
 	results.push_back(containerBenchSub<lib_calvin_container::BPlusTree<ElemType>>());
 	
+	results.push_back(containerBenchSub<std::unordered_set<ElemType, myHasher<ElemType>>>());
 	results.push_back(containerBenchSub<boost::unordered_set<ElemType, myHasher<ElemType>>>());
 	results.push_back(containerBenchSub<lib_calvin_container::HashTable<ElemType, ElemType, Identity<ElemType>, myHasher<ElemType>>>());
 	results.push_back(containerBenchSub<lib_calvin_container::HashTable2<ElemType, ElemType, Identity<ElemType>, myHasher<ElemType>>>());
-	results.push_back(containerBenchSub<std::unordered_set<ElemType, myHasher<ElemType>>>());
 	
 	lib_calvin_benchmark::save_bench(category, getSubCategory<ElemType>(),
 									 getTitle<ElemType>(currentOperation), "",
