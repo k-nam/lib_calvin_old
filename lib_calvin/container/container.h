@@ -281,9 +281,11 @@ void insertSingleElement(T *elements, size_t size, size_t index, T1&& elem) {
 	}
 	new (elements + size) T(std::move(elements[size - 1]));
 	for (size_t i = size - 1; i > index; i--) { // assuming size is non-zero
-		elements[i] = std::move(elements[i - 1]);
+		elements[i].~T();
+		new (elements + i)  T(std::move(elements[i - 1]));
 	}
-	elements[index] = std::forward<T1>(elem);
+	elements[index].~T();
+	new (elements + index) T(std::forward<T1>(elem));
 }
 
 // put result in the target array (source array is treated rvalue)
