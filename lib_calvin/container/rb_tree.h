@@ -55,9 +55,10 @@ public:
 		void insert(InputIterator beg, InputIterator end);
 	size_t erase(K const &);
 	
-private: 
-	using BinTree<T, K, Comp, ExtractKey>::root_;
+public:
 	using BinTree<T, K, Comp, ExtractKey>::empty;
+private: 
+	using BinTree<T, K, Comp, ExtractKey>::root_;	
 	using BinTree<T, K, Comp, ExtractKey>::copyFrom;
 
 	template <typename T1>
