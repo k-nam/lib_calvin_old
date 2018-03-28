@@ -89,11 +89,11 @@ lib_calvin_benchmark::container::getContainerNamesAndTags(ContainerType containe
 		return { "lib_calvin::rb_tree" };
 
 	case GOOGLE_BTREE:
-		return { "google::b_tree" };
+		return { "google::b_tree", "B-tree" };
 	case LIB_CALVIN_BTREE:
-		return { "lib_calvin::b_tree" };
+		return { "lib_calvin::b_tree", "B-tree" };
 	case LIB_CALVIN_BPLUS_TREE:
-		return { "lib_calvin::b_plus_tree" };
+		return { "lib_calvin::b_plus_tree", "B-tree" };
 
 	case STD_UNORDERED_SET:
 		return { "std::unordered_set", "hash table" };
