@@ -291,7 +291,6 @@ namespace lib_calvin_container
 		void printNode(Node *) const;
 		void printTree(Node *) const;
 	private:
-		size_t size_;
 		Node *root_;
 	public:
 		friend BTreeTest<T>;
@@ -865,20 +864,20 @@ namespace lib_calvin_container
 	//--------------------------- tree implementation ------------------//
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	B_TREE_BASE<T, K, Comp, ExtractKey>::B_TREE_BASE() :size_(0), root_(NULL) {
+	B_TREE_BASE<T, K, Comp, ExtractKey>::B_TREE_BASE(): root_(NULL) {
 		//std::cout << "btree default ctor\n";
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	B_TREE_BASE<T, K, Comp, ExtractKey>::B_TREE_BASE(B_TREE_BASE<T, K, Comp, ExtractKey> const &rhs) :
-		size_(0), root_(NULL) {
+		root_(NULL) {
 		//std::cout << "btree copy ctor\n";
 		copyFrom(rhs);
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	B_TREE_BASE<T, K, Comp, ExtractKey>::B_TREE_BASE(B_TREE_BASE<T, K, Comp, ExtractKey> &&rhs) :
-		size_(0), root_(NULL) {
+	B_TREE_BASE<T, K, Comp, ExtractKey>::B_TREE_BASE(B_TREE_BASE<T, K, Comp, ExtractKey> &&rhs):
+		root_(NULL) {
 		//std::cout << "btree move ctor\n";
 		swap(rhs);
 	}
@@ -908,11 +907,8 @@ namespace lib_calvin_container
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	void B_TREE_BASE<T, K, Comp, ExtractKey>::swap(B_TREE_BASE<T, K, Comp, ExtractKey> &rhs) {
-		size_t tempSize = size_;
 		Node *tempRoot = root_;
-		size_ = rhs.size_;
 		root_ = rhs.root_;
-		rhs.size_ = tempSize;
 		rhs.root_ = tempRoot;
 	}
 
@@ -1043,7 +1039,7 @@ namespace lib_calvin_container
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	void B_TREE_BASE<T, K, Comp, ExtractKey>::clear() {
-		size_ = 0;
+
 		deleteTree(root_);
 		root_ = NULL;
 	}
@@ -1136,7 +1132,6 @@ namespace lib_calvin_container
 			root_ = newRoot;
 			newRoot->setSize(1);
 			newRoot->constructElement(0, std::forward<T1>(elem));
-			size_ = 1;
 			return std::pair<iterator, bool>(makeIterator(root_, 0), true);
 		}
 		if (root_ != NULL && root_->getSize() == 0) {
@@ -1382,14 +1377,14 @@ namespace lib_calvin_container
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	template <typename T1>
 	void
-		B_TREE_BASE<T, K, Comp, ExtractKey>::insertValue(
+	B_TREE_BASE<T, K, Comp, ExtractKey>::insertValue(
 			Node *node, T1 &&elem, int64_t indexToInsert) {
 		node->insertElement(indexToInsert, std::forward<T1>(elem));
 		node->increaseSizeByOne();
 #ifdef TREE_SIZE
 		node->increaseTreeSizeByOne();
 #endif
-		size_++;
+
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -1400,7 +1395,6 @@ namespace lib_calvin_container
 #ifdef TREE_SIZE
 		node->decreaseTreeSizeByOne();
 #endif
-		size_--;
 		return deletedElement;
 	}
 
@@ -1778,7 +1772,7 @@ namespace lib_calvin_container
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	void B_TREE_BASE<T, K, Comp, ExtractKey>::copyFrom(B_TREE_BASE const &rhs) {
 		// this object is empty at the point of calling this function
-		size_ = rhs.size_;
+
 		if (rhs.empty()) { // rhs is empty
 			return;
 		}

@@ -35,30 +35,31 @@ void lib_calvin_container::setTest() {
 	//setRvalueTest<BPlusTree<HeavyObjectWithMessage>>("BPlusTree / HeavyObject");
 	
 	int const testSize = 1000;
-	int const smallSize = 1000;
+	int const smallSize = 10000;
 	int const mediumSize = 10000;
 	int const largeSize = 1000000;	
-
+	/*
 	setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
 	setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
 	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
+	*/
 	setFunctionTest<BTree<HeavyObject>>(testSize, "lib_calvin_container::BTree");
 	setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
 	setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
 	setFunctionTest<HashTable<Numeric>>(testSize,	"lib_calvin_container::HashTable"); // cannot iterate
 	setFunctionTest<HashTable2<Numeric>>(testSize,	"lib_calvin_container::HashTable2"); // cannot iterate
 	
-	//setFunctionTest2<BTree<Numeric>>(testSize, "lib_calvin_container::BTree");
-	//setFunctionTest2<BPlusTree<Numeric>>(testSize, "lib_calvin_container::BPlusTree");
+	setFunctionTest2<BTree<Numeric>>(testSize, "lib_calvin_container::BTree");
+	setFunctionTest2<BPlusTree<Numeric>>(testSize, "lib_calvin_container::BPlusTree");
 
 	//setIteratorTest<RbTree<Numeric>>("RbTree iterator");
-	//setIteratorTest<BTree<Numeric>>("BTree iterator");
+	setIteratorTest<BTree<Numeric>>("BTree iterator");
 	setIteratorTest<HashTable<Numeric>>("HashTable iterator");
 	setIteratorTest<HashTable2<Numeric>>("HashTable2 iterator");
 
 	//setPerformanceTest<std::set<Numeric>>(largeSize, "std::set / Numeric");
 	//setPerformanceTest<boost::container::set<Numeric>>(largeSize, "boost::set / Numeric");
-	//setPerformanceTest<BinTree<Numeric>>(largeSize, "RbTree / Numeric");
+	//setPerformanceTest<BinTree<Numeric>>(largeSize, "BinTree / Numeric");
 	//setPerformanceTest<RbTree<Numeric>>(largeSize, "RbTree / Numeric");
 	//setPerformanceTest<BTree<Numeric>>(largeSize, "BTree / Numeric");
 	setPerformanceTest<BPlusTree<Numeric>>(largeSize, "BPlusTree / Numeric");
@@ -97,11 +98,11 @@ void lib_calvin_container::setTest() {
 	//setIntegratedSpeedTest<boost::container::set<HeavyObject>>(smallSize, "boost:set");
 	//setIntegratedSpeedTest<RbTree<HeavyObject>>(smallSize, "RbTree");
 	//setIntegratedSpeedTest<BTree<HeavyObject>>(smallSize, "BTree");
-	//setIntegratedSpeedTest<BPlusTree<HeavyObject>>(smallSize, "BPlusTree");
+	setIntegratedSpeedTest<BPlusTree<HeavyObject>>(smallSize, "BPlusTree");
 	//setIntegratedSpeedTest<OrderedArray<HeavyObject>>(smallSize, "OrderedArray");
 	//setIntegratedSpeedTest<boost::unordered_set<int>>(smallSize, "boost::unordered_set");
 	//setIntegratedSpeedTest<HashTable<int>>(smallSize, "HashTable");
-	//setIntegratedSpeedTest<btree::btree_set<HeavyObject>>(smallSize, "Google Btree");
+	setIntegratedSpeedTest<btree::btree_set<HeavyObject>>(smallSize, "Google Btree");
 
 
 
@@ -115,9 +116,6 @@ void lib_calvin_container::setTest() {
 	
 	HeavyObject::countThisObject();
 
-	std::cout << "my btree size: " << sizeof(BTree<HeavyObject>) << "\n";
-
-	std::cout << "google set size: " << sizeof(btree::btree_set<HeavyObject>) << "\n";
 	std::cout << "set test completed\n\n";
 }
 
@@ -321,7 +319,8 @@ void lib_calvin_container::setFunctionTest2(size_t testSize, std::string title) 
 template <typename Impl>
 void lib_calvin_container::setPerformanceTest(int n, std::string title) {
 	typedef Impl::value_type T;
-	cout << "Starting set performance test for " << title << ", objecct size: " << sizeof(T) << "\n";	
+	cout << "Starting set performance test for " << title << " container size: " << sizeof(Impl) <<
+		", objecct size: " << sizeof(T) << "\n";	
 	std::vector<T> testVector(n), testVector2(n);
 	// Test case 1: random
 	for (int i = 0; i < n; ++i) {
