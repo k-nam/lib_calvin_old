@@ -4,6 +4,8 @@
 #define B_TREE_BASE BTree
 #endif
 
+#define TREE_SIZE
+
 #include "container.h"
 
 namespace lib_calvin_container
@@ -12,7 +14,7 @@ template <typename T, typename K = T, typename Comp = std::less<K>, typename Ext
 class B_TREE_BASE 
 {
 private:
-	static int const NODE_BYTES = 500;
+	static int const NODE_BYTES = 150;
 	// all leaf nodes are full except leaf root 
 	// only leaf root grows (by reserve())
 	// B_TREE_FULL_NODE_CAPACITY must be odd
@@ -36,10 +38,12 @@ private:
 		void reserve(int capacity);
 		int getCapacity() const;
 		int getSize() const;
+#ifdef TREE_SIZE
 		virtual size_t getTreeSize() const;
 		virtual void refreshTreeSize();
 		void increaseTreeSizeByOne();
 		void decreaseTreeSizeByOne();
+#endif
 		void setSize(int size);
 		InternalNode *getParent();
 		int getIndexInParent() const;
@@ -138,12 +142,14 @@ private:
 		using Node::insertFirstElement;
 		using Node::insertLastElement;
 
+#ifdef TREE_SIZE
 	public:
 		size_t getTreeSize() const;	
 		void setTreeSize(size_t);
 		void refreshTreeSize();
 		void increaseTreeSizeByOne(size_t childIndex);
 		void decreaseTreeSizeByOne(size_t childIndex);
+#endif
 	public:
 		using Node::insertElement;
 	public:
@@ -417,6 +423,7 @@ int B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getSize() const {
 	return size_;
 }
 
+#ifdef TREE_SIZE
 template <typename T, typename K, typename Comp, typename ExtractKey>
 size_t B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getTreeSize() const {
 	return size_;
@@ -440,6 +447,7 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::decreaseTreeSizeByOne() {
 		getParent()->decreaseTreeSizeByOne(indexInParent_);
 	}
 }
+#endif
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
 void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setSize(int size) {
@@ -689,6 +697,7 @@ template <typename T, typename K, typename Comp, typename ExtractKey>
 B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::~InternalNode() { 
 }
 
+#ifdef TREE_SIZE
 template <typename T, typename K, typename Comp, typename ExtractKey>
 size_t B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::getTreeSize() const { 
 	return treeSize_;
@@ -732,6 +741,7 @@ void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::decreaseTreeSizeByOne(si
 		getParent()->decreaseTreeSizeByOne(indexInParent_);
 	}	
 }
+#endif
 
 template <typename T, typename K, typename Comp, typename ExtractKey>
 typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node * 
@@ -1302,10 +1312,12 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::findIteratorAt(size_t index) const {
 	}
 	Node *currentNode = root_;
 	while (true) {
+#ifdef TREE_SIZE
 		if (index >= currentNode->getTreeSize()) {
 			std::cout << "elementAt2 index error\n";
 			exit(0);
 		}
+#endif
 		if (currentNode->isLeafNode()) {
 			return makeIterator(currentNode, static_cast<int>(index));
 		} else {
@@ -1475,7 +1487,9 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::insertValue(
 		Node *node, T1 &&elem, int indexToInsert) {
 	node->insertElement(indexToInsert, std::forward<T1>(elem));	
 	node->increaseSizeByOne();
+#ifdef TREE_SIZE
 	node->increaseTreeSizeByOne();
+#endif
 	size_++;
 }
 
@@ -1484,7 +1498,9 @@ T const
 B_TREE_BASE<T, K, Comp, ExtractKey>::deleteValue(Node *node, int indexToDelete) {
   T const deletedElement = (node->eraseElement(indexToDelete));	
 	node->decreaseSizeByOne();
+#ifdef TREE_SIZE
 	node->decreaseTreeSizeByOne();
+#endif
 	size_--;
 	return deletedElement;
 }
@@ -1557,9 +1573,11 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::splitNode(Node *node, int parentIndex) {
 	node->setSize(t - 1);
 #endif
 	parent->increaseSizeByOne();
+#ifdef TREE_SIZE
 	node->refreshTreeSize();
 	newBrotherNode->refreshTreeSize();
 	node->getParent()->refreshTreeSize();
+#endif
 
 	return newBrotherNode;
 }
@@ -1652,9 +1670,12 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::addToNode(Node *node, int parentIndex) {
 			addToInternalNodeFromLeft(node, brotherNode, parentIndex);
 		}
 	} 	
+
+#ifdef TREE_SIZE
 	node->refreshTreeSize();
 	brotherNode->refreshTreeSize();
 	node->getParent()->refreshTreeSize();
+#endif
 	return true;
 }
 
@@ -1713,10 +1734,12 @@ B_TREE_BASE<T, K, Comp, ExtractKey>::mergeNode(Node *node, int parentIndex) {
 		root_ = node;
 		root_->setParent(NULL);
 	}
+#ifdef TREE_SIZE
 	node->refreshTreeSize();
 	if (node->getParent()) {
 		node->getParent()->refreshTreeSize();
 	}
+#endif
 	return node;
 }
 
