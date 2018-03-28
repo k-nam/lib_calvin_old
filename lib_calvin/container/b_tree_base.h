@@ -4,7 +4,7 @@
 #define B_TREE_BASE BTree
 #endif
 
-//#define TREE_SIZE
+#define TREE_SIZE
 
 #include "container.h"
 
@@ -23,7 +23,7 @@ namespace lib_calvin_container
 		static int64_t const B_TREE_ROOT_INIT_CAPACITY = 1;
 		static int64_t const B_TREE_NODE_REALLOC_MULTIPLIER = 2;
 		static bool const USE_BINARY_SEARCH = sizeof(T) > 16;
-		class InternalNode;
+		class Node;
 
 		// btree node. number of links in a node: t ~ 2t, number of elements in a node:
 		// t-1 ~ 2t-1. Therefore, maxNumKeys = 2t-1
@@ -32,22 +32,23 @@ namespace lib_calvin_container
 		private:
 			friend B_TREE_BASE;
 		protected:
-			Node(); // does not allocate memory; used only for derived class ctor
 		public:
-			Node(int64_t capacity);
-			~Node();
+
 			int64_t getCapacity() const;
 			int64_t getSize() const;
 #ifdef TREE_SIZE
-			virtual size_t getTreeSize() const;
-			virtual void refreshTreeSize();
+			size_t getTreeSize() const;
+			void setTreeSize(size_t);
+			void refreshTreeSize();
 			void increaseTreeSizeByOne();
 			void decreaseTreeSizeByOne();
+			void increaseTreeSizeByOne(size_t childIndex);
+			void decreaseTreeSizeByOne(size_t childIndex);
 #endif
 			void setSize(int64_t size);
-			InternalNode *getParent();
+			Node *getParent();
 			int64_t getIndexInParent() const;
-			void setParent(InternalNode *parent);
+			void setParent(Node *parent);
 			bool isLeafNode() const; // used to record type information
 		protected:
 			void setIndexInParent(int64_t index);
@@ -88,67 +89,16 @@ namespace lib_calvin_container
 			void setPrevious(Node *previous);
 #endif
 		public:
-			T *getElementArray();
-			T const *getElementArray() const;
-		private:
-			void init();
-			int64_t getTargetCapacity(int64_t capacity) const;
-		private:
-			struct BasicFields {
-				int64_t size_; // current number keys in this node
-				int64_t capacity_;
-				bool isLeafNode_;
-				InternalNode *parent_;
-				int64_t indexInParent_;
-#ifdef BPLUS
-				Node *next_;
-				Node *previous_;
-#endif
-			};
-			struct Fields : public BasicFields {
-				char elements_[sizeof(T) * B_TREE_FULL_NODE_CAPACITY / sizeof(char)];
-			};
-			Fields fields_;
-		};
-
-		class InternalNode : public Node
-		{
-		public:
-			InternalNode();
-			~InternalNode();
-		private:
-			friend B_TREE_BASE;
-		public:
-			using Node::getSize;
-			using Node::getParent;
-			using Node::fields_;
-			using Node::eraseElement;
-			using Node::eraseFirstElement;
-			using Node::eraseLastElement;
-			using Node::insertFirstElement;
-			using Node::insertLastElement;
-
-#ifdef TREE_SIZE
-		public:
-			size_t getTreeSize() const;
-			void setTreeSize(size_t);
-			void refreshTreeSize();
-			void increaseTreeSizeByOne(size_t childIndex);
-			void decreaseTreeSizeByOne(size_t childIndex);
-#endif
-		public:
-			using Node::insertElement;
-		public:
 			// 0 <= index <= size_
 			Node *getChild(int64_t index);
 			Node const *getChild(int64_t index) const;
 			void setChild(int64_t index, Node *child);
 			Node *getFirstChild();
 			Node *getLastChild();
-			int64_t findChild(Node const *child) const; // return the index of the child
-													// insert right before index'th element (index == 0 means at first, 
-													// index == size means at last)
-													// insert and erase methods does not change size_!
+			// return the index of the child
+			int64_t findChild(Node const *child) const;
+			// insert right before index'th element (index == 0 means at first, index == size means at last)
+			// insert and erase methods does not change size_!
 			template <typename T1> void insertElementAndChild(int64_t index, T1 &&elem, Node *child);
 			void insertChild(int64_t index, Node *child);
 			// for addToNode method
@@ -159,10 +109,36 @@ namespace lib_calvin_container
 			// for mergeNode method
 			void eraseChild(int64_t index);
 			void eraseElementAndChild(int64_t index);
+		public:
+			T *getElementArray();
+			T const *getElementArray() const;
 		private:
-			Node *children_[B_TREE_FULL_NODE_CAPACITY + 1];
-			size_t treeSize_;
-			size_t treeSize2_[B_TREE_FULL_NODE_CAPACITY + 1];
+			void init();
+			int64_t getTargetCapacity(int64_t capacity) const;
+
+		private:
+			struct BasicFields {
+				int64_t size_; // current number keys in this node
+				int64_t capacity_;
+				bool isLeafNode_;
+				Node *parent_;
+				int64_t indexInParent_;
+#ifdef BPLUS
+				Node *next_;
+				Node *previous_;
+#endif
+			};
+			struct LeafFields: public BasicFields {
+				char elements_[sizeof(T) * B_TREE_FULL_NODE_CAPACITY / sizeof(char)];
+			};
+			struct InternalFields: public LeafFields {
+				Node *children_[B_TREE_FULL_NODE_CAPACITY + 1];
+#ifdef TREE_SIZE
+				size_t treeSize_;
+				size_t treeSize2_[B_TREE_FULL_NODE_CAPACITY + 1];
+#endif
+			};
+			InternalFields fields_;
 		};
 
 
@@ -292,7 +268,7 @@ namespace lib_calvin_container
 		// deleting predecessor
 		T const deleteRightMost(Node *node, int64_t parentIndex);
 		Node *makeNewLeafNode(size_t capacity);
-		InternalNode *makeNewInternalNode();
+		Node *makeNewInternalNode();
 		void initNode(Node *, size_t capacity) const;
 	private:
 		// Returns true when given element can be inserted (not already exists)
@@ -351,36 +327,10 @@ namespace lib_calvin_container
 
 	//--------------------------  node implementations -------------------------//
 
-	// this is protected ctor only for derived classes
-	template <typename T, typename K, typename Comp, typename ExtractKey>
-	B_TREE_BASE<T, K, Comp, ExtractKey>::Node::Node() {
-		init();
-	}
-
-	template <typename T, typename K, typename Comp, typename ExtractKey>
-	B_TREE_BASE<T, K, Comp, ExtractKey>::Node::Node(int64_t capacity) {
-		init();
-		fields_.capacity_ = capacity;
-		B_TREE_BASE<T, K, Comp, ExtractKey>::nodeCount_++;
-	}
-
-	template <typename T, typename K, typename Comp, typename ExtractKey>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::init() {
-
-	}
-
-	template <typename T, typename K, typename Comp, typename ExtractKey>
-	B_TREE_BASE<T, K, Comp, ExtractKey>::Node::~Node() {
-		B_TREE_BASE<T, K, Comp, ExtractKey>::nodeCount_--;
-
-	}
-
-
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	int64_t B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getCapacity() const {
 		return fields_.capacity_;
 	}
-
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	int64_t B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getSize() const {
@@ -390,12 +340,36 @@ namespace lib_calvin_container
 #ifdef TREE_SIZE
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	size_t B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getTreeSize() const {
-		return fields_.size_;
+		if (isLeafNode()) {
+			return fields_.size_;
+		} else {
+			return fields_.treeSize_;
+		}
+	}
+
+	template <typename T, typename K, typename Comp, typename ExtractKey>
+	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setTreeSize(size_t treeSize) {
+		fields_.treeSize_ = treeSize;
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::refreshTreeSize() {
-		return;
+		if (isLeafNode()) {
+			return;
+		} else {
+			//std::cout << "refreshTreeSize called\n";
+			size_t treeSize = 0;
+#ifndef BPLUS
+			treeSize += getSize(); // num elements in the node itself
+#endif
+			for (int64_t i = 0; i <= getSize(); i++) {
+				Node *child = getChild(i);
+				treeSize += child->getTreeSize();
+				fields_.treeSize2_[i] = child->getTreeSize();
+				//std::cout << "child tree size at: " << i << " was: " << child->getTreeSize();
+			}
+			fields_.treeSize_ = treeSize;
+		}
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -411,6 +385,24 @@ namespace lib_calvin_container
 			getParent()->decreaseTreeSizeByOne(fields_.indexInParent_);
 		}
 	}
+
+	template <typename T, typename K, typename Comp, typename ExtractKey>
+	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::increaseTreeSizeByOne(size_t childIndex) {
+		fields_.treeSize_++;
+		fields_.treeSize2_[childIndex]++;
+		if (getParent()) {
+			getParent()->increaseTreeSizeByOne(fields_.indexInParent_);
+		}
+	}
+
+	template <typename T, typename K, typename Comp, typename ExtractKey>
+	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::decreaseTreeSizeByOne(size_t childIndex) {
+		fields_.treeSize_--;
+		fields_.treeSize2_[childIndex]--;
+		if (getParent()) {
+			getParent()->decreaseTreeSizeByOne(fields_.indexInParent_);
+		}
+	}
 #endif
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -419,13 +411,13 @@ namespace lib_calvin_container
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	typename B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode *
+	typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
 		B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getParent() {
 		return fields_.parent_;
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setParent(InternalNode *parent) {
+	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setParent(Node *parent) {
 		fields_.parent_ = parent;
 	}
 
@@ -635,101 +627,44 @@ namespace lib_calvin_container
 	}
 #endif
 
-	//--------------------------  internal node implementations -------------------------//
-
-	template <typename T, typename K, typename Comp, typename ExtractKey>
-	B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::InternalNode() : Node() {
-		fields_.isLeafNode_ = false;
-	}
-
-	template <typename T, typename K, typename Comp, typename ExtractKey>
-	B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::~InternalNode() {
-	}
-
-#ifdef TREE_SIZE
-	template <typename T, typename K, typename Comp, typename ExtractKey>
-	size_t B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::getTreeSize() const {
-		return treeSize_;
-	}
-
-	template <typename T, typename K, typename Comp, typename ExtractKey>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::setTreeSize(size_t treeSize) {
-		treeSize_ = treeSize;
-	}
-
-	template <typename T, typename K, typename Comp, typename ExtractKey>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::refreshTreeSize() {
-		//std::cout << "refreshTreeSize called\n";
-		size_t treeSize = 0;
-#ifndef BPLUS
-		treeSize += getSize(); // num elements in the node itself
-#endif
-		for (int64_t i = 0; i <= getSize(); i++) {
-			Node *child = getChild(i);
-			treeSize += child->getTreeSize();
-			treeSize2_[i] = child->getTreeSize();
-			//std::cout << "child tree size at: " << i << " was: " << child->getTreeSize();
-		}
-		treeSize_ = treeSize;
-	}
-
-	template <typename T, typename K, typename Comp, typename ExtractKey>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::increaseTreeSizeByOne(size_t childIndex) {
-		treeSize_++;
-		treeSize2_[childIndex]++;
-		if (getParent()) {
-			getParent()->increaseTreeSizeByOne(fields_.indexInParent_);
-		}
-	}
-
-	template <typename T, typename K, typename Comp, typename ExtractKey>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::decreaseTreeSizeByOne(size_t childIndex) {
-		treeSize_--;
-		treeSize2_[childIndex]--;
-		if (getParent()) {
-			getParent()->decreaseTreeSizeByOne(fields_.indexInParent_);
-		}
-	}
-#endif
-
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
-		B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::getChild(int64_t index) {
-		return children_[index];
+		B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getChild(int64_t index) {
+		return fields_.children_[index];
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node const *
-		B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::getChild(int64_t index) const {
-		return children_[index];
+		B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getChild(int64_t index) const {
+		return fields_.children_[index];
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::setChild(int64_t index, Node *child) {
-		children_[index] = child;
+	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::setChild(int64_t index, Node *child) {
+		fields_.children_[index] = child;
 		child->setIndexInParent(index);
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
-		B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::getFirstChild() {
+		B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getFirstChild() {
 		return getChild(0);
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
-		B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::getLastChild() {
+		B_TREE_BASE<T, K, Comp, ExtractKey>::Node::getLastChild() {
 		return getChild(getSize());
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	int64_t B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::findChild(Node const *child) const {
+	int64_t B_TREE_BASE<T, K, Comp, ExtractKey>::Node::findChild(Node const *child) const {
 		return child->getIndexInParent();
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	template <typename T1>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::insertElementAndChild(
+	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::insertElementAndChild(
 		int64_t index, T1 &&elem, Node *child) {
 		// insert elem right before index'th elem 
 		// and insert child right before index + 1'th child
@@ -738,7 +673,7 @@ namespace lib_calvin_container
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::insertChild(int64_t index, Node *child) {
+	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::insertChild(int64_t index, Node *child) {
 		for (int64_t i = getSize(); i >= index; --i) {
 			//children_[i + 1] = children_[i];
 			setChild(i + 1, getChild(i));
@@ -749,7 +684,7 @@ namespace lib_calvin_container
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	template <typename T1>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::insertFirstElementAndChild(
+	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::insertFirstElementAndChild(
 		T1 &&elem, Node *child) {
 		insertChild(0, child);
 		insertFirstElement(std::forward<T1>(elem));
@@ -757,35 +692,35 @@ namespace lib_calvin_container
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	template <typename T1>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::insertLastElementAndChild(
+	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::insertLastElementAndChild(
 		T1 &&elem, Node *child) {
 		insertChild(getSize() + 1, child);
 		insertLastElement(std::forward<T1>(elem));
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::eraseFirstElementAndChild() {
+	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::eraseFirstElementAndChild() {
 		eraseChild(0);
 		eraseFirstElement();
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::eraseLastElementAndChild() {
+	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::eraseLastElementAndChild() {
 		eraseChild(getSize());
 		eraseLastElement();
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::eraseChild(int64_t index) {
+	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::eraseChild(int64_t index) {
 		for (int64_t i = index; i < getSize(); ++i) {
 			//children_[i] = children_[i + 1];
 			setChild(i, getChild(i + 1));
 		}
-		children_[getSize()] = NULL;
+		fields_.children_[getSize()] = NULL;
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	void B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode::eraseElementAndChild(int64_t index) {
+	void B_TREE_BASE<T, K, Comp, ExtractKey>::Node::eraseElementAndChild(int64_t index) {
 		eraseChild(index + 1);
 		eraseElement(index);
 	}
@@ -850,9 +785,9 @@ namespace lib_calvin_container
 		} \
 	} else { /* internal node */ \
 		Node *temp = \
-			static_cast<InternalNode *>(node_)->getChild(index_ ARG4); \
+			static_cast<Node *>(node_)->getChild(index_ ARG4); \
 		while (temp->isLeafNode() == false) { \
-			temp = static_cast<InternalNode *>(temp)->getChild(ARG5); \
+			temp = static_cast<Node *>(temp)->getChild(ARG5); \
 		} \
 		node_ = temp; \
 		index_ = ARG6;	\
@@ -989,7 +924,11 @@ namespace lib_calvin_container
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	size_t B_TREE_BASE<T, K, Comp, ExtractKey>::size() const {
-		return size_;
+		if (root_ == nullptr) {
+			return 0;
+		} else {
+			return root_->getTreeSize();
+		}
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -1050,7 +989,7 @@ namespace lib_calvin_container
 #endif
 								   // add tree sizes of brothers in left of curNode
 				for (size_t i = 0; i < curIndex; i++) {
-					index += static_cast<InternalNode *>(curNode)->treeSize2_[i];
+					index += curNode->fields_.treeSize2_[i];
 				}
 			}
 			if (curNode->getParent() == nullptr) {
@@ -1093,7 +1032,7 @@ namespace lib_calvin_container
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	size_t
-		B_TREE_BASE<T, K, Comp, ExtractKey>::erase(K const &key) {
+	B_TREE_BASE<T, K, Comp, ExtractKey>::erase(K const &key) {
 		if (empty()) {
 			return 0;
 		} else {
@@ -1111,7 +1050,7 @@ namespace lib_calvin_container
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	bool B_TREE_BASE<T, K, Comp, ExtractKey>::empty() const {
-		return size_ == 0;
+		return root_ == NULL;
 	}
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
@@ -1133,9 +1072,9 @@ namespace lib_calvin_container
 		Node *node = root_;
 		while (node->isLeafNode() == false) {
 			if (isFirst) {
-				node = static_cast<InternalNode *>(node)->getFirstChild();
+				node = static_cast<Node *>(node)->getFirstChild();
 			} else {
-				node = static_cast<InternalNode *>(node)->getLastChild();
+				node = static_cast<Node *>(node)->getLastChild();
 			}
 		}
 		return node;
@@ -1247,7 +1186,7 @@ namespace lib_calvin_container
 					return std::make_pair(makeIterator(thisNode, result.first), false);
 				}
 			} else { // internal nodes are not data elements
-				thisNode = static_cast<InternalNode *>(thisNode)->getChild(result.first);
+				thisNode = static_cast<Node *>(thisNode)->getChild(result.first);
 			}
 #else
 			if (result.second == false) { /* we found the element */
@@ -1256,7 +1195,7 @@ namespace lib_calvin_container
 				if (thisNode->isLeafNode() == true) {
 					return std::make_pair(makeIterator(thisNode, result.first), false);
 				} else {
-					thisNode = static_cast<InternalNode *>(thisNode)->getChild(result.first);
+					thisNode = static_cast<Node *>(thisNode)->getChild(result.first);
 				}
 			}
 #endif
@@ -1280,13 +1219,13 @@ namespace lib_calvin_container
 			if (currentNode->isLeafNode()) {
 				return makeIterator(currentNode, static_cast<int64_t>(index));
 			} else {
-				InternalNode *currentInternalNode = static_cast<InternalNode *>(currentNode);
+				Node *currentInternalNode = static_cast<Node *>(currentNode);
 				for (int64_t i = 0; i <= currentInternalNode->getSize(); i++) {
-					if (index < currentInternalNode->treeSize2_[i]) {
+					if (index < currentInternalNode->fields_.treeSize2_[i]) {
 						currentNode = currentInternalNode->getChild(i);
 						break;
 					} else {
-						index -= currentInternalNode->treeSize2_[i]; // pass through i'th subtreee
+						index -= currentInternalNode->fields_.treeSize2_[i]; // pass through i'th subtreee
 #ifndef BPLUS
 						if (index == 0) {
 							return makeIterator(currentNode, i);
@@ -1326,7 +1265,7 @@ namespace lib_calvin_container
 			}
 		}
 		if (node->isLeafNode() == false) { // this is internal node
-			Node *childNodeToInsert = static_cast<InternalNode *>(node)->getChild(indexToInsert);
+			Node *childNodeToInsert = static_cast<Node *>(node)->getChild(indexToInsert);
 			if (node->isFull()) {
 				// If we are going down with the right part of splitted node
 				if (Comp()(ExtractKey()(node->getElement(node->t - 1)), ExtractKey()(elem))) {
@@ -1372,7 +1311,7 @@ namespace lib_calvin_container
 		int64_t returnValue = 0;
 		std::pair<int64_t, bool> result = getIndexToInsert2(node, key);
 		if (node->isLeafNode() == false) { // this is internal
-			InternalNode *thisNode = static_cast<InternalNode *>(node);
+			Node *thisNode = static_cast<Node *>(node);
 			Node *childNodeToDeleteFrom = thisNode->getChild(result.first);
 #ifdef BPLUS
 			return deleteFromNode(childNodeToDeleteFrom, key, result.first);
@@ -1402,13 +1341,14 @@ namespace lib_calvin_container
 			}
 #endif
 		} else { // leaf node		
-			if (result.second == true) { // not exist in this tree at all
-										 //std::cout << "deleting: key not found in leaf node\n";
+			if (result.second == true) { 
+				// not exist in this tree at all
+				//std::cout << "deleting: key not found in leaf node\n";
 				returnValue = 0;
 			} else { // exists
 					 //std::cout << "deleting: key found in leaf node\n";
 				deleteValue(node, result.first);
-				if (empty()) { // now empty
+				if (node == root_ && node->getSize() == 0) { // now empty
 					deleteNode(root_);
 					root_ = NULL;
 				}
@@ -1483,7 +1423,7 @@ namespace lib_calvin_container
 			exit(0);
 		}
 		if (node == root_) {
-			InternalNode *newRoot = makeNewInternalNode();
+			Node *newRoot = makeNewInternalNode();
 			node->setParent(newRoot);
 			newRoot->setChild(0, node);
 			root_ = newRoot; // change the root of this B-tree
@@ -1491,13 +1431,13 @@ namespace lib_calvin_container
 		Node *newBrotherNode = NULL;
 		if (node->isLeafNode() == false) { // node is internal
 			newBrotherNode = makeNewInternalNode();
-			//static_cast<InternalNode *>(newBrotherNode)->setTreeSize(0);
+			//static_cast<Node *>(newBrotherNode)->setTreeSize(0);
 			// copy links and change parents
 			for (int64_t i = 0; i < t; ++i) {
-				static_cast<InternalNode *>(newBrotherNode)->
-					setChild(i, static_cast<InternalNode *>(node)->getChild(i + t));
-				static_cast<InternalNode *>(newBrotherNode)->
-					getChild(i)->setParent(static_cast<InternalNode *>(newBrotherNode));
+				static_cast<Node *>(newBrotherNode)->
+					setChild(i, static_cast<Node *>(node)->getChild(i + t));
+				static_cast<Node *>(newBrotherNode)->
+					getChild(i)->setParent(static_cast<Node *>(newBrotherNode));
 			}
 		} else { // node is leaf
 			newBrotherNode = makeNewLeafNode(B_TREE_FULL_NODE_CAPACITY);
@@ -1505,7 +1445,7 @@ namespace lib_calvin_container
 		// copy elements and delete original ones
 		node->giveRightHalfTo(newBrotherNode);
 		newBrotherNode->setParent(node->getParent());
-		InternalNode *parent = static_cast<InternalNode *>(node->getParent());
+		Node *parent = static_cast<Node *>(node->getParent());
 		if (parent->isFull()) {
 			std::cout << "splitNode error: parent is full\n";
 			exit(0);
@@ -1572,12 +1512,12 @@ namespace lib_calvin_container
 #undef ADD_TO_NODE_ROUTINE_LEAF
 
 #define ADD_TO_NODE_ROUTINE_INTERNAL(ARG1, ARG2, ARG3, ARG4, ARG5) \
-	static_cast<InternalNode *>(node)->ARG1(\
-	node->getParent()->getElement(parentIndex ARG2), static_cast<InternalNode *>(brotherNode)->ARG3()); \
-	static_cast<InternalNode *>(brotherNode)->ARG3()->setParent(static_cast<InternalNode *>(node)); \
+	static_cast<Node *>(node)->ARG1(\
+	node->getParent()->getElement(parentIndex ARG2), static_cast<Node *>(brotherNode)->ARG3()); \
+	static_cast<Node *>(brotherNode)->ARG3()->setParent(static_cast<Node *>(node)); \
 	node->increaseSizeByOne(); \
 	node->getParent()->assignElement(parentIndex ARG2, std::move(brotherNode->ARG4())); \
-	static_cast<InternalNode *>(brotherNode)->ARG5(); \
+	static_cast<Node *>(brotherNode)->ARG5(); \
 	brotherNode->decreaseSizeByOne();
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -1596,7 +1536,7 @@ namespace lib_calvin_container
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	bool
 		B_TREE_BASE<T, K, Comp, ExtractKey>::addToNode(Node *node, int64_t parentIndex) {
-		if (root_ == node) { // should not have been called
+		if (empty()) { // should not have been called
 			std::cout << "addToNode called on the root node\n";
 			return false;
 		}
@@ -1607,7 +1547,7 @@ namespace lib_calvin_container
 		// getRightBrother returns null if this is the rightmost children
 		Node *brotherNode = NULL;
 		if (parentIndex < node->getParent()->getSize()) {
-			brotherNode = static_cast<InternalNode *>(node->getParent())->
+			brotherNode = static_cast<Node *>(node->getParent())->
 				getChild(parentIndex + 1);
 			if (brotherNode->isLeast()) {
 				return false;
@@ -1618,7 +1558,7 @@ namespace lib_calvin_container
 				addToInternalNodeFromRight(node, brotherNode, parentIndex);
 			}
 		} else { /* this is the rightmost child; look into its left brother */
-			brotherNode = static_cast<InternalNode *>(node->getParent())->
+			brotherNode = static_cast<Node *>(node->getParent())->
 				getChild(parentIndex - 1);
 			if (brotherNode->isLeast()) {
 				return false;
@@ -1651,10 +1591,10 @@ namespace lib_calvin_container
 		}
 		Node *brotherNode = NULL;
 		if (parentIndex < node->getParent()->getSize()) {
-			brotherNode = static_cast<InternalNode *>(node->getParent())->
+			brotherNode = static_cast<Node *>(node->getParent())->
 				getChild(parentIndex + 1);
 		} else { // using a trick: exchange node and brotherNode for symmetricity
-			brotherNode = static_cast<InternalNode *>(node->getParent())->
+			brotherNode = static_cast<Node *>(node->getParent())->
 				getChild(parentIndex - 1);
 			Node *temp = node;
 			node = brotherNode;
@@ -1665,9 +1605,9 @@ namespace lib_calvin_container
 		if (node->isLeafNode() == false) { // copy children and change parent
 			node->receiveRightHalfFrom(brotherNode);
 			for (int64_t i = 0; i < node->t; ++i) {
-				static_cast<InternalNode *>(node)->setChild(i + node->t,
-															static_cast<InternalNode *>(brotherNode)->getChild(i));
-				static_cast<InternalNode *>(brotherNode)->getChild(i)->setParent(static_cast<InternalNode *>(node));
+				static_cast<Node *>(node)->setChild(i + node->t,
+															static_cast<Node *>(brotherNode)->getChild(i));
+				static_cast<Node *>(brotherNode)->getChild(i)->setParent(static_cast<Node *>(node));
 			}
 			node->constructElement(node->t - 1, std::move(node->getParent()->getElement(parentIndex)));
 		} else { // leaf
@@ -1684,7 +1624,7 @@ namespace lib_calvin_container
 		}
 		deleteNode(brotherNode);
 		// erase one element and one child from the parent
-		static_cast<InternalNode *>(node->getParent())->eraseElementAndChild(parentIndex);
+		static_cast<Node *>(node->getParent())->eraseElementAndChild(parentIndex);
 		node->getParent()->decreaseSizeByOne();
 		// special case for root
 		if (node->getParent() == root_ && root_->getSize() == 0) {
@@ -1732,7 +1672,7 @@ namespace lib_calvin_container
 			return this->deleteValue(node, 0);
 		} else {
 			return deleteLeftMost(
-				static_cast<InternalNode *>(node)->getFirstChild(), 0);
+				static_cast<Node *>(node)->getFirstChild(), 0);
 		}
 	}
 
@@ -1745,7 +1685,7 @@ namespace lib_calvin_container
 			return this->deleteValue(node, node->getSize() - 1);
 		} else {
 			return deleteRightMost(
-				static_cast<InternalNode *>(node)->getLastChild(), node->getSize());
+				static_cast<Node *>(node)->getLastChild(), node->getSize());
 		}
 	}
 
@@ -1756,7 +1696,7 @@ namespace lib_calvin_container
 		//std::cout << "size of btree is " << sizeof(B_TREE_BASE<T, K, Comp, ExtractKey>) << "\n";
 		//std::cout << "size of node is " << sizeof(B_TREE_BASE<T, K, Comp, ExtractKey>::Node) << "\n";
 		//std::cout << "size of fullnode is " << sizeof(B_TREE_BASE<T, K, Comp, ExtractKey>::FullNode) << "\n";
-		//std::cout << "size of internal node is " << sizeof(B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode) << "\n";
+		//std::cout << "size of internal node is " << sizeof(B_TREE_BASE<T, K, Comp, ExtractKey>::Node) << "\n";
 		//std::cout << "size of full internal node is " << 
 		//	sizeof(B_TREE_BASE<T, K, Comp, ExtractKey>::FullInternalNode) << "\n";
 		capacity = B_TREE_FULL_NODE_CAPACITY;
@@ -1769,9 +1709,9 @@ namespace lib_calvin_container
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	typename B_TREE_BASE<T, K, Comp, ExtractKey>::InternalNode *
+	typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
 		B_TREE_BASE<T, K, Comp, ExtractKey>::makeNewInternalNode() {
-		InternalNode *newObject = reinterpret_cast<InternalNode *>(operator new(sizeof(InternalNode)));
+		Node *newObject = reinterpret_cast<Node *>(operator new(sizeof(Node)));
 		initNode(newObject, B_TREE_FULL_NODE_CAPACITY);
 		newObject->fields_.isLeafNode_ = false;
 		return newObject;
@@ -1809,11 +1749,11 @@ namespace lib_calvin_container
 		B_TREE_BASE<T, K, Comp, ExtractKey>::printTree(Node *node) const {
 		if (node->isLeafNode() == false) {
 			for (int64_t i = 0; i < node->getSize(); ++i) {
-				printTree(static_cast<InternalNode *>(node)->getChild(i));
+				printTree(static_cast<Node *>(node)->getChild(i));
 				std::cout << node->getElement(i);
 				std::cout << "\n";
 			}
-			printTree(static_cast<InternalNode *>(node)->getLastChild());
+			printTree(static_cast<Node *>(node)->getLastChild());
 		} else {
 			printNode(node);
 		}
@@ -1867,9 +1807,9 @@ namespace lib_calvin_container
 		}
 		bool isLeafNode = source->isLeafNode();
 		if (isLeafNode == false) { // this is internal	
-			InternalNode *realTarget = makeNewInternalNode();
+			Node *realTarget = makeNewInternalNode();
 			bTreeNodeContentCopy(source, realTarget);
-			InternalNode const *realSource = static_cast<InternalNode const *>(source);
+			Node const *realSource = static_cast<Node const *>(source);
 #ifdef BPLUS
 			Node *previousRightMostOfChild = NULL;
 #endif
@@ -1911,11 +1851,11 @@ namespace lib_calvin_container
 		target->setSize(source->getSize());
 		copyConstruct(source->getElementArray(), target->getElementArray(), source->getSize());
 		if (!source->isLeafNode()) {
-			InternalNode const *src = static_cast<InternalNode const *>(source);
-			InternalNode *tar = static_cast<InternalNode *>(target);
-			tar->treeSize_ = src->treeSize_;
+			Node const *src = static_cast<Node const *>(source);
+			Node *tar = static_cast<Node *>(target);
+			tar->fields_.treeSize_ = src->fields_.treeSize_;
 			for (int64_t i = 0; i <= src->getSize(); i++) {
-				tar->treeSize2_[i] = src->treeSize2_[i];
+				tar->fields_.treeSize2_[i] = src->fields_.treeSize2_[i];
 			}
 		}
 	}
@@ -1928,7 +1868,7 @@ namespace lib_calvin_container
 		bool isLeafNode = node->isLeafNode();
 		if (isLeafNode == false) { // this is internal
 			for (int64_t i = 0; i <= node->getSize(); ++i) {
-				deleteTree(static_cast<InternalNode *>(node)->getChild(i));
+				deleteTree(static_cast<Node *>(node)->getChild(i));
 			}
 		}
 		deleteNode(node);
