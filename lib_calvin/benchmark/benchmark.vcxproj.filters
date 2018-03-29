@@ -19,8 +19,8 @@
     <Filter Include="container">
       <UniqueIdentifier>{4e72d6d9-64b7-41f1-9676-dde72694fd19}</UniqueIdentifier>
     </Filter>
-    <Filter Include="other">
-      <UniqueIdentifier>{bd1e374a-48d8-4c1b-a963-1e4b2fcb8ece}</UniqueIdentifier>
+    <Filter Include="matrix">
+      <UniqueIdentifier>{71923e8d-6635-43a9-8586-63b8d5994ebe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +48,12 @@
     <ClCompile Include="container_bench.cc">
       <Filter>container</Filter>
     </ClCompile>
+    <ClCompile Include="matrix_bench.cc">
+      <Filter>matrix</Filter>
+    </ClCompile>
+    <ClCompile Include="..\matrix\matrix.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bench.h">
@@ -59,14 +65,17 @@
     <ClInclude Include="container_bench.h">
       <Filter>container</Filter>
     </ClInclude>
+    <ClInclude Include="..\container\google_btree_set.h">
+      <Filter>container</Filter>
+    </ClInclude>
     <ClInclude Include="..\container\google_btree.h">
-      <Filter>other</Filter>
+      <Filter>container</Filter>
     </ClInclude>
     <ClInclude Include="..\container\google_btree_container.h">
-      <Filter>other</Filter>
+      <Filter>container</Filter>
     </ClInclude>
-    <ClInclude Include="..\container\google_btree_set.h">
-      <Filter>other</Filter>
+    <ClInclude Include="matrix_bench.h">
+      <Filter>matrix</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

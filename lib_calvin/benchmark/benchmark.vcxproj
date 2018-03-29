@@ -41,7 +41,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -123,11 +123,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\container\container_test_types.cc" />
+    <ClCompile Include="..\matrix\matrix.cc" />
     <ClCompile Include="..\sorting\sort_test.cc" />
     <ClCompile Include="..\util\random.cc" />
     <ClCompile Include="..\util\thread.cc" />
     <ClCompile Include="bench_main.cc" />
     <ClCompile Include="container_bench.cc" />
+    <ClCompile Include="matrix_bench.cc" />
     <ClCompile Include="sorting_bench.cc" />
     <ClCompile Include="bench.cc" />
   </ItemGroup>
@@ -136,6 +138,7 @@
     <ClInclude Include="..\container\google_btree_container.h" />
     <ClInclude Include="..\container\google_btree_set.h" />
     <ClInclude Include="container_bench.h" />
+    <ClInclude Include="matrix_bench.h" />
     <ClInclude Include="sorting_bench.h" />
     <ClInclude Include="bench.h" />
   </ItemGroup>
