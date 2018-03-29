@@ -13,8 +13,8 @@
 // type T should have default constructor as initializer
 namespace lib_calvin_matrix
 {
-	size_t const L1_SIZE = 32000;
-	size_t const L2_SIZE = 6000000;
+	size_t const L1_SIZE = 32*1000;
+	size_t const L2_SIZE = 256*1000;
 
 	template <typename T>
 	class matrix_base;
@@ -84,7 +84,7 @@ namespace lib_calvin_matrix
 		strassenMultiAdd(matrix<T> const &lhs, matrix<T> const &rhs, matrix<T> &result);
 
 	template <typename T>
-	void strassenMultiAdd(matrix<T> const &lhs, matrix<T> const &rhs, matrix<T> &result,
+	void strassenMultiAddGeneral(matrix<T> const &lhs, matrix<T> const &rhs, matrix<T> &result,
 		bool toBeParallel);
 
 	template <typename T>
@@ -110,7 +110,7 @@ namespace lib_calvin_matrix
 
 	// Normal layout
 	template <typename T>
-	void naiveMultiAdd(T const *A, T const *B, T *C,
+	void naiveMultiAddImpl(T const *A, T const *B, T *C,
 		size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
 	// using loop unrolling with k
@@ -123,52 +123,52 @@ namespace lib_calvin_matrix
 
 	// Normal layout, transpose B for sequential access
 	template <typename T>
-	void naiveMultiAdd3(T const *A, T const *B, T *C,
+	void naiveMultiAdd3Impl(T const *A, T const *B, T *C,
 		size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
 	// normal layout multiply (row * row)
 	// lheight, lwidth, rwidth: operating region
 	template <typename T>
-	void simpleMultiAdd(T const *A, T const *B, T *C,
+	void simpleMultiAddImpl(T const *A, T const *B, T *C,
 		size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
 	template <>
-	void simpleMultiAdd<float>(float const *A, float const *B, float *C,
+	void simpleMultiAddImpl<float>(float const *A, float const *B, float *C,
 		size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
 	// normal layout multiply (cache-optimized)
 	template <typename T>
-	void blockedMultiAdd(T const *A, T const *B, T *C,
+	void blockedMultiAddImpl(T const *A, T const *B, T *C,
 		size_t lheight, size_t lwidth, size_t rwidth,
 		size_t Aw, size_t Bw, size_t blockH, size_t blockW);
 
 	template <typename T>
-	void blockedMultiAdd(T const *A, T const *B, T *C,
+	void blockedMultiAddImpl(T const *A, T const *B, T *C,
 		size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
 	// This assumes recursive layout of matrices
 	template <typename T>
-	void recursiveMultiAddSingleThread(T const *A, T const *B, T *C,
+	void recursiveMultiAddSingleThreadImpl(T const *A, T const *B, T *C,
 		size_t lheight, size_t lwidth, size_t rwidth, size_t remainingRecursion);
 
 	template <typename T>
-	void recursiveMultiAddParallel(T const *A, T const *B, T *C,
+	void recursiveMultiAddParallelImpl(T const *A, T const *B, T *C,
 		size_t lheight, size_t lwidth, size_t rwidth, size_t remainingRecursion);
 
 	template <typename T>
-	void recursiveMultiAddParallelSubRoutine(T const *A, T const *B, T *C,
+	void recursiveMultiAddParallelImplSubRoutine(T const *A, T const *B, T *C,
 		size_t lheight, size_t lwidth, size_t rwidth,
 		size_t remainingRecursion, size_t parallelDepth);
 
 	template <typename T>
-	void strassenMultiAdd(T const *A, T const *B, T *C,
+	void strassenMultiAddImpl(T const *A, T const *B, T *C,
 		size_t n, size_t remainingRecursion);
 
 	template <typename T>
-	void strassenMultiAddParallel(T const *A, T const *B, T *C,
+	void strassenMultiAddParallelImpl(T const *A, T const *B, T *C,
 		size_t n, size_t remainingRecursion);
 	template <typename T>
-	void strassenMultiAddParallel(T const *A, T const *B, T *C,
+	void strassenMultiAddParallelImpl(T const *A, T const *B, T *C,
 		size_t n, size_t remainingRecursion, size_t parallelDepth);
 
 	template <typename T>
@@ -178,7 +178,7 @@ namespace lib_calvin_matrix
 	class recursiveMultiAddOp {
 	public:
 		void operator()(recursiveMultiThreadArg<T> const &threadArg) const {
-			recursiveMultiAddSingleThread<T>(threadArg.A_, threadArg.B_, threadArg.C_,
+			recursiveMultiAddSingleThreadImpl<T>(threadArg.A_, threadArg.B_, threadArg.C_,
 				threadArg.l_, threadArg.m_, threadArg.n_,
 				threadArg.remainingRecursion_);
 		}
@@ -256,6 +256,7 @@ namespace lib_calvin
 		void reset(matrix<T> const &rhs); // assignment with arbitrary dimensions									  
 		T const &getval(size_t row, size_t col) const; // No boundary check
 		T &setval(size_t row, size_t col);
+		void set_val(size_t row, size_t col, T const &);
 
 		T & operator()(size_t row, size_t col);
 		T const &operator()(size_t row, size_t col) const;
@@ -296,7 +297,7 @@ namespace lib_calvin
 			matrix<T> const &, matrix<T> &);
 		friend void lib_calvin_matrix::recursiveMultiAdd<T>(matrix<T> const &,
 			matrix<T> const &, matrix<T> &, bool);
-		friend void lib_calvin_matrix::strassenMultiAdd<T>(matrix<T> const &,
+		friend void lib_calvin_matrix::strassenMultiAddGeneral<T>(matrix<T> const &,
 			matrix<T> const &, matrix<T> &, bool);
 		friend void lib_calvin_matrix::recursiveSelfMultiAdd<T>(matrix<T> &);
 
@@ -324,6 +325,7 @@ namespace lib_calvin
 		static size_t const blockWidth_;
 
 	private:
+		T * real_pointer_;
 		T * elements_; // array of E (raw oriented representation)
 		size_t height_;
 		size_t width_;
@@ -377,11 +379,7 @@ namespace lib_calvin  // for definitions
 
 	template <typename T>
 	matrix<T>::~matrix() {
-		size_t const num = height_ * width_;
-		for (size_t i = 0; i < num; ++i) {
-			elements_[i].~T();
-		}
-		operator delete (elements_);
+		delete[] real_pointer_;
 	}
 
 	/*************** reset ***************/
@@ -393,7 +391,7 @@ namespace lib_calvin  // for definitions
 
 	template <typename T>
 	void matrix<T>::reset(size_t height, size_t width) {
-		delete[] elements_;
+		delete[] real_pointer_;
 		height_ = height;
 		width_ = width;
 		init();
@@ -405,7 +403,7 @@ namespace lib_calvin  // for definitions
 			return;
 		height_ = rhs.height_;
 		width_ = rhs.width_;
-		delete[] elements_;
+		delete[] real_pointer_;
 		init();
 		copy(rhs);
 	}
@@ -426,6 +424,12 @@ namespace lib_calvin  // for definitions
 		matrix<T>::setval(size_t row, size_t col) {
 		// No boundary check!
 		return elements_[width_ * row + col];
+	}
+
+	template <typename T>
+	void
+		matrix<T>::set_val(size_t row, size_t col, T const &val) {
+		elements_[width_ * row + col] = val;
 	}
 
 	/*-----------function call style access------------*/
@@ -632,7 +636,7 @@ namespace lib_calvin  // for definitions
 		if (toAbortIfWrong) {
 			// Reference algorithm
 			naiveMultiAdd(m1, m2, m3);
-
+			m4.prsize_t();
 			// Naive algorithms
 			watch.start();
 			naiveMultiAdd2(m1, m2, m4);
@@ -641,9 +645,12 @@ namespace lib_calvin  // for definitions
 				multiProblemSize / watch.read() / GIGA << "\n";
 			if (m4 != m3) {
 				cout << "naiveMultiAdd2 Error!!!\n";
-				exit(0);
+				m3.prsize_t();
+				m4.prsize_t();
+				//exit(0);
 			}
 			m4.reset(m1.height(), m2.width());
+			m4.prsize_t();
 			watch.start();
 			naiveMultiAdd3(m1, m2, m4);
 			watch.stop();
@@ -651,7 +658,8 @@ namespace lib_calvin  // for definitions
 				multiProblemSize / watch.read() / GIGA << "\n";
 			if (m4 != m3) {
 				cout << "naiveMultiAdd3 Error!!!\n";
-				exit(0);
+				m4.prsize_t();
+				//exit(0);
 			}
 
 			// Simple
@@ -718,6 +726,9 @@ namespace lib_calvin  // for definitions
 				exit(0);
 			}
 		}
+
+
+
 		// recursive
 		m4.reset(m1.height(), m2.width());
 		watch.start();
@@ -761,11 +772,11 @@ namespace lib_calvin  // for definitions
 	template <typename T>
 	void matrix<T>::init() {
 		size_t num = height_ * width_;
-		elements_ = (T *)operator new(sizeof(T)*num); // default constructor should work
-													  //std::cout << "alignmemnt is " << ((size_t)elements_ % 256) << "\n";
-		for (size_t i = 0; i < num; ++i) {
-			// important! needed for built-in type initialization
-			elements_[i] = T();
+		real_pointer_ = new T[num + 4];
+		elements_ = real_pointer_  + 4 - 
+			(reinterpret_cast<ptrdiff_t>(real_pointer_) / sizeof(T)) % 4;
+		for (size_t i = 0; i < num; i++) {
+			new (elements_ + i) T();
 		}
 	}
 
@@ -851,7 +862,7 @@ lib_calvin_matrix::matrixMultiAdd(matrix<T> const &lhs, matrix<T> const &rhs,
 	//naiveMultiAdd3(lhs, rhs, result);
 	//simpleMultiAdd(lhs, rhs, result);
 	//recursiveMultiAdd(lhs, rhs, result);
-	//recursiveMultiAddParallelSubRoutine(lhs, rhs, result);
+	//recursiveMultiAddParallelImplSubRoutine(lhs, rhs, result);
 }
 
 template <typename T>
@@ -871,7 +882,7 @@ void lib_calvin_matrix::naiveMultiAdd(
 		std::cout << "multiply not compatible\n";
 		exit(0);
 	}
-	naiveMultiAdd<T>(A.elements_, B.elements_, C.elements_,
+	naiveMultiAddImpl<T>(A.elements_, B.elements_, C.elements_,
 		A.height_, A.width_, B.width_,
 		A.width_, B.width_);
 }
@@ -895,7 +906,7 @@ void lib_calvin_matrix::naiveMultiAdd3(
 		std::cout << "multiply not compatible\n";
 		exit(0);
 	}
-	naiveMultiAdd3<T>(A.elements_, B.elements_, C.elements_,
+	naiveMultiAdd3Impl<T>(A.elements_, B.elements_, C.elements_,
 		A.height_, A.width_, B.width_,
 		A.width_, B.width_);
 }
@@ -907,7 +918,7 @@ void lib_calvin_matrix::simpleMultiAdd(
 		exit(0);
 	}
 	//std::cout << "mul_thre_ is: " << A.mul_thre_ << "\n";
-	simpleMultiAdd<T>(A.elements_, B.elements_, C.elements_,
+	simpleMultiAddImpl<T>(A.elements_, B.elements_, C.elements_,
 		A.height_, A.width_, B.width_,
 		A.width_, B.width_);
 }
@@ -921,7 +932,7 @@ void lib_calvin_matrix::blockedMultiAdd(
 		std::cout << "multiply not compatible\n";
 		exit(0);
 	}
-	blockedMultiAdd<T>(A.elements_, B.elements_, C.elements_,
+	blockedMultiAddImpl<T>(A.elements_, B.elements_, C.elements_,
 		A.height_, A.width_, B.width_,
 		A.width_, B.width_, A.blockHeight_, A.blockWidth_);
 }
@@ -956,7 +967,7 @@ void lib_calvin_matrix::recursiveMultiAdd(
 	size_t mul_thre = A.mul_thre_;
 	size_t initialRecursionDepth = 0;
 	if (std::min(A.width_, A.height_) > mul_thre) {
-		initialRecursionDepth = log(std::min(A.width_, A.height_)) - log(mul_thre);
+		initialRecursionDepth = log(std::min(A.width_, A.height_)) - log(mul_thre) ;
 	}
 	std::cout << "recursion depth starting: " << initialRecursionDepth << "\n";
 	lib_calvin::stopwatch watch;
@@ -968,10 +979,10 @@ void lib_calvin_matrix::recursiveMultiAdd(
 		C.height_, C.width_, C.width_, initialRecursionDepth, true);
 	// actual multiplication takes place here
 	if (toBeParallel == true) {
-		recursiveMultiAddParallel(lhs, rhs, result,
+		recursiveMultiAddParallelImpl(lhs, rhs, result,
 			A.height_, A.width_, B.width_, initialRecursionDepth);
 	} else {
-		recursiveMultiAddSingleThread(lhs, rhs, result,
+		recursiveMultiAddSingleThreadImpl(lhs, rhs, result,
 			A.height_, A.width_, B.width_, initialRecursionDepth);
 	}
 	// now multiplication ended; make final results
@@ -996,17 +1007,17 @@ void lib_calvin_matrix::recursiveMultiAdd(
 template <typename T>
 void lib_calvin_matrix::strassenMultiAdd(
 	matrix<T> const &A, matrix<T> const &B, matrix<T> &C) {
-	strassenMultiAdd(A, B, C, false);
+	strassenMultiAddGeneral(A, B, C, false);
 }
 
 template <typename T>
 void lib_calvin_matrix::strassenMultiAddParallel(
 	matrix<T> const &A, matrix<T> const &B, matrix<T> &C) {
-	strassenMultiAdd(A, B, C, true);
+	strassenMultiAddGeneral(A, B, C, true);
 }
 
 template <typename T>
-void lib_calvin_matrix::strassenMultiAdd(
+void lib_calvin_matrix::strassenMultiAddGeneral(
 	matrix<T> const &A, matrix<T> const &B, matrix<T> &C, bool toBeParallel)
 {
 	using lib_calvin_util::log;
@@ -1029,9 +1040,9 @@ void lib_calvin_matrix::strassenMultiAdd(
 	// actual multiplication takes place here
 	//std::cout << "recursion depth starting: " << initialRecursionDepth << "\n";
 	if (toBeParallel == true) {
-		strassenMultiAddParallel(lhs, rhs, result, n, initialRecursionDepth);
+		strassenMultiAddParallelImpl(lhs, rhs, result, n, initialRecursionDepth);
 	} else {
-		strassenMultiAdd(lhs, rhs, result, n, initialRecursionDepth);
+		strassenMultiAddImpl(lhs, rhs, result, n, initialRecursionDepth);
 	}
 	// now multiplication ended; make final results
 	recursiveArrange(C.elements_, result,
@@ -1060,7 +1071,7 @@ void lib_calvin_matrix::recursiveSelfMultiAdd(matrix<T> &A) {
 
 /**************************** Algorithms ***************************/
 template <typename T>
-void lib_calvin_matrix::naiveMultiAdd(T const *A, T const *B, T * __restrict C,
+void lib_calvin_matrix::naiveMultiAddImpl(T const *A, T const *B, T * __restrict C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
 	size_t Cw = Bw;
 	for (size_t i = 0; i < lheight; ++i) {
@@ -1096,7 +1107,7 @@ void lib_calvin_matrix::naiveMultiAdd2(T const * __restrict A, T const * __restr
 }
 
 template <typename T>
-void lib_calvin_matrix::naiveMultiAdd3(T const * __restrict A, T const * __restrict B, T * __restrict C,
+void lib_calvin_matrix::naiveMultiAdd3Impl(T const * __restrict A, T const * __restrict B, T * __restrict C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
 	size_t Cw = Bw;
 	T *transposedB = new T[lwidth*rwidth];
@@ -1112,7 +1123,7 @@ void lib_calvin_matrix::naiveMultiAdd3(T const * __restrict A, T const * __restr
 }
 template <typename T>
 void
-lib_calvin_matrix::simpleMultiAdd(T const * __restrict A, T const *__restrict B, T * __restrict C,
+lib_calvin_matrix::simpleMultiAddImpl(T const * __restrict A, T const *__restrict B, T * __restrict C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
 	size_t Cw = Bw;
 	for (size_t i = 0; i < lheight; ++i) {
@@ -1129,14 +1140,15 @@ lib_calvin_matrix::simpleMultiAdd(T const * __restrict A, T const *__restrict B,
 // lheight, lwidth, rheight, rwidth: operation region
 // Aw, Bw: widths or total matrices
 template <typename T>
-void lib_calvin_matrix::blockedMultiAdd(T const *A, T const *B, T *C,
+void lib_calvin_matrix::blockedMultiAddImpl(T const *A, T const *B, T *C,
 	size_t lheight, size_t lwidth, size_t rwidth,
 	size_t Aw, size_t Bw, size_t blockH, size_t blockW) {
 	//std::cout << "blockH: " << blockH << " blockW: " << blockW << "\n";
-	size_t rheight = lwidth, Cw = Bw; // for convenience
-									  // right, down: offset
-									  // h, w: size of current working block size
-									  // blockH, blockW: size of default block (determined by cache and sizeof T)
+	// for convenience
+	// right, down: offset
+	// h, w: size of current working block size
+	// blockH, blockW: size of default block (determined by cache and sizeof T)
+	size_t rheight = lwidth, Cw = Bw; 
 	size_t right, down, h, w, i = 0, j = 0, k = 0;
 	// status: is there remaing rows or columns
 	bool status1 = true, status2 = true;
@@ -1164,16 +1176,16 @@ void lib_calvin_matrix::blockedMultiAdd(T const *A, T const *B, T *C,
 }
 
 template <typename T>
-void lib_calvin_matrix::blockedMultiAdd(T const *A, T const *B, T *C,
+void lib_calvin_matrix::blockedMultiAddImpl(T const *A, T const *B, T *C,
 	size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
 	matrix<T> temp(100);
-	blockedMultiAdd(A, B, C, lheight, lwidth, rwidth, Aw, Bw,
+	blockedMultiAddImpl(A, B, C, lheight, lwidth, rwidth, Aw, Bw,
 		temp.blockHeight_, temp.blockWidth_);
 }
 
 // Work only on recursively arranged matrix
 template <typename T>
-void lib_calvin_matrix::recursiveMultiAddSingleThread(T const *A, T const *B, T *C,
+void lib_calvin_matrix::recursiveMultiAddSingleThreadImpl(T const *A, T const *B, T *C,
 	size_t l, size_t m, size_t n, size_t remainingRecursion)
 {
 	if (remainingRecursion <= 0) {
@@ -1192,28 +1204,28 @@ void lib_calvin_matrix::recursiveMultiAddSingleThread(T const *A, T const *B, T 
 	// too many threads.
 
 	// (1,1) (1,1) (1,1)
-	recursiveMultiAddSingleThread(A, B, C, l / 2, m / 2, n / 2, remainingRecursion - 1);
+	recursiveMultiAddSingleThreadImpl(A, B, C, l / 2, m / 2, n / 2, remainingRecursion - 1);
 	// (1,2) (2,1) (1,1)
-	recursiveMultiAddSingleThread(A + (l / 2)*(m / 2), B + (m / 2)*n, C,
+	recursiveMultiAddSingleThreadImpl(A + (l / 2)*(m / 2), B + (m / 2)*n, C,
 		l / 2, m - m / 2, n / 2, remainingRecursion - 1);
 	// (1,1) (1,2) (1,2)
-	recursiveMultiAddSingleThread(A, B + (m / 2)*(n / 2), C + (l / 2)*(n / 2),
+	recursiveMultiAddSingleThreadImpl(A, B + (m / 2)*(n / 2), C + (l / 2)*(n / 2),
 		l / 2, m / 2, n - n / 2, remainingRecursion - 1);
 	// (1,2) (2,2) (1,2)
-	recursiveMultiAddSingleThread(A + (l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
+	recursiveMultiAddSingleThreadImpl(A + (l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
 		C + (l / 2)*(n / 2),
 		l / 2, m - m / 2, n - n / 2, remainingRecursion - 1);
 	// (2,1) (1,1) (2,1)
-	recursiveMultiAddSingleThread(A + (l / 2)*m, B, C + (l / 2)*n,
+	recursiveMultiAddSingleThreadImpl(A + (l / 2)*m, B, C + (l / 2)*n,
 		l - l / 2, m / 2, n / 2, remainingRecursion - 1);
 	// (2,2) (2,1) (2,1)
-	recursiveMultiAddSingleThread(A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n, C + (l / 2)*n,
+	recursiveMultiAddSingleThreadImpl(A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n, C + (l / 2)*n,
 		l - l / 2, m - m / 2, n / 2, remainingRecursion - 1);
 	// (2,1) (1,2) (2,2)
-	recursiveMultiAddSingleThread(A + (l / 2)*m, B + (m / 2)*(n / 2), C + (l / 2)*n + (l - l / 2)*(n / 2),
+	recursiveMultiAddSingleThreadImpl(A + (l / 2)*m, B + (m / 2)*(n / 2), C + (l / 2)*n + (l - l / 2)*(n / 2),
 		l - l / 2, m / 2, n - n / 2, remainingRecursion - 1);
 	// (2,2) (2,2) (2,2)
-	recursiveMultiAddSingleThread(A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
+	recursiveMultiAddSingleThreadImpl(A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
 		C + (l / 2)*n + (l - l / 2)*(n / 2),
 		l - l / 2, m - m / 2, n - n / 2, remainingRecursion - 1);
 }
@@ -1221,7 +1233,7 @@ void lib_calvin_matrix::recursiveMultiAddSingleThread(T const *A, T const *B, T 
 // multi-threading only when problem becomes small enough to fit in cache
 // does not brings performance gain; refer to one-note files
 template <typename T>
-void lib_calvin_matrix::recursiveMultiAddParallel(T const *A, T const *B, T *C,
+void lib_calvin_matrix::recursiveMultiAddParallelImpl(T const *A, T const *B, T *C,
 	size_t l, size_t m, size_t n, size_t remainingRecursion)
 {
 	// Starting to use multi thread in small problem to avoid L2 or L3 cache miss. 
@@ -1232,7 +1244,7 @@ void lib_calvin_matrix::recursiveMultiAddParallel(T const *A, T const *B, T *C,
 	size_t const parallelBeginRecursion = 10; // shouldn't be small (eg.3)
 	size_t const parallelRecursionDepth = 2;
 	if (remainingRecursion <= parallelBeginRecursion) {
-		recursiveMultiAddParallelSubRoutine(A, B, C, l, m, n, remainingRecursion, parallelRecursionDepth);
+		recursiveMultiAddParallelImplSubRoutine(A, B, C, l, m, n, remainingRecursion, parallelRecursionDepth);
 		return;
 	}
 	// Recursive calls for sub-problems
@@ -1247,34 +1259,34 @@ void lib_calvin_matrix::recursiveMultiAddParallel(T const *A, T const *B, T *C,
 	// too many threads.
 
 	// (1,1) (1,1) (1,1)
-	recursiveMultiAddParallel(A, B, C, l / 2, m / 2, n / 2, remainingRecursion - 1);
+	recursiveMultiAddParallelImpl(A, B, C, l / 2, m / 2, n / 2, remainingRecursion - 1);
 	// (1,2) (2,1) (1,1)
-	recursiveMultiAddParallel(A + (l / 2)*(m / 2), B + (m / 2)*n, C,
+	recursiveMultiAddParallelImpl(A + (l / 2)*(m / 2), B + (m / 2)*n, C,
 		l / 2, m - m / 2, n / 2, remainingRecursion - 1);
 	// (1,1) (1,2) (1,2)
-	recursiveMultiAddParallel(A, B + (m / 2)*(n / 2), C + (l / 2)*(n / 2),
+	recursiveMultiAddParallelImpl(A, B + (m / 2)*(n / 2), C + (l / 2)*(n / 2),
 		l / 2, m / 2, n - n / 2, remainingRecursion - 1);
 	// (1,2) (2,2) (1,2)
-	recursiveMultiAddParallel(A + (l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
+	recursiveMultiAddParallelImpl(A + (l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
 		C + (l / 2)*(n / 2),
 		l / 2, m - m / 2, n - n / 2, remainingRecursion - 1);
 	// (2,1) (1,1) (2,1)
-	recursiveMultiAddParallel(A + (l / 2)*m, B, C + (l / 2)*n,
+	recursiveMultiAddParallelImpl(A + (l / 2)*m, B, C + (l / 2)*n,
 		l - l / 2, m / 2, n / 2, remainingRecursion - 1);
 	// (2,2) (2,1) (2,1)
-	recursiveMultiAddParallel(A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n, C + (l / 2)*n,
+	recursiveMultiAddParallelImpl(A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n, C + (l / 2)*n,
 		l - l / 2, m - m / 2, n / 2, remainingRecursion - 1);
 	// (2,1) (1,2) (2,2)
-	recursiveMultiAddParallel(A + (l / 2)*m, B + (m / 2)*(n / 2), C + (l / 2)*n + (l - l / 2)*(n / 2),
+	recursiveMultiAddParallelImpl(A + (l / 2)*m, B + (m / 2)*(n / 2), C + (l / 2)*n + (l - l / 2)*(n / 2),
 		l - l / 2, m / 2, n - n / 2, remainingRecursion - 1);
 	// (2,2) (2,2) (2,2)
-	recursiveMultiAddParallel(A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
+	recursiveMultiAddParallelImpl(A + (l / 2)*m + (l - l / 2)*(m / 2), B + (m / 2)*n + (m - m / 2)*(n / 2),
 		C + (l / 2)*n + (l - l / 2)*(n / 2),
 		l - l / 2, m - m / 2, n - n / 2, remainingRecursion - 1);
 }
 
 template <typename T>
-void lib_calvin_matrix::recursiveMultiAddParallelSubRoutine(T const *A, T const *B, T *C,
+void lib_calvin_matrix::recursiveMultiAddParallelImplSubRoutine(T const *A, T const *B, T *C,
 	size_t l, size_t m, size_t n, size_t remainingRecursion, size_t parallelDepth)
 {
 	if (remainingRecursion <= 0) {
@@ -1282,7 +1294,7 @@ void lib_calvin_matrix::recursiveMultiAddParallelSubRoutine(T const *A, T const 
 		return;
 	}
 	if (parallelDepth <= 0) { // fall back to single thread
-		recursiveMultiAddSingleThread(A, B, C, l, m, n, remainingRecursion);
+		recursiveMultiAddSingleThreadImpl(A, B, C, l, m, n, remainingRecursion);
 		return;
 	}
 	// (1,1) (1,1) (1,1)
@@ -1335,14 +1347,14 @@ void lib_calvin_matrix::recursiveMultiAddParallelSubRoutine(T const *A, T const 
 }
 
 template <typename T>
-void lib_calvin_matrix::strassenMultiAdd(T const *A, T const *B, T *C,
+void lib_calvin_matrix::strassenMultiAddImpl(T const *A, T const *B, T *C,
 	size_t n, size_t remainingRecursion) {
 	if (n % 2 != 0) {
-		recursiveMultiAddSingleThread(A, B, C, n, n, n, remainingRecursion);
+		recursiveMultiAddSingleThreadImpl(A, B, C, n, n, n, remainingRecursion);
 		return;
 	}
 	if (remainingRecursion <= 0) {
-		naiveMultiAdd(A, B, C, n, n, n, n, n);
+		naiveMultiAddImpl(A, B, C, n, n, n, n, n);
 		return;
 	}
 	T *lhs = new T[(n / 2)*(n / 2)];
@@ -1368,43 +1380,43 @@ void lib_calvin_matrix::strassenMultiAdd(T const *A, T const *B, T *C,
 		lhs[i] = A[i];
 		rhs[i] = B[(n / 2)*(n / 2) + i] - B[(n / 2)*(n / 2) * 3 + i];
 	}
-	strassenMultiAdd(lhs, rhs, p1, n / 2, remainingRecursion - 1);
+	strassenMultiAddImpl(lhs, rhs, p1, n / 2, remainingRecursion - 1);
 	// A2 = a + b, B2 = h
 	for (size_t i = 0; i < (n / 2)*(n / 2); ++i) {
 		lhs[i] = A[i] + A[(n / 2)*(n / 2) + i];
 		rhs[i] = B[(n / 2)*(n / 2) * 3 + i];
 	}
-	strassenMultiAdd(lhs, rhs, p2, n / 2, remainingRecursion - 1);
+	strassenMultiAddImpl(lhs, rhs, p2, n / 2, remainingRecursion - 1);
 	// A3 = c + d, B3 = e
 	for (size_t i = 0; i < (n / 2)*(n / 2); ++i) {
 		lhs[i] = A[(n / 2)*(n / 2) * 2 + i] + A[(n / 2)*(n / 2) * 3 + i];
 		rhs[i] = B[i];
 	}
-	strassenMultiAdd(lhs, rhs, p3, n / 2, remainingRecursion - 1);
+	strassenMultiAddImpl(lhs, rhs, p3, n / 2, remainingRecursion - 1);
 	// A4 = d, B4 = g - e
 	for (size_t i = 0; i < (n / 2)*(n / 2); ++i) {
 		lhs[i] = A[(n / 2)*(n / 2) * 3 + i];
 		rhs[i] = B[(n / 2)*(n / 2) * 2 + i] - B[i];
 	}
-	strassenMultiAdd(lhs, rhs, p4, n / 2, remainingRecursion - 1);
+	strassenMultiAddImpl(lhs, rhs, p4, n / 2, remainingRecursion - 1);
 	// A5 = a + d, B5 = e + h
 	for (size_t i = 0; i < (n / 2)*(n / 2); ++i) {
 		lhs[i] = A[i] + A[(n / 2)*(n / 2) * 3 + i];
 		rhs[i] = B[i] + B[(n / 2)*(n / 2) * 3 + i];
 	}
-	strassenMultiAdd(lhs, rhs, p5, n / 2, remainingRecursion - 1);
+	strassenMultiAddImpl(lhs, rhs, p5, n / 2, remainingRecursion - 1);
 	// A6 = b - d, B6 = g + h
 	for (size_t i = 0; i < (n / 2)*(n / 2); ++i) {
 		lhs[i] = A[(n / 2)*(n / 2) + i] - A[(n / 2)*(n / 2) * 3 + i];
 		rhs[i] = B[(n / 2)*(n / 2) * 2 + i] + B[(n / 2)*(n / 2) * 3 + i];
 	}
-	strassenMultiAdd(lhs, rhs, p6, n / 2, remainingRecursion - 1);
+	strassenMultiAddImpl(lhs, rhs, p6, n / 2, remainingRecursion - 1);
 	// A7 = a - c, B7 = e + f
 	for (size_t i = 0; i < (n / 2)*(n / 2); ++i) {
 		lhs[i] = A[i] - A[(n / 2)*(n / 2) * 2 + i];
 		rhs[i] = B[i] + B[(n / 2)*(n / 2) + i];
 	}
-	strassenMultiAdd(lhs, rhs, p7, n / 2, remainingRecursion - 1);
+	strassenMultiAddImpl(lhs, rhs, p7, n / 2, remainingRecursion - 1);
 
 	// r = -P2 + P4 + P5 + P6
 	// s = P1 + P2
@@ -1431,16 +1443,16 @@ void lib_calvin_matrix::strassenMultiAdd(T const *A, T const *B, T *C,
 }
 
 template <typename T>
-void lib_calvin_matrix::strassenMultiAddParallel(T const *A, T const *B, T *C,
+void lib_calvin_matrix::strassenMultiAddParallelImpl(T const *A, T const *B, T *C,
 	size_t n, size_t remainingRecursion) {
-	strassenMultiAddParallel(A, B, C, n, remainingRecursion, 1);
+	strassenMultiAddParallelImpl(A, B, C, n, remainingRecursion, 1);
 }
 
 template <typename T>
-void lib_calvin_matrix::strassenMultiAddParallel(T const *A, T const *B, T *C,
+void lib_calvin_matrix::strassenMultiAddParallelImpl(T const *A, T const *B, T *C,
 	size_t n, size_t remainingRecursion, size_t parallelDepth) {
 	if (n % 2 != 0) {
-		recursiveMultiAddParallelSubRoutine(A, B, C, n, n, n, remainingRecursion, 2);
+		recursiveMultiAddParallelImplSubRoutine(A, B, C, n, n, n, remainingRecursion, 2);
 		return;
 	}
 	if (remainingRecursion <= 0) {
@@ -1448,7 +1460,7 @@ void lib_calvin_matrix::strassenMultiAddParallel(T const *A, T const *B, T *C,
 		return;
 	}
 	if (parallelDepth <= 0) { // fall back to single thread
-		strassenMultiAdd(A, B, C, n, remainingRecursion);
+		strassenMultiAddImpl(A, B, C, n, remainingRecursion);
 		return;
 	}
 	T *lhs1 = new T[(n / 2)*(n / 2)];
@@ -1584,7 +1596,7 @@ template <typename T>
 void *
 lib_calvin_matrix::recursiveMultiThreadFunc(void *lpParam) {
 	recursiveMultiThreadArg<T> *threadArg = (recursiveMultiThreadArg<T> *)lpParam;
-	recursiveMultiAddParallelSubRoutine<T>(threadArg->A_, threadArg->B_, threadArg->C_,
+	recursiveMultiAddParallelImplSubRoutine<T>(threadArg->A_, threadArg->B_, threadArg->C_,
 		threadArg->l_, threadArg->m_, threadArg->n_,
 		threadArg->remainingRecursion_, threadArg->parallelDepth_);
 	return NULL;
@@ -1594,7 +1606,7 @@ template <typename T>
 void *
 lib_calvin_matrix::strassenThreadFunc(void *lpParam) {
 	StrassenThreadArg<T> *threadArg = (StrassenThreadArg<T> *)lpParam;
-	strassenMultiAddParallel<T>(threadArg->A_, threadArg->B_, threadArg->C_,
+	strassenMultiAddParallelImpl<T>(threadArg->A_, threadArg->B_, threadArg->C_,
 		threadArg->n_, threadArg->remainingRecursion_, threadArg->parallelDepth_);
 	return NULL;
 }
