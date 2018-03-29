@@ -2,8 +2,8 @@
 #include <immintrin.h>
 
 void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
-		double const * __restrict B, double * __restrict C,
-		size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
+									   double const * __restrict B, double * __restrict C,
+									   size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
 
 	size_t Cw = Bw;
 	size_t const loopUnroll = 40;
@@ -34,7 +34,30 @@ void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 	__m256d c10 = _mm256_set_pd(0, 0, 0, 0);
 
 	size_t k = 0;
-			
+
+
+	if (reinterpret_cast<ptrdiff_t>(C) % (sizeof(double) * 4) != 0 ||
+		reinterpret_cast<ptrdiff_t>(B) % (sizeof(double) * 4) != 0 ||
+		 Bw % 4 != 0 || Cw % 4 != 0) {
+		for (; k < rwidth; k++) {
+			for (size_t i = 0; i < lheight; ++i) {
+				for (size_t j = 0; j < lwidth; ++j) {
+					C[Cw * i + k] += (A[Aw * i + j] * B[Bw * j + k]);
+				}
+			}
+		}
+		return;
+	}
+
+	for (; k < rwidth && (reinterpret_cast<ptrdiff_t>(C + k) % (sizeof(double) * 4) != 0 ||
+						(reinterpret_cast<ptrdiff_t>(B + k) % (sizeof(double) * 4) != 0)); k++) {
+		for (size_t i = 0; i < lheight; ++i) {
+			for (size_t j = 0; j < lwidth; ++j) {
+				C[Cw * i + k] += (A[Aw * i + j] * B[Bw * j + k]);
+			}
+		}
+	}
+
 	for (; k + loopUnroll - 1 < rwidth; k += loopUnroll) {
 		for (size_t i = 0; i < lheight; ++i) {
 			c1 = _mm256_load_pd(C + Cw * i + k + 0);
@@ -73,7 +96,7 @@ void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 				c9 = _mm256_fmadd_pd(a, b9, c9);
 				c10 = _mm256_fmadd_pd(a, b10, c10);
 			}
-
+			
 			_mm256_store_pd(C + Cw * i + k, c1);
 			_mm256_store_pd(C + Cw * i + k + 4, c2);
 			_mm256_store_pd(C + Cw * i + k + 8, c3);
@@ -86,11 +109,13 @@ void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 			_mm256_store_pd(C + Cw * i + k + 36, c10);
 		}
 	}
-	for (; k < rwidth; ++k) {
+
+	for (; k < rwidth; k++) {
 		for (size_t i = 0; i < lheight; ++i) {
 			for (size_t j = 0; j < lwidth; ++j) {
 				C[Cw * i + k] += (A[Aw * i + j] * B[Bw * j + k]);
 			}
 		}
 	}
+
 }
