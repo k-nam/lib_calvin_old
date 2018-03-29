@@ -16,8 +16,6 @@
 void lib_calvin_matrix::matrixTest() {	
 	std::cout << "---------- Beginning matrix test -----------\n\n";
 	typedef double NumericType;
-	// If test size is not 40 * 2^n, naiveMultiAdd2 in matrix.cc will cause runtime error
-	//  with _mm256_store_pd().
 	size_t testSize = 1000;
 	lib_calvin_matrix::mklTest(testSize);
 	
@@ -43,8 +41,10 @@ void lib_calvin_matrix::matrixTest() {
 
 void lib_calvin_matrix::matrixFunctionTest() {
 	std::cout << "---------- Beginning matrixFunctionTest -----------\n\n";
-	size_t testSize = 3;
-	lib_calvin::matrix<ptrdiff_t> m(testSize);
+	// If test size is not 40 * 2^n, naiveMultiAdd2 in matrix.cc will cause runtime error
+	//  with _mm256_store_pd().
+	size_t testSize = 640;
+	lib_calvin::matrix<double> m(testSize);
 	m.check();
 	std::cout << "------------- matrixFunctionTest finished ---------------\n\n\n";
 }
@@ -65,24 +65,30 @@ void lib_calvin_matrix::mklTest(size_t size) {
 	using boost::numeric::ublas::vector;
 	lib_calvin::stopwatch watch;
 
+
+	lib_calvin_matrix::matrix<NumericType> mmy(size, size);
+	mmy.randomize();
+
 	size_t const size2 = 100;
 
 	matrix<NumericType> a(size, size);
 	matrix<NumericType> b(size, size);
-
+	matrix<NumericType> c(size, size);
 	vector<NumericType> x(size);
 	vector<NumericType> y(size);
 
+	
 	for (size_t i = 0; i < size; ++i) {
 		for (size_t j = 0; j < size; j++) {
 			a(i, j) = 1.2;
 			b(i, j) = 1.5;
+			c(i, j) = mmy(j, j);
 		}
 		x(i) = 1.5;
 		y(i) = 1.2;
 	}
 
-	prod(a, b);
+	c = prod(a, b);
 	watch.start();
 	matrix<NumericType> result = prod(a, b);
 	watch.stop();
