@@ -11,7 +11,7 @@ namespace lib_calvin_benchmark
 	{
 		size_t const benchNumCases = 4;
 		std::vector<size_t> const benchTestSize = { 1000, 10*1000, 100*1000, 1000*1000};
-		std::vector<std::string> const testCases = { "1K", "10K", "100K", "1M" };
+		std::vector<std::string> const benchCases = { "1K", "10K", "100K", "1M" };
 		std::vector<size_t> const benchNumIter = { 1000, 100, 10, 3};
 		std::vector<int> const benchOrder = { 0, 1, 2, 3 };
 		std::string const unit = "M/s (higher is better)";

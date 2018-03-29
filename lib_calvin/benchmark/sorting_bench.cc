@@ -49,7 +49,7 @@ lib_calvin_benchmark::sorting::getAlgorithmNamesAndTags(Algorithm algo) {
 
 std::string
 lib_calvin_benchmark::sorting::getTitle(size_t num) {
-	return category + " " + testCases[num] + " " + benchTitleSuffix;
+	return category + " " + benchCases[num] + " " + benchTitleSuffix;
 }
 
 std::string
@@ -179,8 +179,6 @@ lib_calvin_benchmark::sorting::sortBenchTemplateSub(void(*sorter)(T *first, T *l
 													size_t testSize, size_t numIter) {
 	using namespace lib_calvin_sort;
 	lib_calvin::stopwatch watch;
-	size_t seed = 1232; // reset seed to give identical input to algorithms
-	std::srand(1232); // reset seed to give identical input to algorithms
 
 	T *testSet = static_cast<T *>(operator new(sizeof(T) * testSize));
 	double min = 1000000;
