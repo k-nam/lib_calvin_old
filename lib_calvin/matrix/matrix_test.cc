@@ -18,7 +18,7 @@ void lib_calvin_matrix::matrixTest() {
 	typedef double NumericType;
 	// If test size is not 40 * 2^n, naiveMultiAdd2 in matrix.cc will cause runtime error
 	//  with _mm256_store_pd().
-	size_t testSize = 5000;
+	size_t testSize = 1000;
 	lib_calvin_matrix::mklTest(testSize);
 	
 	lib_calvin::stopwatch watch;
@@ -43,15 +43,15 @@ void lib_calvin_matrix::matrixTest() {
 
 void lib_calvin_matrix::matrixFunctionTest() {
 	std::cout << "---------- Beginning matrixFunctionTest -----------\n\n";
-	size_t testSize = 500;
-	lib_calvin::matrix<double> m(testSize);
+	size_t testSize = 3;
+	lib_calvin::matrix<ptrdiff_t> m(testSize);
 	m.check();
 	std::cout << "------------- matrixFunctionTest finished ---------------\n\n\n";
 }
 
 void lib_calvin_matrix::matrixPerformanceTest() {
 	std::cout << "---------- Beginning matrixPerformanceTest -----------\n\n";
-	size_t testSize = 5000;
+	size_t testSize = 1280;
 	lib_calvin::matrix<double> m(testSize);
 	m.check(false);
 	std::cout << "------------- matrixPerformanceTest finished ---------------\n\n\n";
