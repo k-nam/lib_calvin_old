@@ -15,7 +15,7 @@ std::vector<std::string>
 lib_calvin_benchmark::matrix::getAlgorithmNamesAndTags(Algorithm algo) {
 	switch (algo) {
 	case MKL:
-		return { "MKL", "parallel" };
+		return { "MKL", "parallel", "MMX" };
 
 	case NAIVE:
 		return { "naive method" };
@@ -24,16 +24,21 @@ lib_calvin_benchmark::matrix::getAlgorithmNamesAndTags(Algorithm algo) {
 	case ROW_FIRST:
 		return { "row first method" };
 	case BLOCKING:
-		return { "blocked method" };
+		return { "blocking method" };
+
+	case NAIVE_MMX:
+		return { "naive method (MMX)", "MMX" };
+	case BLOCKING_MMX:
+		return { "blocking method (MMX)", "MMX" };
 
 	case RECURSIVE:
-		return { "recursive method"};
-	case STRASSEN:
-		return { "Strassen method" };
+		return { "recursive method", "MMX" };
 	case RECURSIVE_PARALLEL:
-		return { "parallel recursive", "parallel" };
+		return { "parallel recursive", "parallel", "MMX" };
+	case STRASSEN:
+		return { "Strassen method", "MMX" };
 	case STRASSEN_PARALLEL:
-		return { "parallel Strassen", "parallel" };
+		return { "parallel Strassen", "parallel", "MMX" };
 
 	default:
 		return { "getAlgorithmName error!" };
@@ -42,13 +47,16 @@ lib_calvin_benchmark::matrix::getAlgorithmNamesAndTags(Algorithm algo) {
 
 std::vector<SubCategory> 
 lib_calvin_benchmark::matrix::getAllSubCategories() {
-	return std::vector<SubCategory> { MATRIX_MULTI_DOUBLE, MATRIX_MULTI_USER_DEFINED_OBJECT };
+	return std::vector<SubCategory> { MATRIX_MULTI_DOUBLE };
 }
 
 std::vector<Algorithm> 
 lib_calvin_benchmark::matrix::getAllAlgorithms() {
-	return std::vector<Algorithm> { MKL, NAIVE, NAIVE_TRANSPOSED, ROW_FIRST, BLOCKING,
-		RECURSIVE, STRASSEN, RECURSIVE_PARALLEL, STRASSEN_PARALLEL };
+	return std::vector<Algorithm> { 
+			MKL, 
+			NAIVE, NAIVE_TRANSPOSED, ROW_FIRST, BLOCKING,
+			NAIVE_MMX, BLOCKING_MMX,
+			RECURSIVE, RECURSIVE_PARALLEL, STRASSEN, STRASSEN_PARALLEL };
 }
 
 std::string
@@ -97,6 +105,7 @@ void lib_calvin_benchmark::matrix::matrixBench(SubCategory subCategory, size_t n
 	currentSubCategory = subCategory;
 	currentBenchNum = num;
 
+
 	string subCategoryString = getSubCategory(subCategory);
 	string comment = "";
 	vector<string> testCases = { subCategoryString };
@@ -105,7 +114,7 @@ void lib_calvin_benchmark::matrix::matrixBench(SubCategory subCategory, size_t n
 		if (subCategory == MATRIX_MULTI_DOUBLE) {
 			results.push_back({ matrixBenchSub<double>(algorithm) });
 		} else {
-			results.push_back({ matrixBenchSub<int>(algorithm) });
+			//results.push_back({ matrixBenchSub<int>(algorithm) });
 		}		
 	}
 
@@ -116,7 +125,7 @@ void lib_calvin_benchmark::matrix::matrixBench(SubCategory subCategory, size_t n
 
 template <typename T>
 double lib_calvin_benchmark::matrix::matrixBenchSub(Algorithm algo) {
-
+	currentAlgo = algo;
 	std::cout << "Now benchmarking: " << getSubCategory(currentSubCategory) << 
 		" testSize: " << benchTestSizes[currentBenchNum] << 
 		" algorithm: " << getAlgorithmNamesAndTags(algo)[0] << "\n";
@@ -126,25 +135,28 @@ double lib_calvin_benchmark::matrix::matrixBenchSub(Algorithm algo) {
 								lib_calvin_matrix::matrix<T> &)> funcType;
 	switch (algo) {
 	case MKL:
-		return 0;
-		//return matrixBenchTemplateSub();
+		return matrixBenchTemplateSub<T>(funcType(mklMultiAdd));
 
 	case NAIVE:
 		return matrixBenchTemplateSub<T>(funcType(naiveMultiAdd<T>));
 	case NAIVE_TRANSPOSED:
 		return matrixBenchTemplateSub<T>(funcType(naiveMultiAdd3<T>));
-
 	case ROW_FIRST:
 		return matrixBenchTemplateSub<T>(funcType(simpleMultiAdd<T>));
 	case BLOCKING:
 		return matrixBenchTemplateSub<T>(funcType(blockedMultiAdd<T>));
+
+	case NAIVE_MMX:
+		return matrixBenchTemplateSub<T>(funcType(naiveMultiAdd2<T>));
+	case BLOCKING_MMX:
+		return matrixBenchTemplateSub<T>(funcType(blockedMultiAddMmx<T>));
+
 	case RECURSIVE:
 		return matrixBenchTemplateSub<T>(funcType(recursiveMultiAddSingleThread<T>));
-	case STRASSEN:
-		return matrixBenchTemplateSub<T>(funcType(strassenMultiAdd<T>));
-
 	case RECURSIVE_PARALLEL:
 		return matrixBenchTemplateSub<T>(funcType(recursiveMultiAddParallel<T>));
+	case STRASSEN:
+		return matrixBenchTemplateSub<T>(funcType(strassenMultiAdd<T>));
 	case STRASSEN_PARALLEL:
 		return matrixBenchTemplateSub<T>(funcType(strassenMultiAddParallel<T>));
 
@@ -159,8 +171,14 @@ double
 lib_calvin_benchmark::matrix::matrixBenchTemplateSub(std::function<Function> func) {
 
 	size_t testSize = benchTestSizes[currentBenchNum];
-
 	size_t numIter = benchNumIter[currentBenchNum];
+
+	if (!(currentAlgo == MKL || currentAlgo == BLOCKING_MMX ||
+			currentAlgo == RECURSIVE || currentAlgo == RECURSIVE_PARALLEL) &&
+		testSize > 1500) {
+		// slow algorithms taka too much time if problem is big
+		return 0;
+	}
 
 	lib_calvin_matrix::matrix<T> x = lib_calvin_matrix::matrix<T>(testSize);
 	lib_calvin_matrix::matrix<T> y = lib_calvin_matrix::matrix<T>(testSize);

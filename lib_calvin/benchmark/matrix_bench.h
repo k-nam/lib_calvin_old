@@ -12,11 +12,11 @@ namespace lib_calvin_benchmark
 	{
 		using namespace lib_calvin_matrix;
 
-		size_t const benchNumCases = 4;
-		std::vector<size_t> const benchTestSizes = { 160, 320, 640, 1280, 2560, 5120 };
+		size_t const benchNumCases = 7;
+		std::vector<size_t> const benchTestSizes = { 160, 320, 640, 1280, 2560, 5120, 10240 };
 		std::vector<std::string> const benchTestCase = { "matrix multiplication" };
-		std::vector<size_t> const benchNumIter = { 10, 3, 1, 1, 1, 1 };
-		std::vector<int> const benchOrder = { 0, 1, 2, 3, 4, 5 };
+		std::vector<size_t> const benchNumIter = { 100, 10, 3, 1, 1, 1, 1 };
+		std::vector<int> const benchOrder = { 0, 1, 2, 3, 4, 5, 6 };
 		std::string const unit = "G/s (higher is better)";
 		std::string const category = "Matrix";
 
@@ -30,11 +30,16 @@ namespace lib_calvin_benchmark
 			ROW_FIRST,
 			BLOCKING,
 
+			NAIVE_MMX,
+			BLOCKING_MMX,
+
 			RECURSIVE,
-			STRASSEN,
 			RECURSIVE_PARALLEL,
+			STRASSEN,			
 			STRASSEN_PARALLEL
 		};
+
+		static Algorithm currentAlgo;
 
 		enum SubCategory {
 			MATRIX_MULTI_DOUBLE,
