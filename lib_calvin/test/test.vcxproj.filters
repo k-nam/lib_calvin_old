@@ -111,6 +111,9 @@
     <ClCompile Include="..\subcc_interpreter\subcc_interpreter_test.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\container\container_test_types.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="..\matrix\matrix_multi.asm">

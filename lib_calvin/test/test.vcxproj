@@ -177,6 +177,7 @@
     <ClCompile Include="..\container\adt.cc" />
     <ClCompile Include="..\container\b_tree_test.cc" />
     <ClCompile Include="..\container\container_test.cc" />
+    <ClCompile Include="..\container\container_test_types.cc" />
     <ClCompile Include="..\container\map_test.cc" />
     <ClCompile Include="..\container\set_test.cc" />
     <ClCompile Include="..\container\vector_test.cc" />
