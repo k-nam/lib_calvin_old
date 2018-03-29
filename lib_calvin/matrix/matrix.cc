@@ -48,13 +48,7 @@ void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 			c9 = _mm256_load_pd(C + Cw * i + k + 32);
 			c10 = _mm256_load_pd(C + Cw * i + k + 36);
 
-			for (size_t j = 0; j < lwidth; ++j) {
-				/*
-				C[Cw * i + (k + 0)] += A[Aw * i + j] * B[Bw * j + (k + 0)];
-				C[Cw * i + (k + 1)] += A[Aw * i + j] * B[Bw * j + (k + 1)];
-				C[Cw * i + (k + 2)] += A[Aw * i + j] * B[Bw * j + (k + 2)];
-				C[Cw * i + (k + 3)] += A[Aw * i + j] * B[Bw * j + (k + 3)];
-				*/			
+			for (size_t j = 0; j < lwidth; ++j) {	
 				a = _mm256_broadcast_sd(A + Aw * i + j);
 
 				b1 = _mm256_load_pd(B + Bw * j + k + 0);
@@ -79,37 +73,7 @@ void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 				c9 = _mm256_fmadd_pd(a, b9, c9);
 				c10 = _mm256_fmadd_pd(a, b10, c10);
 			}
-			/*
-			C[Cw * i + k + 0] = ((double *)&c1)[0];
-			C[Cw * i + k + 1] = ((double *)&c1)[1];
-			C[Cw * i + k + 2] = ((double *)&c1)[2];
-			C[Cw * i + k + 3] = ((double *)&c1)[3];
 
-			C[Cw * i + k + 4] = ((double *)&c2)[0];
-			C[Cw * i + k + 5] = ((double *)&c2)[1];
-			C[Cw * i + k + 6] = ((double *)&c2)[2];
-			C[Cw * i + k + 7] = ((double *)&c2)[3];
-
-			C[Cw * i + k + 8] = ((double *)&c3)[0];
-			C[Cw * i + k + 9] = ((double *)&c3)[1];
-			C[Cw * i + k + 10] = ((double *)&c3)[2];
-			C[Cw * i + k + 11] = ((double *)&c3)[3];
-
-			C[Cw * i + k + 12] = ((double *)&c4)[0];
-			C[Cw * i + k + 13] = ((double *)&c4)[1];
-			C[Cw * i + k + 14] = ((double *)&c4)[2];
-			C[Cw * i + k + 15] = ((double *)&c4)[3];
-
-			C[Cw * i + k + 16] = ((double *)&c5)[0];
-			C[Cw * i + k + 17] = ((double *)&c5)[1];
-			C[Cw * i + k + 18] = ((double *)&c5)[2];
-			C[Cw * i + k + 19] = ((double *)&c5)[3];
-
-			C[Cw * i + k + 20] = ((double *)&c6)[0];
-			C[Cw * i + k + 21] = ((double *)&c6)[1];
-			C[Cw * i + k + 22] = ((double *)&c6)[2];
-			C[Cw * i + k + 23] = ((double *)&c6)[3];
-			*/
 			_mm256_store_pd(C + Cw * i + k, c1);
 			_mm256_store_pd(C + Cw * i + k + 4, c2);
 			_mm256_store_pd(C + Cw * i + k + 8, c3);
@@ -121,7 +85,6 @@ void lib_calvin_matrix::naiveMultiAdd2(double const * __restrict A,
 			_mm256_store_pd(C + Cw * i + k + 32, c9);
 			_mm256_store_pd(C + Cw * i + k + 36, c10);
 		}
-
 	}
 	for (; k < rwidth; ++k) {
 		for (size_t i = 0; i < lheight; ++i) {
