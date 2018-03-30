@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <thread>
+#include <algorithm>
 #include "utility.h" 
 #include "stopwatch.h"
 #include "thread.h"
@@ -17,6 +18,12 @@ namespace lib_calvin_matrix
 {
 	size_t const L1_SIZE = 32*1000;
 	size_t const L2_SIZE = 256*1000;
+
+
+	size_t const trans_thre_ = 40;
+	size_t const mul_thre_ = 40;
+	size_t const blockWidth_ = 40;
+	size_t const blockHeight_ = 80;
 
 	template <typename T>
 	class matrix_base;
@@ -336,12 +343,8 @@ namespace lib_calvin
 		void check(bool toAbortIfWrong = true); // unit test 
 		void test();
 		void randomize(); // for unit testing
-
-		static size_t const trans_thre_;
-		static size_t const mul_thre_;
-		static size_t const blockHeight_;
-		static size_t const blockWidth_;
-
+	private:
+		size_t getRecursionDepth(size_t size, size_t threshold) const;
 	private:
 		T * real_pointer_;
 		T * elements_; // array of E (raw oriented representation)
@@ -588,7 +591,7 @@ namespace lib_calvin  // for definitions
 		//cout << "trans thre is" << trans_thre_ << endl;
 		matrix<T> result(width_, height_); // transposed matrix
 		lib_calvin_matrix::transCopy(elements_, result.elements_, height_, width_,
-									 width_, height_, trans_thre_);
+									 width_, height_, lib_calvin_matrix::trans_thre_);
 		return result;
 	}
 
@@ -722,7 +725,7 @@ namespace lib_calvin  // for definitions
 			if (m4 != m3) {
 				cout << "mklMultiAdd Error!!!\n";
 				m4.prsize_t();
-				exit(0);
+				//exit(0);
 			}
 
 			// Strassen
@@ -856,28 +859,18 @@ namespace lib_calvin  // for definitions
 
 	/************************ matrix<T> static fields ************************/
 
-	template <typename T>
-	size_t const matrix<T>::trans_thre_ =
-		std::max<size_t>((size_t)(sqrt((float)lib_calvin_matrix::L1_SIZE / 2.0 / sizeof(T))), 3);
-
-	template <typename T>
-	size_t const matrix<T>::mul_thre_ = 40;
-	//std::max((size_t)(sqrt((float)lib_calvin_matrix::L1_SIZE/3.0/sizeof(T))/2), 3);
-
-
-	template <typename T>
-	size_t const matrix<T>::blockWidth_ = 120;
-	//std::max((size_t)((float)lib_calvin_matrix::L1_SIZE/sizeof(T)/3.0), 300);
-
-	// Note that we cannot use blockWidth_ value here
-	// (order of computation not guaranteed)
-	template <typename T>
-	size_t const matrix<T>::blockHeight_ = 60;
-	//(size_t)(((float)lib_calvin_matrix::L2_SIZE)/sizeof(T)/
-	//std::max ((size_t)((float)L1_SIZE/sizeof(T)/3.0), 300))/ 1.5);
-
 } // end namesapce lib_calvin for definitions
 
+
+template <typename T>
+size_t lib_calvin_matrix::matrix<T>::getRecursionDepth(size_t size, size_t threshold) const {
+	size_t depth = 0;
+	while (size / 2 >= threshold) {
+		depth++;
+		size /= 2;
+	}
+	return depth;
+}
 
   /************************ Global functions ***********************/
 
@@ -975,7 +968,6 @@ void lib_calvin_matrix::simpleMultiAdd(
 		std::cout << "multiply not compatible\n";
 		exit(0);
 	}
-	//std::cout << "mul_thre_ is: " << A.mul_thre_ << "\n";
 	simpleMultiAddImpl<T>(A.elements_, B.elements_, C.elements_,
 						  A.height_, A.width_, B.width_,
 						  A.width_, B.width_);
@@ -990,7 +982,7 @@ void lib_calvin_matrix::blockedMultiAdd(
 	}
 	blockedMultiAddImpl<T>(A.elements_, B.elements_, C.elements_,
 						   A.height_, A.width_, B.width_,
-						   A.width_, B.width_, A.blockHeight_, A.blockWidth_, false);
+						   A.width_, B.width_, blockHeight_, blockWidth_, false);
 }
 
 template <typename T>
@@ -1002,7 +994,7 @@ void lib_calvin_matrix::blockedMultiAddMmx(
 	}
 	blockedMultiAddImpl<T>(A.elements_, B.elements_, C.elements_,
 						   A.height_, A.width_, B.width_,
-						   A.width_, B.width_, A.blockHeight_, A.blockWidth_, true);
+						   A.width_, B.width_, blockHeight_, blockWidth_, true);
 }
 
 template <typename T>
@@ -1023,7 +1015,6 @@ template <typename T>
 void lib_calvin_matrix::recursiveMultiAdd(
 	matrix<T> const &A, matrix<T> const &B, matrix<T> &C, bool toBeParallel)
 {
-	using lib_calvin_util::log;
 	if (!(A.width_ == B.height_ && A.height_ == C.height_ && B.width_ == C.width_)) {
 		std::cout << "multiply not compatible\n";
 		exit(0);
@@ -1037,11 +1028,9 @@ void lib_calvin_matrix::recursiveMultiAdd(
 	matrix<T> dd(A.height_, B.width_);
 	T *result = dd.elements_;
 
-	size_t mul_thre = A.mul_thre_;
 	size_t initialRecursionDepth = 0;
-	if (std::min(A.width_, A.height_) > mul_thre) {
-		initialRecursionDepth = log(std::min(A.width_, A.height_)) - log(mul_thre);
-	}
+	initialRecursionDepth = A.getRecursionDepth(std::min(A.width_, A.height_), mul_thre_);
+
 	//std::cout << "recursion depth starting: " << initialRecursionDepth << "\n";
 	lib_calvin::stopwatch watch;
 	recursiveArrange(A.elements_, lhs,
@@ -1097,9 +1086,8 @@ void lib_calvin_matrix::strassenMultiAddGeneral(
 	}
 	size_t n = A.height_;
 	size_t initialRecursionDepth = 0;
-	if (n > A.mul_thre_) {
-		initialRecursionDepth = log(n) - log(A.mul_thre_);
-	}
+
+	initialRecursionDepth = A.getRecursionDepth(n, mul_thre_);
 	T *lhs = new T[n*n];
 	T *rhs = new T[n*n];
 	T *result = new T[n*n];
