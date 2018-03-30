@@ -99,9 +99,9 @@ lib_calvin_benchmark::matrix::getAllNamesAndTagsVector() {
 void lib_calvin_benchmark::matrix::matrixBench() {
 
 	for (size_t i = 0; i < benchNumCases; i++) {
-		//matrixBench(OPTIMAL, i);
+		matrixBench(OPTIMAL, i);
 	}
-	matrixBench(DROP, 0);
+	//matrixBench(DROP, 0);
 }
 
 void lib_calvin_benchmark::matrix::matrixBench(SubCategory subCategory, size_t num) {
@@ -125,8 +125,8 @@ void lib_calvin_benchmark::matrix::matrixBench(SubCategory subCategory, size_t n
 										 getAllNamesAndTagsVector(),
 										 results, benchTestCase, unit, num);
 	} else {
-		//std::vector<size_t> testSizes = { 400, 640, 800, 1280, 1600, 2560, 3200, 5120, 6400, 10240 };
-		std::vector<size_t> testSizes = { 400, 640, 800, 1280, 1600, 2560 };
+		std::vector<size_t> testSizes = { 400, 640, 800, 1280, 1600, 1920, 2560, 3200, 3840, 5120, 6400, 8000, 10240 };
+		//std::vector<size_t> testSizes = { 400, 640, 800, 1280, 1600, 2560 };
 		auto algorithms = {MKL, RECURSIVE_PARALLEL};
 		auto title = getAlgorithmNamesAndTags(MKL)[0] + " vs " + getAlgorithmNamesAndTags(RECURSIVE_PARALLEL)[0];
 		vector<string> testCases;

@@ -43,36 +43,36 @@ void lib_calvin_container::setTest() {
 	setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
 	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
 	*/
-	setFunctionTest<BTree<HeavyObject>>(testSize, "lib_calvin_container::BTree");
-	setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
-	setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
-	setFunctionTest<HashTable<Numeric>>(testSize,	"lib_calvin_container::HashTable"); // cannot iterate
+	//setFunctionTest<BTree<HeavyObject>>(testSize, "lib_calvin_container::BTree");
+	//setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
+	//setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
+	//setFunctionTest<HashTable<Numeric>>(testSize,	"lib_calvin_container::HashTable"); // cannot iterate
 	setFunctionTest<HashTable2<Numeric>>(testSize,	"lib_calvin_container::HashTable2"); // cannot iterate
 	
-	setFunctionTest2<BTree<Numeric>>(testSize, "lib_calvin_container::BTree");
-	setFunctionTest2<BPlusTree<Numeric>>(testSize, "lib_calvin_container::BPlusTree");
+	//setFunctionTest2<BTree<Numeric>>(testSize, "lib_calvin_container::BTree");
+	//setFunctionTest2<BPlusTree<Numeric>>(testSize, "lib_calvin_container::BPlusTree");
 
 	//setIteratorTest<RbTree<Numeric>>("RbTree iterator");
-	setIteratorTest<BTree<Numeric>>("BTree iterator");
-	setIteratorTest<HashTable<Numeric>>("HashTable iterator");
+	//setIteratorTest<BTree<Numeric>>("BTree iterator");
+	//setIteratorTest<HashTable<Numeric>>("HashTable iterator");
 	setIteratorTest<HashTable2<Numeric>>("HashTable2 iterator");
 
-	//setPerformanceTest<std::set<Numeric>>(largeSize, "std::set / Numeric");
-	//setPerformanceTest<boost::container::set<Numeric>>(largeSize, "boost::set / Numeric");
+	setPerformanceTest<std::set<Numeric>>(largeSize, "std::set / Numeric");
+	setPerformanceTest<boost::container::set<Numeric>>(largeSize, "boost::set / Numeric");
 	//setPerformanceTest<BinTree<Numeric>>(largeSize, "BinTree / Numeric");
-	//setPerformanceTest<RbTree<Numeric>>(largeSize, "RbTree / Numeric");
+	setPerformanceTest<RbTree<Numeric>>(largeSize, "RbTree / Numeric");
 	//setPerformanceTest<BTree<Numeric>>(largeSize, "BTree / Numeric");
 	setPerformanceTest<BPlusTree<Numeric>>(largeSize, "BPlusTree / Numeric");
 	//setPerformanceTest<OrderedArray<Numeric>>(largeSize, "OrderedArray / Numeric");
 	//setPerformanceTest<std::unordered_set<Numeric>>(largeSize, "std::unordered_set / Numeric");
-	//setPerformanceTest<boost::unordered_set<Numeric>>(largeSize, "boost::unordered_set / Numeric");
+	setPerformanceTest<boost::unordered_set<Numeric>>(largeSize, "boost::unordered_set / Numeric");
 	//setPerformanceTest<HashTable<Numeric>>(largeSize, "HashTable / Numeric");
-	//setPerformanceTest<HashTable2<Numeric>>(largeSize, "HashTable2 / Numeric");
+	setPerformanceTest<HashTable2<Numeric>>(largeSize, "HashTable2 / Numeric");
 	setPerformanceTest<btree::btree_set<Numeric>>(largeSize, "Google Btree / Numeric");
 
-	//setPerformanceTest<std::set<LightObject>>(largeSize, "std::set / LightObject");
-	//setPerformanceTest<boost::container::set<LightObject>>(largeSize, "boost::set / LightObject");
-	//setPerformanceTest<RbTree<LightObject>>(largeSize, "RbTree / LightObject");
+	setPerformanceTest<std::set<LightObject>>(largeSize, "std::set / LightObject");
+	setPerformanceTest<boost::container::set<LightObject>>(largeSize, "boost::set / LightObject");
+	setPerformanceTest<RbTree<LightObject>>(largeSize, "RbTree / LightObject");
 	//setPerformanceTest<BTree<LightObject>>(largeSize, "BTree / LightObject");
 	setPerformanceTest<BPlusTree<LightObject>>(largeSize, "BPlusTree / LightObject");
 	//setPerformanceTest<OrderedArray<LightObject>>(largeSize, "OrderedArray / LightObject");
