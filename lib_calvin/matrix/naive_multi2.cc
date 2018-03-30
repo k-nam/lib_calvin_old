@@ -38,6 +38,7 @@ void lib_calvin_matrix::naiveMultiAdd2Impl(double const * __restrict A,
 	__m256d c10 = _mm256_set_pd(0, 0, 0, 0);
 
 	size_t k = 0;
+
 	size_t const loopUnroll = 40;
 
 	for (; k + loopUnroll - 1 < rwidth; k += loopUnroll) {
@@ -92,9 +93,39 @@ void lib_calvin_matrix::naiveMultiAdd2Impl(double const * __restrict A,
 		}
 	}
 	
-	size_t loopUnroll2 = 8;
+	size_t loopUnroll2 = 16;
 
 	for (; k + loopUnroll2 - 1 < rwidth; k += loopUnroll2) {
+		for (size_t i = 0; i < lheight; ++i) {
+			c1 = _mm256_load_pd(C + Cw * i + k + 0);
+			c2 = _mm256_load_pd(C + Cw * i + k + 4);
+			c3 = _mm256_load_pd(C + Cw * i + k + 8);
+			c4 = _mm256_load_pd(C + Cw * i + k + 12);
+
+			for (size_t j = 0; j < lwidth; ++j) {
+				a = _mm256_broadcast_sd(A + Aw * i + j);
+
+				b1 = _mm256_load_pd(B + Bw * j + k + 0);
+				b2 = _mm256_load_pd(B + Bw * j + k + 4);
+				b3 = _mm256_load_pd(B + Bw * j + k + 8);
+				b4 = _mm256_load_pd(B + Bw * j + k + 12);
+
+				c1 = _mm256_fmadd_pd(a, b1, c1);
+				c2 = _mm256_fmadd_pd(a, b2, c2);
+				c3 = _mm256_fmadd_pd(a, b3, c3);
+				c4 = _mm256_fmadd_pd(a, b4, c4);
+			}
+
+			_mm256_store_pd(C + Cw * i + k, c1);
+			_mm256_store_pd(C + Cw * i + k + 4, c2);
+			_mm256_store_pd(C + Cw * i + k + 8, c3);
+			_mm256_store_pd(C + Cw * i + k + 12, c4);
+		}
+	}
+	
+	size_t loopUnroll3 = 8;
+
+	for (; k + loopUnroll3 - 1 < rwidth; k += loopUnroll3) {
 		for (size_t i = 0; i < lheight; ++i) {
 			c1 = _mm256_load_pd(C + Cw * i + k + 0);
 			c2 = _mm256_load_pd(C + Cw * i + k + 4);
@@ -114,12 +145,29 @@ void lib_calvin_matrix::naiveMultiAdd2Impl(double const * __restrict A,
 		}
 	}
 
+	size_t loopUnroll4 = 4;
+
+	for (; k + loopUnroll4 - 1 < rwidth; k += loopUnroll4) {
+		for (size_t i = 0; i < lheight; ++i) {
+			c1 = _mm256_load_pd(C + Cw * i + k + 0);
+
+			for (size_t j = 0; j < lwidth; ++j) {
+				a = _mm256_broadcast_sd(A + Aw * i + j);
+
+				b1 = _mm256_load_pd(B + Bw * j + k + 0);
+
+				c1 = _mm256_fmadd_pd(a, b1, c1);
+			}
+
+			_mm256_store_pd(C + Cw * i + k, c1);
+		}
+	}
+
 	for (; k < rwidth; k++) {
 		for (size_t i = 0; i < lheight; ++i) {
-			for (size_t j = 0; j < lwidth; ++j) {
+			for (size_t j = 0; j < lwidth; ++j) {			
 				C[Cw * i + k] += (A[Aw * i + j] * B[Bw * j + k]);
 			}
 		}
 	}
-
 }
