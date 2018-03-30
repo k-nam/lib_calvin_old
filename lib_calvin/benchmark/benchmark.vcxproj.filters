@@ -52,6 +52,12 @@
       <Filter>matrix</Filter>
     </ClCompile>
     <ClCompile Include="..\matrix\matrix.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\matrix\mkl_multi.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\matrix\naive_multi2.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>

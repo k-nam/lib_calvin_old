@@ -124,6 +124,8 @@
   <ItemGroup>
     <ClCompile Include="..\container\container_test_types.cc" />
     <ClCompile Include="..\matrix\matrix.cc" />
+    <ClCompile Include="..\matrix\mkl_multi.cc" />
+    <ClCompile Include="..\matrix\naive_multi2.cc" />
     <ClCompile Include="..\sorting\sort_test.cc" />
     <ClCompile Include="..\util\random.cc" />
     <ClCompile Include="..\util\thread.cc" />
