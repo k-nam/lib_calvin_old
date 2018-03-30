@@ -29,14 +29,17 @@
     <ClCompile Include="matrix_main.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="matrix.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\util\thread.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="..\util\random.cc">
       <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="naive_multi2.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mkl_multi.cc">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
