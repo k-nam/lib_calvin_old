@@ -184,8 +184,9 @@
     <ClCompile Include="..\graph\graph.cc" />
     <ClCompile Include="..\graph\graph_test.cc" />
     <ClCompile Include="..\lexer\lexer_test.cc" />
-    <ClCompile Include="..\matrix\matrix.cc" />
     <ClCompile Include="..\matrix\matrix_test.cc" />
+    <ClCompile Include="..\matrix\mkl_multi.cc" />
+    <ClCompile Include="..\matrix\naive_multi2.cc" />
     <ClCompile Include="..\parser\parser.cc" />
     <ClCompile Include="..\parser\parser_test.cc" />
     <ClCompile Include="..\sorting\sort_test.cc" />
