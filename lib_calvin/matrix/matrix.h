@@ -766,7 +766,21 @@ namespace lib_calvin  // for definitions
 			}
 		}
 
-
+		// MKL
+		m4.reset(m1.height(), m2.width());
+		watch.start();
+		mklMultiAdd(m1, m2, m4);
+		watch.stop();
+		cout << "mklMultiAdd multiply time " << watch.read() << " GFLOPS: " <<
+			multiProblemSize / watch.read() / GIGA << "\n";
+		if (toAbortIfWrong && m4 != m3) {
+			cout << "mklMultiAdd Error!!!\n";
+			cout << "Right answer is:\n";
+			m3.prsize_t();
+			cout << "mklMultiAdd result is:\n";
+			m4.prsize_t();
+			exit(0);
+		}
 
 		// recursive
 		m4.reset(m1.height(), m2.width());

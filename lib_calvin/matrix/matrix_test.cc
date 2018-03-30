@@ -16,7 +16,7 @@
 void lib_calvin_matrix::matrixTest() {	
 	std::cout << "---------- Beginning matrix test -----------\n\n";
 	typedef double NumericType;
-	size_t testSize = 1000;
+	size_t testSize = 200;
 	lib_calvin_matrix::mklTest(testSize);
 	
 	lib_calvin::stopwatch watch;
@@ -51,7 +51,7 @@ void lib_calvin_matrix::matrixFunctionTest() {
 
 void lib_calvin_matrix::matrixPerformanceTest() {
 	std::cout << "---------- Beginning matrixPerformanceTest -----------\n\n";
-	size_t testSize = 1280;
+	size_t testSize = 5120;
 	lib_calvin::matrix<double> m(testSize);
 	m.check(false);
 	std::cout << "------------- matrixPerformanceTest finished ---------------\n\n\n";
@@ -74,6 +74,8 @@ void lib_calvin_matrix::mklTest(size_t size) {
 	matrix<NumericType> a(size, size);
 	matrix<NumericType> b(size, size);
 	matrix<NumericType> c(size, size);
+
+	lib_calvin_matrix::matrix<NumericType> test(size, size);
 	vector<NumericType> x(size);
 	vector<NumericType> y(size);
 
@@ -90,6 +92,12 @@ void lib_calvin_matrix::mklTest(size_t size) {
 
 	c = prod(a, b);
 	watch.start();
+	for (size_t i = 0; i < size; ++i) {
+		for (size_t j = 0; j < size; j++) {
+			test.setval(i, j) = a(i, j);
+			c(i, j) = mmy.getval(i, j);
+		}
+	}
 	matrix<NumericType> result = prod(a, b);
 	watch.stop();
 	std::cout << "size: " << size << "\n";

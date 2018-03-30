@@ -35,6 +35,9 @@
     <ClCompile Include="..\util\thread.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\util\random.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="matrix_multi.asm">
