@@ -200,13 +200,14 @@ lib_calvin_benchmark::matrix::matrixBenchTemplateSub(std::function<Function> fun
 		}
 		watch.start();
 		func(x, y, z);
+		watch.stop();
 
 		for (size_t temp_i = 0; temp_i < testSize; temp_i++) {
 			for (size_t temp_j = 0; temp_j < testSize; temp_j++) {
 				checkSum += z(temp_i, temp_j);
 			}
 		}
-		watch.stop();
+		
 		best = std::min(best, watch.read());
 	}
 
