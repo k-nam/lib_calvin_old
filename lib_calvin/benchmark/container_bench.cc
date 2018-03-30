@@ -3,9 +3,6 @@
 #include <unordered_set>
 #include <algorithm>
 
-#include "boost/unordered_set.hpp"
-#include "boost/container/set.hpp"
-
 #include "google_btree_set.h"
 
 #include "container_test_types.h"
@@ -27,6 +24,8 @@ lib_calvin_benchmark::container::getSubCategory() {
 	auto result = std::to_string(sizeof(ElemType)) + std::string("byte");
 	if (sizeof(ElemType) >= 24) {
 		result += " (vector)";
+	} else {
+		result += " (int)";
 	}
 	result += " / ";
 	if (currentWorkingSetSize == 0) {
@@ -133,9 +132,9 @@ lib_calvin_benchmark::container::containerBench() {
 void
 lib_calvin_benchmark::container::containerBench(size_t workingSetSize) {
 	currentWorkingSetSize = workingSetSize;
-	//containerBenchTemplate<lib_calvin_container::Numeric>();
-	containerBenchTemplate<lib_calvin_container::LightObject>();
-	containerBenchTemplate<lib_calvin_container::HeavyObject>();
+	containerBenchTemplate<lib_calvin_container::Numeric>();
+	//containerBenchTemplate<lib_calvin_container::LightObject>();
+	//containerBenchTemplate<lib_calvin_container::HeavyObject>();
 }
 
 template <typename ElemType>
@@ -156,7 +155,7 @@ void lib_calvin_benchmark::container::containerBenchTemplate(OperationType opera
 	currentOperation = operation;
 
 	results.push_back(containerBenchSub<std::set<ElemType>>());
-	results.push_back(containerBenchSub<boost::container::set<ElemType>>());	
+	results.push_back(containerBenchSub<std::set<ElemType>>());
 	results.push_back(containerBenchSub<lib_calvin_container::RbTree<ElemType>>());
 	
 	results.push_back(containerBenchSub<btree::btree_set<ElemType>>());
@@ -164,7 +163,7 @@ void lib_calvin_benchmark::container::containerBenchTemplate(OperationType opera
 	results.push_back(containerBenchSub<lib_calvin_container::BPlusTree<ElemType>>());
 	
 	results.push_back(containerBenchSub<std::unordered_set<ElemType, myHasher<ElemType>>>());
-	results.push_back(containerBenchSub<boost::unordered_set<ElemType, myHasher<ElemType>>>());
+	results.push_back(containerBenchSub<std::unordered_set<ElemType, myHasher<ElemType>>>());
 	results.push_back(containerBenchSub<lib_calvin_container::HashTable<ElemType, ElemType, Identity<ElemType>, myHasher<ElemType>>>());
 	results.push_back(containerBenchSub<lib_calvin_container::HashTable2<ElemType, ElemType, Identity<ElemType>, myHasher<ElemType>>>());
 	

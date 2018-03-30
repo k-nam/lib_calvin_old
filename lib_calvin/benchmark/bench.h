@@ -17,7 +17,7 @@ namespace lib_calvin_benchmark
 	void save_bench(std::string category, std::string subCategory, std::string title, std::string comment,
 					std::vector<std::vector<std::string>> algorithms,
 					std::vector<std::vector<double>> results,
-					std::vector<std::string> testCases, std::string unit, int order);
+					std::vector<std::string> testCases, std::string unit, size_t order);
 
 }
 

@@ -19,7 +19,7 @@ void lib_calvin_benchmark::save_bench(std::string category, std::string subCateg
 									  string title, string comment,
 									  vector<vector<string>> algorithms,
 									  vector<vector<double>> results, vector<string> testCases, string unit, 
-									  int order) {
+									  size_t order) {
 	using json = nlohmann::json;
 	json benchData;
 	benchData["category"] = category;

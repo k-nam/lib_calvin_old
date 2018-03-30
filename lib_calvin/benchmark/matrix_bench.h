@@ -16,7 +16,7 @@ namespace lib_calvin_benchmark
 		std::vector<size_t> const benchTestSizes = { 160, 320, 640, 1280, 2560, 5120, 10240 };
 		std::vector<std::string> const benchTestCase = { "matrix multiplication" };
 		std::vector<size_t> const benchNumIter = { 100, 10, 3, 1, 1, 1, 1 };
-		std::vector<int> const benchOrder = { 0, 1, 2, 3, 4, 5, 6 };
+
 		std::string const unit = "G/s (higher is better)";
 		std::string const category = "Matrix";
 
@@ -42,8 +42,8 @@ namespace lib_calvin_benchmark
 		static Algorithm currentAlgo;
 
 		enum SubCategory {
-			MATRIX_MULTI_DOUBLE,
-			MATRIX_MULTI_USER_DEFINED_OBJECT
+			OPTIMAL,
+			DROP
 		};
 
 		static SubCategory currentSubCategory;
@@ -58,20 +58,21 @@ namespace lib_calvin_benchmark
 
 		std::vector<std::string> getAlgorithmNamesAndTags(Algorithm);
 
-
-
+		std::vector<std::vector<std::string>> getAlgorithmNamesAndTagsVector(std::vector<Algorithm>);
 		std::vector<std::vector<std::string>> getAllNamesAndTagsVector();
 
 		void matrixBench();
 
 		void matrixBench(SubCategory, size_t currentNum);
 
-		template <typename T>
 		double
 			matrixBenchSub(Algorithm);
 
-		template <typename T, typename Function>
+		template <typename Function>
 		double matrixBenchTemplateSub(std::function<Function>);
+
+		template <typename Function>
+		double matrixBenchTemplateSub(std::function<Function> func, size_t testSize, size_t numIter);
 
 	}
 }

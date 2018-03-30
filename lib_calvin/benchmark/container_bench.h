@@ -7,7 +7,6 @@
 #include <functional>
 
 #include "container_test.h"
-#include "boost/functional/hash.hpp"
 
 namespace lib_calvin_benchmark
 {
