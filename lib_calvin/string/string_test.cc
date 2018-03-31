@@ -47,7 +47,7 @@ void lib_calvin_string::matchingAlgorithmTest() {
 template <typename Alphabet>
 void lib_calvin_string::matchingTest(void(*matchingCharAlg)
 (abstract_string<Alphabet> const &text, abstract_string<Alphabet> const &pattern,
-	vector<size_t> &record), std::string title) {
+									 vector<size_t> &record), std::string title) {
 	vector<size_t> record;
 	vector<size_t> answer;
 	lib_calvin::stopwatch watch;
