@@ -2,6 +2,8 @@
 #include "suffix_tree.h"
 #include "vector.h"
 
+using namespace lib_calvin;
+
 void lib_calvin_string::suffixTreeTest() {
 	SuffixTreeTest<char> a;
 	a.suffixTreeTest();
@@ -218,7 +220,7 @@ void lib_calvin_string::SuffixTreeTest<Alphabet>::findLongestCommonSubstringTest
 
 template <typename Alphabet>
 void lib_calvin_string::SuffixTreeTest<Alphabet>::printMatchResult(
-		abstract_string<Alphabet> const &pattern, std::string rightAnswer,
+		lib_calvin::abstract_string<Alphabet> const &pattern, std::string rightAnswer,
 		lib_calvin::vector<std::pair<size_t, size_t>> const &result) const {
 	std::cout << "Result for: ";
 	pattern.print();

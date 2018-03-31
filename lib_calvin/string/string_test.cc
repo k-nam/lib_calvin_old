@@ -4,6 +4,8 @@
 #include "suffix_tree.h"
 #include "suffix_tree_test.h"
 
+using namespace lib_calvin;
+
 void lib_calvin_string::stringTest() {
 	std::cout << "---------- Beginning string test -----------\n\n";
 	abstractStringTest();
@@ -47,13 +49,13 @@ void lib_calvin_string::matchingAlgorithmTest() {
 template <typename Alphabet>
 void lib_calvin_string::matchingTest(void(*matchingCharAlg)
 (abstract_string<Alphabet> const &text, abstract_string<Alphabet> const &pattern,
-									 vector<size_t> &record), std::string title) {
-	vector<size_t> record;
-	vector<size_t> answer;
+									 lib_calvin::vector<size_t> &record), std::string title) {
+	lib_calvin::vector<size_t> record;
+	lib_calvin::vector<size_t> answer;
 	lib_calvin::stopwatch watch;
 
 	Alphabet alphabetSize = 4;
-	size_t textLen = 100000;
+	size_t textLen = 1000* 1000;
 	size_t patternLen = 16;
 	Alphabet *pText = new Alphabet[textLen];
 	Alphabet *pPattern = new Alphabet[patternLen];

@@ -1046,7 +1046,7 @@ namespace lib_calvin_container
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	bool B_TREE_BASE<T, K, Comp, ExtractKey>::empty() const {
-		return root_ == NULL;
+		return root_ == nullptr;
 	}
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
@@ -1063,7 +1063,7 @@ namespace lib_calvin_container
 	typename B_TREE_BASE<T, K, Comp, ExtractKey>::Node *
 		B_TREE_BASE<T, K, Comp, ExtractKey>::getFirstOrLastNode(bool isFirst) const {
 		if (empty()) {
-			return NULL;
+			return nullptr;
 		}
 		Node *node = root_;
 		while (node->isLeafNode() == false) {

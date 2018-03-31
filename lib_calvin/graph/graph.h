@@ -32,9 +32,9 @@ namespace lib_calvin_graph { // auxiliary for graph class
 
 size_t const UNREACHABLE_VERTEX = SIZE_MAX;
 
-using lib_calvin::map;
+using std::map;
 using lib_calvin::vector;
-using lib_calvin::set;
+using std::set;
 using std::pair;
 using std::cout;
 using std::endl;

@@ -8,57 +8,55 @@
 
 namespace lib_calvin_string 
 {
-using lib_calvin::abstract_string;
-using lib_calvin::vector;
 using std::cout;
 using std::endl;
 
 // Z(i) = the length of the c_string that starts at index i and matches
 // ...the prefix of pattern
 template <typename Alphabet>
-void calculateZ(abstract_string<Alphabet> const &pattern, vector<size_t> &record);
+void calculateZ(lib_calvin::abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> &record);
 
 // f(i) = the maximum length of a prefix of pattern which is also a 
 // ...proper suffix of substring pattern[0 i-1]
 template <typename Alphabet>
-void calculateF(abstract_string<Alphabet> const &pattern, vector<size_t> &record);
+void calculateF(lib_calvin::abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> &record);
 
 // maps each Alphabet to the index in which the Alphabet first appears in the 
 // ..pattern (looking from the right-end of patttern)
 // assumes that Alphabet can be converted to unsigned int type (which is the
 // ..index in record)
 template <typename Alphabet>
-void badChar(abstract_string<Alphabet> const &pattern, vector<size_t> &record);
+void badChar(lib_calvin::abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> &record);
 
 template <typename Alphabet>
-void strongGoodSuffix(abstract_string<Alphabet> const &pattern, 
-											 vector<size_t> &record);
+void strongGoodSuffix(lib_calvin::abstract_string<Alphabet> const &pattern, 
+											 lib_calvin::vector<size_t> &record);
 
 // save the matching indices in the third argument
 template <typename Alphabet>
-void naiveMatch(abstract_string<Alphabet> const &text, 
-    abstract_string<Alphabet> const &pattern, 
-    vector<size_t> &result);
+void naiveMatch(lib_calvin::abstract_string<Alphabet> const &text, 
+    lib_calvin::abstract_string<Alphabet> const &pattern, 
+    lib_calvin::vector<size_t> &result);
 
 template <typename Alphabet>
-void basicMatch(abstract_string<Alphabet> const &text, 
-    abstract_string<Alphabet> const &pattern,
-    vector<size_t> &result);
+void basicMatch(lib_calvin::abstract_string<Alphabet> const &text, 
+    lib_calvin::abstract_string<Alphabet> const &pattern,
+    lib_calvin::vector<size_t> &result);
 
 template <typename Alphabet>
-void kmp(abstract_string<Alphabet> const &text, 
-    abstract_string<Alphabet> const &pattern, 
-    vector<size_t> &result);
+void kmp(lib_calvin::abstract_string<Alphabet> const &text, 
+    lib_calvin::abstract_string<Alphabet> const &pattern, 
+    lib_calvin::vector<size_t> &result);
 
 template <typename Alphabet>
-void boyerMoore(abstract_string<Alphabet> const &text, 
-    abstract_string<Alphabet> const &pattern, 
-    vector<size_t> &result);
+void boyerMoore(lib_calvin::abstract_string<Alphabet> const &text, 
+    lib_calvin::abstract_string<Alphabet> const &pattern, 
+    lib_calvin::vector<size_t> &result);
 
 template <typename Alphabet>
-void suffixTreeMatching(abstract_string<Alphabet> const &text, 
-    abstract_string<Alphabet> const &pattern, 
-    vector<size_t> &result);
+void suffixTreeMatching(lib_calvin::abstract_string<Alphabet> const &text, 
+    lib_calvin::abstract_string<Alphabet> const &pattern, 
+    lib_calvin::vector<size_t> &result);
 
 } // end namespace lib_calvin_string
 
@@ -68,10 +66,10 @@ void suffixTreeMatching(abstract_string<Alphabet> const &text,
 // ...also prefix of the entire c_string. 
 template <typename Alphabet>
 void lib_calvin_string::calculateZ (
-    abstract_string<Alphabet> const &pattern, vector<size_t> &record) {
+    lib_calvin::abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> &record) {
 
   size_t len = pattern.size();  
-  vector<size_t> &Z = record;
+  lib_calvin::vector<size_t> &Z = record;
   record.clear();
   record.resize(len, 0);
   // l(k), r(k): the leftmost and rightmost indices of the substring 
@@ -123,11 +121,11 @@ void lib_calvin_string::calculateZ (
 //  in KMP algorithm. f(len) denotes the jump length when a match has been found.
 template <typename Alphabet>
 void lib_calvin_string::calculateF (
-    abstract_string<Alphabet> const &pattern, vector<size_t> &record) {
+    lib_calvin::abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> &record) {
   size_t len = pattern.size();
   size_t k;
 	size_t m; // for indices
-  vector<size_t> &f = record;
+  lib_calvin::vector<size_t> &f = record;
   record.clear();
   record.resize(len + 1);
   f[0] = 0; // this value is not used, but convenient for below procedure
@@ -156,7 +154,7 @@ void lib_calvin_string::calculateF (
 // character i.
 template <typename Alphabet>
 void lib_calvin_string::badChar (
-    abstract_string<Alphabet> const &pattern, vector<size_t> &record) {
+    lib_calvin::abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> &record) {
   
   record.clear();
   size_t len = pattern.size();
@@ -181,12 +179,12 @@ void lib_calvin_string::badChar (
 // detected on index i (from right).
 template <typename Alphabet>
 void lib_calvin_string::strongGoodSuffix (
-    abstract_string<Alphabet> const &pattern, vector<size_t> &record) {
+    lib_calvin::abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> &record) {
   size_t len = pattern.size();
   record.clear();
   record.resize(len + 1, len);
   // use Z algorithm in reverse c_string
-  vector<size_t> Z;
+  lib_calvin::vector<size_t> Z;
   calculateZ (pattern.reverse(), Z);
   for (size_t i = 1; i < len; ++i) {
 		// we must not overwrite; otherwise, we will get greater jump value than
@@ -219,8 +217,8 @@ void lib_calvin_string::strongGoodSuffix (
 
 template <typename Alphabet>
 void lib_calvin_string::naiveMatch (
-    abstract_string<Alphabet> const &text, 
-		abstract_string<Alphabet> const &pattern, vector<size_t> &result) 
+    lib_calvin::abstract_string<Alphabet> const &text, 
+		lib_calvin::abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> &result) 
 {
   result.clear();
   size_t textLen   = text.size();
@@ -242,15 +240,15 @@ void lib_calvin_string::naiveMatch (
 // need a special character($) that is not present either in text or pattern
 // using null character for this case
 template <typename Alphabet>
-void lib_calvin_string::basicMatch (abstract_string<Alphabet> const &text, 
-    abstract_string<Alphabet> const &pattern, vector<size_t> &result) {
+void lib_calvin_string::basicMatch (lib_calvin::abstract_string<Alphabet> const &text, 
+    lib_calvin::abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> &result) {
   result.clear();
   size_t patternLen     = pattern.size();
   size_t textLen      = text.size();
   Alphabet *pSpecialChar  = new Alphabet(0);
-  abstract_string<Alphabet> newstring  = 
-    pattern + abstract_string<Alphabet>(pSpecialChar, 1) + text;
-  vector<size_t> Z;
+  lib_calvin::abstract_string<Alphabet> newstring  = 
+    pattern + lib_calvin::abstract_string<Alphabet>(pSpecialChar, 1) + text;
+  lib_calvin::vector<size_t> Z;
   calculateZ(newstring, Z);
   for (size_t i = patternLen + 1; i < textLen + patternLen + 1; ++i) {
     if (Z[i] == patternLen) { // match detected
@@ -268,12 +266,12 @@ void lib_calvin_string::basicMatch (abstract_string<Alphabet> const &text,
 // It seems that using goto statement is unavoidable here.
 template <typename Alphabet>
 void lib_calvin_string::kmp(
-    abstract_string<Alphabet> const &text, 
-		abstract_string<Alphabet> const &pattern, vector<size_t> &result) {
+    lib_calvin::abstract_string<Alphabet> const &text, 
+		lib_calvin::abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> &result) {
   result.clear();
   size_t patternLen  = pattern.size();
   size_t textLen   = text.size();
-  vector<size_t> f; 
+  lib_calvin::vector<size_t> f; 
   calculateF (pattern, f);
   size_t k = 0, s = 0;
   
@@ -330,18 +328,18 @@ FirstWrong:
 
 template <typename Alphabet>
 void lib_calvin_string::boyerMoore (
-    abstract_string<Alphabet> const &text, 
-		abstract_string<Alphabet> const &pattern, vector<size_t> &result) {		
+    lib_calvin::abstract_string<Alphabet> const &text, 
+		lib_calvin::abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> &result) {		
   result.clear();
-  abstract_string<Alphabet> reverse = pattern.reverse();
+  lib_calvin::abstract_string<Alphabet> reverse = pattern.reverse();
   size_t textLen   = text.size();
   size_t patternLen  = pattern.size();
   // h: head in text, k: index in text, s: index in pattern (reversed)
   size_t h = patternLen - 1, k = patternLen - 1, s = 0;
   size_t badCharJump = 0, goodSuffixJump = 0;
 	bool matched = false;
-  vector<size_t> charTable;
-	vector<size_t> suffixTable;
+  lib_calvin::vector<size_t> charTable;
+	lib_calvin::vector<size_t> suffixTable;
   badChar(pattern, charTable);
   strongGoodSuffix (pattern, suffixTable);
   while (h < textLen) {
@@ -381,8 +379,8 @@ void lib_calvin_string::boyerMoore (
 }
 
 template <typename Alphabet>
-void lib_calvin_string::suffixTreeMatching(abstract_string<Alphabet> const &text, 
-    abstract_string<Alphabet> const &pattern, vector<size_t> &result) {
+void lib_calvin_string::suffixTreeMatching(lib_calvin::abstract_string<Alphabet> const &text, 
+    lib_calvin::abstract_string<Alphabet> const &pattern, lib_calvin::vector<size_t> &result) {
 	lib_calvin::suffix_tree<Alphabet> tree(text);
 	// return value of find_pattern is (textId, startIndex) pair
 	tree.build();
