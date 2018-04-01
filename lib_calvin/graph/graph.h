@@ -188,8 +188,6 @@ public:
 private:
 	// returns (vertexId, wasInserted)
 	std::pair<size_t, bool> insertVertex(V const &);
-	// has no effect if vertex is already present
-	void increaseSizeByOne();
 	// src and dest must be present
 	bool hasEdge(size_t src, size_t dest) const;
 private:
