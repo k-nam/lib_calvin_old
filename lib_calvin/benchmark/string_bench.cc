@@ -25,7 +25,7 @@ lib_calvin_benchmark::string::getAlgorithmNamesAndTags(Algorithm algo) {
 		return { "z-algorithm" };
 	case KMP:
 		return { "KMP" };
-	case BOYWER:
+	case BOYER:
 		return { "Boywer-Moore" };
 	case SUFFIX:
 		return { "suffix tree" };
@@ -35,31 +35,49 @@ lib_calvin_benchmark::string::getAlgorithmNamesAndTags(Algorithm algo) {
 	}
 }
 
-vector<SubCategory>
-lib_calvin_benchmark::string::getAllSubCategories() {
-	return vector<SubCategory> { BINARY, GENE, ENG };
+vector<CharSet>
+lib_calvin_benchmark::string::getAllCharSets() {
+	return vector<CharSet> { BINARY, DNA, ENG };
 }
 
 vector<Algorithm>
 lib_calvin_benchmark::string::getAllAlgorithms() {
-	return vector<Algorithm> { NAIVE, Z, KMP, BOYWER, SUFFIX };
+	return vector<Algorithm> { NAIVE, Z, KMP, BOYER, SUFFIX };
 }
 
-string
-lib_calvin_benchmark::string::getTitle(size_t problemSize) {
-	auto sizeString = to_string(problemSize);
-	return "Matching text (" + to_string(problemSize/1000/1000) +  "M) with pattern (" + to_string(patternLen) + ")";
+vector<Algorithm>
+lib_calvin_benchmark::string::getLinearTimeAlgorithms() {
+	return vector<Algorithm> { NAIVE, Z, KMP, BOYER, SUFFIX };
 }
 
-string
-lib_calvin_benchmark::string::getSubCategory(SubCategory subCategory) {
-	switch (subCategory) {
+size_t 
+lib_calvin_benchmark::string::getPatternLen(CharSet charSet) {
+	switch (charSet) {
 	case BINARY:
-		return "Binary string";
-	case GENE:
-		return "4-letter string";
+		return 1000;
+	case DNA:
+		return 300;
 	case ENG:
-		return "English string (26)";
+		return 10;
+	default:
+		cout << "getPatternLen error!";
+		exit(0);
+	}
+}
+
+string
+lib_calvin_benchmark::string::getTitle(CharSet charSet) {
+	return "Charset size: " +  to_string(static_cast<int>(charSet)) + 
+										 " / Pattern len: " + to_string(getPatternLen(charSet));
+}
+
+string
+lib_calvin_benchmark::string::getSubCategory(TextType type) {
+	switch (type) {
+	case RANDOM:
+		return "Randomized string";
+	case MANY_NEAR_MISS:
+		return "Frequent near misses";
 	default:
 		cout << "getSubCategory error!";
 		exit(0);
@@ -84,132 +102,158 @@ lib_calvin_benchmark::string::getAllNamesAndTagsVector() {
 
 void lib_calvin_benchmark::string::stringBench() {
 
-	for (auto subCategory: getAllSubCategories()) {
-		stringBench(subCategory);
+	for (auto type: { RANDOM, MANY_NEAR_MISS }) {
+		stringBench(type);
 	}
 }
 
-void lib_calvin_benchmark::string::stringBench(SubCategory subCategory) {
+void lib_calvin_benchmark::string::stringBench(TextType type) {
 
-	for (size_t testsize : benchTestSizes) {
-		stringBench(subCategory, testsize);
+	for (auto charSet : getAllCharSets()) {
+		stringBench(type, charSet);
 	}
+	//stringBench(type, BINARY);
 }
 
-void lib_calvin_benchmark::string::stringBench(SubCategory subCategory, size_t testSize) {
-	auto subCategoryString = getSubCategory(subCategory);
+void lib_calvin_benchmark::string::stringBench(TextType type, CharSet charSet) {
+	auto subCategoryString = getSubCategory(type);
 	auto comment = "";
-	vector<std::string> benchTestCase = { "string matching" };
 	vector<vector<double>> results;
 
 	static size_t order = 0;
 
-	for (auto algorithm : getAllAlgorithms()) {
-		results.push_back({ stringBenchSub(subCategory, testSize, algorithm, benchNumIter) });
+	vector<Algorithm> algos;
+	if (type == RANDOM) {
+		algos = getAllAlgorithms();
+	} else {
+		algos = getLinearTimeAlgorithms();
+	}
+
+	for (auto algorithm : algos) {
+		results.push_back(stringBenchSub(type, charSet, getPatternLen(charSet), algorithm));
 
 	}
 
-	lib_calvin_benchmark::save_bench(category, subCategoryString, getTitle(testSize), comment,
-										getAllNamesAndTagsVector(),
-										results, benchTestCase, unit, order++);	
+	lib_calvin_benchmark::save_bench(category, subCategoryString, getTitle(charSet), comment,
+										getAlgorithmNamesAndTagsVector(algos),
+										results, benchCases, unit, order++);
 }
 
 vector<double> 
-lib_calvin_benchmark::string::stringBenchSub(SubCategory subCategory, size_t textLen, 
-											 Algorithm algo, vector<size_t> numIters) {
-	cout << "Now benchmarking: " << getSubCategory(subCategory) <<
-		" testSize: " << textLen <<
+lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, size_t patternLen, Algorithm algo) {
+	cout << "Now benchmarking: " << getSubCategory(type) <<
+		" pattern len: " << patternLen <<
 		" algorithm: " << getAlgorithmNamesAndTags(algo)[0] << "\n";
 
 	vector<double> result;
-
-	auto fixedAndVariable = stringBenchSub2(subCategory, textLen, algo);
-	for (auto numIter: numIters) {
-		result.push_back(fixedAndVariable.first + fixedAndVariable.second * numIter);
-	}
-	return result;
-}
-
-pair<double, double>
-lib_calvin_benchmark::string::stringBenchSub2(SubCategory subCategory, size_t textLen,
-											 Algorithm algo) {
-
 	using namespace lib_calvin_string;
 	using lib_calvin::stopwatch;
-
-	vector<double> result;
-
+	lib_calvin::random_number_generator gen;
 	typedef typename lib_calvin::abstract_string<char> c_string;
-	char *pText = new char[textLen];
-	char *pPattern = new char[patternLen];
-	lib_calvin::vector<size_t> algorithmResult;
-	size_t alphabetSize = 0;
+	size_t const numPatterns = 10;
 
-	switch (subCategory) {
+	size_t alphabetSize = 0;
+	switch (charSet) {
 	case BINARY:
 		alphabetSize = 2;
 		break;
-	case GENE:
+	case DNA:
 		alphabetSize = 4;
 		break;
 	case ENG:
-		alphabetSize = 4;
+		alphabetSize = 26;
 		break;
 	default:
-		cout << "stringBenchSub2 error!";
+		cout << "stringBenchSub error!";
 		exit(0);
 	}
 
-	lib_calvin::random_number_generator gen;	
-	for (size_t i = 0; i < textLen; ++i) {
-		pText[i] = '0' + gen() % alphabetSize;
-	}
-	for (size_t i = 0; i < patternLen; i++) {
-		pPattern[i] ='0' + gen() % alphabetSize;
-	}
+	for (auto testSize: benchTestSizes) {
+		size_t textLen = testSize;
 
-	c_string text(pText, textLen);
-	c_string pattern(pPattern, patternLen);
+		char *pText = new char[textLen];
+		char *pPatterns[numPatterns];
 
-	stopwatch watch;
-	watch.start();
+		for (size_t i = 0; i < textLen; ++i) {
+			size_t number;
+			if (type == RANDOM) {
+				number = gen() ;
+			} else {
+				number = i;
+			}
+			pText[i] = '0' + static_cast<char>(number % alphabetSize);
+		}
+		for (size_t i = 0; i < numPatterns; i++) {
+			pPatterns[i] = new char[patternLen];
+			for (size_t j = 0; j < patternLen; j++) {
+				size_t number;
+				if (type == RANDOM) {
+					number = gen();
+				} else {
+					number = j;
+				}
+				pPatterns[i][j] = '0' + static_cast<char>(number % alphabetSize);				
+			}
+			if (type == MANY_NEAR_MISS) {
+				// Prevent matching
+				pPatterns[i][patternLen - 1] = pPatterns[i][patternLen - 2];
+			}
+		}
+		c_string text(pText, textLen);
 
-	switch (algo) {
+		stopwatch watch;
+		
 
-	case NAIVE: {
-		naiveMatch(text, pattern, algorithmResult);
-		watch.stop();
-		return make_pair(0, watch.read());
-	}
-	case Z: {
-		basicMatch(text, pattern, algorithmResult);
-		watch.stop();
-		return make_pair(0, watch.read());
-	}
-	case KMP: {
-		kmp(text, pattern, algorithmResult);
-		watch.stop();
-		return make_pair(0, watch.read());
-	}
-	case BOYWER: {
-		boyerMoore(text, pattern, algorithmResult);
-		watch.stop();
-		return make_pair(0, watch.read());
-	}
-	case SUFFIX:{
-		lib_calvin::suffix_tree<char> tree(text);
-		tree.build();
-		watch.stop();
-		double fixed = watch.read();
+		if (algo == SUFFIX) {
+			lib_calvin::suffix_tree<char> tree(text);
+			tree.build();
 
-		watch.start();
-		tree.find_pattern(pattern);
-		watch.stop();
-		return make_pair(fixed, watch.read());
-	}
-	default:
-		cout << "stringBenchSub2 error2!";
-		exit(0);
-	}
+			watch.start();
+			for (size_t i = 0; i < numPatterns; i++) {
+				c_string pattern(pPatterns[i], patternLen);
+				tree.find_pattern(pattern);
+			}
+			watch.stop();
+		} else {
+			watch.start();
+			for (size_t i = 0; i < numPatterns; i++) {
+				c_string pattern(pPatterns[i], patternLen);
+				lib_calvin::vector<size_t> algorithmResult;
+				switch (algo) {
+				case NAIVE: {
+					naiveMatch(text, pattern, algorithmResult);
+					break;
+				}
+				case Z: {
+					basicMatch(text, pattern, algorithmResult);
+					break;
+				}
+				case KMP: {
+					kmp(text, pattern, algorithmResult);
+					break;
+				}
+				case BOYER: {
+					boyerMoore(text, pattern, algorithmResult);
+					break;
+				}
+				default:
+					cout << "stringBenchSub error2!";
+					exit(0);
+				}
+			}
+			watch.stop();
+		}
+		result.push_back(textLen / (watch.read() / numPatterns) / 1000 / 1000);
+
+
+		delete[] pText;
+		for (size_t i = 0; i < numPatterns; i++) {
+			delete[] pPatterns[i];
+		}
+	}	
+
+
+
+	return result;
 }
 
