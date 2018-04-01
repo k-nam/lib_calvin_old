@@ -623,7 +623,7 @@ namespace lib_calvin  // for definitions
 		using std::cout;
 		using std::endl;
 		size_t const GIGA = 1000000000;
-		double const multiProblemSize = static_cast<double>(height_)*height_*height_ * 2;
+		double const multiProblemSize = static_cast<double>(height_)*height_*height_;
 		cout << "Testing with matrix dimension: " << height_ << " * " << width_
 			<< endl;
 		stopwatch watch;

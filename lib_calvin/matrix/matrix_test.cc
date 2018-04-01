@@ -51,7 +51,7 @@ void lib_calvin_matrix::matrixFunctionTest() {
 
 void lib_calvin_matrix::matrixPerformanceTest() {
 	std::cout << "---------- Beginning matrixPerformanceTest -----------\n\n";
-	size_t testSize = 1280;
+	size_t testSize = 2560;
 	lib_calvin::matrix<double> m(testSize);
 	m.check(false);
 	std::cout << "------------- matrixPerformanceTest finished ---------------\n\n\n";
@@ -102,7 +102,7 @@ void lib_calvin_matrix::mklTest(size_t size) {
 	watch.stop();
 	std::cout << "size: " << size << "\n";
 	std::cout << "matrix*matrix: " << watch.read() << "  GFLOPS: " <<
-		(double)size * size * size * 2 / watch.read() / 1000000000 << "\n";
+		(double)size * size * size / watch.read() / 1000000000 << "\n";
 	for (size_t i = 0; i < size; ++i) {
 		for (size_t j = 0; j < size; j++) {
 			double residual = result(i, j) - 1.2 * 1.5 * size;
@@ -116,12 +116,12 @@ void lib_calvin_matrix::mklTest(size_t size) {
 	x = prod(a, x);
 	watch.stop();
 	std::cout << "matrix*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
-		(double)size * size2 * 2 / watch.read() / 1000000000 << "\n";
+		(double)size * size2 / watch.read() / 1000000000 << "\n";
 	watch.start();
 	double innerProdResult = inner_prod(x, y);
 	watch.stop();
 	std::cout << "vector*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
-		(double)size * 2 / watch.read() / 1000000000 << "\n";
+		(double)size / watch.read() / 1000000000 << "\n";
 	std::cout << "\n";
 
 	lib_calvin::matrix<NumericType> c1(size, size);
@@ -131,12 +131,12 @@ void lib_calvin_matrix::mklTest(size_t size) {
 	auto result1 = c1 * x1;
 	watch.stop();
 	std::cout << "lib_calvin matrix*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
-		(double)size * size2 * 2 / watch.read() / 1000000000 << "\n";
+		(double)size * size2 / watch.read() / 1000000000 << "\n";
 	watch.start();
 	result1.reset(y1 * x1);
 	watch.stop();
 	std::cout << "lib_calvin vector*vector: " << size << ". " << watch.read() << "  GFLOPS: " <<
-		(double)size * 2 / watch.read() / 1000000000 << "\n";
+		(double)size / watch.read() / 1000000000 << "\n";
 	std::cout << "\n";
 
 	std::cout << "------------- mklTest finished ---------------\n\n";
@@ -233,7 +233,7 @@ double lib_calvin_matrix::doGigaOps() {
 	}	
 	watch.stop();
 	std::cout << "Gigaop: " << watch.read() << "  GFLOPS: " <<
-		(double)giga  * 2 / watch.read() / (1000*1000*1000) << "\n\n";
+		(double)giga / watch.read() / (1000*1000*1000) << "\n\n";
 	std::cout << "---------- Gigaops finished -----------\n\n";
 
 	return *((double *)&a1) * *((double *)&a2) * *((double *)&a3) * *((double *)&a4);
