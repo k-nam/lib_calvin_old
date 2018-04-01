@@ -47,9 +47,9 @@ namespace lib_calvin_adt
 		K & operator[] (size_t index);
 	private:
 		size_t newIndex_;
-		//hash_map<size_t, K> indexToKey_;
+		hash_map<size_t, K> indexToKey_;
 		//hash_map<K, size_t> keyToIndex_;
-		map<size_t, K> indexToKey_; // map indx to key
+		//map<size_t, K> indexToKey_; // map indx to key
 		map<K, size_t> keyToIndex_; // map key to index
 	};
 
