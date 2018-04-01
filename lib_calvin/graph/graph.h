@@ -32,9 +32,9 @@ namespace lib_calvin_graph { // auxiliary for graph class
 
 size_t const UNREACHABLE_VERTEX = SIZE_MAX;
 
-using std::map;
+using lib_calvin::map;
 using lib_calvin::vector;
-using std::set;
+using lib_calvin::set;
 using std::pair;
 using std::cout;
 using std::endl;
@@ -177,7 +177,7 @@ protected:
 	path getPathFromReversedPath(size_t src, vector<size_t> const &reversedPath) const;
 protected:
 	lib_calvin_adt::IntIndexer<K> mapping_; // 1:1 mapping of verticex and size_tegers
-	lib_calvin_container::BPlusTree<V, K, std::less<K>, ExtractKey> vertices_;
+	lib_calvin_container::RbTree<V, K, std::less<K>, ExtractKey> vertices_;
 	//lib_calvin_container::HashTable<V, K, ExtractKey> vertices_;
 	map<size_t, map<size_t, E>> outLinks_;
 	map<size_t, set<size_t>> inLinks_;
