@@ -205,6 +205,7 @@
   <ItemGroup>
     <ClInclude Include="graph.h" />
     <ClInclude Include="graph_test.h" />
+    <ClInclude Include="simple_graph.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
