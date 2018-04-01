@@ -47,7 +47,7 @@ namespace lib_calvin
 	template <typename Iterator, typename Comparator =
 		std::less<typename std::iterator_traits<Iterator>::value_type>>
 		void intro_sort(Iterator first, Iterator last, Comparator comp = Comparator()) {
-		lib_calvin_sort:introSort(first, last, comp);
+		lib_calvin_sort::introSort(first, last, comp);
 	}
 
 	template <typename Iterator, typename Comparator =
