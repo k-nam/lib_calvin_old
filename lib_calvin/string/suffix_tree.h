@@ -2,8 +2,9 @@
 #define LIB_CALVIN__STRING__SUFFIX_TREE_H
 
 #include "abstract_string.h"
-#include "graph.h"
+#include "simple_graph.h"
 #include "stopwatch.h"
+#include "sort.h"
 
 namespace lib_calvin_string {
 template <typename Alphabet>
@@ -19,8 +20,8 @@ private:
 	// users of this class should only use positive char or int value of Alphabet
 	Alphabet dollor_ = '9';
 public:
-	suffix_tree(abstract_string<Alphabet> const &texts);
-	suffix_tree(vector<abstract_string<Alphabet>> const &texts);
+	suffix_tree(lib_calvin::abstract_string<Alphabet> const &texts);
+	suffix_tree(vector<lib_calvin::abstract_string<Alphabet>> const &texts);
 	void build();
 	// return (textId, startIndex) of match
 	vector<std::pair<size_t, size_t>> find_pattern(abstract_string<Alphabet> const &pattern) const;
@@ -124,7 +125,7 @@ private:
 	void printNode(NodeKey key) const;
 private:
 	vector<abstract_string<Alphabet>> texts_;
-	lib_calvin::graph<Node, Link, NodeKey, NodeExtractKey> graph_;
+	lib_calvin_graph::simple_graph<Node, Link, NodeKey, NodeExtractKey> graph_;
 private:
 	size_t textId_; 
 	size_t phase_; // length of current prefix
@@ -183,7 +184,7 @@ suffix_tree<Alphabet>::find_pattern(abstract_string<Alphabet> const &pattern) co
 	for (auto iter = reachableLeaves.begin(); iter < reachableLeaves.end(); iter++) {
 		result.push_back(std::make_pair(iter->textId_, iter->id_));
 	}
-	lib_calvin::sort(result.begin(), result.end());
+	lib_calvin::intro_sort(result.begin(), result.end());
 	return result;
 }
 
