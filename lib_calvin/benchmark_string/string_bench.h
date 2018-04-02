@@ -14,12 +14,10 @@ namespace lib_calvin_benchmark
 		using namespace lib_calvin_string;
 
 		std::vector<size_t> const benchTestSizes = { 1000*1000, 2000*1000, 4000*1000 };
-		//std::vector<size_t> const benchTestSizes = { 1000*1000 };
-
 
 		std::vector<std::string> const benchCases = { "1M", "2M", "4M"};
 
-		std::string const unit = "M sec (lower is better)";
+		std::string const unit = "M / sec (higher is better)";
 		std::string const category = "String";
 
 		enum Algorithm {
@@ -33,7 +31,7 @@ namespace lib_calvin_benchmark
 		};
 
 		enum TextType {
-			RANDOM, MANY_NEAR_MISS
+			RANDOM, HEAD_MISS, TAIL_MISS
 		};
 
 		size_t getPatternLen(CharSet);

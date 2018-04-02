@@ -168,6 +168,7 @@ public:
 	typedef value_type & reference;
 	typedef ptrdiff_t difference_type;
 	typedef typename Impl::iterator_category iterator_category;
+	using  ConstIterator<Impl>::impl_;
 
 	Iterator(): ConstIterator<Impl>() { }
 	Iterator(Impl impl): ConstIterator<Impl>(impl) { }
@@ -493,7 +494,7 @@ bool containerLess(Iterator lhsBegin, Iterator lhsEnd,
 
 template <typename Iterator> 
 Iterator advanceIteratorBy(Iterator iterator, ptrdiff_t distance) {
-	std::iterator_traits<Iterator>::iterator_category category;
+	typename std::iterator_traits<Iterator>::iterator_category category;
 	return advanceIteratorBy(iterator, distance, category);
 }
 
@@ -524,7 +525,7 @@ Iterator advanceIteratorBy(Iterator iterator, ptrdiff_t distance, std::forward_i
 
 template <typename Iterator> 
 ptrdiff_t distanceBetweenIterator(Iterator begin, Iterator end) {
-	std::iterator_traits<Iterator>::iterator_category category;
+	typename std::iterator_traits<Iterator>::iterator_category category;
 	return distanceBetweenIterator(begin, end, category);
 }
 

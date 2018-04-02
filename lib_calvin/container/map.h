@@ -23,11 +23,11 @@ namespace lib_calvin_container
 
 		mapped_type & operator[](key_type const &key)
 		{
-			return insert(std::pair<K, V>(key, V())).first->second;
+			return Set::insert(std::pair<K, V>(key, V())).first->second;
 		}
 		mapped_type & operator[](key_type &&key)
 		{
-			return insert(std::pair<K, V>(std::forward<key_type>(key), V())).first->second;
+			return Set::insert(std::pair<K, V>(std::forward<key_type>(key), V())).first->second;
 		}
 	};
 

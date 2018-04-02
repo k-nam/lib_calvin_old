@@ -191,7 +191,6 @@
     <ClCompile Include="..\parser\parser_test.cc" />
     <ClCompile Include="..\sorting\sort_test.cc" />
     <ClCompile Include="..\string\abstract_string.cc" />
-    <ClCompile Include="..\string\string_test.cc" />
     <ClCompile Include="..\string\suffix_tree_test.cc" />
     <ClCompile Include="..\subcc\subcc_code_generator.cc" />
     <ClCompile Include="..\subcc\subcc_compiler.cc" />

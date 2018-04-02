@@ -2,6 +2,7 @@
 #define LIB_CALVIN__SORT__SORT_TEST_H
 
 #include <iostream>
+#include <algorithm>
 #include "sort.h"
 #include "stopwatch.h"
 #include "container_test_types.h"
@@ -136,7 +137,7 @@ void lib_calvin_sort::sortTest(void(*sortingAlg) (T *first, T *last, Comparator 
 				new (testSet + j) T(j);
 				//testSet[j].first = -j / 3; // reverse ordered input array
 			}
-			std::random_shuffle(testSet, testSet + arraySize[i], lib_calvin::random_number_generator());
+			std::shuffle(testSet, testSet + arraySize[i], std::mt19937(std::random_device()()));
 			for (int j = 0; j < arraySize[i]; j++) {
 				//testSet[j].second = j; // for testing stability
 			}

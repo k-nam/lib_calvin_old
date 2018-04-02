@@ -22,9 +22,6 @@
     <Filter Include="matrix">
       <UniqueIdentifier>{71923e8d-6635-43a9-8586-63b8d5994ebe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="string">
-      <UniqueIdentifier>{7311a0f1-839f-4e2a-aeb6-78331f1add08}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bench_main.cc">
@@ -60,9 +57,6 @@
     <ClCompile Include="..\matrix\naive_multi2.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="string_bench.cc">
-      <Filter>string</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bench.h">
@@ -85,9 +79,6 @@
     </ClInclude>
     <ClInclude Include="matrix_bench.h">
       <Filter>matrix</Filter>
-    </ClInclude>
-    <ClInclude Include="string_bench.h">
-      <Filter>string</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

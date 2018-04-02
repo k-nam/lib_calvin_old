@@ -51,9 +51,6 @@
     <ClCompile Include="..\parser\parser.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\string\string_test.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\subcc\subcc_test.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>

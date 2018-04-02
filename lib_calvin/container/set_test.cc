@@ -2,6 +2,7 @@
 #include <random>
 #include <set>
 #include <unordered_set>
+#include <algorithm>
 
 #include "boost/unordered_set.hpp"
 #include "boost/container/set.hpp"
@@ -44,15 +45,15 @@ void lib_calvin_container::setTest() {
 	int const smallSize = 10000;
 	int const mediumSize = 10000;
 	int const largeSize = 1000000;	
-	/*
+	
 	setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
 	setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
 	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
-	*/
-	//setFunctionTest<BTree<HeavyObject>>(testSize, "lib_calvin_container::BTree");
-	//setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
+	
+	setFunctionTest<BTree<HeavyObject>>(testSize, "lib_calvin_container::BTree");
+	setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
 	//setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
-	//setFunctionTest<HashTable<Numeric>>(testSize,	"lib_calvin_container::HashTable"); // cannot iterate
+	setFunctionTest<HashTable<Numeric>>(testSize,	"lib_calvin_container::HashTable"); // cannot iterate
 	setFunctionTest<HashTable2<Numeric>>(testSize,	"lib_calvin_container::HashTable2"); // cannot iterate
 	
 	//setFunctionTest2<BTree<Numeric>>(testSize, "lib_calvin_container::BTree");
@@ -74,9 +75,7 @@ void lib_calvin_container::setTest() {
 	setPerformanceTest<boost::unordered_set<Numeric>>(largeSize, "boost::unordered_set / Numeric");
 	setPerformanceTest<HashTable<Numeric>>(largeSize, "HashTable / Numeric");
 	setPerformanceTest<HashTable2<Numeric>>(largeSize, "HashTable2 / Numeric");
-	//setPerformanceTest<btree::btree_set<Numeric>>(largeSize, "Google Btree / Numeric");
-
-	exit(0);
+	setPerformanceTest<btree::btree_set<Numeric>>(largeSize, "Google Btree / Numeric");
 
 	setPerformanceTest<std::set<LightObject>>(largeSize, "std::set / LightObject");
 	setPerformanceTest<boost::container::set<LightObject>>(largeSize, "boost::set / LightObject");
@@ -335,7 +334,7 @@ void lib_calvin_container::setPerformanceTest(int n, std::string title) {
 		testVector[i] = T(i);
 	}	
 
-	std::random_shuffle(testVector.begin(), testVector.end());
+	std::shuffle(testVector.begin(), testVector.end(), std::mt19937_64(std::random_device()()));
 	setPerformanceTest_<Impl, T>(testVector, n, "<Random data test>");
 	
 	// Test case 2: sorted sequence. Not a good standard for performance test because of temporal locality. 
@@ -586,7 +585,7 @@ void lib_calvin_container::randomAccessSpeedTest(size_t size) {
 	for (size_t i = 1; i < size; ++i) {
 		indexArray[i] = i;
 	}
-	std::random_shuffle(indexArray.begin(), indexArray.end());
+	std::shuffle(indexArray.begin(), indexArray.end(), std::mt19937_64(std::random_device()()));
 	lib_calvin::stopwatch watch;
 	int temp = 0;
 	watch.start();

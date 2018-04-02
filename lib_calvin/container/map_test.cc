@@ -190,7 +190,7 @@ void lib_calvin_container::mapPerformanceTest(unsigned n, std::string title)
 	}	
 
 	// Test case 1: random
-	std::random_shuffle(testVector.begin(), testVector.end());
+	std::shuffle(testVector.begin(), testVector.end(), std::mt19937_64 (std::random_device()()));
 	mapPerformanceTest_<Impl>(testVector, n, "<Random data test>");
 	/*
 	// Test case 2: sorted sequence

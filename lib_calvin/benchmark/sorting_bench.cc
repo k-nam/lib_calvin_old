@@ -187,7 +187,7 @@ lib_calvin_benchmark::sorting::sortBenchTemplateSub(void(*sorter)(T *first, T *l
 		for (int j = 0; j < testSize; j++) {
 			new (testSet + j) T(j);
 		}
-		std::random_shuffle(testSet, testSet + testSize, lib_calvin::random_number_generator());
+		std::shuffle(testSet, testSet + testSize, std::mt19937_64(std::random_device()()));
 		double time = 0;
 		bool isCorrect = true;
 		bool isStable = true;

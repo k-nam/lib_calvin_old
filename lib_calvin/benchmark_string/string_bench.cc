@@ -33,7 +33,7 @@ lib_calvin_benchmark::string::getAlgorithmNamesAndTags(Algorithm algo) {
 	case LIB_CALVIN_BOYER:
 		return { "Boyer-Moore" };
 	case LIB_CALVIN_SUFFIX:
-		return { "suffix tree" };
+		return { "lib_calvin::suffix tree" };
 
 	default:
 		return { "getAlgorithmName error!" };
@@ -78,8 +78,10 @@ lib_calvin_benchmark::string::getSubCategory(TextType type) {
 	switch (type) {
 	case RANDOM:
 		return "Randomized string";
-	case MANY_NEAR_MISS:
-		return "Frequent near misses";
+	case HEAD_MISS:
+		return "Frequent mismatch at the beginning of pattern";
+	case TAIL_MISS:
+		return "Frequent mismatch at the end of pattern";
 	default:
 		cout << "getSubCategory error!";
 		exit(0);
@@ -104,7 +106,7 @@ lib_calvin_benchmark::string::getAllNamesAndTagsVector() {
 
 void lib_calvin_benchmark::string::stringBench() {
 
-	for (auto type: { RANDOM, MANY_NEAR_MISS }) {
+	for (auto type: { RANDOM, HEAD_MISS, TAIL_MISS }) {
 		stringBench(type);
 	}
 }
@@ -190,9 +192,12 @@ lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, siz
 				}
 				pPatterns[i][j] = '0' + static_cast<char>(number % alphabetSize);				
 			}
-			if (type == MANY_NEAR_MISS) {
-				// Prevent matching
+			// Prevent matching
+
+			if (type == TAIL_MISS) {
 				pPatterns[i][patternLen - 1] = pPatterns[i][patternLen - 2];
+			} else if (type == HEAD_MISS) {
+				pPatterns[i][0] = pPatterns[i][1];
 			}
 		}
 		c_string text(pText, textLen);
