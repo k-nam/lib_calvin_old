@@ -2,26 +2,32 @@
 #include <random>
 #include <set>
 #include <unordered_set>
+
 #include "boost/unordered_set.hpp"
 #include "boost/container/set.hpp"
 #include "boost/functional/hash.hpp"
+
 #include "set_test.h"
+#include "random.h"
+#include "container_test_types.h"
 #include "utility.h"
 #include "stopwatch.h"
 #include "container_test.h"
+
 #include "bin_tree.h"
 #include "b_tree.h"
 #include "b_plus_tree.h"
-#include "set.h"
 #include "rb_tree.h"  
 #include "ptr_set.h"
 #include "hash_table.h"
 #include "hash_table2.h"
 #include "blocked_array.h"
 #include "ordered_array.h"
-#include "random.h"
-#include "container_test_types.h"
+#include "set.h"
+#include "hash_set.h"
+
 #include "google_btree_set.h"
+
 
 using lib_calvin::stopwatch;
 using std::cout;
@@ -57,18 +63,20 @@ void lib_calvin_container::setTest() {
 	//setIteratorTest<HashTable<Numeric>>("HashTable iterator");
 	setIteratorTest<HashTable2<Numeric>>("HashTable2 iterator");
 
-	setPerformanceTest<std::set<Numeric>>(largeSize, "std::set / Numeric");
-	setPerformanceTest<boost::container::set<Numeric>>(largeSize, "boost::set / Numeric");
+	//setPerformanceTest<std::set<Numeric>>(largeSize, "std::set / Numeric");
+	//setPerformanceTest<boost::container::set<Numeric>>(largeSize, "boost::set / Numeric");
 	//setPerformanceTest<BinTree<Numeric>>(largeSize, "BinTree / Numeric");
-	setPerformanceTest<RbTree<Numeric>>(largeSize, "RbTree / Numeric");
+	//setPerformanceTest<RbTree<Numeric>>(largeSize, "RbTree / Numeric");
 	//setPerformanceTest<BTree<Numeric>>(largeSize, "BTree / Numeric");
 	setPerformanceTest<BPlusTree<Numeric>>(largeSize, "BPlusTree / Numeric");
 	//setPerformanceTest<OrderedArray<Numeric>>(largeSize, "OrderedArray / Numeric");
-	//setPerformanceTest<std::unordered_set<Numeric>>(largeSize, "std::unordered_set / Numeric");
+	setPerformanceTest<std::unordered_set<Numeric>>(largeSize, "std::unordered_set / Numeric");
 	setPerformanceTest<boost::unordered_set<Numeric>>(largeSize, "boost::unordered_set / Numeric");
-	//setPerformanceTest<HashTable<Numeric>>(largeSize, "HashTable / Numeric");
+	setPerformanceTest<HashTable<Numeric>>(largeSize, "HashTable / Numeric");
 	setPerformanceTest<HashTable2<Numeric>>(largeSize, "HashTable2 / Numeric");
-	setPerformanceTest<btree::btree_set<Numeric>>(largeSize, "Google Btree / Numeric");
+	//setPerformanceTest<btree::btree_set<Numeric>>(largeSize, "Google Btree / Numeric");
+
+	exit(0);
 
 	setPerformanceTest<std::set<LightObject>>(largeSize, "std::set / LightObject");
 	setPerformanceTest<boost::container::set<LightObject>>(largeSize, "boost::set / LightObject");

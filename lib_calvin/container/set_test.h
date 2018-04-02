@@ -1,26 +1,6 @@
 #ifndef LIB_CALVIN__CONTAINER__SET_TEST_H
 #define LIB_CALVIN__CONTAINER__SET_TEST_H
 
-#include <cstdlib>
-#include <random>
-#include <set>
-#include <unordered_set>
-#include "boost/unordered_set.hpp"
-#include "boost/container/set.hpp"
-
-#include "utility.h"
-#include "stopwatch.h"
-#include "container_test.h"
-#include "bin_tree.h"
-#include "b_tree.h"
-#include "b_plus_tree.h"
-#include "set.h"
-#include "rb_tree.h"  
-#include "ptr_set.h"
-#include "hash_table.h"
-#include "blocked_array.h"
-
-
 namespace lib_calvin_container
 {
 	void setTest();

@@ -14,6 +14,7 @@
 
 #include "vector.h"
 #include "map.h"
+#include "hash_map.h"
 #include <list>
 #include <utility>
 

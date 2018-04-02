@@ -1,14 +1,17 @@
 #include <cstdlib>
-#include <map>
-#include <unordered_map>
 
+#include "map_test.h"
 #include "container_test.h"
 #include "container_test_types.h"
-#include "map_test.h"
 #include "utility.h"
 #include "stopwatch.h"
 #include "random.h"
+
+#include <map>
+#include <unordered_map>
+
 #include "map.h"
+#include "hash_map.h"
 #include "boost/unordered_map.hpp"
 
 using lib_calvin::stopwatch;
@@ -33,7 +36,6 @@ void lib_calvin_container::mapTest()
 	//mapPerformanceTest<std::map<int, int>>(largeSize, "std::map");
 	//mapPerformanceTest<lib_calvin_container::map<HeavyObject, int>>(smallSize, "lib_calvin::map / HeavyObject->int");
 	mapPerformanceTest<lib_calvin::map<int, HeavyObject>>(largeSize, "lib_calvin::map / int->HeavyObject");
-	mapPerformanceTest<lib_calvin::hash_map<int, HeavyObject>>(largeSize, "hash_map / int->HeavyObject");
 	//mapPerformanceTest<std::map<HeavyObject, int>>(largeSize, "std::map / HeavyObject->int");
 	mapPerformanceTest<std::map<int, HeavyObject>>(largeSize, "std::map / int->HeavyObject");
 	

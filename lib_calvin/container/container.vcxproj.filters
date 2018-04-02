@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="public">
+      <UniqueIdentifier>{3a3cf9ce-98fa-4eba-8b33-29298e79ce60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="adt.cc">
@@ -50,16 +53,7 @@
     <ClInclude Include="container.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="map.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="set.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="set_test.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="vector_test.h">
@@ -118,6 +112,21 @@
     </ClInclude>
     <ClInclude Include="google_btree_set.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vector.h">
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="map.h">
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="set.h">
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="hash_map.h">
+      <Filter>public</Filter>
+    </ClInclude>
+    <ClInclude Include="hash_set.h">
+      <Filter>public</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -4,7 +4,8 @@
 #include <algorithm>
 
 #include "google_btree_set.h"
-
+#include "hash_table.h"
+#include "hash_table2.h"
 #include "container_test_types.h"
 #include "bench.h"
 #include "container_bench.h"

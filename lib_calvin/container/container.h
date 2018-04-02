@@ -197,11 +197,11 @@ public:
 template <typename Impl>
 class ConstReverseIterator { 
 public:
-	typedef typename Impl::value_type value_type;
+	typedef typename std::iterator_traits<Impl>::value_type value_type;
 	typedef value_type const * pointer;
 	typedef value_type const & reference;
 	typedef ptrdiff_t difference_type;
-	typedef typename Impl::iterator_category iterator_category;
+	typedef typename std::iterator_traits<Impl>::iterator_category iterator_category;
 
 	ConstReverseIterator(): impl_() { }
 	ConstReverseIterator(Impl impl): impl_(impl) { }
@@ -243,11 +243,11 @@ protected:
 template <typename Impl>
 class ReverseIterator: public ConstReverseIterator<Impl> {
 public:
-	typedef typename Impl::value_type value_type;
+	typedef typename std::iterator_traits<Impl>::value_type value_type;
 	typedef value_type * pointer;
 	typedef value_type & reference;
 	typedef ptrdiff_t difference_type;
-	typedef typename Impl::iterator_category iterator_category;
+	typedef typename std::iterator_traits<Impl>::iterator_category iterator_category;
 
 	ReverseIterator(): ConstReverseIterator<Impl>() { }
 	ReverseIterator(Impl impl): ConstReverseIterator<Impl>(impl) { }
@@ -493,7 +493,7 @@ bool containerLess(Iterator lhsBegin, Iterator lhsEnd,
 
 template <typename Iterator> 
 Iterator advanceIteratorBy(Iterator iterator, ptrdiff_t distance) {
-	typename Iterator::iterator_category category;
+	std::iterator_traits<Iterator>::iterator_category category;
 	return advanceIteratorBy(iterator, distance, category);
 }
 
@@ -524,7 +524,7 @@ Iterator advanceIteratorBy(Iterator iterator, ptrdiff_t distance, std::forward_i
 
 template <typename Iterator> 
 ptrdiff_t distanceBetweenIterator(Iterator begin, Iterator end) {
-	typename Iterator::iterator_category category;
+	std::iterator_traits<Iterator>::iterator_category category;
 	return distanceBetweenIterator(begin, end, category);
 }
 

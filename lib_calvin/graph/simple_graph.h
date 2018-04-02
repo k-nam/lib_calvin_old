@@ -2,8 +2,8 @@
 #define LIB_CALVIN__GRAPH__SIMPLE_GRAPH_H 
 
 #include <utility>
-#include "set.h"
 #include "map.h"
+#include "set.h"
 #include "vector.h"
 #include "stopwatch.h" 
 #include "utility.h" 
@@ -12,14 +12,16 @@
 
 
 namespace lib_calvin_graph {
-
-
-
 	// Generic directed graph.
 	// Does not permit self-loop or multiple edges (will be extended later)
 	// V must support '<'and '==' operator (key).
 	// At least two subclasses will be derived from this: undirected graph and
 	// ..network flow.
+	
+	using lib_calvin::vector;
+	using lib_calvin::map;
+	using lib_calvin::set;
+
 	template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>>
 	class simple_graph {
 	public: // basic data access
@@ -59,7 +61,6 @@ namespace lib_calvin_graph {
 
 } // end namespace lib_calvin_graph
 
-  //----------------------------- graph<V, E, ExtractWeight> methods ------------------------
 
 namespace lib_calvin_graph { // open for definitions
 
@@ -186,7 +187,7 @@ namespace lib_calvin_graph { // open for definitions
 	}
 
 	template <typename V, typename E, typename K, typename ExtractKey>
-	vector<V>
+	lib_calvin::vector<V>
 		simple_graph<V, E, K, ExtractKey>::get_vertices_to(K const &dest) const {
 		vector<V> result;
 		for (auto vertex: inLinks_.find(dest)->second) {
