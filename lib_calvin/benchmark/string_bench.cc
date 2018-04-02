@@ -22,11 +22,11 @@ lib_calvin_benchmark::string::getAlgorithmNamesAndTags(Algorithm algo) {
 	case NAIVE:
 		return { "naive" };
 	case Z:
-		return { "z-algorithm" };
+		return { "Z algorithm" };
 	case KMP:
 		return { "KMP" };
 	case BOYER:
-		return { "Boywer-Moore" };
+		return { "Boyer-Moore" };
 	case SUFFIX:
 		return { "suffix tree" };
 
@@ -112,7 +112,6 @@ void lib_calvin_benchmark::string::stringBench(TextType type) {
 	for (auto charSet : getAllCharSets()) {
 		stringBench(type, charSet);
 	}
-	//stringBench(type, BINARY);
 }
 
 void lib_calvin_benchmark::string::stringBench(TextType type, CharSet charSet) {

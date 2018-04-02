@@ -2,7 +2,9 @@
 #define LIB_CALVIN__STRING__SUFFIX_TREE_H
 
 #include "abstract_string.h"
+#include "graph.h"
 #include "simple_graph.h"
+
 #include "stopwatch.h"
 #include "sort.h"
 
@@ -126,6 +128,7 @@ private:
 private:
 	vector<abstract_string<Alphabet>> texts_;
 	lib_calvin_graph::simple_graph<Node, Link, NodeKey, NodeExtractKey> graph_;
+
 private:
 	size_t textId_; 
 	size_t phase_; // length of current prefix

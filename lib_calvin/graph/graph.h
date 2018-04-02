@@ -177,7 +177,7 @@ protected:
 	path getPathFromReversedPath(size_t src, vector<size_t> const &reversedPath) const;
 protected:
 	lib_calvin_adt::IntIndexer<K> mapping_; // 1:1 mapping of verticex and size_tegers
-	lib_calvin_container::RbTree<V, K, std::less<K>, ExtractKey> vertices_;
+	lib_calvin_container::BTree<V, K, std::less<K>, ExtractKey> vertices_;
 	//lib_calvin_container::HashTable<V, K, ExtractKey> vertices_;
 	map<size_t, map<size_t, E>> outLinks_;
 	map<size_t, set<size_t>> inLinks_;
@@ -664,6 +664,7 @@ graph_base<V, E, K, ExtractKey>::operator= (graph_base<V, E, K, ExtractKey> cons
 	isDynamic_ = rhs.isDynamic_;
 	numEdges_ = rhs.numEdges_;
 	mapping_ = rhs.mapping_;
+	vertices_ = rhs.vertices_;
 	outLinks_ = rhs.outLinks_;
 	inLinks_ = rhs.inLinks_;
 	arrayData_ = rhs.arrayData_;

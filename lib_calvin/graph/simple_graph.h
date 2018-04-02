@@ -2,7 +2,6 @@
 #define LIB_CALVIN__GRAPH__SIMPLE_GRAPH_H 
 
 #include <utility>
-#include "adt.h"
 #include "set.h"
 #include "map.h"
 #include "vector.h"
@@ -14,16 +13,8 @@
 
 namespace lib_calvin_graph {
 
-	using lib_calvin::map;
-	using lib_calvin::vector;
-	using lib_calvin::set;
-	using std::pair;
-	using std::cout;
-	using std::endl;
-	using lib_calvin_container::Identity;
-	
-	class null_edge { };
-	
+
+
 	// Generic directed graph.
 	// Does not permit self-loop or multiple edges (will be extended later)
 	// V must support '<'and '==' operator (key).
@@ -57,16 +48,11 @@ namespace lib_calvin_graph {
 		//virtual void prsize_t() const;
 
 	protected:
-		lib_calvin_adt::IntIndexer<K> mapping_; // 1:1 mapping of verticex and size_tegers
-		lib_calvin_container::RbTree<V, K, std::less<K>, ExtractKey> vertices_;
+		lib_calvin_container::BTree<V, K, std::less<K>, ExtractKey> vertices_;
 		//lib_calvin_container::HashTable<V, K, ExtractKey> vertices_;
-		map<size_t, map<size_t, E>> outLinks_;
-		map<size_t, set<size_t>> inLinks_;
+		map<K, map<K, E>> outLinks_;
+		map<K, set<K>> inLinks_;
 
-	private:
-		std::pair<size_t, bool> insertVertex(V const &);
-		// src and dest must be present
-		bool hasEdge(size_t src, size_t dest) const;
 	private:
 		size_t numEdges_;
 	}; // end graph
@@ -92,19 +78,19 @@ namespace lib_calvin_graph { // open for definitions
 			return *this;
 		}
 		numEdges_ = rhs.numEdges_;
-		mapping_ = rhs.mapping_;
+		vertices_ = rhs.vertices_;
 		outLinks_ = rhs.outLinks_;
 		inLinks_ = rhs.inLinks_;
 		return *this;
 	}
 	template <typename V, typename E, typename K, typename ExtractKey>
 	size_t simple_graph<V, E, K, ExtractKey>::size() const {
-		return mapping_.size();
+		return vertices_.size();
 	}
 
 	template <typename V, typename E, typename K, typename ExtractKey>
 	size_t simple_graph<V, E, K, ExtractKey>::number_of_vertex() const {
-		return size();
+		return vertices_.size();
 	}
 
 	template <typename V, typename E, typename K, typename ExtractKey>
@@ -114,15 +100,19 @@ namespace lib_calvin_graph { // open for definitions
 
 	template <typename V, typename E, typename K, typename ExtractKey>
 	bool simple_graph<V, E, K, ExtractKey>::has_vertex(K vertex) const {
-		return mapping_.indexOf(vertex).second == true;
+		return outLinks_.count(vertex) != 0;
 	}
 
 	template <typename V, typename E, typename K, typename ExtractKey>
 	bool simple_graph<V, E, K, ExtractKey>::has_edge(K src, K dest) const {
-		auto result1 = mapping_.indexOf(src);
-		auto result2 = mapping_.indexOf(dest);
-		return hasEdge(result1.first, result2.first);
+		auto iter = outLinks_.find(src);
+		if (iter == outLinks_.end()) {
+			return false;
+		} else {
+			return iter->second.count(dest) != 0;
+		}
 	}
+
 	template <typename V, typename E, typename K, typename ExtractKey>
 	V const &
 		simple_graph<V, E, K, ExtractKey>::get_vertex(K const &key) const {
@@ -135,25 +125,10 @@ namespace lib_calvin_graph { // open for definitions
 		return *vertices_.find(key);
 	}
 
-	template <typename V, typename E, typename K, typename ExtractKey>
-	bool simple_graph<V, E, K, ExtractKey>::hasEdge(size_t srcId, size_t destId) const {
-		return outLinks_.find(srcId)->second.count(destId) != 0;
-	}
-	template <typename V, typename E, typename K, typename ExtractKey>
-	bool simple_graph<V, E, K, ExtractKey>::insert_vertex(V const &src) {
-		return insertVertex(src).second;
-	}
 
 	template <typename V, typename E, typename K, typename ExtractKey>
-	std::pair<size_t, bool>
-		simple_graph<V, E, K, ExtractKey>::insertVertex(V const &src) {
-		auto result = mapping_.insert(ExtractKey()(src));
-		vertices_.insert(src);
-		if (result.second == true) {
-			outLinks_.insert(std::make_pair(result.first, map<size_t, E>()));
-			inLinks_.insert(std::make_pair(result.first, set<size_t>()));
-		}
-		return result;
+	bool simple_graph<V, E, K, ExtractKey>::insert_vertex(V const &src) {
+		return vertices_.insert(src).second;
 	}
 
 	template <typename V, typename E, typename K, typename ExtractKey>
@@ -161,13 +136,11 @@ namespace lib_calvin_graph { // open for definitions
 		if (src == dest) { // No self loop !!!
 			return false;
 		}
-		size_t srcId = mapping_.indexOf(src).first;
-		size_t destId = mapping_.indexOf(dest).first;
-		if (hasEdge(srcId, destId)) {
+		if (has_edge(src, dest)) {
 			return false;
 		} else {
-			outLinks_[srcId].insert(std::make_pair(destId, edge));;
-			inLinks_[destId].insert(srcId);
+			outLinks_[src][dest] = edge;
+			inLinks_[dest].insert(src);
 			numEdges_++;
 			return true;
 		}
@@ -175,31 +148,20 @@ namespace lib_calvin_graph { // open for definitions
 
 	template <typename V, typename E, typename K, typename ExtractKey>
 	bool simple_graph<V, E, K, ExtractKey>::remove_edge(K const &src, K const &dest) {
-		size_t srcId = mapping_.indexOf(src).first;
-		size_t destId = mapping_.indexOf(dest).first;
-		if (srcId < 0 || destId < 0) {
-			return false;
-		}
-		size_t result1 = outLinks_[srcId].erase(destId);
-		size_t result2 = inLinks_[destId].erase(srcId);
-		if (result1 != result2) {
-			std::cout << "graph remove_edge error\n";
-			exit(0);
-		}
-		if (result1 == 0) {
-			return false;
-		} else {
+		if (outLinks_[src].erase(dest) > 0) {
+			inLinks_[dest].erase(src);
 			numEdges_--;
 			return true;
+		} else {
+			return false;
 		}
 	}
 
 	template <typename V, typename E, typename K, typename ExtractKey>
 	E const &
 		simple_graph<V, E, K, ExtractKey>::get_edge(K const &src, K const &dest) const {
-		size_t srcId = mapping_.indexOf(src).first;
-		size_t destId = mapping_.indexOf(dest).first;
-		return outLinks_.find(srcId)->second.find(destId)->second;
+
+		return outLinks_.find(src)->second.find(dest)->second;
 	}
 
 	template <typename V, typename E, typename K, typename ExtractKey>
@@ -211,12 +173,14 @@ namespace lib_calvin_graph { // open for definitions
 	template <typename V, typename E, typename K, typename ExtractKey>
 	vector<std::pair<V, E>>
 		simple_graph<V, E, K, ExtractKey>::get_vertex_edge_pairs_from(K const &src) const {
-		size_t srcId = mapping_.indexOf(src).first;
-		vector<std::pair<V, E>> result;
-		map<size_t, E> const & edges = outLinks_.find(srcId)->second;
-		result.reserve(edges.size());
-		for (auto iter = edges.begin(); iter != edges.end(); ++iter) {
-			result.push_back(std::make_pair(*vertices_.find(mapping_[iter->first]), iter->second));
+
+		vector<std::pair<V, E>> result;	
+		auto iter = outLinks_.find(src);
+		if (iter == outLinks_.end()) {
+		} else {
+			for (auto pair: iter->second) {
+				result.push_back(std::make_pair(*vertices_.find(pair.first), pair.second));
+			}
 		}
 		return result;
 	}
@@ -224,11 +188,9 @@ namespace lib_calvin_graph { // open for definitions
 	template <typename V, typename E, typename K, typename ExtractKey>
 	vector<V>
 		simple_graph<V, E, K, ExtractKey>::get_vertices_to(K const &dest) const {
-		size_t destId = mapping_.indexOf(dest).first;
 		vector<V> result;
-		result.reserve(inLinks_[destId].size());
-		for (auto iter = inLinks_[destId].begin(); iter != inLinks_[destId].end(); ++iter) {
-			result.push_back(*vertices_.find(mapping_[*iter]));
+		for (auto vertex: inLinks_.find(dest)->second) {
+			result.push_back(*vertices_.find(vertex));
 		}
 		return result;
 	}
