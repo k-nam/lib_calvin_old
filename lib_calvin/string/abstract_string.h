@@ -8,7 +8,6 @@
 
 #include <string>
 #include <iostream>
-
 #include <cstdlib>
 #include "stopwatch.h"
 #include "vector.h"
@@ -45,6 +44,15 @@ namespace lib_calvin
 		abstract_string(abstract_string<Alphabet> &&);
 		abstract_string & operator=(abstract_string const &);
 		abstract_string(std::basic_string<Alphabet> const &);
+	public:
+		typedef Alphabet * iterator;
+		typedef Alphabet const * const_iterator;
+		iterator begin() { return &(*vector_.begin()); }
+		const_iterator begin() const { return &(*vector_.begin()); }
+		iterator end() { return &(*vector_.end()); }
+		const_iterator end() const { return &(*vector_.end()); }
+
+	public:
 		void swap(abstract_string<Alphabet> &&rhs);
 		size_t size() const;
 		size_t length() const;

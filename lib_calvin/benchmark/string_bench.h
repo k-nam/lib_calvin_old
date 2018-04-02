@@ -23,7 +23,7 @@ namespace lib_calvin_benchmark
 		std::string const category = "String";
 
 		enum Algorithm {
-			NAIVE, Z, KMP, BOYER, SUFFIX
+			NAIVE, Z, KMP, STD_BOYER, LIB_CALVIN_BOYER, LIB_CALVIN_SUFFIX
 		};
 
 		static Algorithm currentAlgo;

@@ -4,9 +4,12 @@
 #include <algorithm>
 #include <functional>
 
+#include "string_bench.h"
 #include "string_matching.h"
 #include "abstract_string.h"
-#include "string_bench.h"
+#include "naive_matching.h"
+#include "kmp.h"
+#include "boyer_moore.h"
 #include "bench.h"
 #include "random.h"
 #include "stopwatch.h"
@@ -25,9 +28,11 @@ lib_calvin_benchmark::string::getAlgorithmNamesAndTags(Algorithm algo) {
 		return { "Z algorithm" };
 	case KMP:
 		return { "KMP" };
-	case BOYER:
+	case STD_BOYER:
+		return { "std::boyer_moore_searcher (C++17)" };
+	case LIB_CALVIN_BOYER:
 		return { "Boyer-Moore" };
-	case SUFFIX:
+	case LIB_CALVIN_SUFFIX:
 		return { "suffix tree" };
 
 	default:
@@ -42,12 +47,9 @@ lib_calvin_benchmark::string::getAllCharSets() {
 
 vector<Algorithm>
 lib_calvin_benchmark::string::getAllAlgorithms() {
-	return vector<Algorithm> { NAIVE, Z, KMP, BOYER, SUFFIX };
-}
+	return vector<Algorithm> { NAIVE, Z, KMP, STD_BOYER, LIB_CALVIN_BOYER, LIB_CALVIN_SUFFIX };
+	//return vector<Algorithm> { NAIVE, Z, KMP, STD_BOYER, LIB_CALVIN_BOYER };
 
-vector<Algorithm>
-lib_calvin_benchmark::string::getLinearTimeAlgorithms() {
-	return vector<Algorithm> { NAIVE, Z, KMP, BOYER, SUFFIX };
 }
 
 size_t 
@@ -121,12 +123,7 @@ void lib_calvin_benchmark::string::stringBench(TextType type, CharSet charSet) {
 
 	static size_t order = 0;
 
-	vector<Algorithm> algos;
-	if (type == RANDOM) {
-		algos = getAllAlgorithms();
-	} else {
-		algos = getLinearTimeAlgorithms();
-	}
+	vector<Algorithm> algos  = getAllAlgorithms();
 
 	for (auto algorithm : algos) {
 		results.push_back(stringBenchSub(type, charSet, getPatternLen(charSet), algorithm));
@@ -203,7 +200,7 @@ lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, siz
 		stopwatch watch;
 		
 
-		if (algo == SUFFIX) {
+		if (algo == LIB_CALVIN_SUFFIX) {
 			lib_calvin::suffix_tree<char> tree(text);
 			tree.build();
 
@@ -217,7 +214,7 @@ lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, siz
 			watch.start();
 			for (size_t i = 0; i < numPatterns; i++) {
 				c_string pattern(pPatterns[i], patternLen);
-				lib_calvin::vector<size_t> algorithmResult;
+				std::vector<size_t> algorithmResult;
 				switch (algo) {
 				case NAIVE: {
 					naiveMatch(text, pattern, algorithmResult);
@@ -231,7 +228,11 @@ lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, siz
 					kmp(text, pattern, algorithmResult);
 					break;
 				}
-				case BOYER: {
+				case STD_BOYER: {
+					stdMatch(text, pattern, algorithmResult);
+					break;
+				}
+				case LIB_CALVIN_BOYER: {
 					boyerMoore(text, pattern, algorithmResult);
 					break;
 				}
