@@ -8,7 +8,7 @@
 namespace lib_calvin_lexer {
 	void lexerTest();
 	void lexerTest(std::string const &inputText);
-  void printToken(NfaLexerGenerator<>::Token const &);
+	void printToken(NfaLexerGenerator<>::Token const &);
 }
 
 #endif
