@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include "abstract_string.h"
-#include "vector.h"
+
 
 using std::cout;
 using std::endl;
@@ -15,10 +15,11 @@ void stringTest();
 void abstractStringTest();
 
 void matchingAlgorithmTest();
+
 template <typename Alphabet>
 void matchingTest (void (*matchingCharAlg) 
     (lib_calvin::abstract_string<Alphabet> const &text, lib_calvin::abstract_string<Alphabet> const &pattern,
-     lib_calvin::vector<size_t> &record), std::string title);
+     std::vector<size_t> &record), std::string title);
 
 void palindromeTest();
 }

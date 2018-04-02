@@ -1,0 +1,151 @@
+#ifndef LIB_CALVIN__STRING__BOYER_MOORE_H
+#define LIB_CALVIN__STRING__BOYER_MOORE_H
+
+#include "abstract_string.h"
+#include "string_matching.h"
+
+namespace lib_calvin_string
+{
+	using std::cout;
+	using std::endl;
+
+	// maps each Alphabet to the index in which the Alphabet first appears in the 
+	// ..pattern (looking from the right-end of patttern)
+	// assumes that Alphabet can be converted to unsigned int type (which is the
+	// ..index in record)
+	template <typename Alphabet>
+	void badChar(lib_calvin::abstract_string<Alphabet> const &pattern, std::vector<size_t> &record);
+
+	template <typename Alphabet>
+	void strongGoodSuffix(lib_calvin::abstract_string<Alphabet> const &pattern,
+						  std::vector<size_t> &record);
+
+	template <typename Alphabet>
+	void boyerMoore(lib_calvin::abstract_string<Alphabet> const &text,
+					lib_calvin::abstract_string<Alphabet> const &pattern,
+					std::vector<size_t> &result);
+
+
+
+} // end namespace lib_calvin_string
+
+
+template <typename Alphabet>
+void lib_calvin_string::boyerMoore(
+	lib_calvin::abstract_string<Alphabet> const &text,
+	lib_calvin::abstract_string<Alphabet> const &pattern, std::vector<size_t> &result) {
+	result.clear();
+	lib_calvin::abstract_string<Alphabet> reverse = pattern.reverse();
+	size_t textLen = text.size();
+	size_t patternLen = pattern.size();
+	// h: head in text, k: index in text, s: index in pattern (reversed)
+	size_t h = patternLen - 1, k = patternLen - 1, s = 0;
+	size_t badCharJump = 0, goodSuffixJump = 0;
+	bool matched = false;
+	std::vector<size_t> charTable;
+	std::vector<size_t> suffixTable;
+	badChar(pattern, charTable);
+	strongGoodSuffix(pattern, suffixTable);
+	while (h < textLen) {
+		// sequntial matching
+		while (true) {
+			if (text[k] != reverse[s]) { // using reverse for convenient indexing
+				matched = false;
+				break;
+			}
+			k--;
+			s++;
+			if (s == patternLen) { // match at (k + 1)
+				result.push_back(k + 1);
+				badCharJump = 0; // can not use badchar when matched
+				matched = true;
+				break;
+			}
+		}
+		// jump forward
+		if (!matched) {
+			badCharJump = charTable[static_cast<size_t>(text[k])];
+			if (badCharJump > s) {
+				badCharJump -= s;
+			} else {
+				badCharJump = 0;
+			}
+		}
+		goodSuffixJump = suffixTable[s];
+		if (badCharJump > goodSuffixJump) {
+			h += badCharJump;
+		} else {
+			h += goodSuffixJump;
+		}
+		k = h;
+		s = 0;
+	}
+}
+
+// Be careful!!! Output is indexed in REVERSE ORDER!!!
+// record[i] denotes the index (from the right) of the first occurrence of
+// character i.
+template <typename Alphabet>
+void lib_calvin_string::badChar(
+	lib_calvin::abstract_string<Alphabet> const &pattern, std::vector<size_t> &record) {
+
+	record.clear();
+	size_t len = pattern.size();
+	size_t index;
+	// we need to know the size of character set (Alphabet::size)
+	// Characters not present in the pattern is marked as len; this will
+	// ...make the shift amount appropriate
+	if (sizeof(Alphabet) > 1) { // inappropriate for this algorithm
+		std::cout << "badChar for large charset\n";
+		//exit(0);
+	}
+	record.resize(lib_calvin::getSizeOfCharSet<Alphabet>(), len);
+	for (size_t i = 0; i < len; i++) {
+		index = static_cast<size_t>(pattern[i]);
+		record[index] = len - 1 - i;  // reversed index to fit Boyer-Moore
+	}
+}
+
+// Be careful!!! Output is indexed in REVERSE ORDER!!!
+// The shift amount determined by strong good suffix rule is recorded in the
+// array. Record[i] is the amount to shift (to right) if wrong character was
+// detected on index i (from right).
+template <typename Alphabet>
+void lib_calvin_string::strongGoodSuffix(
+	lib_calvin::abstract_string<Alphabet> const &pattern, std::vector<size_t> &record) {
+	size_t len = pattern.size();
+	record.clear();
+	record.resize(len + 1, len);
+	// use Z algorithm in reverse c_string
+	std::vector<size_t> Z;
+	calculateZ(pattern.reverse(), Z);
+	for (size_t i = 1; i < len; ++i) {
+		// we must not overwrite; otherwise, we will get greater jump value than
+		// the right one.
+		if (record[Z[i]] == len) {
+			record[Z[i]] = i;
+		}
+	}
+	// additional processing 
+	size_t left = len; // possible leftmost element not marked
+	for (size_t i = 1; i < len; ++i) {
+		if (i + Z[i] == len) { // match goes through the end of c_string
+			for (size_t j = left; j > len - i; j--) {
+				// we must not overwrite, like above.
+				if (record[j] == len) {
+					record[j] = i;
+				}
+			}
+			left = len - i;
+		}
+	}
+	for (size_t k = 0; k < len + 1; k++) { // maximum shift for -1
+		if (record[k] == len) {
+			record[k] = len;
+		}
+	}
+	// not to be used, but the right answer is 1 
+	record[0] = 1;
+}
+
+#endif

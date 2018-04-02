@@ -47,5 +47,14 @@
     <ClInclude Include="palindrome.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="naive_matching.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="boyer_moore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="kmp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

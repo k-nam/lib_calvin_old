@@ -183,6 +183,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <CompileAsManaged>false</CompileAsManaged>
       <CompileAs>CompileAsCpp</CompileAs>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -203,6 +204,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="abstract_string.h" />
+    <ClInclude Include="boyer_moore.h" />
+    <ClInclude Include="kmp.h" />
+    <ClInclude Include="naive_matching.h" />
     <ClInclude Include="palindrome.h" />
     <ClInclude Include="string_matching.h" />
     <ClInclude Include="string_test.h" />

@@ -1,8 +1,12 @@
 #include "stopwatch.h"
 #include "string_test.h"
 #include "string_matching.h"
+#include "naive_matching.h"
+#include "kmp.h"
+#include "boyer_moore.h"
 #include "suffix_tree.h"
 #include "suffix_tree_test.h"
+#include "sort.h"
 
 using namespace lib_calvin;
 
@@ -38,6 +42,7 @@ void lib_calvin_string::matchingAlgorithmTest() {
 	matchingTest<Alphabet>(basicMatch, "Basic string matching(Z-alg)");
 	matchingTest<Alphabet>(kmp, "KMP");
 	matchingTest<Alphabet>(boyerMoore, "Boyer-Moore");
+	matchingTest<Alphabet>(stdMatch, "std::boyer_moore_horspool_searcher");
 	for (size_t i = 0; i < numIter; i++) {
 		matchingTest<Alphabet>(suffixTreeMatching, "Suffix Tree");
 	}
@@ -49,9 +54,9 @@ void lib_calvin_string::matchingAlgorithmTest() {
 template <typename Alphabet>
 void lib_calvin_string::matchingTest(void(*matchingCharAlg)
 (abstract_string<Alphabet> const &text, abstract_string<Alphabet> const &pattern,
-									 lib_calvin::vector<size_t> &record), std::string title) {
-	lib_calvin::vector<size_t> record;
-	lib_calvin::vector<size_t> answer;
+									 std::vector<size_t> &record), std::string title) {
+	std::vector<size_t> record;
+	std::vector<size_t> answer;
 	lib_calvin::stopwatch watch;
 
 	Alphabet alphabetSize = 4;
@@ -80,7 +85,7 @@ void lib_calvin_string::matchingTest(void(*matchingCharAlg)
 		cout << "Running time: " << watch.read() << endl;
 		cout << "# of match was: " << record.size() << endl;
 		// sorting is needed as suffix tree's result is not in ascending order
-		lib_calvin::sort(record.begin(), record.end());
+		lib_calvin::intro_sort(record.begin(), record.end());
 		if (answer == record)
 			cout << "Matching is correct.\n";
 		else {
