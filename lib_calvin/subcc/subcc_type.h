@@ -2,10 +2,9 @@
 #ifndef LIB_CALVIN__SUBCC__TYPE_H
 #define LIB_CALVIN__SUBCC__TYPE_H
 
-
+#include <deque>
 #include <iostream>
 #include "abstract_string.h"
-//#include "subcc_symbol_table.h"
 #include "subcc_lexer.h" // for c_string<>
 
 using std::deque;
