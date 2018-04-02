@@ -10,7 +10,6 @@ namespace subcc
 
 	// Printing a C code with some constraints 
 	void CCodeGenerator::printCCode() const {
-		vector<Instruction const *>::const_iterator iter;
 		// For other declarations
 		cout << "#include <stdio.h> \n";
 		cout << "#include \"subcc_interpreter.h\"\n\n";
