@@ -16,7 +16,7 @@
 void lib_calvin_matrix::matrixTest() {	
 	std::cout << "---------- Beginning matrix test -----------\n\n";
 	typedef double NumericType;
-	size_t testSize = 200;
+	size_t testSize = 1280;
 	lib_calvin_matrix::mklTest(testSize);
 	
 	lib_calvin::stopwatch watch;

@@ -27,7 +27,7 @@
 #include "set.h"
 #include "hash_set.h"
 
-#include "google_btree_set.h"
+#include "google/btree/google_btree_set.h"
 
 
 using lib_calvin::stopwatch;
@@ -64,11 +64,11 @@ void lib_calvin_container::setTest() {
 	//setIteratorTest<HashTable<Numeric>>("HashTable iterator");
 	setIteratorTest<HashTable2<Numeric>>("HashTable2 iterator");
 
-	//setPerformanceTest<std::set<Numeric>>(largeSize, "std::set / Numeric");
-	//setPerformanceTest<boost::container::set<Numeric>>(largeSize, "boost::set / Numeric");
+	setPerformanceTest<std::set<Numeric>>(largeSize, "std::set / Numeric");
+	setPerformanceTest<boost::container::set<Numeric>>(largeSize, "boost::set / Numeric");
 	//setPerformanceTest<BinTree<Numeric>>(largeSize, "BinTree / Numeric");
-	//setPerformanceTest<RbTree<Numeric>>(largeSize, "RbTree / Numeric");
-	//setPerformanceTest<BTree<Numeric>>(largeSize, "BTree / Numeric");
+	setPerformanceTest<RbTree<Numeric>>(largeSize, "RbTree / Numeric");
+	setPerformanceTest<BTree<Numeric>>(largeSize, "BTree / Numeric");
 	setPerformanceTest<BPlusTree<Numeric>>(largeSize, "BPlusTree / Numeric");
 	//setPerformanceTest<OrderedArray<Numeric>>(largeSize, "OrderedArray / Numeric");
 	setPerformanceTest<std::unordered_set<Numeric>>(largeSize, "std::unordered_set / Numeric");
@@ -87,9 +87,9 @@ void lib_calvin_container::setTest() {
 	// largeSize, "hash_set / LightObject");
 	setPerformanceTest<btree::btree_set<LightObject>>(largeSize, "Google Btree / LightObject");
 
-	//setPerformanceTest<std::set<HeavyObject>>(mediumSize, "std::set / HeavyObject");
-	//setPerformanceTest<boost::container::set<HeavyObject>>(mediumSize, "boost::set / HeavyObject");
-	//setPerformanceTest<RbTree<HeavyObject>>(mediumSize, "RbTree / HeavyObject");
+	setPerformanceTest<std::set<HeavyObject>>(mediumSize, "std::set / HeavyObject");
+	setPerformanceTest<boost::container::set<HeavyObject>>(mediumSize, "boost::set / HeavyObject");
+	setPerformanceTest<RbTree<HeavyObject>>(mediumSize, "RbTree / HeavyObject");
 	//setPerformanceTest<BTree<HeavyObject>>(mediumSize, "BTree / HeavyObject");
 	setPerformanceTest<BPlusTree<HeavyObject>>(mediumSize, "BPlusTree / HeavyObject");
 	//setPerformanceTest<set_ref<HeavyObject>>(mediumSize, "set_ref / HeavyObject");

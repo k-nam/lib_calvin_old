@@ -104,15 +104,6 @@
     <ClInclude Include="container_test_types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="google_btree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="google_btree_container.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="google_btree_set.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="vector.h">
       <Filter>public</Filter>
     </ClInclude>

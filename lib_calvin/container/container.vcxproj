@@ -215,9 +215,6 @@
     <ClInclude Include="container_test.h" />
     <ClInclude Include="blocked_array.h" />
     <ClInclude Include="container_test_types.h" />
-    <ClInclude Include="google_btree.h" />
-    <ClInclude Include="google_btree_container.h" />
-    <ClInclude Include="google_btree_set.h" />
     <ClInclude Include="hash_map.h" />
     <ClInclude Include="hash_set.h" />
     <ClInclude Include="hash_table.h" />
