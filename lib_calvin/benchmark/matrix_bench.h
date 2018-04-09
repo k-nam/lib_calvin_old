@@ -1,5 +1,5 @@
-#ifndef LIB_CALVIN__MATRIX__BENCH_H
-#define LIB_CALVIN__MATRIX__BENCH_H
+#ifndef LIB_CALVIN__MATRIX_BENCH_H
+#define LIB_CALVIN__MATRIX_BENCH_H
 
 #include <vector>
 #include <string>

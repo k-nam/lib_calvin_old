@@ -22,6 +22,9 @@
     <Filter Include="matrix">
       <UniqueIdentifier>{71923e8d-6635-43a9-8586-63b8d5994ebe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="graph">
+      <UniqueIdentifier>{4bc883d6-162f-4be5-b916-1c4e169398f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bench_main.cc">
@@ -57,6 +60,9 @@
     <ClCompile Include="..\matrix\naive_multi2.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="graph_bench.cc">
+      <Filter>graph</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bench.h">
@@ -79,6 +85,12 @@
     </ClInclude>
     <ClInclude Include="matrix_bench.h">
       <Filter>matrix</Filter>
+    </ClInclude>
+    <ClInclude Include="graph_bench.h">
+      <Filter>graph</Filter>
+    </ClInclude>
+    <ClInclude Include="boost_graph.h">
+      <Filter>graph</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -121,6 +121,7 @@
     <ClCompile Include="..\util\thread.cc" />
     <ClCompile Include="bench_main.cc" />
     <ClCompile Include="container_bench.cc" />
+    <ClCompile Include="graph_bench.cc" />
     <ClCompile Include="matrix_bench.cc" />
     <ClCompile Include="sorting_bench.cc" />
     <ClCompile Include="bench.cc" />
@@ -129,7 +130,9 @@
     <ClInclude Include="..\container\google_btree.h" />
     <ClInclude Include="..\container\google_btree_container.h" />
     <ClInclude Include="..\container\google_btree_set.h" />
+    <ClInclude Include="boost_graph.h" />
     <ClInclude Include="container_bench.h" />
+    <ClInclude Include="graph_bench.h" />
     <ClInclude Include="matrix_bench.h" />
     <ClInclude Include="sorting_bench.h" />
     <ClInclude Include="bench.h" />

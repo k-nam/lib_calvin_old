@@ -1,5 +1,5 @@
-#ifndef LIB_CALVIN__SORT__BENCH_H
-#define LIB_CALVIN__SORT__BENCH_H
+#ifndef LIB_CALVIN__SORT_BENCH_H
+#define LIB_CALVIN__SORT_BENCH_H
 
 #include <map>
 #include <vector>
