@@ -11,18 +11,20 @@ namespace lib_calvin_string {
 	class SuffixTreeTest;
 
 
-	template <typename Alphabet>
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph =
+		lib_calvin_graph::simple_graph>
 	void suffixTreeMatching(lib_calvin::abstract_string<Alphabet> const &text,
 							lib_calvin::abstract_string<Alphabet> const &pattern,
 							std::vector<size_t> &result);
 }
 
 
-template <typename Alphabet>
+template <typename Alphabet, 
+	template <typename V, typename E, typename K, typename ExtractKey> class Graph>
 void lib_calvin_string::suffixTreeMatching(lib_calvin::abstract_string<Alphabet> const &text,
-										   lib_calvin::abstract_string<Alphabet> const &pattern, 
+										   lib_calvin::abstract_string<Alphabet> const &pattern,
 										   std::vector<size_t> &result) {
-	lib_calvin::suffix_tree<Alphabet> tree(text);
+	lib_calvin::suffix_tree<Alphabet, Graph> tree(text);
 	// return value of find_pattern is (textId, startIndex) pair
 	tree.build();
 	auto temp = tree.find_pattern(pattern);
@@ -34,7 +36,9 @@ void lib_calvin_string::suffixTreeMatching(lib_calvin::abstract_string<Alphabet>
 
 namespace lib_calvin
 {
-	template <typename Alphabet>
+	template <typename Alphabet,
+		template <typename V, typename E, typename K, typename ExtractKey> class Graph = 
+		lib_calvin_graph::simple_graph>
 	class suffix_tree {
 	private:
 		// all negative value integer is only for internal use. 
@@ -146,7 +150,8 @@ namespace lib_calvin
 		void printNode(NodeKey key) const;
 	private:
 		vector<abstract_string<Alphabet>> texts_;
-		lib_calvin_graph::simple_graph<Node, Link, NodeKey, NodeExtractKey> graph_;
+		//lib_calvin_graph::simple_graph<Node, Link, NodeKey, NodeExtractKey> graph_;
+		Graph<Node, Link, NodeKey, NodeExtractKey> graph_;
 
 	private:
 		size_t textId_;
@@ -157,13 +162,13 @@ namespace lib_calvin
 		map<NodeKey, set<size_t>> internalNodeToTextId_;
 	};
 
-	template <typename Alphabet>
-	suffix_tree<Alphabet>::suffix_tree(abstract_string<Alphabet> const &text) {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	suffix_tree<Alphabet, Graph>::suffix_tree(abstract_string<Alphabet> const &text) {
 		init(vector<abstract_string<Alphabet>>(1, text));
 	}
 
-	template <typename Alphabet>
-	suffix_tree<Alphabet>::suffix_tree(vector<abstract_string<Alphabet>> const &texts) {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	suffix_tree<Alphabet, Graph>::suffix_tree(vector<abstract_string<Alphabet>> const &texts) {
 		init(texts);
 		lib_calvin::stopwatch watch;
 		watch.start();
@@ -171,8 +176,8 @@ namespace lib_calvin
 		//std::cout << "Suffix with size: " << text.length() << " build took: " << watch.read() << "\n";
 	}
 
-	template <typename Alphabet>
-	void suffix_tree<Alphabet>::init(vector<abstract_string<Alphabet>> const &texts) {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	void suffix_tree<Alphabet, Graph>::init(vector<abstract_string<Alphabet>> const &texts) {
 		texts_ = texts;
 		// we need $ char at the tail for the correctness of the following routine
 		// otherwise, some suffix may not have corresponding leaf node
@@ -183,15 +188,15 @@ namespace lib_calvin
 		internalNodeId_ = 0;
 	}
 
-	template <typename Alphabet>
-	void suffix_tree<Alphabet>::build() {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	void suffix_tree<Alphabet, Graph>::build() {
 		buildTree();
 		findAllCommmonSubstrings();
 	}
 
-	template <typename Alphabet>
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
 	vector<std::pair<size_t, size_t>>
-		suffix_tree<Alphabet>::find_pattern(abstract_string<Alphabet> const &pattern) const {
+		suffix_tree<Alphabet, Graph>::find_pattern(abstract_string<Alphabet> const &pattern) const {
 		stopwatch watch;
 		watch.start();
 		vector<NodeKey> reachableLeaves;
@@ -210,9 +215,9 @@ namespace lib_calvin
 		return result;
 	}
 
-	template <typename Alphabet>
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
 	abstract_string<Alphabet>
-		suffix_tree<Alphabet>::find_longest_common_substring() const {
+		suffix_tree<Alphabet, Graph>::find_longest_common_substring() const {
 		size_t maxLength = 0; // max length of substring common to all texts so far
 		NodeKey keyForMaxLength = getNullKey(); // internal node corresponding to the above
 		for (auto iter = internalNodeToTextId_.begin(); iter != internalNodeToTextId_.end(); ++iter) {
@@ -227,8 +232,8 @@ namespace lib_calvin
 		return readToNode(keyForMaxLength);
 	}
 
-	template <typename Alphabet>
-	void suffix_tree<Alphabet>::buildTree() {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	void suffix_tree<Alphabet, Graph>::buildTree() {
 		// inserting root
 		Node root(getRootKey(), NodeType::Root, getNullKey(), getNullKey());
 		graph_.insert_vertex(root);
@@ -297,9 +302,9 @@ namespace lib_calvin
 		}
 	}
 
-	template <typename Alphabet>
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
 	void
-		suffix_tree<Alphabet>::findAllCommmonSubstrings() {
+		suffix_tree<Alphabet, Graph>::findAllCommmonSubstrings() {
 		// for each and all of leaves, mark all ancestors (internal nodes) of it as
 		// substring of a text[i], where i is the textId_ of that leaf node
 		// as internal nodes can be a substring of multiple text, each key of internal node
@@ -322,9 +327,9 @@ namespace lib_calvin
 		}
 	}
 
-	template <typename Alphabet>
-	std::pair<typename suffix_tree<Alphabet>::Point, bool>
-		suffix_tree<Alphabet>::findPatternPoint(abstract_string<Alphabet> const &pattern) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	std::pair<typename suffix_tree<Alphabet, Graph>::Point, bool>
+		suffix_tree<Alphabet, Graph>::findPatternPoint(abstract_string<Alphabet> const &pattern) const {
 		NodeKey srcNode;
 		NodeKey destNode = getRootKey();
 		Link link;
@@ -365,15 +370,15 @@ namespace lib_calvin
 		return std::make_pair(Point(srcNode, destNode, indexInText), true);
 	}
 
-	template <typename Alphabet>
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
 	void
-		suffix_tree<Alphabet>::findReachableLeaves(Point const &point, vector<NodeKey> &result) const {
+		suffix_tree<Alphabet, Graph>::findReachableLeaves(Point const &point, vector<NodeKey> &result) const {
 		findReachableLeaves(point.dest_, result);
 	}
 
-	template <typename Alphabet>
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
 	void
-		suffix_tree<Alphabet>::findReachableLeaves(NodeKey key, vector<NodeKey> &result) const {
+		suffix_tree<Alphabet, Graph>::findReachableLeaves(NodeKey key, vector<NodeKey> &result) const {
 		if (getNode(key).type_ == NodeType::Leaf) {
 			//std::cout << "findReachableLeaves adding: " << node << "\n";
 			result.push_back(key);
@@ -385,69 +390,69 @@ namespace lib_calvin
 		}
 	}
 
-	template <typename Alphabet>
-	void suffix_tree<Alphabet>::printPoint(Point const &point) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	void suffix_tree<Alphabet, Graph>::printPoint(Point const &point) const {
 		readToPoint(point).print();
 	}
 
-	template <typename Alphabet>
-	void suffix_tree<Alphabet>::printNode(NodeKey key) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	void suffix_tree<Alphabet, Graph>::printNode(NodeKey key) const {
 		if (getNode(key).type_ == NodeType::Internal) {
 			std::cout << "Internal, substring length is: " << getNode(key).substringLength_ << " ";
 		}
 		readToPoint(createPoint(key)).println();
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::NodeKey
-		suffix_tree<Alphabet>::getNullKey() const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::NodeKey
+		suffix_tree<Alphabet, Graph>::getNullKey() const {
 		return NodeKey(1000, 0);
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::NodeKey
-		suffix_tree<Alphabet>::getRootKey() const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::NodeKey
+		suffix_tree<Alphabet, Graph>::getRootKey() const {
 		return NodeKey(2000, 0);
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::NodeKey
-		suffix_tree<Alphabet>::getNewInternalKey() {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::NodeKey
+		suffix_tree<Alphabet, Graph>::getNewInternalKey() {
 		return NodeKey(3000, internalNodeId_++);
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::Point
-		suffix_tree<Alphabet>::getNullPoint() const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::Point
+		suffix_tree<Alphabet, Graph>::getNullPoint() const {
 		return Point(getNullKey(), getNullKey(), 1);
 	}
 
-	template <typename Alphabet>
-	suffix_tree<Alphabet>::NodeKey::NodeKey(size_t textId, size_t id) :
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	suffix_tree<Alphabet, Graph>::NodeKey::NodeKey(size_t textId, size_t id) :
 		textId_(textId), id_(id) {}
 
-	template <typename Alphabet>
-	suffix_tree<Alphabet>::NodeKey::NodeKey() : textId_(0), id_(0) {}
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	suffix_tree<Alphabet, Graph>::NodeKey::NodeKey() : textId_(0), id_(0) {}
 
-	template <typename Alphabet>
-	bool suffix_tree<Alphabet>::NodeKey::operator==(NodeKey const &rhs) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	bool suffix_tree<Alphabet, Graph>::NodeKey::operator==(NodeKey const &rhs) const {
 		return textId_ == rhs.textId_ && id_ == rhs.id_;
 	}
 
-	template <typename Alphabet>
-	bool suffix_tree<Alphabet>::NodeKey::operator!=(NodeKey const &rhs) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	bool suffix_tree<Alphabet, Graph>::NodeKey::operator!=(NodeKey const &rhs) const {
 		return !(*this == rhs);
 	}
 
-	template <typename Alphabet>
-	bool suffix_tree<Alphabet>::NodeKey::operator<(NodeKey const &rhs) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	bool suffix_tree<Alphabet, Graph>::NodeKey::operator<(NodeKey const &rhs) const {
 		return textId_ < rhs.textId_ ||
 			(textId_ == rhs.textId_ && id_ < rhs.id_);
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::NodeKey &
-		suffix_tree<Alphabet>::NodeKey::operator=(NodeKey const &rhs) {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::NodeKey &
+		suffix_tree<Alphabet, Graph>::NodeKey::operator=(NodeKey const &rhs) {
 		if (this != &rhs) {
 			textId_ = rhs.textId_;
 			id_ = rhs.id_;
@@ -455,22 +460,22 @@ namespace lib_calvin
 		return *this;
 	}
 
-	template <typename Alphabet>
-	suffix_tree<Alphabet>::Node::Node(NodeKey key, NodeType type, NodeKey parent, NodeKey suffixLink) :
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	suffix_tree<Alphabet, Graph>::Node::Node(NodeKey key, NodeType type, NodeKey parent, NodeKey suffixLink) :
 		key_(key), type_(type), parent_(parent), suffixLink_(suffixLink), substringLength_(0) {
 		objectCount_++;
 		//std::cout << "objectCount_ is: " << objectCount_ << "\n";
 	}
 
-	template <typename Alphabet>
-	suffix_tree<Alphabet>::Node::Node(Node const &rhs) : key_(rhs.key_), type_(rhs.type_),
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	suffix_tree<Alphabet, Graph>::Node::Node(Node const &rhs) : key_(rhs.key_), type_(rhs.type_),
 		parent_(rhs.parent_), suffixLink_(rhs.suffixLink_), substringLength_(rhs.substringLength_) {
 		objectCount_++;
 		//std::cout << "objectCount_ is: " << objectCount_ << "\n";
 	}
 
-	template <typename Alphabet>
-	suffix_tree<Alphabet>::Node::~Node() {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	suffix_tree<Alphabet, Graph>::Node::~Node() {
 		objectCount_--;
 		if (objectCount_ < 0) {
 			std::cout << "objectCount_ is: " << objectCount_ << "\n";
@@ -478,8 +483,8 @@ namespace lib_calvin
 		//std::cout << "objectCount_ is: " << objectCount_ << "\n";
 	}
 
-	template <typename Alphabet>
-	void suffix_tree<Alphabet>::Node::countThisObject() {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	void suffix_tree<Alphabet, Graph>::Node::countThisObject() {
 		std::cout << "Node current count is: \"" << objectCount_ << "\": ";
 		if (objectCount_ == 0) {
 			std::cout << "O.K\n\n";
@@ -489,26 +494,26 @@ namespace lib_calvin
 		}
 	}
 
-	template <typename Alphabet>
-	int suffix_tree<Alphabet>::Node::objectCount_ = 0;
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	int suffix_tree<Alphabet, Graph>::Node::objectCount_ = 0;
 
-	template <typename Alphabet>
-	bool suffix_tree<Alphabet>::Node::operator==(Node const &rhs) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	bool suffix_tree<Alphabet, Graph>::Node::operator==(Node const &rhs) const {
 		return key_ == rhs.key_;
 	}
 
-	template <typename Alphabet>
-	bool suffix_tree<Alphabet>::Node::operator<(Node const &rhs) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	bool suffix_tree<Alphabet, Graph>::Node::operator<(Node const &rhs) const {
 		return key_ < rhs.key_;
 	}
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::NodeKey
-		suffix_tree<Alphabet>::NodeExtractKey::operator()(Node const &node) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::NodeKey
+		suffix_tree<Alphabet, Graph>::NodeExtractKey::operator()(Node const &node) const {
 		return node.key_;
 	};
 
-	template <typename Alphabet>
-	suffix_tree<Alphabet>::Link::Link(size_t textId, Alphabet head, size_t startIndex, size_t endIndex) :
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	suffix_tree<Alphabet, Graph>::Link::Link(size_t textId, Alphabet head, size_t startIndex, size_t endIndex) :
 		textId_(textId), head_(head), startIndex_(startIndex), endIndex_(endIndex) {
 		if (startIndex >= endIndex && endIndex != 0) {
 			std::cout << "Link error:  start: " << startIndex << " end: " << endIndex << "\n";
@@ -516,12 +521,12 @@ namespace lib_calvin
 		}
 	}
 
-	template <typename Alphabet>
-	suffix_tree<Alphabet>::Link::Link() :
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	suffix_tree<Alphabet, Graph>::Link::Link() :
 		textId_(0), head_(0), startIndex_(0), endIndex_(0) {}
 
-	template <typename Alphabet>
-	suffix_tree<Alphabet>::Point::Point(NodeKey src, NodeKey dest, size_t endIndex) :
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	suffix_tree<Alphabet, Graph>::Point::Point(NodeKey src, NodeKey dest, size_t endIndex) :
 		src_(src), dest_(dest), endIndex_(endIndex) {
 		if (endIndex == 0) {
 			std::cout << "Point ctor creating leaf\n";
@@ -529,23 +534,23 @@ namespace lib_calvin
 		}
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::Point &
-		suffix_tree<Alphabet>::Point::operator=(Point const &rhs) {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::Point &
+		suffix_tree<Alphabet, Graph>::Point::operator=(Point const &rhs) {
 		src_ = rhs.src_;
 		dest_ = rhs.dest_;
 		endIndex_ = rhs.endIndex_;
 		return *this;
 	}
 
-	template <typename Alphabet>
-	bool suffix_tree<Alphabet>::Point::operator==(Point const &rhs) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	bool suffix_tree<Alphabet, Graph>::Point::operator==(Point const &rhs) const {
 		return src_ == rhs.src_ && dest_ == rhs.dest_ && endIndex_ == rhs.endIndex_;
 	}
 
-	template <typename Alphabet>
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
 	size_t
-		suffix_tree<Alphabet>::getLength(Link const &link) const {
+		suffix_tree<Alphabet, Graph>::getLength(Link const &link) const {
 		if (link.endIndex_ != 0) {
 			return link.endIndex_ - link.startIndex_;
 		} else {
@@ -557,22 +562,22 @@ namespace lib_calvin
 		}
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::Node
-		suffix_tree<Alphabet>::makeNewLeaf(NodeKey parentId) {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::Node
+		suffix_tree<Alphabet, Graph>::makeNewLeaf(NodeKey parentId) {
 		leafNodes_.push_back(NodeKey(textId_, extension_));
 		return Node(NodeKey(textId_, extension_), NodeType::Leaf, parentId, getNullKey());
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::Node
-		suffix_tree<Alphabet>::makeNewInternal(NodeKey parentId) {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::Node
+		suffix_tree<Alphabet, Graph>::makeNewInternal(NodeKey parentId) {
 		return Node(getNewInternalKey(), NodeType::Internal, parentId, getNullKey());
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::Point
-		suffix_tree<Alphabet>::followPathDown(size_t textId,
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::Point
+		suffix_tree<Alphabet, Graph>::followPathDown(size_t textId,
 											  NodeKey src, size_t startIndex, size_t endIndex) const {
 		vector<std::pair<Node, Link>> pairs = graph_.get_vertex_edge_pairs_from(src);
 		//std::cout << "graph size was: "<< graph_.number_of_vertex() << "numedge was: " << graph_.number_of_edge() << "\n";
@@ -596,9 +601,9 @@ namespace lib_calvin
 		exit(0);
 	}
 
-	template <typename Alphabet>
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
 	abstract_string<Alphabet>
-		suffix_tree<Alphabet>::readToPoint(Point const &point) const {
+		suffix_tree<Alphabet, Graph>::readToPoint(Point const &point) const {
 		Link const &link = getLink(point);
 		if (!(link.startIndex_ < point.endIndex_)) {
 			std::cout << "suffix_tree readToPoint error\n";
@@ -617,15 +622,15 @@ namespace lib_calvin
 		}
 	}
 
-	template <typename Alphabet>
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
 	abstract_string<Alphabet>
-		suffix_tree<Alphabet>::readToNode(NodeKey const &key) const {
+		suffix_tree<Alphabet, Graph>::readToNode(NodeKey const &key) const {
 		return readToPoint(createPoint(key));
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::Link const &
-		suffix_tree<Alphabet>::getLink(NodeKey src, NodeKey dest) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::Link const &
+		suffix_tree<Alphabet, Graph>::getLink(NodeKey src, NodeKey dest) const {
 		Link const &link = graph_.get_edge(src, dest);
 		if (!(link.startIndex_ < link.endIndex_) && link.endIndex_!= 0) {
 			//if (true) {
@@ -636,39 +641,39 @@ namespace lib_calvin
 		return link;
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::Link const &
-		suffix_tree<Alphabet>::getLink(Point const &point) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::Link const &
+		suffix_tree<Alphabet, Graph>::getLink(Point const &point) const {
 		return getLink(point.src_, point.dest_);
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::Link const &
-		suffix_tree<Alphabet>::getParenetLink(NodeKey key) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::Link const &
+		suffix_tree<Alphabet, Graph>::getParenetLink(NodeKey key) const {
 		return graph_.get_edge(getNode(key).parent_, key);
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::Node &
-		suffix_tree<Alphabet>::getNode(NodeKey key) {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::Node &
+		suffix_tree<Alphabet, Graph>::getNode(NodeKey key) {
 		return graph_.get_vertex(key);
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::Node const &
-		suffix_tree<Alphabet>::getNode(NodeKey key) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::Node const &
+		suffix_tree<Alphabet, Graph>::getNode(NodeKey key) const {
 		return graph_.get_vertex(key);
 	}
 
-	template <typename Alphabet>
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
 	bool
-		suffix_tree<Alphabet>::isLeaf(NodeKey const &key) const {
+		suffix_tree<Alphabet, Graph>::isLeaf(NodeKey const &key) const {
 		return key.textId_ < texts_.size();
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::Point
-		suffix_tree<Alphabet>::createPoint(NodeKey dest) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::Point
+		suffix_tree<Alphabet, Graph>::createPoint(NodeKey dest) const {
 		if (getNode(dest).type_ == NodeType::Root) {
 			std::cout << "suffix_tree createPoint error\n";
 			exit(0);
@@ -686,9 +691,9 @@ namespace lib_calvin
 		return Point(node.parent_, dest, endIndex);
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::Point
-		suffix_tree<Alphabet>::followSuffixLink(NodeKey key) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::Point
+		suffix_tree<Alphabet, Graph>::followSuffixLink(NodeKey key) const {
 		if (getNode(key).suffixLink_ !=  getNullKey()) {
 			//std::cout << "follow suffix\n";
 			return createPoint(getNode(key).suffixLink_);
@@ -719,14 +724,14 @@ namespace lib_calvin
 		}
 	}
 
-	template <typename Alphabet>
-	bool suffix_tree<Alphabet>::isNode(Point const &point) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	bool suffix_tree<Alphabet, Graph>::isNode(Point const &point) const {
 		return getLink(point.src_, point.dest_).endIndex_ == point.endIndex_;
 	}
 
-	template <typename Alphabet>
-	std::pair<typename suffix_tree<Alphabet>::Point, bool>
-		suffix_tree<Alphabet>::continuesWith(Point const &point, Alphabet const &character) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	std::pair<typename suffix_tree<Alphabet, Graph>::Point, bool>
+		suffix_tree<Alphabet, Graph>::continuesWith(Point const &point, Alphabet const &character) const {
 		//std::cout << "continue with : " << character << " \n";
 		//readToPoint(point).print();
 		if (isNode(point)) {
@@ -742,9 +747,9 @@ namespace lib_calvin
 		}
 	}
 
-	template <typename Alphabet>
-	std::pair<typename suffix_tree<Alphabet>::Point, bool>
-		suffix_tree<Alphabet>::nodeContinuesWith(NodeKey key, Alphabet const &character) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	std::pair<typename suffix_tree<Alphabet, Graph>::Point, bool>
+		suffix_tree<Alphabet, Graph>::nodeContinuesWith(NodeKey key, Alphabet const &character) const {
 		//std::cout << "continue with2 : ";
 		if (isLeaf(key)) { // wrong call
 			std::cout << "continuesWith error1\n";
@@ -764,15 +769,15 @@ namespace lib_calvin
 		return std::make_pair(getNullPoint(), false);
 	}
 
-	template <typename Alphabet>
-	std::pair<typename suffix_tree<Alphabet>::Point, bool>
-		suffix_tree<Alphabet>::rootContinuesWith(Alphabet const &character) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	std::pair<typename suffix_tree<Alphabet, Graph>::Point, bool>
+		suffix_tree<Alphabet, Graph>::rootContinuesWith(Alphabet const &character) const {
 		return nodeContinuesWith(getRootKey(), character);
 	}
 
-	template <typename Alphabet>
-	typename suffix_tree<Alphabet>::NodeKey
-		suffix_tree<Alphabet>::createBranch(Point const &point, Alphabet const &character) {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	typename suffix_tree<Alphabet, Graph>::NodeKey
+		suffix_tree<Alphabet, Graph>::createBranch(Point const &point, Alphabet const &character) {
 		if (!isNode(point)) {
 			NodeKey parentKey = point.src_;
 			NodeKey childKey = point.dest_;
@@ -810,29 +815,29 @@ namespace lib_calvin
 		}
 	}
 
-	template <typename Alphabet>
-	void suffix_tree<Alphabet>::createBranchAtRoot(Alphabet const &character) {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	void suffix_tree<Alphabet, Graph>::createBranchAtRoot(Alphabet const &character) {
 		Node newLeaf = makeNewLeaf(getRootKey());
 		Link newLink(textId_, character, phase_ - 1, 0);
 		graph_.insert_vertex(newLeaf);
 		insertEdge(getRootKey(), newLeaf.key_, newLink);
 	}
 
-	template <typename Alphabet>
-	void suffix_tree<Alphabet>::printSuffix(NodeKey leaf) const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	void suffix_tree<Alphabet, Graph>::printSuffix(NodeKey leaf) const {
 		std::cout << "suffix textId: " << leaf.textId_ << " starting index: " << leaf.id_ << " ";
 		readToPoint(createPoint(leaf)).println();
 	}
 
-	template <typename Alphabet>
-	void suffix_tree<Alphabet>::printAllSuffix() const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	void suffix_tree<Alphabet, Graph>::printAllSuffix() const {
 		for (auto iter = leafNodes_.begin(); iter != leafNodes_.end(); ++iter) {
 			printSuffix(*iter);
 		}
 	}
 
-	template <typename Alphabet>
-	void suffix_tree<Alphabet>::printAllCommonSubstring() const {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	void suffix_tree<Alphabet, Graph>::printAllCommonSubstring() const {
 		for (auto iter = internalNodeToTextId_.begin(); iter != internalNodeToTextId_.end(); ++iter) {
 			if (iter->second.size() == texts_.size()) {
 				printNode(iter->first);
@@ -840,8 +845,8 @@ namespace lib_calvin
 		}
 	}
 
-	template <typename Alphabet>
-	void suffix_tree<Alphabet>::insertEdge(NodeKey src, NodeKey dest, Link const &link) {
+	template <typename Alphabet, template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+	void suffix_tree<Alphabet, Graph>::insertEdge(NodeKey src, NodeKey dest, Link const &link) {
 		graph_.insert_edge(src, dest, link);
 		//std::cout << "inserting edge src: " << src << " dest: " << dest << " link start: " << link.startIndex_ <<
 		//" link end: " << link.endIndex_ << "\n";
