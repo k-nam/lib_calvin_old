@@ -203,6 +203,7 @@
     <ClCompile Include="..\container\adt.cc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="boost_graph.h" />
     <ClInclude Include="graph.h" />
     <ClInclude Include="graph_test.h" />
     <ClInclude Include="simple_graph.h" />

@@ -89,8 +89,5 @@
     <ClInclude Include="graph_bench.h">
       <Filter>graph</Filter>
     </ClInclude>
-    <ClInclude Include="boost_graph.h">
-      <Filter>graph</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

@@ -134,9 +134,6 @@ namespace lib_calvin_graph { // open for definitions
 
 	template <typename V, typename E, typename K, typename ExtractKey>
 	bool simple_graph<V, E, K, ExtractKey>::insert_edge(K const &src, K const &dest, E const &edge) {
-		if (src == dest) { // No self loop !!!
-			return false;
-		}
 		if (has_edge(src, dest)) {
 			return false;
 		} else {
