@@ -59,10 +59,9 @@ namespace lib_calvin_benchmark
 		double basicOperationBenchTemplate(size_t num_v, size_t num_e);
 
 		// Do a run
-		void suffixTreeBench(size_t alphabet_size, size_t string_len);
+		void suffixTreeBench(SubCategory, size_t alphabet_size, size_t text_len);
+		double suffixTreeBenchSub(Algorithm, size_t alphabet_size, size_t text_len);
 
-		template <typename Graph>
-		double suffixTreeBenchTemplate(size_t alphabet_size, size_t string_len);
 	}
 }
 
