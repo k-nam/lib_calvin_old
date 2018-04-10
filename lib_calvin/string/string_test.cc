@@ -34,7 +34,6 @@ void lib_calvin_string::abstractStringTest() {
 
 void lib_calvin_string::matchingAlgorithmTest() {
 	using namespace lib_calvin_string;
-	size_t testSize = 100000000;
 	size_t numIter = 1;
 	typedef char Alphabet;
 	std::cout << "-------------- matchingAlgorithmTest start ----------------\n\n";
