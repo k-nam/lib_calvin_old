@@ -119,9 +119,6 @@ namespace lib_calvin_graph {
 
 	template <typename V, typename E, typename K, typename ExtractKey>
 	bool boost_graph<V, E, K, ExtractKey>::insert_edge(K const &src, K const &dest, E const &edge) {
-		if (has_edge(src, dest)) {
-			return false;
-		}
 		vertex_descriptor v1 = key_to_descriptor_[src];
 		vertex_descriptor v2 = key_to_descriptor_[dest];
 
