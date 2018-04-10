@@ -2,12 +2,14 @@
 #define LIB_CALVIN__GRAPH__SIMPLE_GRAPH_H 
 
 #include <utility>
+#include <map>
 #include "map.h"
 #include "set.h"
 #include "vector.h"
 #include "stopwatch.h" 
 #include "utility.h" 
 #include "container.h"
+#include "rb_tree.h"
 
 
 
@@ -50,10 +52,13 @@ namespace lib_calvin_graph {
 		//virtual void prsize_t() const;
 
 	protected:
-		lib_calvin_container::BTree<V, K, std::less<K>, ExtractKey> vertices_;
+		// Warning! this container must preserve positions of elems (B-tree should not be used)
+		lib_calvin_container::RbTree<V, K, std::less<K>, ExtractKey> vertices_;
 		//lib_calvin_container::HashTable<V, K, ExtractKey> vertices_;
-		map<K, map<K, E>> outLinks_;
-		map<K, set<K>> inLinks_;
+		//std::map<K, std::map<K, E>> outLinks_;
+		map<K, map<K, std::pair<V *, E>>> outLinks_;
+
+		//map<K, set<K>> inLinks_;
 
 	private:
 		size_t numEdges_;
@@ -81,7 +86,7 @@ namespace lib_calvin_graph { // open for definitions
 		numEdges_ = rhs.numEdges_;
 		vertices_ = rhs.vertices_;
 		outLinks_ = rhs.outLinks_;
-		inLinks_ = rhs.inLinks_;
+		//inLinks_ = rhs.inLinks_;
 		return *this;
 	}
 	template <typename V, typename E, typename K, typename ExtractKey>
@@ -134,20 +139,16 @@ namespace lib_calvin_graph { // open for definitions
 
 	template <typename V, typename E, typename K, typename ExtractKey>
 	bool simple_graph<V, E, K, ExtractKey>::insert_edge(K const &src, K const &dest, E const &edge) {
-		if (has_edge(src, dest)) {
-			return false;
-		} else {
-			outLinks_[src][dest] = edge;
-			inLinks_[dest].insert(src);
-			numEdges_++;
-			return true;
-		}
+		outLinks_[src][dest] = std::make_pair(& get_vertex(dest), edge);
+		//inLinks_[dest].insert(src);
+		numEdges_++;
+		return true;		
 	}
 
 	template <typename V, typename E, typename K, typename ExtractKey>
 	bool simple_graph<V, E, K, ExtractKey>::remove_edge(K const &src, K const &dest) {
 		if (outLinks_[src].erase(dest) > 0) {
-			inLinks_[dest].erase(src);
+			//inLinks_[dest].erase(src);
 			numEdges_--;
 			return true;
 		} else {
@@ -159,7 +160,7 @@ namespace lib_calvin_graph { // open for definitions
 	E const &
 		simple_graph<V, E, K, ExtractKey>::get_edge(K const &src, K const &dest) const {
 
-		return outLinks_.find(src)->second.find(dest)->second;
+		return outLinks_.find(src)->second.find(dest)->second.second;
 	}
 
 	template <typename V, typename E, typename K, typename ExtractKey>
@@ -177,12 +178,13 @@ namespace lib_calvin_graph { // open for definitions
 		if (iter == outLinks_.end()) {
 		} else {
 			for (auto pair: iter->second) {
-				result.push_back(std::make_pair(*vertices_.find(pair.first), pair.second));
+				result.push_back(std::make_pair(*pair.second.first, pair.second.second));
 			}
 		}
 		return result;
 	}
 
+	/*
 	template <typename V, typename E, typename K, typename ExtractKey>
 	lib_calvin::vector<V>
 		simple_graph<V, E, K, ExtractKey>::get_vertices_to(K const &dest) const {
@@ -191,7 +193,7 @@ namespace lib_calvin_graph { // open for definitions
 			result.push_back(*vertices_.find(vertex));
 		}
 		return result;
-	}
+	}*/
 
 } // end namespace lib_calvin_graph
 
