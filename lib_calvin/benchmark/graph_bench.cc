@@ -1,79 +1,145 @@
 #include <iostream>
+#include <algorithm>
 
 #include "graph_bench.h"
 #include "boost/graph/adjacency_list.hpp"
+#include "simple_graph.h"
 #include "boost_graph.h"
 
-struct Node {
-	Node() {}
-	Node(size_t id): id_(id) {}
-	size_t id_;
-	bool operator< (Node const &rhs) const { return id_ < rhs.id_; }
-};
+#include "bench.h"
+#include "stopwatch.h"
 
-struct Link {
-	Link() {}
-	Link(size_t head): head_(head) {}
-	size_t head_;
-	size_t length_;
-};
+using namespace lib_calvin_benchmark::graph;
+
+std::string
+lib_calvin_benchmark::graph::getStringFromNumber(size_t num) {
+	if (num < 1000* 1000) {
+		return std::to_string(num / 1000) + "K";
+	} else {
+		return std::to_string(num / 1000 / 1000) + "M";
+	}
+}
+
+std::string 
+lib_calvin_benchmark::graph::getTitle(SubCategory sub, size_t size1, size_t size2) {
+	if (sub == BASIC_SPARSE || sub == BASIC_DENSE) {
+		return "# Vertices: " + getStringFromNumber(size1) + " / # Edges: " + getStringFromNumber(size2);
+	} else if (sub == SUFFIX_TREE) {
+		return "Charset size: " + getStringFromNumber(size1) + " / Text length: " + getStringFromNumber(size2);
+	} else {
+		return "";
+	}
+}
+
+std::string 
+lib_calvin_benchmark::graph::getSubCategory(SubCategory sub) {
+	if (sub == BASIC_SPARSE) {
+		return "Basic operations / Sparse";
+	} else if (sub == BASIC_DENSE) {
+		return "Basic operations / Dense";
+	} else {
+		return "Suffix tree performance";
+	}
+}
+
+std::vector<std::string> lib_calvin_benchmark::graph::getAlgorithmNamesAndTags(Algorithm algo) {
+	if (algo == LIB_CALVIN_GRAPH) {
+		return { "lib_calvin::graph" };
+	} else if (algo == BOOST_GRAPH) {
+		return { "boost::graph" };
+	} else {
+		return { "error" };
+	}
+}
+
+std::vector<std::vector<std::string>> 
+lib_calvin_benchmark::graph::getAlgorithmNamesAndTagsVector(std::vector<Algorithm> algorithms) {
+	using namespace std;
+	vector<vector<string>> result = {};
+	std::for_each(algorithms.begin(), algorithms.end(),
+				  [&result](Algorithm algo) {
+		result.push_back(getAlgorithmNamesAndTags(algo)); });
+	return result;
+}
+
+std::vector<Algorithm> 
+lib_calvin_benchmark::graph::getAllAlgorithms() {
+	return { LIB_CALVIN_GRAPH, BOOST_GRAPH };
+}
+
+std::vector<std::vector<std::string>>
+lib_calvin_benchmark::graph::getAllAlgorithmNamesAndTagsVector() {
+	return getAlgorithmNamesAndTagsVector(getAllAlgorithms());
+}
 
 void lib_calvin_benchmark::graph::graphBench() {
-	using std::cout;
-	using namespace boost;
+	graphBench(BASIC_SPARSE);
+	graphBench(BASIC_DENSE);
+	graphBench(SUFFIX_TREE);
+}
+
+void  lib_calvin_benchmark::graph::graphBench(SubCategory sub) {
+	if (sub == BASIC_SPARSE) {
+		basicOperationBench(sub, 1000, 5);
+		basicOperationBench(sub, 1000 * 10, 5);
+		basicOperationBench(sub, 1000 * 100, 5);
+		basicOperationBench(sub, 1000 * 1000, 5);
+	} else if (sub == BASIC_DENSE) {
+		basicOperationBench(sub, 10000, 100);
+		basicOperationBench(sub, 10000, 1000);
+		basicOperationBench(sub, 10000, 10000);
+	} else if (sub == SUFFIX_TREE) {
+		suffixTreeBench(2, 100 * 1000);
+		suffixTreeBench(26, 100 * 1000);
+		suffixTreeBench(2, 1000 * 1000);
+		suffixTreeBench(26, 1000 * 1000);
+	} else {
+
+	}
+}
+
+// Do a run
+void  lib_calvin_benchmark::graph::basicOperationBench(SubCategory sub, size_t num_v, size_t num_e) {
+	static size_t benchOrder = 0;
+
+	std::vector<std::vector<double>> results;
+	std::vector<std::string> testCases = { "Basic operation" };
+	auto algorithms = getAllAlgorithms();
+
+	results.push_back({ basicOperationBenchTemplate<lib_calvin_graph::simple_graph<Node, Link>>(num_v, num_e) });
+	results.push_back({ basicOperationBenchTemplate<lib_calvin_graph::boost_graph<Node, Link>>(num_v, num_e) });
+
 	
-	typedef property<vertex_all_t, Node> VertexProperty;
-	typedef property<edge_weight_t, Link> EdgeProperty;
+	std::string comment = "";
+	lib_calvin_benchmark::save_bench(category, getSubCategory(sub), getTitle(sub, num_v, num_e), comment,
+									 getAlgorithmNamesAndTagsVector(algorithms),
+									 results, testCases, unit, benchOrder++);
+}
 
-	typedef adjacency_list<setS, setS, directedS, VertexProperty, EdgeProperty> Graph;
-	typedef typename graph_traits<Graph>::vertex_descriptor vertex_descriptor;
-	typedef typename graph_traits<Graph>::edge_descriptor edge_descriptor;
-
+template <typename Graph>
+double  lib_calvin_benchmark::graph::basicOperationBenchTemplate(size_t num_v, size_t num_e) {
+	std::cout << "Now doing basicOperationBench of size: " << std::to_string(num_v) << " and " << std::to_string(num_e) << "\n";
 	Graph graph;
-	vertex_descriptor v1 = add_vertex(graph);
-	vertex_descriptor v2 = add_vertex(graph);
-	edge_descriptor e1 = add_edge(v1, v2, graph).first;
+	size_t degree = num_e / num_v;
 
-	//typedef typename property_map<Graph, vertex_all_t>::type VertexPropertyMapType;
-	//typedef typename property_map<Graph, edge_weight_t>::type EdgePropertyMapType;
-	//VertexPropertyMapType vertex_all_map = get(vertex_all, graph);
-	//EdgePropertyMapType edge_weight_map = get(edge_weight, graph);
+	lib_calvin::stopwatch watch;
+	watch.start();
+	for (size_t i = 0; i < num_v; i++) {
+		graph.insert_vertex(Node(i));
+	}
 
-	//property_traits<property_map<Graph, vertex_all_t>::const_type>::value_type a =
-	//boost::get(vertex_all, graph, v1);
+	size_t interval = num_v / (degree + 1);
+	for (size_t i = 0; i < num_v; i++) {
+		for (size_t j = 0; j < degree; j++) {			
+			graph.insert_edge(Node(i), Node(i + j * interval), Link());
+		}		
+	}
+	watch.stop();
+	return watch.read();
+}
 
-	Node b = get(vertex_all, graph, v1).m_value;
-	put(vertex_all, graph, v2, Node());
-	put(edge_weight, graph, e1, Link());
-	num_vertices(graph);
 
-	std::cout << "v1: " << v1 << "\n";
-	std::cout << "v2: " << v2 << "\n";
-	std::cout << "e1: " << e1 << "\n";	
+// Do a run
+void  lib_calvin_benchmark::graph::suffixTreeBench(size_t alphabet_size, size_t string_len) {
 
-	
-	benchmark::graph::boost_graph<Node, Link> aa;
-	Node v11(1);
-	Node v12(2);
-	Node v13(3);
-	Node v14(4);
-
-	Link e11(10);
-	Link e12(11);
-	Link e13(12);
-
-	aa.insert_vertex(v11);
-	aa.insert_vertex(v12);
-	aa.insert_vertex(v13);
-	aa.insert_vertex(v14);
-
-	aa.get_vertex(v11);
-
-	aa.insert_edge(v11, v12, e11);
-	aa.insert_edge(v11, v13, e12);
-	aa.insert_edge(v11, v14, e13);
-
-	aa.remove_edge(v11, v14);
-
-	aa.get_vertex_edge_pairs_from(v11);	
 }
