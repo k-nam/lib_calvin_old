@@ -23,6 +23,7 @@ namespace lib_calvin_graph {
 	using lib_calvin::vector;
 	using lib_calvin::map;
 	using lib_calvin::set;
+	using lib_calvin::btree_map;
 
 	template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>>
 	class simple_graph {
@@ -54,10 +55,8 @@ namespace lib_calvin_graph {
 	protected:
 		// Warning! this container must preserve positions of elems (B-tree should not be used)
 		lib_calvin_container::RbTree<V, K, std::less<K>, ExtractKey> vertices_;
-		//lib_calvin_container::HashTable<V, K, ExtractKey> vertices_;
 		//std::map<K, std::map<K, E>> outLinks_;
 		map<K, map<K, std::pair<V *, E>>> outLinks_;
-
 		//map<K, set<K>> inLinks_;
 
 	private:
