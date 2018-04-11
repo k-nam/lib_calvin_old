@@ -12,5 +12,6 @@ filenames.each do |filename|
   File.delete(filename)
   puts 'Finished uploading: ' + filename
 end
-#puts filenames
+puts 'All finished'
+
 #http_post_json(json_text, server_url)
