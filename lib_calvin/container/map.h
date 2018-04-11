@@ -31,15 +31,20 @@ namespace lib_calvin_container
 		}
 	};
 
-	template <typename K, typename V, typename Comp = std::less<K>>
-	using Map = MapWrapper<K, V, Comp, SetImpl<std::pair<K, V>, K, Comp, TakeFirstOfPair<K, V>>>;
+	template <typename K, typename V, typename Comp>
+	using Map = MapWrapper<K, V, Comp, RbTree<std::pair<K, V>, K, Comp, TakeFirstOfPair<K, V>>>;
+
+	template <typename K, typename V, typename Comp>
+	using BTreeMap = MapWrapper<K, V, Comp, BTree<std::pair<K, V>, K, Comp, TakeFirstOfPair<K, V>>>;
 } 
 
 namespace lib_calvin
 {
-	template <typename K, typename V>
-	class map : public lib_calvin_container::Map<K, V> { };
-	//class map: public std::map<K, V> { };
+	template <typename K, typename V, typename Comp = std::less<K>>
+	class map : public lib_calvin_container::Map<K, V, Comp> { };
+
+	template <typename K, typename V, typename Comp = std::less<K>>
+	class btree_map : public lib_calvin_container::BTreeMap<K, V, Comp> { };
 
 }
 

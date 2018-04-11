@@ -25,7 +25,7 @@ void lib_calvin_container::mapTest()
 
 	int const testSize = 10000;
 	mapFunctionTest<lib_calvin::map<int, int>>(testSize, "lib_calvin::map");
-	mapRvalueTest<lib_calvin_container::Map<int, HeavyObjectWithMessage>>("mapRvalueTest / lib_calvin::map");
+	mapRvalueTest<lib_calvin::map<int, HeavyObjectWithMessage>>("mapRvalueTest / lib_calvin::map");
 	
 	int const smallSize = 10000;
 	int const largeSize = 100000;
@@ -39,7 +39,6 @@ void lib_calvin_container::mapTest()
 	//mapPerformanceTest<std::map<HeavyObject, int>>(largeSize, "std::map / HeavyObject->int");
 	mapPerformanceTest<std::map<int, HeavyObject>>(largeSize, "std::map / int->HeavyObject");
 	
-	mapIntegratedSpeedTest<lib_calvin_container::Map<int, int>>(smallSize, "lib_calvin::map");
 	mapIntegratedSpeedTest<std::map<int, int>>(smallSize, "std::map");
 
 	mapIteratorTest<int, int>();

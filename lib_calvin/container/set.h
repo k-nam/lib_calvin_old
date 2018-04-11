@@ -10,24 +10,16 @@
 #include "ordered_array.h"
 #include <set>
 
-namespace lib_calvin_container
-{
-	template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = Identity<T>>
-	using SetImpl =
-		lib_calvin_container::BPlusTree<T, K, Comp, ExtractKey>;
-	//lib_calvin_container::RbTree<T, K, Comp, ExtractKey>;
-	//lib_calvin_container::BinTree<T, K, Comp, ExtractKey>;
-
-	template <typename T, typename Comp = std::less<K>>
-	using Set = SetImpl<T, T, Comp>;
-} 
-
 namespace lib_calvin
 {
 	template <typename T, typename Comp = std::less<T>>
-	using set = lib_calvin_container::Set<T, Comp>;
+	using set = lib_calvin_container::RbTree<T, T, Comp>;
+
 	//using set = public boost::container::set<T, Comp>;
 	//using set = public std::set<T, Comp>;
+
+	template <typename T, typename Comp = std::less<T>>
+	using btree_set = lib_calvin_container::BTree<T, T, Comp>;
 
 } // end namespace lib_calvin
 #endif
