@@ -12,6 +12,8 @@
 #include "random.h"
 #include "vector.h"
 
+using namespace lib_calvin_benchmark::container;
+
 template <typename ElemType>
 std::string
 lib_calvin_benchmark::container::getTitle(OperationType operation) {
@@ -21,13 +23,7 @@ lib_calvin_benchmark::container::getTitle(OperationType operation) {
 template <typename ElemType>
 std::string 
 lib_calvin_benchmark::container::getSubCategory() {
-	//auto result = std::string("Object size: ") + std::to_string(sizeof(ElemType)) + std::string("byte");
-	auto result = std::to_string(sizeof(ElemType)) + std::string("byte");
-	if (sizeof(ElemType) >= 24) {
-		result += " (vector)";
-	} else {
-		result += " (int)";
-	}
+	auto result = ElemType::to_string();
 	result += " / ";
 	if (currentWorkingSetSize == 0) {
 		result += "minimum";
@@ -133,7 +129,11 @@ lib_calvin_benchmark::container::containerBench() {
 void
 lib_calvin_benchmark::container::containerBench(size_t workingSetSize) {
 	currentWorkingSetSize = workingSetSize;
-	containerBenchTemplate<lib_calvin_container::Numeric>();
+	containerBenchTemplate<object_16>();
+	containerBenchTemplate<object_32>();	
+	containerBenchTemplate<object_64>();
+	containerBenchTemplate<object_vector>();
+
 	//containerBenchTemplate<lib_calvin_container::LightObject>();
 	//containerBenchTemplate<lib_calvin_container::HeavyObject>();
 }
@@ -193,6 +193,9 @@ lib_calvin_benchmark::container::containerBenchSub() {
 			currentWorkingSetSize / (sizeof(ElemType) * testSize), static_cast<size_t>(1));
 		size_t totalNumOps = testSize * numContainers;
 		size_t numIter = benchNumIter[i];
+		if (currentWorkingSetSize > 0 || ElemType::to_string().size() > 6) {
+			numIter = 1;
+		}
 		double min = 1000;		
 		size_t problemSize = totalNumOps * static_cast<size_t>(std::log(testSize));
 		//std::cout << "Test size " << testSize << "numContainers " << numContainers << "\n";

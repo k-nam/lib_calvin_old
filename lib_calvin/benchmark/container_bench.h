@@ -15,7 +15,7 @@ namespace lib_calvin_benchmark
 		size_t const numCases = 3;
 		std::vector<size_t> const benchTestSize = { 1000, 10*1000, 1000*1000 };
 		std::vector<std::string> const testCases = { "1K", "10K", "1M" };
-		std::vector<size_t> const benchNumIter = { 1, 1, 1 };
+		std::vector<size_t> const benchNumIter = { 10, 3, 1 };
 
 		size_t const numWorkingSetCases = 2;
 		// This much mega-bytes of memory will be working area
@@ -90,6 +90,60 @@ namespace lib_calvin_benchmark
 		template <typename ContainerType>
 		std::vector<double>
 			containerBenchSub();
+
+		struct object_8 {
+			object_8() {}
+			object_8(size_t key): key_(key) {}
+			bool operator< (object_8 const &rhs) const { return key_ < rhs.key_; }
+			bool operator== (object_8 const &rhs) const { return key_ == rhs.key_; }
+			static std::string to_string() { return std::to_string(sizeof(object_8)) + "byte"; }
+			operator size_t () const { return key_; }
+			size_t key_;
+		};
+
+		struct object_16: public object_8 {
+			object_16() {}
+			object_16(size_t key): object_8(key) {}
+			static std::string to_string() { return std::to_string(sizeof(object_16)) + "byte"; }
+			char value_[8];
+		};
+
+		struct object_32: public object_8 {
+			object_32() {}
+			object_32(size_t key) : object_8(key) {}
+			static std::string to_string() { return std::to_string(sizeof(object_32)) + "byte"; }
+			char value_[24];
+		};
+
+		struct object_64 : public object_8 {
+			object_64() {}
+			object_64(size_t key) : object_8(key) {}
+			static std::string to_string() { return std::to_string(sizeof(object_64)) + "byte"; }
+			char value_[56];
+		};
+
+		struct object_vector {
+			object_vector() {}
+			object_vector(size_t num) {
+				for (size_t i = 0; i < 5; ++i) {
+					key_.push_back(num % 100);
+					num = std::hash<size_t>()(num);
+				}
+			}
+			bool operator< (object_vector const &rhs) const { return key_ < rhs.key_; }
+			bool operator== (object_vector const &rhs) const { return key_ == rhs.key_; }
+			operator size_t () const {
+				size_t hash = 0;
+				for (auto number : key_) {
+					hash *= 100;
+					hash += number;
+				}
+				return hash;
+			}
+			static std::string to_string() { return std::to_string(sizeof(object_vector)) + "byte (vector)"; }
+			std::vector<int> key_;
+			size_t value_;
+		};
 	}
 }
 #endif
