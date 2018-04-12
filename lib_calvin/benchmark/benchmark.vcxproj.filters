@@ -74,20 +74,20 @@
     <ClInclude Include="container_bench.h">
       <Filter>container</Filter>
     </ClInclude>
-    <ClInclude Include="..\container\google_btree_set.h">
-      <Filter>container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\container\google_btree.h">
-      <Filter>container</Filter>
-    </ClInclude>
-    <ClInclude Include="..\container\google_btree_container.h">
-      <Filter>container</Filter>
-    </ClInclude>
     <ClInclude Include="matrix_bench.h">
       <Filter>matrix</Filter>
     </ClInclude>
     <ClInclude Include="graph_bench.h">
       <Filter>graph</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\google\btree\google_btree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\google\btree\google_btree_container.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\lib\google\btree\google_btree_set.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

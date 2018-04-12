@@ -47,7 +47,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -127,9 +127,9 @@
     <ClCompile Include="bench.cc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\container\google_btree.h" />
-    <ClInclude Include="..\container\google_btree_container.h" />
-    <ClInclude Include="..\container\google_btree_set.h" />
+    <ClInclude Include="..\..\..\lib\google\btree\google_btree.h" />
+    <ClInclude Include="..\..\..\lib\google\btree\google_btree_container.h" />
+    <ClInclude Include="..\..\..\lib\google\btree\google_btree_set.h" />
     <ClInclude Include="container_bench.h" />
     <ClInclude Include="graph_bench.h" />
     <ClInclude Include="matrix_bench.h" />

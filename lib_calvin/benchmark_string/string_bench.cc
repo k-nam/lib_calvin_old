@@ -29,9 +29,9 @@ lib_calvin_benchmark::string::getAlgorithmNamesAndTags(Algorithm algo) {
 	case KMP:
 		return { "KMP" };
 	case STD_BOYER:
-		return { "std::boyer_moore_searcher (C++17)" };
+		return { "std::boyer_moore" };
 	case LIB_CALVIN_BOYER:
-		return { "Boyer-Moore" };
+		return { "lib_calvin::boyer_moore" };
 	case LIB_CALVIN_SUFFIX:
 		return { "lib_calvin::suffix tree" };
 
