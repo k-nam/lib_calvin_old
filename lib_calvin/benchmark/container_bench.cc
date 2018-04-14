@@ -128,6 +128,7 @@ lib_calvin_benchmark::container::containerBench() {
 
 void
 lib_calvin_benchmark::container::containerBench(size_t workingSetSize) {
+	using namespace lib_calvin_benchmark;
 	currentWorkingSetSize = workingSetSize;
 	containerBenchTemplate<object_16>();
 	containerBenchTemplate<object_32>();	
