@@ -4,11 +4,15 @@
 #include "utility.h"
 #include "random.h"
 #include "pdqsort.h"
+#include "bench.h"
 
 void lib_calvin_sort::sortTest() {
 	std::cout << "---------------- Beginning sort test -----------------\n\n";
 	using namespace lib_calvin_sort;
-	typedef int ElemType;
+	//typedef size_t ElemType;
+	
+	typedef lib_calvin_benchmark::object_vector ElemType;
+
 	//typedef SimpleStruct ElemType;
 	//typedef StringStruct ElemType;
 	
@@ -16,23 +20,24 @@ void lib_calvin_sort::sortTest() {
 	//binSearchTest2();
 	//getSamplesTest();
 
-	sortTest<ElemType>(introSort, "introSort");
-	sortTest<ElemType>(blockIntroSort, "blockIntroSort");
-	sortTest<ElemType>(introSortParallel, "Parallel introSort");
-	sortTest<ElemType>(introSortParallelAdvanced, "Advanced parallel introSort");
+	//sortTest<ElemType>(introSort, "introSort");
+	//sortTest<ElemType>(blockIntroSort, "blockIntroSort");
+	//sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
+	//sortTest<ElemType>(introSortParallel, "Parallel introSort");
+	//sortTest<ElemType>(introSortParallelAdvanced, "Advanced parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
-	sortTest<ElemType>(mergeSort, "mergeSort");
+	//sortTest<ElemType>(mergeSort, "mergeSort");
 	sortTest<ElemType>(mergeSortParallel, "Parallel mergeSort");
-	sortTest<ElemType>(heapSort, "heapSort");
-	sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");
+	//sortTest<ElemType>(heapSort, "heapSort");
+	//sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");
 	//sortTest<ElemType>(std::sort, "std::sort");
 	//sortTest<ElemType>(std::stable_sort, "std::stable_sort");
 	//sortTest<ElemType>(pdqsort, "pdqsort");
-	sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
+	
 
 	//sortTest<ElemType>(sampleSort, "sampleSort");
-	sortTest<ElemType>(countingSort, "countingSort");
-	sortTest<ElemType>(introCountingSort, "introCountingSort");
+	//sortTest<ElemType>(countingSort, "countingSort");
+	//sortTest<ElemType>(introCountingSort, "introCountingSort");
 
 	//sortTest2();
 
@@ -189,5 +194,4 @@ bool lib_calvin_sort::operator== (StringStruct const &lhs, StringStruct const &r
 		return true;
 	return false;
 }
-
 

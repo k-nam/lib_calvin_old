@@ -7,6 +7,7 @@
 #include "stopwatch.h"
 #include "container_test_types.h"
 
+
 // This is test for Windows and Linux file sharing
 
 using std::cout;
@@ -21,32 +22,34 @@ namespace lib_calvin_sort
 	void binSearchTest2();
 	void getSamplesTest();
 
+
+
 	struct SimpleStruct {
 		SimpleStruct(int value) : first(value), second(value + 1) { 
 			//defaultCtorCount_;  
 			//objectCount_++; 
 		}
-		//SimpleStruct() : first(0) { objectCount_++; }
+		SimpleStruct() : first(0) { objectCount_++; }
 		SimpleStruct(SimpleStruct const &rhs) : first(rhs.first), second(rhs.second) { 
 			//std::cout << "ctor!\n";
 			//objectCount_++; 
 			//assignCount_++;
 		}
-		SimpleStruct & operator=(SimpleStruct const &rhs) { 
-			first = rhs.first; 
-			second = rhs.second;
+		//SimpleStruct & operator=(SimpleStruct const &rhs) { 
+			//first = rhs.first; 
+			//second = rhs.second;
 			//assignCount_++;
-			return *this;
-		}
+			//return *this;
+		//}
 		~SimpleStruct() { objectCount_--; }
 		static void countObjects();
 		char operator() (int b) { return '5'; }
 		operator int() const { return first; }
 		int first;
 		int second;
-		int x;
-		int y;
-		//double x1;
+		size_t x;
+		size_t y;
+		double x1;
 		//double x2;
 		//int array[10];
 
@@ -196,6 +199,8 @@ void lib_calvin_sort::sortTest(void(*sortingAlgorithm)(Iterator, Iterator, Compa
 	for (ptrdiff_t j = 0; j < size - 1; j++) {
 		if (comp(*(first + (j + 1)), *(first + j))) {
 			isCorrect = false;
+			std::cout << "Sorting wrong!\n" << std::to_string(*(first + (j + 1)));
+			exit(0);
 		}
 	}
 }
