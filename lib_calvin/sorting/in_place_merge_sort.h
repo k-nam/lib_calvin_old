@@ -87,24 +87,6 @@ void lib_calvin_sort::inPlaceMerge(Iterator first, Iterator middle, Iterator las
 		return;
 	}
 	std::inplace_merge(first, middle, last, comp);
-	/*
-	Iterator leftMiddle = first + (middle - first) / 2;
-	Iterator rightMiddle = middle + binSearch(*leftMiddle, middle, last, comp);
-	exchange(leftMiddle, middle, rightMiddle);
-	inPlaceMerge(first, leftMiddle, leftMiddle + (rightMiddle - middle), comp);
-	inPlaceMerge(leftMiddle + (rightMiddle - middle), rightMiddle, last, comp);
-
-	ptrdiff_t next1 = leftMiddle - first;
-	ptrdiff_t next2 = leftMiddle + (rightMiddle - middle) - leftMiddle;
-	ptrdiff_t next3 = rightMiddle - leftMiddle + (rightMiddle - middle);
-	ptrdiff_t nextL4 = last - rightMiddle;
-
-	for (Iterator iter = first; iter < last - 1; iter++) {
-		if (comp(*(iter + 1), *iter)) {
-			std::cout << "inPlaceMerge error: " << middle - first << " " << last - middle << "\n";
-			exit(0);
-		}
-	}*/
 }
 
 template <typename Iterator>
