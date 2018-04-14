@@ -180,7 +180,7 @@ void lib_calvin_sort::introSortParallelSub0(
 		blockIntroSort(first, last, comp);
 		return;
 	}
-	Iterator left = hoarePartition(first, last, comp);
+	Iterator left = betterPartition(first, last, comp);
 	QuickSortThreadArg<Iterator, Comparator> argLeft(first, left, comp, thread_limit - 1, NULL);
 	QuickSortThreadArg<Iterator, Comparator> argRight(left, last, comp, thread_limit - 1, NULL);
 	lib_calvin::thread_type leftThread, rightThread;
@@ -208,7 +208,7 @@ void lib_calvin_sort::introSortParallelSub1(
 		introSortParallelSub2(first, last, comp, factoryLoader);
 		return;
 	}
-	Iterator left = hoarePartition(first, last, comp);
+	Iterator left = betterPartition(first, last, comp);
 	QuickSortThreadArg<Iterator, Comparator> argLeft(first, left, comp, thread_limit - 1, &factoryLoader);
 	QuickSortThreadArg<Iterator, Comparator> argRight(left, last, comp, thread_limit - 1, &factoryLoader);
 	lib_calvin::thread_type leftThread, rightThread;
@@ -233,7 +233,7 @@ void lib_calvin_sort::introSortParallelSub2(Iterator first, Iterator last, Compa
 		//std::cout << "adding to factory loader: sub2\n";
 		factoryLoader.add(pair<Iterator, Iterator>(first, last));
 	} else {
-		Iterator left = hoarePartition(first, last, comp);
+		Iterator left = betterPartition(first, last, comp);
 		introSortParallelSub2(first, left, comp, factoryLoader);
 		introSortParallelSub2(left, last, comp, factoryLoader);
 	}
