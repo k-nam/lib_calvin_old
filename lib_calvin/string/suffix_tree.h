@@ -262,16 +262,6 @@ namespace lib_calvin
 						}
 					} else {
 						// current suffix: [extension_, phase_)
-						/*
-						Point currentPoint = followPathDown(textId_, getRootKey(), extension_, phase_ - 1);
-						if (workingPoint == getNullPoint()){
-						std::cout << "wowrking point is dummy2\n";
-						exit(0);
-						}
-						if (!(currentPoint == workingPoint)) {
-						std::cout << "working point error\n";
-						exit(0);
-						}*/
 						auto result = continuesWith(workingPoint, character);
 						if (!result.second) { // Rule2
 											  //std::cout << "  Rule A': " << "\n";
@@ -580,15 +570,10 @@ namespace lib_calvin
 		suffix_tree<Alphabet, Graph>::followPathDown(size_t textId,
 											  NodeKey src, size_t startIndex, size_t endIndex) const {
 		vector<std::pair<Node, Link>> pairs = graph_.get_vertex_edge_pairs_from(src);
-		//std::cout << "graph size was: "<< graph_.number_of_vertex() << "numedge was: " << graph_.number_of_edge() << "\n";
-		//std::cout << "start was: " << startIndex << "end was: " << endIndex << "\n";
-		//std::cout << "num outlink was: " << pairs.size() << "\n";
 		for (auto iter = pairs.begin(); iter != pairs.end(); ++iter) {
 			if (iter->second.head_ == texts_[textId][startIndex]) {
 				size_t linkLength = getLength(iter->second);
 				size_t linkStartIndex = iter->second.startIndex_;
-				//std::cout << "link src was: " << iter->second.startIndex_ << "link dest was: " << iter->second.endIndex_ << "\n";
-				//std::cout << "linkLength was: " << linkLength << "\n";	
 				if (linkLength < endIndex - startIndex) {
 					return followPathDown(textId, iter->first.key_, startIndex + linkLength, endIndex);
 				} else {
