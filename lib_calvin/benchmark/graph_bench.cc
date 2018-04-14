@@ -27,8 +27,8 @@ lib_calvin_benchmark::graph::getStringFromNumber(size_t num) {
 
 std::string 
 lib_calvin_benchmark::graph::getTitle(SubCategory sub, size_t size1, size_t size2) {
-	if (sub == BASIC_SPARSE || sub == BASIC_DENSE) {
-		return "# Vertices: " + getStringFromNumber(size1) + " / # Edges: " + getStringFromNumber(size2);
+	if (sub == GROWING_SPARSE || sub == GROWING_DENSE) {
+		return "Vertices: " + getStringFromNumber(size1) + " / Edges: " + getStringFromNumber(size2);
 	} else if (sub == SUFFIX_TREE) {
 		return "Charset size: " + getStringFromNumber(size1) + " / Text length: " + getStringFromNumber(size2);
 	} else {
@@ -38,10 +38,10 @@ lib_calvin_benchmark::graph::getTitle(SubCategory sub, size_t size1, size_t size
 
 std::string 
 lib_calvin_benchmark::graph::getSubCategory(SubCategory sub) {
-	if (sub == BASIC_SPARSE) {
-		return "Basic operations / Sparse";
-	} else if (sub == BASIC_DENSE) {
-		return "Basic operations / Dense";
+	if (sub == GROWING_SPARSE) {
+		return "Growing / Sparse";
+	} else if (sub == GROWING_DENSE) {
+		return "Growing / Dense";
 	} else {
 		return "Suffix tree performance";
 	}
@@ -78,19 +78,19 @@ lib_calvin_benchmark::graph::getAllAlgorithmNamesAndTagsVector() {
 }
 
 void lib_calvin_benchmark::graph::graphBench() {
-	graphBench(BASIC_SPARSE);
-	graphBench(BASIC_DENSE);
+	graphBench(GROWING_SPARSE);
+	graphBench(GROWING_DENSE);
 	graphBench(SUFFIX_TREE);
 }
 
 void  lib_calvin_benchmark::graph::graphBench(SubCategory sub) {
-	if (sub == BASIC_SPARSE) {
+	if (sub == GROWING_SPARSE) {
 		std::vector<size_t> num_v_array = { 1000, 1000 * 10, 1000 * 100, 1000* 1000 };
 		size_t degree = 5;
 		for (size_t num_v : num_v_array) {
 			basicOperationBench(sub, num_v, num_v * degree);
 		}
-	} else if (sub == BASIC_DENSE) {
+	} else if (sub == GROWING_DENSE) {
 		std::vector<size_t> num_v_array = { 1000, 2000, 4000 };
 		for (size_t num_v : num_v_array) {
 			basicOperationBench(sub, num_v, num_v * num_v);
@@ -113,7 +113,7 @@ void  lib_calvin_benchmark::graph::basicOperationBench(SubCategory sub, size_t n
 		std::to_string(num_v) << " and " << std::to_string(num_e) << "\n";
 
 	std::vector<std::vector<double>> results;
-	std::vector<std::string> testCases = { "Basic operation" };
+	std::vector<std::string> testCases = { "growing" };
 	auto algorithms = getAllAlgorithms();
 
 	results.push_back({ basicOperationBenchTemplate<lib_calvin_graph::simple_graph<Node, Link>>(num_v, num_e) });
@@ -153,7 +153,7 @@ void  lib_calvin_benchmark::graph::suffixTreeBench(SubCategory sub, size_t alpha
 	static size_t benchOrder = 0;
 
 	std::vector<std::vector<double>> results;
-	std::vector<std::string> testCases = { "Building suffix tree" };
+	std::vector<std::string> testCases = { "building suffix tree" };
 	auto algorithms = getAllAlgorithms();
 	for (auto algorithm : algorithms) {
 		results.push_back({ suffixTreeBenchSub(algorithm, alphabet_size, text_len) });

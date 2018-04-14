@@ -27,7 +27,7 @@ namespace lib_calvin_benchmark
 		};
 
 		enum SubCategory {
-			BASIC_SPARSE, BASIC_DENSE, SUFFIX_TREE, DIJKSTRA
+			GROWING_SPARSE, GROWING_DENSE, SUFFIX_TREE, DIJKSTRA
 		};
 
 		std::string const unit = "M/s (higher is better)";

@@ -14,7 +14,7 @@ namespace lib_calvin_benchmark
 
 		size_t const benchNumCases = 7;
 		std::vector<size_t> const benchTestSizes = { 160, 320, 640, 1280, 2560, 5120, 10240 };
-		std::vector<std::string> const benchTestCase = { "matrix multiplication" };
+		std::vector<std::string> const benchTestCase = { "multiplication" };
 		std::vector<size_t> const benchNumIter = { 100, 10, 3, 1, 1, 1, 1 };
 
 		std::string const unit = "G/s (higher is better)";
