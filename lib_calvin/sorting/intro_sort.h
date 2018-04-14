@@ -22,17 +22,14 @@ namespace lib_calvin_sort {
 	Iterator hoarePartition(Iterator first, Iterator last, Comparator comp);
 
 	template <typename Iterator, typename Comparator>
-	Iterator betterPartition(Iterator first, Iterator last,
-							 blockQsortIndexType *leftBuffer, blockQsortIndexType *rightBuffer, Comparator comp);
+	inline Iterator betterPartition(Iterator first, Iterator last, Comparator comp);
 
 	template <typename Iterator, typename Comparator>
 	void introSortSub(Iterator first, Iterator last, Comparator comp, int remainingDepth);
 
 	// using counting sort for subroutine
 	template <typename Iterator, typename Comparator>
-	void introSort2Sub(Iterator first, Iterator last,
-					   blockQsortIndexType *leftBuffer, blockQsortIndexType *rightBuffer,
-					   Comparator comp, int remainingDepth);
+	void blockQsortSub(Iterator first, Iterator last, Comparator comp, int remainingDepth);
 
 
 }
@@ -44,11 +41,7 @@ void lib_calvin_sort::introSort(Iterator first, Iterator last, Comparator comp) 
 
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::blockIntroSort(Iterator first, Iterator last, Comparator comp) {
-
-	blockQsortIndexType leftBuffer[blockQsortBufferSize];
-	blockQsortIndexType rightBuffer[blockQsortBufferSize];
-
-	introSort2Sub(first, last, leftBuffer, rightBuffer, comp, lib_calvin_util::log(last - first) * 3);
+	blockQsortSub(first, last, comp, lib_calvin_util::log(last - first) * 3);
 }
 
 template <typename Iterator, typename Comparator>
@@ -119,8 +112,13 @@ Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last, Comparat
 }
 
 template <typename Iterator, typename Comparator>
-Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
-										  blockQsortIndexType *leftBuffer, blockQsortIndexType *rightBuffer, Comparator comp) {
+Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparator comp) {
+	
+	blockQsortIndexType leftBuffer[blockQsortBufferSize];
+	blockQsortIndexType rightBuffer[blockQsortBufferSize];
+
+
+	typedef typename std::iterator_traits<Iterator>::value_type T;
 	Iterator left = begin;
 	Iterator right = end - 1;
 	Iterator middle = begin + (end - begin) / 2;
@@ -146,7 +144,7 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 		std::iter_swap(left, middle + 4);
 	}
 
-	auto pivot = *left;
+	T pivot = *left;
 	left++;
 
 	// These buffers contain index of elements to be swapped
@@ -183,21 +181,18 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 		} 
 
 		if (isLeftEmpty) {
-			auto tempIter = left;
+			Iterator tempIter = left;
 			if (mustBreak) {
 				for (blockQsortIndexType i = 0; i < leftBatchSize; ) {
 					leftBuffer[l_end] = i++; l_end += !comp(*tempIter++, pivot);
 				}
 			} else {
 				for (blockQsortIndexType i = 0; i < leftBatchSize; ) {
-					leftBuffer[l_end] = i++; l_end += !comp(*tempIter++, pivot);
-					leftBuffer[l_end] = i++; l_end += !comp(*tempIter++, pivot);
-					leftBuffer[l_end] = i++; l_end += !comp(*tempIter++, pivot);
-					leftBuffer[l_end] = i++; l_end += !comp(*tempIter++, pivot);
-					leftBuffer[l_end] = i++; l_end += !comp(*tempIter++, pivot);
-					leftBuffer[l_end] = i++; l_end += !comp(*tempIter++, pivot);
-					leftBuffer[l_end] = i++; l_end += !comp(*tempIter++, pivot);
-					leftBuffer[l_end] = i++; l_end += !comp(*tempIter++, pivot);
+					leftBuffer[l_end] = i++; l_end += !(*tempIter++ < pivot);
+					leftBuffer[l_end] = i++; l_end += !(*tempIter++ < pivot);
+					leftBuffer[l_end] = i++; l_end += !(*tempIter++ < pivot);
+					leftBuffer[l_end] = i++; l_end += !(*tempIter++ < pivot);
+					//leftBuffer[l_end] = i++; l_end += !comp(*tempIter++, pivot);
 				}
 			}
 		}
@@ -209,14 +204,11 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 				}
 			} else {
 				for (blockQsortIndexType i = 0; i < rightBatchSize; i) {
-					rightBuffer[r_end] = i++; r_end += comp(*tempIter--, pivot);
-					rightBuffer[r_end] = i++; r_end += comp(*tempIter--, pivot);
-					rightBuffer[r_end] = i++; r_end += comp(*tempIter--, pivot);
-					rightBuffer[r_end] = i++; r_end += comp(*tempIter--, pivot);
-					rightBuffer[r_end] = i++; r_end += comp(*tempIter--, pivot);
-					rightBuffer[r_end] = i++; r_end += comp(*tempIter--, pivot);
-					rightBuffer[r_end] = i++; r_end += comp(*tempIter--, pivot);
-					rightBuffer[r_end] = i++; r_end += comp(*tempIter--, pivot);
+					rightBuffer[r_end] = i++; r_end += (*tempIter-- < pivot);
+					rightBuffer[r_end] = i++; r_end += (*tempIter-- < pivot);
+					rightBuffer[r_end] = i++; r_end += (*tempIter-- < pivot);
+					rightBuffer[r_end] = i++; r_end += (*tempIter-- < pivot);
+					//rightBuffer[r_end] = i++; r_end += comp(*tempIter--, pivot);
 				}
 			}
 		}
@@ -224,18 +216,29 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 		// Do swap now
 		ptrdiff_t swapCount = min(l_end - l_begin, r_end - r_begin);
 		if (swapCount != 0) {
-			ptrdiff_t l_temp = l_begin;
-			ptrdiff_t l_temp_end = l_begin + swapCount;
-			ptrdiff_t r_temp = r_begin;
+			/*
+			// Zig-zag swapping			
+			Iterator temp_left = left + leftBuffer[l_begin];
+			Iterator temp_right = right - rightBuffer[r_begin];
 
-			// Zig-zag swapping
-			auto store = *(left + leftBuffer[l_temp]);
-			*(left + leftBuffer[l_temp++]) = std::move(*(right - rightBuffer[r_temp]));
-			while (l_temp < l_temp_end) {
-				*(right - rightBuffer[r_temp++]) = std::move(*(left + leftBuffer[l_temp]));
-				*(left + leftBuffer[l_temp++]) = std::move(*(right - rightBuffer[r_temp]));
+			T store = *(left + leftBuffer[l_begin]);
+			*temp_left = std::move(*temp_right);
+
+			ptrdiff_t i = 1;
+			for ( ; i < swapCount; i++) {
+				temp_left = left + leftBuffer[l_begin + i];
+				*temp_right = std::move(*temp_left);				
+
+				temp_right = right - rightBuffer[r_begin + i];
+				*temp_left = std::move(*temp_right);
 			}
-			*(right - rightBuffer[r_temp]) = std::move(store);
+			*temp_right = std::move(store);
+			*/
+
+			for (ptrdiff_t i = 0; i < swapCount; i++) {
+				std::iter_swap((left + leftBuffer[l_begin + i]), (right - rightBuffer[r_begin + i]));
+			}
+			
 		}
 
 		l_begin += swapCount;
@@ -258,7 +261,7 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 		}
 	}
 
-	auto pivotPosition = left - 1;
+	Iterator pivotPosition = left - 1;
 	// All elements have been processsed, but
 	// for the last non-empty buffer, we have to move all out-of-place elems to one side
 	if (!isLeftEmpty) {
@@ -282,10 +285,9 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end,
 
 
 
+
 template <typename Iterator, typename Comparator>
-void lib_calvin_sort::introSort2Sub(Iterator first, Iterator last,
-									blockQsortIndexType *leftBuffer, blockQsortIndexType *rightBuffer,
-									Comparator comp, int remainingDepth) {
+void lib_calvin_sort::blockQsortSub(Iterator first, Iterator last, Comparator comp, int remainingDepth) {
 	if (last - first < INTROSORT_THRESHOLD) {
 		insertionSort(first, last, comp);
 		return;
@@ -295,10 +297,10 @@ void lib_calvin_sort::introSort2Sub(Iterator first, Iterator last,
 		heapSort(first, last, comp);
 		return;
 	}
-	Iterator left = betterPartition(first, last, leftBuffer, rightBuffer, comp);
+	Iterator left = betterPartition(first, last, comp);
 
-	introSort2Sub(first, left, leftBuffer, rightBuffer, comp, remainingDepth - 1);
-	introSort2Sub(left + 1, last, leftBuffer, rightBuffer, comp, remainingDepth - 1);
+	blockQsortSub(first, left, comp, remainingDepth - 1);
+	blockQsortSub(left + 1, last, comp, remainingDepth - 1);
 }
 #endif
 
