@@ -18,7 +18,7 @@ namespace lib_calvin_sort
 
 
 	template <typename SrcIterator, typename TargetIterator, typename Comparator>
-	void mergeSortSub(SrcIterator first, SrcIterator last, TargetIterator target, Comparator comp);
+	void mergeSortSub(SrcIterator first, SrcIterator last, TargetIterator target, Comparator comp, bool targetIsReal);
 }
 
 
@@ -30,13 +30,12 @@ void lib_calvin_sort::mergeSort(Iterator first, Iterator last, Comparator comp) 
 	typedef typename iterator_traits<Iterator>::value_type valueType;
 	// prepare supplementary array
 	pointerType tempArray = (pointerType)operator new (sizeof(valueType) * num);
-	auto original = first;
-	auto copy = tempArray;
-	for (; original != last; ++original, ++copy) {
-		new (copy) valueType(*original);
+	for (ptrdiff_t i = 0; i < num; ++i) {
+		new (tempArray + i)  valueType(std::move(*(first + i)));
 	}
+
 	// mergesort without redundant copying
-	mergeSortSub(tempArray, tempArray + num, first, comp);
+	mergeSortSub(tempArray, tempArray + num, first, comp, false);
 	// delete supplementary array
 	for (ptrdiff_t i = 0; i < num; ++i) {
 		tempArray[i].~valueType();
@@ -46,17 +45,18 @@ void lib_calvin_sort::mergeSort(Iterator first, Iterator last, Comparator comp) 
 
 template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void lib_calvin_sort::mergeSortSub(SrcIterator first, SrcIterator last,
-								   TargetIterator target, Comparator comp) {
+								   TargetIterator target, Comparator comp, bool targetIsReal) {	
 	size_t num = last - first;
 	TargetIterator targetLast = target + num;
-	if (last - first < MERGESORT_THRESHOLD) {
+	if (last - first < MERGESORT_THRESHOLD && targetIsReal) {
 		insertionSort(target, targetLast, comp);
 		return;
 	}
+
 	SrcIterator middle = first + num / 2;
 	TargetIterator targetMiddle = target + num / 2;
-	mergeSortSub(target, targetMiddle, first, comp);
-	mergeSortSub(targetMiddle, targetLast, middle, comp);
+	mergeSortSub(target, targetMiddle, first, comp, !targetIsReal);
+	mergeSortSub(targetMiddle, targetLast, middle, comp, !targetIsReal);
 	lib_calvin_sort::merge(first, middle, last, target, comp);
 }
 
@@ -67,23 +67,18 @@ void lib_calvin_sort::merge(SrcIterator first, SrcIterator middle, SrcIterator l
 	SrcIterator left = first, right = middle;
 	TargetIterator dest = target;
 
-	while (left != middle && right != last) {
-		// Using bool to int conversion trick to reduce branch overhead
-		// This method incurs twice as much assignment operation, but still faster
-		ptrdiff_t result = static_cast<ptrdiff_t>(comp(*right, *left));
-		ptrdiff_t opposite = 1 - result;
-		*(dest + result) = *left;
-		*(dest + opposite) = *right;
-		left += opposite;
-		right += result;
-		dest++;
-
-		/*
+	while (true) {
 		if (comp(*right, *left)) {
-		*dest++ = *right++;
+			*dest++ = std::move(*right++);
+			if (right == last) {
+				break;
+			}
 		} else {
-		*dest++ = *left++;
-		}*/
+			*dest++ = std::move(*left++);
+			if (left == middle) {
+				break;
+			}
+		}		
 	}
 
 	if (right == last) { // right subarray empty

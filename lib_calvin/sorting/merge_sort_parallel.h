@@ -10,19 +10,20 @@ namespace lib_calvin_sort
 
 	template <typename SrcIterator, typename TargetIterator, typename Comparator>
 	void mergeSortParallelSub0(SrcIterator first, SrcIterator last,
-							   TargetIterator target, Comparator comp, int thread_limit);
+							   TargetIterator target, Comparator comp, int thread_limit, bool targetReal);
 
 	template <typename SrcIterator, typename TargetIterator, typename Comparator>
 	struct MergeSortRThreadArg
 	{
 		MergeSortRThreadArg(SrcIterator const &first, SrcIterator const &last,
-							TargetIterator const &target, Comparator comp, int thread_limit) :
-			first_(first), last_(last), target_(target), comp_(comp), thread_limit_(thread_limit) { }
+							TargetIterator const &target, Comparator comp, int thread_limit, bool targetReal) :
+			first_(first), last_(last), target_(target), comp_(comp), thread_limit_(thread_limit), targetReal_(targetReal) { }
 		SrcIterator const first_;
 		SrcIterator const last_;
 		TargetIterator const target_;
 		Comparator comp_;
 		int const thread_limit_;
+		bool targetReal_;
 	};
 
 	template <typename SrcIterator, typename TargetIterator, typename Comparator>
@@ -30,7 +31,7 @@ namespace lib_calvin_sort
 		mergeSortParallelSub0ThreadFunction(void *lpParam) {
 		MergeSortRThreadArg<SrcIterator, TargetIterator, Comparator> *pArg =
 			(MergeSortRThreadArg<SrcIterator, TargetIterator, Comparator> *)lpParam;
-		mergeSortParallelSub0(pArg->first_, pArg->last_, pArg->target_, pArg->comp_, pArg->thread_limit_);
+		mergeSortParallelSub0(pArg->first_, pArg->last_, pArg->target_, pArg->comp_, pArg->thread_limit_, pArg->targetReal_);
 		return NULL;
 	}
 }
@@ -45,9 +46,9 @@ void lib_calvin_sort::mergeSortParallel(Iterator first, Iterator last, Comparato
 	tempArray = (pointerType) operator new (sizeof(valueType) * num);
 	Iterator original = first;
 	for (auto copy = tempArray; original != last; ++original, ++copy) {
-		new (copy) valueType(*original);
+		new (copy) valueType(std::move(*original));
 	}
-	mergeSortParallelSub0(tempArray, tempArray + num, first, comp, 4);
+	mergeSortParallelSub0(tempArray, tempArray + num, first, comp, 4, false);
 	for (size_t i = 0; i < num; i++) {
 		tempArray[i].~valueType();
 	}
@@ -56,9 +57,9 @@ void lib_calvin_sort::mergeSortParallel(Iterator first, Iterator last, Comparato
 
 template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void lib_calvin_sort::mergeSortParallelSub0(SrcIterator first, SrcIterator last,
-											TargetIterator target, Comparator comp, int thread_limit) {
+											TargetIterator target, Comparator comp, int thread_limit, bool targetReal) {
 	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE / 2 || thread_limit <= 0) {
-		mergeSortSub(first, last, target, comp);
+		mergeSortSub(first, last, target, comp, targetReal);
 		return;
 	}
 	size_t num = last - first;
@@ -66,9 +67,9 @@ void lib_calvin_sort::mergeSortParallelSub0(SrcIterator first, SrcIterator last,
 	SrcIterator middle = first + num / 2;
 	TargetIterator targetMiddle = target + num / 2;
 	MergeSortRThreadArg<SrcIterator, TargetIterator, Comparator> argLeft(
-		target, targetMiddle, first, comp, thread_limit - 1);
+		target, targetMiddle, first, comp, thread_limit - 1, !targetReal);
 	MergeSortRThreadArg<SrcIterator, TargetIterator, Comparator> argRight(
-		targetMiddle, targetLast, middle, comp, thread_limit - 1);
+		targetMiddle, targetLast, middle, comp, thread_limit - 1, !targetReal);
 	lib_calvin::thread_type leftThread, rightThread;
 	leftThread = lib_calvin::create_thread(
 		mergeSortParallelSub0ThreadFunction<SrcIterator, TargetIterator, Comparator>, &argLeft);
