@@ -52,7 +52,7 @@ namespace lib_calvin_benchmark
 		std::vector<ContainerType> const allContainers = { 
 			STD_SET, BOOST_SET, LIB_CALVIN_RB_TREE, 
 			GOOGLE_BTREE, LIB_CALVIN_BTREE, LIB_CALVIN_BPLUS_TREE,
-			STD_UNORDERED_SET, BOOST_UNORDERED_SET, LIB_CALVIN_HASH_TABLE, LIB_CALVIN_HASH_TABLE2 };
+			STD_UNORDERED_SET, BOOST_UNORDERED_SET, LIB_CALVIN_HASH_TABLE };
 
 		template <typename ElemType>
 		struct myHasher {

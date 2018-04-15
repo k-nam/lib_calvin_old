@@ -3,6 +3,8 @@
 #include <unordered_set>
 #include <algorithm>
 
+#include "boost/unordered_set.hpp"
+#include "boost/container/set.hpp"
 #include "google/btree/google_btree_set.h"
 #include "hash_table.h"
 #include "hash_table2.h"
@@ -156,18 +158,17 @@ void lib_calvin_benchmark::container::containerBenchTemplate(OperationType opera
 	
 	currentOperation = operation;
 
-	results.push_back(containerBenchSub<std::set<ElemType>>());
-	results.push_back(containerBenchSub<std::set<ElemType>>());
+	results.push_back(containerBenchSub<std::set<ElemType>>());	
+	results.push_back(containerBenchSub<boost::container::set<ElemType>>());
 	results.push_back(containerBenchSub<lib_calvin_container::RbTree<ElemType>>());
 	
-	results.push_back(containerBenchSub<btree::btree_set<ElemType>>());
+	results.push_back(containerBenchSub<btree::btree_set<ElemType>>()); //Google's
 	results.push_back(containerBenchSub<lib_calvin_container::BTree<ElemType>>());
 	results.push_back(containerBenchSub<lib_calvin_container::BPlusTree<ElemType>>());
 	
 	results.push_back(containerBenchSub<std::unordered_set<ElemType, myHasher<ElemType>>>());
-	results.push_back(containerBenchSub<std::unordered_set<ElemType, myHasher<ElemType>>>());
+	results.push_back(containerBenchSub<boost::unordered_set<ElemType, myHasher<ElemType>>>());
 	results.push_back(containerBenchSub<lib_calvin_container::HashTable<ElemType, ElemType, Identity<ElemType>, myHasher<ElemType>>>());
-	results.push_back(containerBenchSub<lib_calvin_container::HashTable2<ElemType, ElemType, Identity<ElemType>, myHasher<ElemType>>>());
 	
 	lib_calvin_benchmark::save_bench(category, getSubCategory<ElemType>(),
 									 getTitle<ElemType>(currentOperation), "",
