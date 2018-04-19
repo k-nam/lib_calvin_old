@@ -14,4 +14,3 @@ filenames.each do |filename|
 end
 puts 'All finished'
 
-#http_post_json(json_text, server_url)
