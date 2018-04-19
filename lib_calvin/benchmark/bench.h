@@ -14,6 +14,10 @@ namespace lib_calvin_benchmark
 
 	std::string getDatetime();
 
+	std::string getSizeString(size_t);
+	std::vector<std::string> getSizeStrings(std::vector<size_t>);
+
+
 	// algorithms: [["qsort", "unstable", "std"], ["parallel_block_qsort", "unstable", "lib_calvin"], ...]
 	void save_bench(std::string category, std::string subCategory, std::string title, std::string comment,
 					std::vector<std::vector<std::string>> algorithms,

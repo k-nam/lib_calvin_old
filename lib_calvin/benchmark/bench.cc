@@ -15,6 +15,25 @@ std::string lib_calvin_benchmark::getDatetime() {
 	return buffer;
 }
 
+std::string lib_calvin_benchmark::getSizeString(size_t size) {
+	if (size < 1000) {
+		return std::to_string(size);
+	} else if (size < 1000* 1000) {
+		return std::to_string(size / 1000) + "K";
+	} else {
+		return std::to_string(size / 1000 / 1000) + "M";
+	}
+}
+std::vector<std::string> lib_calvin_benchmark::getSizeStrings(std::vector<size_t> sizes) {
+	std::vector<std::string> result;
+	for (size_t size : sizes) {
+		result.push_back(getSizeString(size));
+	}
+	return result;
+}
+
+
+
 void lib_calvin_benchmark::save_bench(std::string category, std::string subCategory,
 									  string title, string comment,
 									  vector<vector<string>> algorithms,
