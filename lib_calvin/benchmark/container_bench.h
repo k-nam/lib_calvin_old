@@ -12,7 +12,6 @@ namespace lib_calvin_benchmark
 {
 	namespace container
 	{
-		size_t const numCases = 3;
 		std::vector<size_t> const benchTestSize = { 1000, 10*1000, 1000*1000 };
 		std::vector<std::string> const testCases = { "1K", "10K", "1M" };
 		std::vector<size_t> const benchNumIter = { 10, 3, 1 };

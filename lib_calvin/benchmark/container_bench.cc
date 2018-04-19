@@ -170,6 +170,8 @@ void lib_calvin_benchmark::container::containerBenchTemplate(OperationType opera
 	results.push_back(containerBenchSub<boost::unordered_set<ElemType, myHasher<ElemType>>>());
 	results.push_back(containerBenchSub<lib_calvin_container::HashTable<ElemType, ElemType, Identity<ElemType>, myHasher<ElemType>>>());
 	
+	auto testCases = lib_calvin_benchmark::getSizeStrings(benchTestSize);
+
 	lib_calvin_benchmark::save_bench(category, getSubCategory<ElemType>(),
 									 getTitle<ElemType>(currentOperation), "",
 									 getAllContainerNamesAndTags(),
@@ -189,7 +191,7 @@ lib_calvin_benchmark::container::containerBenchSub() {
 	std::cout << "Now testing " << std::to_string(sizeof(ElemType)) << 
 		"bytes " << getString(currentOperation) << " working size: " << currentWorkingSetSize << "\n";
 
-	for (size_t i = 0; i < numCases; i++) {
+	for (size_t i = 0; i < benchTestSize.size(); i++) {
 		size_t testSize = benchTestSize[i];
 		size_t numContainers = std::max(
 			currentWorkingSetSize / (sizeof(ElemType) * testSize), static_cast<size_t>(1));
