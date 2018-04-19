@@ -108,7 +108,7 @@ void lib_calvin_container::setTest() {
 	setIntegratedSpeedTest<BPlusTree<HeavyObject>>(smallSize, "BPlusTree");
 	//setIntegratedSpeedTest<OrderedArray<HeavyObject>>(smallSize, "OrderedArray");
 	//setIntegratedSpeedTest<boost::unordered_set<int>>(smallSize, "boost::unordered_set");
-	//setIntegratedSpeedTest<HashTable<int>>(smallSize, "HashTable");
+	setIntegratedSpeedTest<HashTable<int>>(smallSize, "HashTable");
 	setIntegratedSpeedTest<btree::btree_set<HeavyObject>>(smallSize, "Google Btree");
 
 

@@ -288,18 +288,10 @@ HashTable<T, K, ExtractKey, HashFunc>::operator=(HashTable &&rhs) {
 
 template <typename T, typename K, typename ExtractKey, typename HashFunc> 
 void HashTable<T, K, ExtractKey, HashFunc>::swap(HashTable &rhs) {
-	Node **temp1 = table_;
-	size_t temp2 = size_;
-	size_t temp3 = tableSize_;
-	size_t temp4 = hashSetSizeIndex_;
-	table_ = rhs.table_;
-	size_ = rhs.size_;
-	tableSize_ = rhs.tableSize_;
-	hashSetSizeIndex_ = rhs.hashSetSizeIndex_;
-	rhs.table_ = temp1;
-	rhs.size_ = temp2;
-	rhs.tableSize_ = temp3;
-	rhs.hashSetSizeIndex_ = temp4;
+	std::swap(table_, rhs.table_);
+	std::swap(size_, rhs.size_);
+	std::swap(tableSize_, rhs.tableSize_);
+	std::swap(hashSetSizeIndex_, rhs.hashSetSizeIndex_);
 }
 
 template <typename T, typename K, typename ExtractKey, typename HashFunc> 
