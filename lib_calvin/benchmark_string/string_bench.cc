@@ -10,10 +10,14 @@
 #include "naive_matching.h"
 #include "kmp.h"
 #include "boyer_moore.h"
+#include "std_boyer_moore.h"
 #include "bench.h"
 #include "random.h"
 #include "stopwatch.h"
 
+#include "boost/algorithm/searching/boyer_moore.hpp"
+#include "boost/algorithm/searching/boyer_moore_horspool.hpp"
+#include "boost/algorithm/searching/knuth_morris_pratt.hpp"
 
 using namespace lib_calvin_benchmark::string;
 using namespace std;
@@ -27,9 +31,9 @@ lib_calvin_benchmark::string::getAlgorithmNamesAndTags(Algorithm algo) {
 	case Z:
 		return { "Z algorithm" };
 	case KMP:
-		return { "KMP" };
+		return { "lib_calvin::knuth_morris_pratt" };
 	case STD_BOYER:
-		return { "std::boyer_moore" };
+		return { "std::boyer_moore_horspool" };
 	case LIB_CALVIN_BOYER:
 		return { "lib_calvin::boyer_moore" };
 	case LIB_CALVIN_SUFFIX:
@@ -47,7 +51,7 @@ lib_calvin_benchmark::string::getAllCharSets() {
 
 vector<Algorithm>
 lib_calvin_benchmark::string::getAllAlgorithms() {
-	return vector<Algorithm> { NAIVE, Z, KMP, STD_BOYER, LIB_CALVIN_BOYER, LIB_CALVIN_SUFFIX };
+	return vector<Algorithm> { KMP, STD_BOYER, LIB_CALVIN_BOYER };
 	//return vector<Algorithm> { NAIVE, Z, KMP, STD_BOYER, LIB_CALVIN_BOYER };
 
 }
@@ -234,7 +238,7 @@ lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, siz
 					break;
 				}
 				case STD_BOYER: {
-					stdMatch(text, pattern, algorithmResult);
+					std_boyer_moore(text, pattern, algorithmResult);
 					break;
 				}
 				case LIB_CALVIN_BOYER: {
