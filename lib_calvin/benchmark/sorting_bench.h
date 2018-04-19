@@ -9,11 +9,9 @@ namespace lib_calvin_benchmark
 {
 	namespace sorting
 	{
-		size_t const benchNumCases = 4;
 		size_t const kilo = 1000;
 		size_t const mega = 1000*1000;
 		std::vector<size_t> const benchTestSize = { kilo, 10*kilo, 100*kilo, mega };
-		std::vector<std::string> const benchCases = { "1K", "10K", "100K", "1M" };
 		std::vector<size_t> const benchNumIter = { 1000, 100, 10, 3};
 		std::vector<int> const benchOrder = { 0, 1, 2, 3 };
 		std::string const unit = "M/s (higher is better)";
@@ -31,8 +29,6 @@ namespace lib_calvin_benchmark
 
 			LIB_CALVIN_MERGESORT,
 			LIB_CALVIN_IN_PLACE_MERGESORT,
-			LIB_CALVIN_IN_PLACE_MERGESORT2,
-			LIB_CALVIN_IN_PLACE_MERGESORT3,
 
 			LIB_CALVIN_HEAPSORT,
 
@@ -50,6 +46,8 @@ namespace lib_calvin_benchmark
 		std::string getTitle(size_t num);
 
 		std::string getSubCategory(SubCategory);
+
+		std::vector<Algorithm> getBenchAlgorithms();
 
 		std::vector<std::string> getAlgorithmNamesAndTags(Algorithm);
 

@@ -9,6 +9,29 @@
 #include "bench.h"
 #include "random.h"
 
+
+std::vector<lib_calvin_benchmark::sorting::Algorithm>
+lib_calvin_benchmark::sorting::getBenchAlgorithms() {
+	using namespace lib_calvin_benchmark::sorting;
+	return {
+		STD_SORT,
+		LIB_CALVIN_QSORT,
+
+		PDQSORT,
+		LIB_CALVIN_BLOCK_QSORT,
+
+		STD_STABLE_SORT,
+		LIB_CALVIN_MERGESORT,
+		LIB_CALVIN_IN_PLACE_MERGESORT,
+
+		LIB_CALVIN_HEAPSORT,
+
+		LIB_CALVIN_BLOCK_QSORT_PARALLEL,
+		LIB_CALVIN_MERGESORT_PARALLEL
+	};
+}
+
+
 std::vector<std::string>
 lib_calvin_benchmark::sorting::getAlgorithmNamesAndTags(Algorithm algo) {
 	switch (algo) {
@@ -29,10 +52,7 @@ lib_calvin_benchmark::sorting::getAlgorithmNamesAndTags(Algorithm algo) {
 		return { "lib_calvin::mergesort", "stable" };
 	case LIB_CALVIN_IN_PLACE_MERGESORT:
 		return { "inplace_mergesort", "stable", "in-place" };
-	case LIB_CALVIN_IN_PLACE_MERGESORT2:
-		return { "inplace_mergesort(+1%)", "stable", "in-place" };
-	case LIB_CALVIN_IN_PLACE_MERGESORT3:
-		return { "inplace_mergesort(+10%)", "stable", "in-place" };
+
 
 	case LIB_CALVIN_HEAPSORT:
 		return { "lib_calvin::heapsort", "in-place" };
@@ -49,7 +69,8 @@ lib_calvin_benchmark::sorting::getAlgorithmNamesAndTags(Algorithm algo) {
 
 std::string
 lib_calvin_benchmark::sorting::getTitle(size_t num) {
-	return category + " " + benchCases[num] + " " + benchTitleSuffix;
+	return category + " " + lib_calvin_benchmark::getSizeString(benchTestSize[num]) + 
+		" " + benchTitleSuffix;
 }
 
 std::string
@@ -82,7 +103,7 @@ lib_calvin_benchmark::sorting::getAlgorithmNamesAndTagsVector(std::vector<Algori
 }
 
 void lib_calvin_benchmark::sorting::sortBench() {
-	for (size_t i = 0; i < benchNumCases; i++) {
+	for (size_t i = 0; i < benchTestSize.size(); i++) {
 		sortBench<object_16>(i);
 		sortBench<object_32>(i);
 		sortBench<object_64>(i);
@@ -98,16 +119,7 @@ void lib_calvin_benchmark::sorting::sortBench(size_t num) {
 	string comment = "";
 	string unit = "M/s (higher is better)";
 	vector<string> testCases = { "comparison sorting" };
-	vector<Algorithm> algorithms{
-		STD_SORT, 
-		STD_STABLE_SORT,
-		PDQSORT,
-		LIB_CALVIN_QSORT,LIB_CALVIN_BLOCK_QSORT, 
-		LIB_CALVIN_MERGESORT, 
-		LIB_CALVIN_IN_PLACE_MERGESORT, //LIB_CALVIN_IN_PLACE_MERGESORT2, LIB_CALVIN_IN_PLACE_MERGESORT3,
-		LIB_CALVIN_HEAPSORT,
-		LIB_CALVIN_BLOCK_QSORT_PARALLEL, LIB_CALVIN_MERGESORT_PARALLEL
-	};
+	auto algorithms = getBenchAlgorithms();
 	vector<vector<double>> results;
 	for (auto algorithm : algorithms) {
 		results.push_back({ sortBenchSub<T>(algorithm, benchTestSize[num], benchNumIter[num]) });
@@ -142,10 +154,6 @@ double lib_calvin_benchmark::sorting::sortBenchSub(Algorithm algo, size_t testSi
 
 	case LIB_CALVIN_IN_PLACE_MERGESORT:
 		return sortBenchSub2(inPlaceMergeSort<T *, less<T>>, testSize, numIter);
-	case LIB_CALVIN_IN_PLACE_MERGESORT2:
-		return sortBenchSub2(inPlaceMergeSort2<T *, less<T>>, testSize, numIter);
-	case LIB_CALVIN_IN_PLACE_MERGESORT3:
-		return sortBenchSub2(inPlaceMergeSort3<T *, less<T>>, testSize, numIter);
 
 	case LIB_CALVIN_HEAPSORT:
 		return sortBenchSub2(heapSort<T *, less<T>>, testSize, numIter);
