@@ -18,25 +18,25 @@ lib_calvin_benchmark::matrix::getAlgorithmNamesAndTags(Algorithm algo) {
 		return { "MKL", "parallel", "MMX" };
 
 	case NAIVE:
-		return { "naive method" };
+		return { "naive" };
 	case NAIVE_TRANSPOSED:
 		return { "naive with transpose" };
 	case ROW_FIRST:
-		return { "row first method" };
+		return { "row first" };
 	case BLOCKING:
-		return { "blocking method" };
+		return { "blocking" };
 
 	case NAIVE_MMX:
-		return { "naive method (MMX)", "MMX" };
+		return { "naive (MMX)", "MMX" };
 	case BLOCKING_MMX:
-		return { "blocking method (MMX)", "MMX" };
+		return { "blocking (MMX)", "MMX" };
 
 	case RECURSIVE:
-		return { "recursive method", "MMX" };
+		return { "recursive", "MMX" };
 	case RECURSIVE_PARALLEL:
 		return { "parallel recursive", "parallel", "MMX" };
 	case STRASSEN:
-		return { "Strassen method", "MMX" };
+		return { "Strassen", "MMX" };
 	case STRASSEN_PARALLEL:
 		return { "parallel Strassen", "parallel", "MMX" };
 
@@ -101,7 +101,7 @@ void lib_calvin_benchmark::matrix::matrixBench() {
 	for (size_t i = 0; i < benchNumCases; i++) {
 		matrixBench(OPTIMAL, i);
 	}
-	//matrixBench(DROP, 0);
+	matrixBench(DROP, 0);
 }
 
 void lib_calvin_benchmark::matrix::matrixBench(SubCategory subCategory, size_t num) {
@@ -126,7 +126,6 @@ void lib_calvin_benchmark::matrix::matrixBench(SubCategory subCategory, size_t n
 										 results, benchTestCase, unit, num);
 	} else {
 		std::vector<size_t> testSizes = { 400, 640, 800, 1280, 1600, 1920, 2560, 3200, 3840, 5120, 6400, 8000, 10240 };
-		//std::vector<size_t> testSizes = { 400, 640, 800, 1280, 1600, 2560 };
 		auto algorithms = {MKL, RECURSIVE_PARALLEL};
 		auto title = getAlgorithmNamesAndTags(MKL)[0] + " vs " + getAlgorithmNamesAndTags(RECURSIVE_PARALLEL)[0];
 		vector<string> testCases;
