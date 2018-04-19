@@ -25,6 +25,12 @@
     <Filter Include="graph">
       <UniqueIdentifier>{4bc883d6-162f-4be5-b916-1c4e169398f8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="etc">
+      <UniqueIdentifier>{69305024-6c31-42a6-b6b9-b36a7645aac9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="string">
+      <UniqueIdentifier>{ac93947c-905f-41b3-9ea4-f32b6a0ab283}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bench_main.cc">
@@ -63,6 +69,12 @@
     <ClCompile Include="graph_bench.cc">
       <Filter>graph</Filter>
     </ClCompile>
+    <ClCompile Include="etc_bench.cc">
+      <Filter>etc</Filter>
+    </ClCompile>
+    <ClCompile Include="string_bench.cc">
+      <Filter>string</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bench.h">
@@ -88,6 +100,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\lib\google\btree\google_btree_set.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="etc_bench.h">
+      <Filter>etc</Filter>
+    </ClInclude>
+    <ClInclude Include="string_bench.h">
+      <Filter>string</Filter>
+    </ClInclude>
+    <ClInclude Include="boost_string_algorithm.h">
+      <Filter>string</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
