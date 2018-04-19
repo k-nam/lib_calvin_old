@@ -7,6 +7,7 @@
 #include "suffix_tree.h"
 #include "suffix_tree_test.h"
 #include "sort.h"
+#include "std_boyer_moore_horspool.h"
 
 using namespace lib_calvin;
 
@@ -39,9 +40,9 @@ void lib_calvin_string::matchingAlgorithmTest() {
 	std::cout << "-------------- matchingAlgorithmTest start ----------------\n\n";
 	matchingTest<Alphabet>(naiveMatch, "Naive string matching");
 	matchingTest<Alphabet>(basicMatch, "Basic string matching(Z-alg)");
-	matchingTest<Alphabet>(kmp, "KMP");
+	matchingTest<Alphabet>(kmp, "LIB_CALVIN_KMP");
 	matchingTest<Alphabet>(boyerMoore, "Boyer-Moore");
-	matchingTest<Alphabet>(stdMatch, "std::boyer_moore_horspool_searcher");
+	matchingTest<Alphabet>(std_boyer_moore_horspool, "std::boyer_moore_horspool_searcher");
 	for (size_t i = 0; i < numIter; i++) {
 		matchingTest<Alphabet>(suffixTreeMatching, "Suffix Tree");
 	}

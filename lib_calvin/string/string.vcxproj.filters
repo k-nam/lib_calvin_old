@@ -56,5 +56,8 @@
     <ClInclude Include="kmp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="std_boyer_moore_horspool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

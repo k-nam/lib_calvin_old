@@ -23,7 +23,7 @@ namespace lib_calvin_string
 // f(k) is the length of longest prefix of the c_string P which is also suffix of
 //  P[0...k-1]   so, f(len) should be determined.
 // f(k) value determines the jump length when pattern does not match at index k
-//  in KMP algorithm. f(len) denotes the jump length when a match has been found.
+//  in LIB_CALVIN_KMP algorithm. f(len) denotes the jump length when a match has been found.
 template <typename Alphabet>
 void lib_calvin_string::calculateF(
 	lib_calvin::abstract_string<Alphabet> const &pattern, std::vector<size_t> &record) {

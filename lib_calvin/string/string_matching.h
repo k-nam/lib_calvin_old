@@ -22,10 +22,6 @@ namespace lib_calvin_string
 					std::vector<size_t> &result);
 
 
-	template <typename Alphabet>
-	void stdMatch(lib_calvin::abstract_string<Alphabet> const &text,
-					lib_calvin::abstract_string<Alphabet> const &pattern,
-					std::vector<size_t> &result);
 
 } // end namespace lib_calvin_string
 
@@ -111,24 +107,6 @@ void lib_calvin_string::basicMatch(lib_calvin::abstract_string<Alphabet> const &
 	delete pSpecialChar;
 }
 
-template <typename Alphabet>
-void lib_calvin_string::stdMatch(lib_calvin::abstract_string<Alphabet> const &text,
-								   lib_calvin::abstract_string<Alphabet> const &pattern, std::vector<size_t> &result) {
-
-	auto matchStart = text.begin();
-	while (true) {
-		matchStart = std::search(matchStart, text.end(),
-						 std::boyer_moore_horspool_searcher<decltype(matchStart)>(
-						 pattern.begin(), pattern.end()));
-		if (matchStart == text.end()) {
-			break;
-		} else {
-			//std::cout << "The string " << pattern << " found at offset "<< matchStart - text.begin() << '\n';
-			result.push_back(matchStart - text.begin());
-			matchStart++;
-		}
-	}
-}
 
 
 #endif
