@@ -1,65 +1,75 @@
 #include "matrix.h"
-#include "mkl/include/mkl_boost_ublas_matrix_prod.hpp"
 
+// This line is important
+// As I link 64bit binary files, I must define MKL_ILP64 before including header
 #ifdef _WIN64 
 #define MKL_ILP64
 #endif
+#include "mkl/include/mkl.h"
 
 void lib_calvin_matrix::mklMultiAdd(
 	matrix<double> const &A, matrix<double> const &B, matrix<double> &C) {
-	using boost::numeric::ublas::matrix;
-	using boost::numeric::ublas::vector;
+	// C <- alpha*A*B + beta*C
+	double alpha = 1;
+	double beta = 1;
+	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+				A.height(), B.width(), A.width(),
+				alpha, A.elements_, A.width(), B.elements_, B.width(),
+				beta, C.elements_, C.width());
+}
+
+void lib_calvin_matrix::mklMultiAdd2(
+	matrix<double> const &A, matrix<double> const &B, matrix<double> &C) {
+
+	double *a = (double *)mkl_malloc(A.height() * A.width() * sizeof(double), 64);
+	double *b = (double *)mkl_malloc(B.height() * B.width() * sizeof(double), 64);
+	double *c = (double *)mkl_malloc(C.height() * C.width() * sizeof(double), 64);
+
+	// C <- alpha*A*B + beta*C
+	double alpha = 1;
+	double beta = 1;
+
 	lib_calvin::stopwatch watch;
-
-	boost::numeric::ublas::matrix<double> a(A.height(), A.width());
-	boost::numeric::ublas::matrix<double> b(B.height(), B.width());
-	boost::numeric::ublas::matrix<double> result(C.height(), C.width());
-
-	/*
-	// Copying lib_calvin matrix takes only 1/3 time as MKL
 	watch.start();
-	lib_calvin_matrix::matrix<double> tempA(A.height(), A.width());
-	lib_calvin_matrix::matrix<double> tempB(B.height(), B.width());
-	for (size_t i = 0; i < A.height(); ++i) {
-	for (size_t j = 0; j < A.width(); j++) {
-	tempA.setval(i, j) = A.getval(i, j);
-	}
-	}
-	for (size_t i = 0; i < B.height(); ++i) {
-	for (size_t j = 0; j < B.width(); j++) {
-	tempB.setval(i, j) = B.getval(i, j);
-	}
-	}
-	watch.stop();
-	std::cout << "MKL internal 2: " << watch.read() << "\n";
-	*/
-
-	watch.start();
-	for (size_t i = 0; i < A.height(); ++i) {
+	for (size_t i = 0; i < A.height(); i++) {
 		for (size_t j = 0; j < A.width(); j++) {
-			a(i, j) = A.getval(i, j);
+			a[i*A.width() + j] = A.getval(i, j);
+			//std::cout << a[i*A.width() + j] << "\n";
 		}
 	}
-	for (size_t i = 0; i < B.height(); ++i) {
+	for (size_t i = 0; i < B.height(); i++) {
 		for (size_t j = 0; j < B.width(); j++) {
-			b(i, j) = B.getval(i, j);
+			b[i*B.width() + j] = B.getval(i, j);
 		}
 	}
-	watch.stop();
-	//std::cout << "MKL internal 3: " << watch.read() << "\n";
-
-
-	watch.start();
-	result = prod(a, b);
-	watch.stop();
-	//std::cout << "MKL real time: " << watch.read() << "\n";
-
-	watch.start();
-	for (size_t i = 0; i < C.height(); ++i) {
+	for (size_t i = 0; i < C.height(); i++) {
 		for (size_t j = 0; j < C.width(); j++) {
-			C.setval(i, j) = C.getval(i, j) + result(i, j);
+			c[i*C.width() + j] = C.getval(i, j);
 		}
 	}
 	watch.stop();
-	//std::cout << "MKL internal 4: " << watch.read() << "\n";
+	std::cout << "MKL internal 3: " << watch.read() << "\n";
+
+
+	watch.start();
+	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+				A.height(), B.width(), A.width(),
+				alpha, a, A.width(), b, B.width(),
+				beta, c, C.width());
+
+	watch.stop();
+	std::cout << "MKL real time: " << watch.read() << "\n";
+
+	watch.start();
+	for (size_t i = 0; i < C.height(); i++) {
+		for (size_t j = 0; j < C.width(); j++) {
+			C.setval(i, j) = c[i*C.width() + j];
+		}
+	}
+	watch.stop();
+	std::cout << "MKL internal 4: " << watch.read() << "\n";
+
+	mkl_free(a);
+	mkl_free(b);
+	mkl_free(c);
 }

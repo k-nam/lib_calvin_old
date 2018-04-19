@@ -7,7 +7,6 @@ namespace lib_calvin_matrix {
 	void matrixTest();
 	void matrixFunctionTest();
 	void matrixPerformanceTest();
-	void mklTest(size_t size);
 	double doGigaOps();		
 	void assemblyTest();
 	extern "C" int doAssembly(double *src, double *target, size_t size, size_t iteration);
