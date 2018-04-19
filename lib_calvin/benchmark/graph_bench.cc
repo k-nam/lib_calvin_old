@@ -14,23 +14,14 @@
 
 using namespace lib_calvin_benchmark::graph;
 
-std::string
-lib_calvin_benchmark::graph::getStringFromNumber(size_t num) {
-	if (num < 1000) {
-		return std::to_string(num);
-	} else if (num < 1000* 1000) {
-		return std::to_string(num / 1000) + "K";
-	} else {
-		return std::to_string(num / 1000 / 1000) + "M";
-	}
-}
 
 std::string 
 lib_calvin_benchmark::graph::getTitle(SubCategory sub, size_t size1, size_t size2) {
+	using lib_calvin_benchmark::getSizeString;
 	if (sub == GROWING_SPARSE || sub == GROWING_DENSE) {
-		return "Vertices: " + getStringFromNumber(size1) + " / Edges: " + getStringFromNumber(size2);
+		return "Vertices: " + getSizeString(size1) + " / Edges: " + getSizeString(size2);
 	} else if (sub == SUFFIX_TREE) {
-		return "Charset size: " + getStringFromNumber(size1) + " / Text length: " + getStringFromNumber(size2);
+		return "Charset size: " + getSizeString(size1) + " / Text length: " + getSizeString(size2);
 	} else {
 		return "";
 	}
