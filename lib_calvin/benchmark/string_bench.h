@@ -36,7 +36,9 @@ namespace lib_calvin_benchmark
 		};
 
 		enum TextType {
-			RANDOM, HEAD_MISS, TAIL_MISS
+			RANDOM, 
+			NO_MATCH_HEAD_MISS, NO_MATCH_TAIL_MISS,
+			MANY_MATCH
 		};
 
 		size_t getPatternLen(CharSet);

@@ -45,20 +45,18 @@ lib_calvin_benchmark::string::getAlgorithmNamesAndTags(Algorithm algo) {
 	}
 }
 
-vector<CharSet>
-lib_calvin_benchmark::string::getAllCharSets() {
-	return vector<CharSet> { BINARY, DNA, ENG };
-}
+
 
 vector<Algorithm>
 lib_calvin_benchmark::string::getAllAlgorithms() {
 	return { 
-		//NAIVE, 
+		NAIVE, 
 		BOOST_KMP, LIB_CALVIN_KMP, 
 		STD_BOYER_MOORE_HORSPOOL, 
-		//BOOST_BOYER_MOORE_HORSPOOL,
-		BOOST_BOYER_MOORE, LIB_CALVIN_BOYER_MOORE,
-		//LIB_CALVIN_SUFFIX 
+		BOOST_BOYER_MOORE_HORSPOOL,
+		BOOST_BOYER_MOORE, 
+		LIB_CALVIN_BOYER_MOORE,
+		LIB_CALVIN_SUFFIX 
 	};
 }
 
@@ -88,10 +86,12 @@ lib_calvin_benchmark::string::getSubCategory(TextType type) {
 	switch (type) {
 	case RANDOM:
 		return "Randomized string";
-	case HEAD_MISS:
-		return "Frequent mismatch at the beginning of pattern";
-	case TAIL_MISS:
-		return "Frequent mismatch at the end of pattern";
+	case NO_MATCH_HEAD_MISS:
+		return "Mismatch at the beginning of pattern";
+	case NO_MATCH_TAIL_MISS:
+		return "Mismatch at the end of pattern";
+	case MANY_MATCH:
+		return "Frequent matches";
 	default:
 		cout << "getSubCategory error!";
 		exit(0);
@@ -116,10 +116,20 @@ lib_calvin_benchmark::string::getAllNamesAndTagsVector() {
 
 void lib_calvin_benchmark::string::stringBench() {
 
-	for (auto type: { RANDOM, HEAD_MISS, TAIL_MISS }) {
+	for (auto type: {  RANDOM, NO_MATCH_HEAD_MISS, NO_MATCH_TAIL_MISS }) {
+	//for (auto type: { TAIL_MISS }) {
+
 		stringBench(type);
 	}
 }
+
+vector<CharSet>
+lib_calvin_benchmark::string::getAllCharSets() {
+	return vector<CharSet> { BINARY, DNA, ENG };
+	//return vector<CharSet> {BINARY };
+
+}
+
 
 void lib_calvin_benchmark::string::stringBench(TextType type) {
 
@@ -159,7 +169,7 @@ lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, siz
 	using lib_calvin::stopwatch;
 	lib_calvin::random_number_generator gen;
 	typedef typename lib_calvin::abstract_string<char> c_string;
-	size_t const numPatterns = 10;
+	size_t const numPatterns = 100;
 
 	size_t alphabetSize = 0;
 	switch (charSet) {
@@ -205,32 +215,33 @@ lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, siz
 			}
 			// Prevent matching
 
-			if (type == TAIL_MISS) {
+			if (type == NO_MATCH_TAIL_MISS) {
 				pPatterns[i][patternLen - 1] = pPatterns[i][patternLen - 2];
-			} else if (type == HEAD_MISS) {
+			} else if (type == NO_MATCH_HEAD_MISS) {
 				pPatterns[i][0] = pPatterns[i][1];
 			}
 		}
 		c_string text(pText, textLen);
 
 		stopwatch watch;
-		
+		double best = 1000000;
 
 		if (algo == LIB_CALVIN_SUFFIX) {
 			lib_calvin::suffix_tree<char> tree(text);
 			tree.build();
-
-			watch.start();
 			for (size_t i = 0; i < numPatterns; i++) {
 				c_string pattern(pPatterns[i], patternLen);
+				watch.start();				
 				tree.find_pattern(pattern);
-			}
-			watch.stop();
+				watch.stop();
+				best = min(best, watch.read());
+			}			
 		} else {
-			watch.start();
+			
 			for (size_t i = 0; i < numPatterns; i++) {
 				c_string pattern(pPatterns[i], patternLen);
 				std::vector<size_t> algorithmResult;
+				watch.start();
 				switch (algo) {
 				case NAIVE: {
 					naiveMatch(text, pattern, algorithmResult);
@@ -261,13 +272,15 @@ lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, siz
 					break;
 				}
 				default:
-					cout << "stringBenchSub error2!";
+					cout << "stringBenchSub error2!" << algorithmResult.size();
 					exit(0);
 				}
-			}
-			watch.stop();
+				watch.stop();
+				best = min(best, watch.read());
+			}		
 		}
-		result.push_back(textLen / (watch.read() / numPatterns) / 1000 / 1000);
+		cout << "Measured: " << textLen / best / 1000 / 1000 << "\n";
+		result.push_back(textLen / best / 1000 / 1000);
 
 		delete[] pText;
 		for (size_t i = 0; i < numPatterns; i++) {
