@@ -28,7 +28,7 @@ namespace lib_calvin_string
   /************************ Global functions *******************************/
 
   // Z(k) is the length of longest substring that starts at index k, which is
-  // ...also prefix of the entire c_string. 
+  // ...also prefix of the entire cstring. 
 template <typename Alphabet>
 void lib_calvin_string::calculateZ(
 	lib_calvin::abstract_string<Alphabet> const &pattern, std::vector<size_t> &record) {
