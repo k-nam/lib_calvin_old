@@ -149,6 +149,10 @@ void naiveMultiAdd2Impl(T const *A, T const *B, T *C,
 void naiveMultiAdd2Impl(double const *A, double const *B, double *C,
 						size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
 
+
+void mklImpl(double const *A, double const *B, double *C,
+						size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw);
+
 // Normal layout, transpose B for sequential access
 template <typename T>
 void naiveMultiAdd3Impl(T const *A, T const *B, T *C,

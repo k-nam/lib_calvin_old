@@ -1,6 +1,7 @@
 #include "matrix.h"
 #include <immintrin.h>
 
+
 void lib_calvin_matrix::naiveMultiAdd2Impl(double const * __restrict A,
 									   double const * __restrict B, double * __restrict C,
 									   size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {

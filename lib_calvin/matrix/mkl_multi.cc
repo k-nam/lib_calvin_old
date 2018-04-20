@@ -18,6 +18,19 @@ void lib_calvin_matrix::mklMultiAdd(
 				beta, C.elements_, C.width());
 }
 
+/*
+void lib_calvin_matrix::naiveMultiAdd2Impl(double const *A, double const *B, double *C,
+								size_t lheight, size_t lwidth, size_t rwidth, size_t Aw, size_t Bw) {
+
+	double alpha = 1;
+	double beta = 1;
+	cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+				lheight, rwidth, lwidth,
+				alpha, A, Aw, B, Bw,
+				beta, C, Bw);
+}*/
+
+
 void lib_calvin_matrix::mklMultiAdd2(
 	matrix<double> const &A, matrix<double> const &B, matrix<double> &C) {
 
