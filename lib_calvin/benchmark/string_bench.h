@@ -37,7 +37,8 @@ namespace lib_calvin_benchmark
 
 		enum TextType {
 			RANDOM, 
-			NO_MATCH_HEAD_MISS, NO_MATCH_TAIL_MISS,
+			CYCLIC_TEXT_ERROR,
+			CYCLIC_PATTERN_ERROR,
 			MANY_MATCH
 		};
 

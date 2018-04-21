@@ -45,21 +45,6 @@ lib_calvin_benchmark::string::getAlgorithmNamesAndTags(Algorithm algo) {
 	}
 }
 
-
-
-vector<Algorithm>
-lib_calvin_benchmark::string::getAllAlgorithms() {
-	return { 
-		NAIVE, 
-		BOOST_KMP, LIB_CALVIN_KMP, 
-		STD_BOYER_MOORE_HORSPOOL, 
-		BOOST_BOYER_MOORE_HORSPOOL,
-		BOOST_BOYER_MOORE, 
-		LIB_CALVIN_BOYER_MOORE,
-		LIB_CALVIN_SUFFIX 
-	};
-}
-
 size_t 
 lib_calvin_benchmark::string::getPatternLen(CharSet charSet) {
 	switch (charSet) {
@@ -86,10 +71,10 @@ lib_calvin_benchmark::string::getSubCategory(TextType type) {
 	switch (type) {
 	case RANDOM:
 		return "Randomized string";
-	case NO_MATCH_HEAD_MISS:
-		return "Mismatch at the beginning of pattern";
-	case NO_MATCH_TAIL_MISS:
-		return "Mismatch at the end of pattern";
+	case CYCLIC_TEXT_ERROR:
+		return "Cyclic / wrong character in text";
+	case CYCLIC_PATTERN_ERROR:
+		return "Cyclic / wrong character in pattern";
 	case MANY_MATCH:
 		return "Frequent matches";
 	default:
@@ -108,6 +93,19 @@ lib_calvin_benchmark::string::getAlgorithmNamesAndTagsVector(vector<Algorithm> a
 	return algorithmNamesAndTags;
 }
 
+vector<Algorithm>
+lib_calvin_benchmark::string::getAllAlgorithms() {
+	return {
+		//NAIVE, 
+		//BOOST_KMP, 
+		//LIB_CALVIN_KMP,
+		//STD_BOYER_MOORE_HORSPOOL,
+		//BOOST_BOYER_MOORE_HORSPOOL,
+		BOOST_BOYER_MOORE,
+		LIB_CALVIN_BOYER_MOORE,
+		//LIB_CALVIN_SUFFIX 
+	};
+}
 
 vector<vector<string>>
 lib_calvin_benchmark::string::getAllNamesAndTagsVector() {
@@ -116,17 +114,16 @@ lib_calvin_benchmark::string::getAllNamesAndTagsVector() {
 
 void lib_calvin_benchmark::string::stringBench() {
 
-	for (auto type: {  RANDOM, NO_MATCH_HEAD_MISS, NO_MATCH_TAIL_MISS }) {
-	//for (auto type: { TAIL_MISS }) {
-
+	//for (auto type: {  RANDOM, CYCLIC_TEXT_ERROR, CYCLIC_PATTERN_ERROR }) {
+	for (auto type: { CYCLIC_PATTERN_ERROR }) {
 		stringBench(type);
 	}
 }
 
 vector<CharSet>
 lib_calvin_benchmark::string::getAllCharSets() {
-	return vector<CharSet> { BINARY, DNA, ENG };
-	//return vector<CharSet> {BINARY };
+	//return vector<CharSet> { BINARY, DNA, ENG };
+	return vector<CharSet> {ENG };
 
 }
 
@@ -169,7 +166,7 @@ lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, siz
 	using lib_calvin::stopwatch;
 	lib_calvin::random_number_generator gen;
 	typedef typename lib_calvin::abstract_string<char> c_string;
-	size_t const numPatterns = 100;
+	size_t const numPatterns = 50;
 
 	size_t alphabetSize = 0;
 	switch (charSet) {
@@ -202,6 +199,14 @@ lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, siz
 			}
 			pText[i] = '0' + static_cast<char>(number % alphabetSize);
 		}
+
+		if (type == CYCLIC_TEXT_ERROR) {
+			for (size_t i = 0; i + patternLen < textLen; i += patternLen) {
+				//size_t randomIndex = i + gen() % patternLen;
+				pText[i + patternLen / 2]++;
+			}
+		}
+
 		for (size_t i = 0; i < numPatterns; i++) {
 			pPatterns[i] = new char[patternLen];
 			for (size_t j = 0; j < patternLen; j++) {
@@ -213,12 +218,10 @@ lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, siz
 				}
 				pPatterns[i][j] = '0' + static_cast<char>(number % alphabetSize);				
 			}
-			// Prevent matching
-
-			if (type == NO_MATCH_TAIL_MISS) {
-				pPatterns[i][patternLen - 1] = pPatterns[i][patternLen - 2];
-			} else if (type == NO_MATCH_HEAD_MISS) {
-				pPatterns[i][0] = pPatterns[i][1];
+			// Prevent matching						
+			if (type == CYCLIC_PATTERN_ERROR) {
+				size_t randomIndex = gen() % patternLen;
+				pPatterns[i][randomIndex]++;
 			}
 		}
 		c_string text(pText, textLen);
