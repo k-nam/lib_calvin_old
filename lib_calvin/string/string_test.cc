@@ -59,9 +59,9 @@ void lib_calvin_string::matchingTest(void(*matchingCharAlg)
 	std::vector<size_t> answer;
 	lib_calvin::stopwatch watch;
 
-	Alphabet alphabetSize = 4;
+	Alphabet alphabetSize = 2;
 	size_t textLen = 1000* 1000;
-	size_t patternLen = 16;
+	size_t patternLen = 32;
 	Alphabet *pText = new Alphabet[textLen];
 	Alphabet *pPattern = new Alphabet[patternLen];
 	// use only small number of alphabets to make test realistic
