@@ -38,7 +38,8 @@ void lib_calvin_string::calculateF(
 	for (k = 2; k <= len; k++) { // include past-end char
 		m = f[k - 1]; // m is the index to consider f[m] value
 		bool didReachZero = false;
-		while (pattern[m] != pattern[k - 1]) {
+		while (pattern[m] != pattern[k - 1] || 
+			   (k < len && pattern[m + 1] == pattern[k])) {
 			if (m != 0) {
 				m = f[m];
 			} else {
@@ -93,6 +94,7 @@ Wrong:
 	if (s == 0) {
 		goto FirstWrong;
 	}
+
 	s = f[s];
 	if (text[k] != pattern[s]) {
 		goto Wrong;
