@@ -32,7 +32,6 @@ template <typename Alphabet>
 void lib_calvin_string::boyerMoore(
 	lib_calvin::abstract_string<Alphabet> const &text,
 	lib_calvin::abstract_string<Alphabet> const &pattern, std::vector<size_t> &result) {
-	//std::cout << "lib_calvin\n";
 
 	result.clear();
 	size_t textLen = text.size();
@@ -42,25 +41,18 @@ void lib_calvin_string::boyerMoore(
 	int64_t	goodSuffixJump = 0;
 	std::vector<size_t> charTable;
 	std::vector<size_t> suffixTable;
-
 	badChar(pattern, charTable);
 	strongGoodSuffix(pattern, suffixTable);
-
-	for (auto i : suffixTable) {
-		//std::cout << i << ", ";
-	}
-
-	//std::cout << pattern << "\n";
 
 	int64_t t = 0;
 	auto textP = &text[0];
 	auto textPEnd = &text[0] + textLen - patternLen;
 	auto patternP = &pattern[0];
 	while (textP <= textPEnd) {
-		t = patternLen - 1;
-		while (textP[t] == patternP[t]) {
+		t = patternLen;
+		while (textP[t - 1] == patternP[t - 1]) {
 			t--;
-			if (t < 0) {
+			if (t == 0) {
 				result.push_back(textP - &text[0]);
 				badCharJump = 0;
 				goto Match;
@@ -68,13 +60,13 @@ void lib_calvin_string::boyerMoore(
 			//std::cout << "Comparing: " << t << "\n";
 		}
 
-		badCharJump = charTable[static_cast<size_t>(textP[t])];
-		badCharJump -= (patternLen - 1 - t);
-
+		badCharJump = charTable[(textP[t - 1])] - (patternLen - t);
 	Match:
-		goodSuffixJump = suffixTable[patternLen - 1 - t];
-		textP += max(goodSuffixJump, badCharJump);
-		//textP += goodSuffixJump;
+		if (badCharJump > 0 && badCharJump > static_cast<int64_t>(suffixTable[patternLen - t])) {
+			textP += badCharJump;
+		} else {
+			textP += suffixTable[patternLen - t];
+		}
 
 		//std::cout << "Suffix: " << goodSuffixJump << " ";
 		//std::cout << "Badchar: " <<  badCharJump << " ";
