@@ -3,20 +3,21 @@
 
 #include <string>
 #include "matrix.h"
-#include "vector.h"
+#include <vector>
 
 namespace lib_calvin_neural_network
 {
 
-using lib_calvin::vector;
+using std::vector;
 using lib_calvin::matrix;
 
 class neural_network
 {
 public:
-	neural_network(size_t numInput, size_t numOutput, vector<size_t> hiddenLayers);
-	void train(vector<std::pair<vector<double>, vector<double>>> trainData,
-		vector<std::pair<vector<double>, vector<double>>> testData);
+	neural_network(size_t numInput, size_t numOutput, vector<size_t> hiddenLayers, double learningRate);
+	vector<double> train(size_t numIter,
+			   vector<std::pair<vector<double>, vector<double>>> trainData,
+			   vector<std::pair<vector<double>, vector<double>>> testData);
 	// Return succees rate
 	double test(vector<std::pair<vector<double>, vector<double>>> testData) const;
 
@@ -74,6 +75,7 @@ private:
 	vector<vector<double>> convertMatrixToVetor(matrix<double> const &) const;
 private:
 	vector<layer> layers_; // last element is output
+	double learningRate_;
 };
 
 }

@@ -10,11 +10,11 @@ namespace lib_calvin_neural_network
 class handwritten_digits_analyzer
 {
 public:
-	handwritten_digits_analyzer();
-	// labe means actual number (0-9)
-	void trainWithBinaryFile(std::string trainImage, std::string trainLabel, 
+	handwritten_digits_analyzer(vector<size_t> hiddenLayer, double learningRate);
+	// label means actual number (0-9)
+	vector<double> trainWithBinaryFile(size_t numIter, std::string trainImage, std::string trainLabel,
 		std::string testImage, std::string testLabel);
-	void trainWithTextFile(std::string trainFileName, std::string testFileName);
+	vector<double> trainWithTextFile(size_t numIter, std::string trainFileName, std::string testFileName);
 private:
 	vector<std::pair<vector<double>, vector<double>>> 
 		readBinaryFile(std::string imageFileName, std::string labelFileName) const;

@@ -7,8 +7,9 @@ namespace lib_calvin_neural_network
 {
 using std::ifstream;
 
-handwritten_digits_analyzer::handwritten_digits_analyzer() :
-	neuralNetwork_(28 * 28, 10, vector<size_t>{ 100, 30 }) {
+handwritten_digits_analyzer::handwritten_digits_analyzer(
+	vector<size_t> hiddenLayer, double learningRate) :
+	neuralNetwork_(28 * 28, 10, hiddenLayer, learningRate) {
 }
 
 vector<std::pair<vector<double>, vector<double>>> 
@@ -59,18 +60,19 @@ handwritten_digits_analyzer::readBinaryFile(std::string imageFileName, std::stri
 	return data;
 }
 
-void
-handwritten_digits_analyzer::trainWithBinaryFile(std::string trainImageFile, std::string trainLabelFile,
-	std::string testImageFile, std::string testLabelFile) {
+vector<double>
+handwritten_digits_analyzer::trainWithBinaryFile(size_t numIter,
+												 std::string trainImageFile, std::string trainLabelFile,
+												 std::string testImageFile, std::string testLabelFile) {
 	auto trainData = readBinaryFile(trainImageFile, trainLabelFile);
 	auto testData = readBinaryFile(testImageFile, testLabelFile);
 	std::cout << "Start training.\n";
-	neuralNetwork_.train(trainData, testData);
+	return neuralNetwork_.train(numIter, trainData, testData);
 	std::cout << "End training.\n";
 }
 
-void 
-handwritten_digits_analyzer::trainWithTextFile(std::string trainFileName, std::string testFileName) {
+vector<double>
+handwritten_digits_analyzer::trainWithTextFile(size_t numIter, std::string trainFileName, std::string testFileName) {
 	std::cout << "Start training.\n";
 	size_t trainDataSize = 100000;
 	size_t testDataSize = 10000;
@@ -83,7 +85,7 @@ handwritten_digits_analyzer::trainWithTextFile(std::string trainFileName, std::s
 	//vector<std::pair<vector<double>, vector<double>>> part2(trainData.begin() + part1Size, 
 		//trainData.begin() + part1Size + validationSize);
 	//train(part1, part2);
-	neuralNetwork_.train(trainData, testData);
+	return neuralNetwork_.train(numIter, trainData, testData);
 	std::cout << "End training.\n";
 }
 

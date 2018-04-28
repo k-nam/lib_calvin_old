@@ -9,8 +9,11 @@
 namespace lib_calvin_neural_network
 {
 
-neural_network::neural_network(size_t numInput, size_t numOutput, vector<size_t> hiddenLayers) {
+neural_network::neural_network(size_t numInput, size_t numOutput, 
+							   vector<size_t> hiddenLayers, double learningRate) {
 	layers_ = vector<layer>(hiddenLayers.size() + 1);
+	learningRate_ = learningRate;
+
 	//std::cout << layers_.size() << "\n";
 	for (size_t i = 0; i < layers_.size(); i++) {
 		size_t thisLayerNumInput = 0;
@@ -36,44 +39,50 @@ neural_network::neural_network(size_t numInput, size_t numOutput, vector<size_t>
 	}
 }
 
-void 
-neural_network::train(vector<std::pair<vector<double>, vector<double>>> trainData,
-					vector<std::pair<vector<double>, vector<double>>> testData) {
+vector<double> 
+neural_network::train(size_t numIter,
+					  vector<std::pair<vector<double>, vector<double>>> trainData,
+					  vector<std::pair<vector<double>, vector<double>>> testData) {
 	size_t subsetSize = 10;	
-	size_t num_epoch = 10000;
+	size_t num_epoch = numIter;
 	std::random_device rd;
 	std::mt19937 gen(rd());
 	double maxAccuracy = 0.0; // in percent
 
 	randomize();
+
+	double epochTotalCost = 0.0;
+	double subsetAvgCost = 0.0;
+	vector<double> result;
+
 	for (size_t i = 0; i < num_epoch; i++) {
-		double epochTotalCost = 0.0;
-		double subsetAvgCost = 0.0;
+		double accuracy = test(testData) * 100;
+		result.push_back(accuracy);
+
+		std::cout << "Epoch: " << i << " Current sigma: " << pow(epochTotalCost / trainData.size(), 0.5) <<
+			". Subset sigma: " << pow(subsetAvgCost, 0.5) << ". Ratio: " << accuracy << "%\n";
+
+		if (accuracy > maxAccuracy) { // save as JSON 
+			saveJson();
+		}
+		
 		std::shuffle(trainData.begin(), trainData.end(), gen);
-		auto subsetBegin = trainData.begin();
-		auto subsetEnd = trainData.end();
-		while (true) {
-			if (trainData.end() - subsetBegin > static_cast<ptrdiff_t>(subsetSize)) {
-				subsetEnd = subsetBegin + subsetSize;
-			} else if (trainData.end() - subsetBegin > 0) {
+		epochTotalCost = 0.0;
+		subsetAvgCost = 0.0;
+
+		for (auto subsetBegin = trainData.begin(); subsetBegin < trainData.end(); subsetBegin += subsetSize) {
+			auto subsetEnd = subsetBegin + subsetSize;
+			if (subsetEnd > trainData.end()) {
 				subsetEnd = trainData.end();
-			} else {
-				break;
-			}
+			} 
 			vector<std::pair<vector<double>, vector<double>>> subset(subsetBegin, subsetEnd);
 			// Calling learnFromData() will also update all z and output values in the network.
 			subsetAvgCost = learnFromData(subset);
 			epochTotalCost += subsetAvgCost * subsetSize;
-
-			subsetBegin = subsetEnd;
-		}
-		double currAccuracy = test(testData) * 100;
-		std::cout << "Epoch: " << i << " Current sigma: " << pow(epochTotalCost / trainData.size(), 0.5) << 
-			 ". Subset sigma: " << pow(subsetAvgCost, 0.5) << ". Ratio: " << currAccuracy << "\n";
-		if (currAccuracy > maxAccuracy) { // save as JSON 
-			saveJson();
 		}
 	}
+
+	return result;
 }
 
 double 
@@ -118,11 +127,11 @@ double
 neural_network::learnFromData(vector<std::pair<vector<double>, vector<double>>> const &trainData) {
 	// get avg of square sum of deviation
 	double totalCost = 0;
-	double learningRate = 1;
+
 	for (size_t i = 0; i < trainData.size(); i++) {
 		totalCost += learnFromData(trainData[i].first, trainData[i].second);
 	}
-	double multiplier = learningRate / trainData.size();
+	double multiplier = learningRate_ / trainData.size();
 	for (layer &currentLayer : layers_) {
 		currentLayer.adjustVariablesWithMultiplier(multiplier);
 		currentLayer.clearGradient();
@@ -143,7 +152,6 @@ neural_network::runNetwork(vector<double> const &input) const {
 double
 neural_network::learnFromData(vector<double> const &input, vector<double> const &output) {
 	// First run the network
-	//std::cout << "input: " << input[0] << "\n";
 	vector<double> networkOutput = runNetwork(input);
 	if (networkOutput.size() != output.size()) {
 		std::cout << "runNetwork error\n";
@@ -353,11 +361,11 @@ neural_network::layer::adjustVariablesWithMultiplier(double multipler) {
 
 vector<double> 
 neural_network::layer::getLayerMultiplier() const {
-	matrix<double> error_vector(1, errors_.size());
+	matrix<double> error_vector(errors_.size(), 1);
 	for (size_t i = 0; i < errors_.size(); i++) {
-		error_vector(0, i) = errors_[i];
+		error_vector(i, 0) = errors_[i];
 	}
-	auto temp = weights_ * error_vector.transpose();
+	auto temp = weights_ * error_vector;
 	vector<double> result(getNumInput()); // weights_.height() == numInput
 	for (size_t i = 0; i < result.size(); i++) {
 		result[i] = temp(i, 0);
@@ -376,13 +384,8 @@ neural_network::layer::calculateErrorsForHiddenLayer(vector<double> const &nextL
 		exit(0);
 	}
 	for (size_t i = 0; i < errors_.size(); i++) {
-		errors_[i] = nextLayerMultiplier[i] * getDerivativeOfSigmoid(z_[i]);
-		//std::cout << "error: " << errors_[i] << ", " << z_[i] << "\n";
-		//if (errors_[i] != errors_[i]) {
-		//	std::cout << "calculateErrorsForHiddenLayer nan\n" << nextLayerMultiplier[i] << ", " <<
-		//		getDerivativeOfSigmoid(z_[i]);
-		//	exit(0);
-		//}
+		// change of z -> change of sigmoid(z) -> next layer
+		errors_[i] = getDerivativeOfSigmoid(z_[i]) * nextLayerMultiplier[i];
 	}
 }
 
@@ -394,37 +397,30 @@ neural_network::layer::calculateErrorsForOutputLayer(vector<double> const &outpu
 	}
 	for (size_t i = 0; i < errors_.size(); i++) {
 		errors_[i] = (outputs_[i] - outputData[i]) * getDerivativeOfSigmoid(z_[i]) / outputData.size();
-		//std::cout << "error: " << errors_[i] << "\n";
-		//if (errors_[i] != errors_[i]) {
-		//	std::cout << "calculateErrorsForOutputLayer nan\n" << getSigmoid(z_[i]) - outputData[i] << ", " <<
-		//	getDerivativeOfSigmoid(z_[i]) << ", " << z_[i];
-		//	exit(0);
-		//}
 	}
 }
 
 double
-neural_network::layer::getSigmoid(double x) const {
-	/*
-	return 1 / (1 + exp(-x));
-	*/	
-	return tanh(x);
-	/*
-	return x > 0 ? x : 0;
-	*/
+neural_network::layer::getSigmoid(double x) const {	
+	return 1 / (1 + exp(-x));	
+	
+	//return tanh(x);	
+	
+	//return x > 0 ? x : 0;
+	
 }
 
 double 
 neural_network::layer::getDerivativeOfSigmoid(double x) const {
-	/*
+	
 	double temp = exp(-x);
 	return temp / (1 + temp) / (1 + temp);
-	*/	
-	double a = tanh(x);
-	return (1 - a * a);	
-	/*
-	return x > 0 ? 1 : 0;
-	*/
+		
+	//double a = tanh(x);
+	//return (1 - a * a);	
+	
+	//return x > 0 ? 1 : 0;
+	
 }
 
 }
