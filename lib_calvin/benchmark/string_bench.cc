@@ -97,12 +97,12 @@ vector<Algorithm>
 lib_calvin_benchmark::string::getAllAlgorithms() {
 	return {
 		//NAIVE, 
-		//BOOST_KMP, 
-		//LIB_CALVIN_KMP,
+		BOOST_KMP, 
+		LIB_CALVIN_KMP,
 		//STD_BOYER_MOORE_HORSPOOL,
 		//BOOST_BOYER_MOORE_HORSPOOL,
-		BOOST_BOYER_MOORE,
-		LIB_CALVIN_BOYER_MOORE,
+		//BOOST_BOYER_MOORE,
+		//LIB_CALVIN_BOYER_MOORE,
 		//LIB_CALVIN_SUFFIX 
 	};
 }
@@ -115,7 +115,7 @@ lib_calvin_benchmark::string::getAllNamesAndTagsVector() {
 void lib_calvin_benchmark::string::stringBench() {
 
 	//for (auto type: {  RANDOM, CYCLIC_TEXT_ERROR, CYCLIC_PATTERN_ERROR }) {
-	for (auto type: { CYCLIC_PATTERN_ERROR }) {
+	for (auto type: { CYCLIC_TEXT_ERROR }) {
 		stringBench(type);
 	}
 }
@@ -123,7 +123,7 @@ void lib_calvin_benchmark::string::stringBench() {
 vector<CharSet>
 lib_calvin_benchmark::string::getAllCharSets() {
 	//return vector<CharSet> { BINARY, DNA, ENG };
-	return vector<CharSet> {ENG };
+	return vector<CharSet> {BINARY };
 
 }
 

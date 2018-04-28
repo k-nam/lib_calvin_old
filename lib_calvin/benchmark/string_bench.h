@@ -13,7 +13,7 @@ namespace lib_calvin_benchmark
 	{
 		using namespace lib_calvin_string;
 
-		std::vector<size_t> const benchTestSizes = { 1000*1000, 2000*1000, 4000*1000 };
+		std::vector<size_t> const benchTestSizes = { 1000*1000 };
 
 		std::vector<std::string> const benchCases = { "1M", "2M", "4M"};
 
