@@ -31,6 +31,9 @@
     <Filter Include="string">
       <UniqueIdentifier>{ac93947c-905f-41b3-9ea4-f32b6a0ab283}</UniqueIdentifier>
     </Filter>
+    <Filter Include="neural_network">
+      <UniqueIdentifier>{598a4eec-fddc-48a5-93d7-5e18632d46cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bench_main.cc">
@@ -75,6 +78,9 @@
     <ClCompile Include="string_bench.cc">
       <Filter>string</Filter>
     </ClCompile>
+    <ClCompile Include="neural_network_bench.cc">
+      <Filter>neural_network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bench.h">
@@ -109,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="boost_string_algorithm.h">
       <Filter>string</Filter>
+    </ClInclude>
+    <ClInclude Include="neural_network_bench.h">
+      <Filter>neural_network</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
