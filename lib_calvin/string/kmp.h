@@ -5,20 +5,20 @@
 
 namespace lib_calvin_string
 {
-	using std::cout;
-	using std::endl;
+using std::cout;
+using std::endl;
 
 
-	// f(i) = the maximum length of a prefix of pattern which is also a 
-	// ...proper suffix of substring pattern[0 i-1]
-	template <typename Alphabet>
-	void calculateF(lib_calvin::abstract_string<Alphabet> const &pattern, std::vector<size_t> &record);
-	
-	template <typename Alphabet>
-	void kmp(lib_calvin::abstract_string<Alphabet> const &text,
-			 lib_calvin::abstract_string<Alphabet> const &pattern,
-			 std::vector<size_t> &result);
-} 
+// f(i) = the maximum length of a prefix of pattern which is also a 
+// ...proper suffix of substring pattern[0 i-1]
+template <typename Alphabet>
+void calculateF(lib_calvin::abstract_string<Alphabet> const &pattern, std::vector<size_t> &record);
+
+template <typename Alphabet>
+void kmp(lib_calvin::abstract_string<Alphabet> const &text,
+		 lib_calvin::abstract_string<Alphabet> const &pattern,
+		 std::vector<size_t> &result);
+}
 
 // f(k) is the length of longest prefix of the c_string P which is also suffix of
 //  P[0...k-1]   so, f(len) should be determined.
@@ -38,8 +38,8 @@ void lib_calvin_string::calculateF(
 	for (k = 2; k <= len; k++) { // include past-end char
 		m = f[k - 1]; // m is the index to consider f[m] value
 		bool didReachZero = false;
-		while (pattern[m] != pattern[k - 1] || 
-			   (k < len && pattern[m + 1] == pattern[k])) {
+		while (pattern[m] != pattern[k - 1] ||
+			(k < len && pattern[m + 1] == pattern[k])) {
 			if (m != 0) {
 				m = f[m];
 			} else {
@@ -66,7 +66,8 @@ void lib_calvin_string::kmp(
 	size_t textLen = text.size();
 	std::vector<size_t> f;
 	calculateF(pattern, f);
-	size_t k = 0, s = 0;
+	size_t k = 0;
+	size_t s = 0;
 
 	// about to match k (text index), s (pattern index)
 AboutToMatch:
