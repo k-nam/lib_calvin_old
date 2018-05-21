@@ -97,7 +97,8 @@ void lib_calvin_container::setTest() {
 		//mediumSize, "boost::unordered_set / HeavyObject");
 	//setPerformanceTest<lib_calvin::hash_set<HeavyObject, GenericHash<HeavyObject>>>(
 		//mediumSize, "HashTable / HeavyObject");
-	//setPerformanceTest<std::unordered_set<HeavyObject, boost::hash<HeavyObject>>>(mediumSize, "std::unordered_set / HeavyObject");
+	//setPerformanceTest<std::unordered_set<HeavyObject, boost::hash<HeavyObject>>>(
+		//mediumSize, "std::unordered_set / HeavyObject");
 	//setPerformanceTest<PtrSet<HeavyObject>>(mediumSize, "PtrSet / HeavyObject");
 	setPerformanceTest<btree::btree_set<HeavyObject>>(mediumSize, "Google Btree / HeavyObject");
 
