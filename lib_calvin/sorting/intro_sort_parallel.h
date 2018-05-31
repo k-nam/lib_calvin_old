@@ -99,7 +99,7 @@ namespace lib_calvin_sort {
 // efficiently (in the same sense as that of multi-programming in OS).
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSortParallel(Iterator first, Iterator last, Comparator comp) {
-	introSortParallelSub0(first, last, comp, 4);
+	introSortParallelSub0(first, last, comp, 8);
 }
 
 // Blocking method
@@ -113,7 +113,7 @@ void lib_calvin_sort::introSortParallelAdvanced(Iterator first, Iterator last, C
 	// Create many threads for partitioning large arrays
 	introSortParallelSub1(first, last, comp, 4, factory);
 	// Create 4 threads for sorting small arrays in L2 cache
-	unsigned numCores = 4;
+	unsigned numCores = 6;
 	typedef lib_calvin::thread_type thread_type;
 	thread_type *handleArray = new thread_type[numCores];
 	for (unsigned i = 0; i < numCores; ++i) {
