@@ -341,3 +341,4 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
+lib_calvin/neural_network/handwriting_network.js
