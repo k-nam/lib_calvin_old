@@ -3,8 +3,12 @@
 #include <vector>
 
 struct user {
-	int group_;
-	int score_;
+	size_t group_;
+	size_t score_;
+
+	bool operator==(user const &rhs) const {
+		return group_ == rhs.group_ && score_ == rhs.score_;
+	}
 };
 
 class user_group_compare {
@@ -29,7 +33,6 @@ public:
 	}
 };
 
-
-void record_sort_two_phase(std::vector<user> &input) {
-
-}
+void user_sort_test();
+void user_sort_one_pass(std::vector<user> &input);
+void user_sort_two_pass(std::vector<user> &input);

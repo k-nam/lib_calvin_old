@@ -149,13 +149,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="number_sorting.h" />
-    <ClInclude Include="user_record_sorting.h" />
+    <ClInclude Include="record_sorting.h" />
+    <ClInclude Include="user_sorting.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\util\random.cc" />
-    <ClCompile Include="number_sorting.cc" />
-    <ClCompile Include="sorting_speed.cpp" />
+    <ClCompile Include="record_sorting.cc" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="user_sorting.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

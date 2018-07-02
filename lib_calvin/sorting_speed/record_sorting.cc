@@ -1,21 +1,21 @@
 #include <iostream>
 
-#include "number_sorting.h"
+#include "record_sorting.h"
 #include "stopwatch.h"
 #include "random.h"
 #include "intro_sort.h"
 
-void number_sort_test() {
+void record_sort_test() {
 	using namespace lib_calvin;
 	stopwatch watch;
 
-	int const test_size = 1000 * 1000 * 10;
-	std::vector<int> test_vector(test_size, 0);
+	int const test_size = 1000 * 1000;
+	std::vector<record> test_vector(test_size);
 	lib_calvin::random_number_generator g;
 
 	for (size_t i = 0; i < test_size; i++) {
 		size_t random = g();
-		test_vector[i] = static_cast<int>(i * 10 + random % 10);
+		test_vector[i].key_ = i * 10 + random % 10;
 	}
 	std::shuffle(test_vector.begin(), test_vector.end(),
 		std::mt19937(std::random_device()()));
@@ -24,12 +24,12 @@ void number_sort_test() {
 	auto copy2 = test_vector;
 
 	watch.start();
-	number_sort(copy);
+	record_sort(copy);
 	watch.stop();
 	std::cout << "number_sort took " << watch.read() << " sec.\n";
 
 	watch.start();
-	number_sort_inplace(copy2);
+	record_sort_inplace(copy2);
 	watch.stop();
 	std::cout << "number_sort_inplace took " << watch.read() << " sec.\n";
 
@@ -44,26 +44,26 @@ void number_sort_test() {
 	}
 }
 
-void number_sort(std::vector<int> & input) {
+void record_sort(std::vector<record> & input) {
 	auto copy = input;
-	for (int number : input) {
-		size_t index = number / 10;
+	for (auto record : input) {
+		size_t index = record.key_ / 10;
 		//std::cout << "index was: " << index << "\n";
-		copy[index] = number;
+		copy[index] = record;
 	}
 	input = copy;
 }
 
-void number_sort_inplace(std::vector<int> & input) {
+void record_sort_inplace(std::vector<record> & input) {
 	size_t start_index = 0;	
 
 	while (true) {
-		int number_to_insert = input[start_index];
+		auto record_to_insert = input[start_index];
 		while (true) { 
-			size_t index_to_insert = number_to_insert / 10;
-			int temp = input[index_to_insert];
-			input[index_to_insert] = number_to_insert;
-			number_to_insert = temp;
+			size_t index_to_insert = record_to_insert.key_ / 10;
+			auto temp = input[index_to_insert];
+			input[index_to_insert] = record_to_insert;
+			record_to_insert = temp;
 
 			if (index_to_insert == start_index) { // we got a cycle
 				break;
@@ -73,7 +73,7 @@ void number_sort_inplace(std::vector<int> & input) {
 		while (true) {
 			if (start_index == input.size()) {
 				return;
-			} else if (input[start_index] / 10 == start_index) {
+			} else if (input[start_index].key_ / 10 == start_index) {
 				start_index++;
 			} else {
 				break;

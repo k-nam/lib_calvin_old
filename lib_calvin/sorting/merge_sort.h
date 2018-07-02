@@ -24,6 +24,7 @@ namespace lib_calvin_sort
 
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::mergeSort(Iterator first, Iterator last, Comparator comp) {
+	using namespace std;
 	ptrdiff_t num = last - first;
 	// additional array for operation
 	typedef typename iterator_traits<Iterator>::pointer pointerType;

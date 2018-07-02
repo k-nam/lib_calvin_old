@@ -20,9 +20,9 @@ void lib_calvin_sort::sortTest() {
 	//binSearchTest2();
 	//getSamplesTest();
 
-	//sortTest<ElemType>(introSort, "introSort");
-	//sortTest<ElemType>(blockIntroSort, "blockIntroSort");
-	//sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
+	sortTest<ElemType>(introSort, "introSort");
+	sortTest<ElemType>(blockIntroSort, "blockIntroSort");
+	sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
 	//sortTest<ElemType>(introSortParallel, "Parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced, "Advanced parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");

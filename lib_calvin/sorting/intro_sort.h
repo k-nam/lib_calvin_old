@@ -192,11 +192,10 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 				}
 			} else {
 				for (blockQsortIndexType i = 0; i < leftBatchSize; ) {
-					leftBuffer[l_end] = i++; l_end += !(*tempIter++ < pivot);
-					leftBuffer[l_end] = i++; l_end += !(*tempIter++ < pivot);
-					leftBuffer[l_end] = i++; l_end += !(*tempIter++ < pivot);
-					leftBuffer[l_end] = i++; l_end += !(*tempIter++ < pivot);
-					//leftBuffer[l_end] = i++; l_end += !comp(*tempIter++, pivot);
+					leftBuffer[l_end] = i++; l_end += !(comp(*tempIter++, pivot));
+					leftBuffer[l_end] = i++; l_end += !(comp(*tempIter++, pivot));
+					leftBuffer[l_end] = i++; l_end += !(comp(*tempIter++, pivot));
+					leftBuffer[l_end] = i++; l_end += !(comp(*tempIter++, pivot));
 				}
 			}
 		}
@@ -208,11 +207,10 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 				}
 			} else {
 				for (blockQsortIndexType i = 0; i < rightBatchSize; i) {
-					rightBuffer[r_end] = i++; r_end += (*tempIter-- < pivot);
-					rightBuffer[r_end] = i++; r_end += (*tempIter-- < pivot);
-					rightBuffer[r_end] = i++; r_end += (*tempIter-- < pivot);
-					rightBuffer[r_end] = i++; r_end += (*tempIter-- < pivot);
-					//rightBuffer[r_end] = i++; r_end += comp(*tempIter--, pivot);
+					rightBuffer[r_end] = i++; r_end += (comp(*tempIter--, pivot));
+					rightBuffer[r_end] = i++; r_end += (comp(*tempIter--, pivot));
+					rightBuffer[r_end] = i++; r_end += (comp(*tempIter--, pivot));
+					rightBuffer[r_end] = i++; r_end += (comp(*tempIter--, pivot));
 				}
 			}
 		}
