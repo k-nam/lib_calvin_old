@@ -3,6 +3,10 @@
 
 #include <minmax.h>
 
+#include "insertion_sort.h"
+#include "heap_sort.h"
+#include "utility.h"
+
 namespace lib_calvin_sort {
 
 	int const INTROSORT_THRESHOLD = 24;

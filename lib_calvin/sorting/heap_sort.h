@@ -34,6 +34,7 @@ void lib_calvin_sort::heapSort(Iterator first, Iterator last, Comparator comp) {
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::percolateDown(Iterator const base, Comparator comp, int index, int const size) {
 	// save original element and insert it back later
+	using namespace std;
 	typename iterator_traits<Iterator>::value_type store = *(base + index);
 	while (true) {
 		Iterator parent = base + index;
