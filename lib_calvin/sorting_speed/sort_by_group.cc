@@ -1,13 +1,13 @@
 #include <iostream>
 
-#include "user_sorting.h"
+#include "sort_by_group.h"
 #include "stopwatch.h"
 #include "random.h"
 
 #include "merge_sort.h"
 #include "intro_sort.h"
 
-void user_sort_test() {
+void sort_by_group_test() {
 	using namespace lib_calvin;
 	stopwatch watch;
 
@@ -31,14 +31,14 @@ void user_sort_test() {
 	auto copy2 = test_vector;
 
 	watch.start();
-	user_sort_one_pass(test_vector);
+	sort_by_group_one_pass(test_vector);
 	watch.stop();
-	std::cout << "user_sort_one_pass took " << watch.read() << " sec.\n";
+	std::cout << "sort_by_group_one_pass took " << watch.read() << " sec.\n";
 
 	watch.start();
-	user_sort_two_pass(copy);
+	sort_by_group_two_pass(copy);
 	watch.stop();
-	std::cout << "user_sort_two_pass took " << watch.read() << " sec.\n";
+	std::cout << "sort_by_group_two_pass took " << watch.read() << " sec.\n";
 
 
 	if (test_vector != copy) {
@@ -47,11 +47,11 @@ void user_sort_test() {
 	}
 }
 
-void user_sort_one_pass(std::vector<user> &input) {
+void sort_by_group_one_pass(std::vector<user> &input) {
 	lib_calvin_sort::blockIntroSort(input.begin(), input.end(), user_all_compare());
 }
 
-void user_sort_two_pass(std::vector<user> &input) {
+void sort_by_group_two_pass(std::vector<user> &input) {
 	lib_calvin_sort::blockIntroSort(input.begin(), input.end(), user_score_compare());
 	lib_calvin_sort::mergeSort(input.begin(), input.end(), user_group_compare());
 

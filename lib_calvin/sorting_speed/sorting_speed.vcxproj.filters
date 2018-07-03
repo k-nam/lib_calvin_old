@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="record_sorting.h">
+    <ClInclude Include="original_place.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="user_sorting.h">
+    <ClInclude Include="sort_by_group.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -26,13 +26,13 @@
     <ClCompile Include="..\util\random.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="record_sorting.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="user_sorting.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="original_place.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sort_by_group.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

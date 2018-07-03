@@ -33,6 +33,6 @@ public:
 	}
 };
 
-void user_sort_test();
-void user_sort_one_pass(std::vector<user> &input);
-void user_sort_two_pass(std::vector<user> &input);
+void sort_by_group_test();
+void sort_by_group_one_pass(std::vector<user> &input);
+void sort_by_group_two_pass(std::vector<user> &input);

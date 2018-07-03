@@ -16,8 +16,8 @@ struct record {
 	}
 };
 
-void record_sort_test();
+void original_place_test();
 
-void record_sort(std::vector<record> & input);
+void original_place_sort(std::vector<record> & input);
 
-void record_sort_inplace(std::vector<record> & input);
+void original_place_sort_inplace(std::vector<record> & input);

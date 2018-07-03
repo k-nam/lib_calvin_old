@@ -1,11 +1,11 @@
 #include <iostream>
 
-#include "record_sorting.h"
+#include "original_place.h"
 #include "stopwatch.h"
 #include "random.h"
 #include "intro_sort.h"
 
-void record_sort_test() {
+void original_place_test() {
 	using namespace lib_calvin;
 	stopwatch watch;
 
@@ -24,14 +24,14 @@ void record_sort_test() {
 	auto copy2 = test_vector;
 
 	watch.start();
-	record_sort(copy);
+	original_place_sort(copy);
 	watch.stop();
-	std::cout << "number_sort took " << watch.read() << " sec.\n";
+	std::cout << "original_place_sort took " << watch.read() << " sec.\n";
 
 	watch.start();
-	record_sort_inplace(copy2);
+	original_place_sort_inplace(copy2);
 	watch.stop();
-	std::cout << "number_sort_inplace took " << watch.read() << " sec.\n";
+	std::cout << "original_place_sort_inplace took " << watch.read() << " sec.\n";
 
 	watch.start();
 	lib_calvin_sort::blockIntroSort(test_vector.begin(), test_vector.end());
@@ -44,7 +44,7 @@ void record_sort_test() {
 	}
 }
 
-void record_sort(std::vector<record> & input) {
+void original_place_sort(std::vector<record> & input) {
 	auto copy = input;
 	for (auto record : input) {
 		size_t index = record.key_ / 10;
@@ -54,7 +54,7 @@ void record_sort(std::vector<record> & input) {
 	input = copy;
 }
 
-void record_sort_inplace(std::vector<record> & input) {
+void original_place_sort_inplace(std::vector<record> & input) {
 	size_t start_index = 0;	
 
 	while (true) {
