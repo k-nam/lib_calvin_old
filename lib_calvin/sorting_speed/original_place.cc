@@ -48,7 +48,6 @@ void original_place_sort(std::vector<record> & input) {
 	auto copy = input;
 	for (auto record : input) {
 		size_t index = record.key_ / 10;
-		//std::cout << "index was: " << index << "\n";
 		copy[index] = record;
 	}
 	input = copy;
