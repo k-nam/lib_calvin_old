@@ -9,29 +9,31 @@
 void lib_calvin_sort::sortTest() {
 	std::cout << "---------------- Beginning sort test -----------------\n\n";
 	using namespace lib_calvin_sort;
+	using namespace lib_calvin_benchmark;
+
 	//typedef size_t ElemType;
 	
-	typedef lib_calvin_benchmark::object_vector ElemType;
+	//typedef object_vector ElemType;
 
-	//typedef SimpleStruct ElemType;
+	typedef object_16 ElemType;
 	//typedef StringStruct ElemType;
 	
 	//binSearchTest();
 	//binSearchTest2();
 	//getSamplesTest();
 
-	sortTest<ElemType>(introSort, "introSort");
-	sortTest<ElemType>(blockIntroSort, "blockIntroSort");
-	sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
+	//sortTest<ElemType>(introSort, "introSort");
+	//sortTest<ElemType>(blockIntroSort, "blockIntroSort");
+	//sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
 	//sortTest<ElemType>(introSortParallel, "Parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced, "Advanced parallel introSort");
-	//sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
-	//sortTest<ElemType>(mergeSort, "mergeSort");
-	sortTest<ElemType>(mergeSortParallel, "Parallel mergeSort");
+	sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
+	sortTest<ElemType>(mergeSort, "mergeSort");
+	//sortTest<ElemType>(mergeSortParallel, "Parallel mergeSort");
 	//sortTest<ElemType>(heapSort, "heapSort");
 	//sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");
 	//sortTest<ElemType>(std::sort, "std::sort");
-	//sortTest<ElemType>(std::stable_sort, "std::stable_sort");
+	sortTest<ElemType>(std::stable_sort, "std::stable_sort");
 	//sortTest<ElemType>(pdqsort, "pdqsort");
 	
 

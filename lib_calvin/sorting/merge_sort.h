@@ -93,7 +93,6 @@ void lib_calvin_sort::merge(SrcIterator first, SrcIterator middle, SrcIterator l
 	}
 }
 
-// normal two-way merge; input size is not zero (both arrays are not empty)
 template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void lib_calvin_sort::merge2(SrcIterator first, SrcIterator middle, SrcIterator last,
 							 TargetIterator target, Comparator comp) {
