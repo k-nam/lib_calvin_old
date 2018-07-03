@@ -60,9 +60,6 @@
     <ClCompile Include="container_bench.cc">
       <Filter>container</Filter>
     </ClCompile>
-    <ClCompile Include="matrix_bench.cc">
-      <Filter>matrix</Filter>
-    </ClCompile>
     <ClCompile Include="..\matrix\mkl_multi.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
@@ -81,6 +78,9 @@
     <ClCompile Include="neural_network_bench.cc">
       <Filter>neural_network</Filter>
     </ClCompile>
+    <ClCompile Include="matrix_bench.cc">
+      <Filter>matrix</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bench.h">
@@ -91,9 +91,6 @@
     </ClInclude>
     <ClInclude Include="container_bench.h">
       <Filter>container</Filter>
-    </ClInclude>
-    <ClInclude Include="matrix_bench.h">
-      <Filter>matrix</Filter>
     </ClInclude>
     <ClInclude Include="graph_bench.h">
       <Filter>graph</Filter>
@@ -118,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="neural_network_bench.h">
       <Filter>neural_network</Filter>
+    </ClInclude>
+    <ClInclude Include="matrix_bench.h">
+      <Filter>matrix</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
