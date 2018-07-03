@@ -13,7 +13,7 @@ void lib_calvin_benchmark::etc::etc_bench() {
 void lib_calvin_benchmark::etc::memory_access_bench(size_t testSize) {
 	using namespace std;
 	string category = "Etc.";
-	string subCategory = "Power of pipelining";
+	string subCategory = "The power of parallelism";
 	string title = "Random accessing " + to_string(testSize) + " elements";
 	string comment = "";
 	string unit = "M/s";
