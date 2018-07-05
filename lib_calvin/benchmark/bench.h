@@ -10,7 +10,7 @@
 namespace lib_calvin_benchmark
 {
 	std::string const saveFilePath = "../../../bench_result/";
-	std::string const environment = "Intel 4790K with 16GB ram, Windows 10, Visual C++ v141";
+	std::string const environment = "Intel 8700 with 16GB ram, Windows 10, Visual C++ v141";
 
 	std::string getDatetime();
 
