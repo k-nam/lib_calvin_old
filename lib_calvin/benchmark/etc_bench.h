@@ -11,6 +11,11 @@ namespace lib_calvin_benchmark
 	{
 		static size_t const numGroups = 100;
 
+		std::vector<std::string> const testCases = { "1K", "10K", "100K", "1M", "10M" };
+		std::vector<size_t> const testSizes = { 1000, 1000*10, 1000*100, 1000*1000, 1000*1000*10 };
+		std::vector<size_t> const numIters = { 1000, 100, 10, 10, 3 };
+
+
 		void etc_bench();
 
 		void memory_access_bench();
@@ -19,21 +24,27 @@ namespace lib_calvin_benchmark
 
 		void sort_by_group_bench();
 
-		std::vector<double> linked_list_access(std::vector<size_t>);
-		std::vector<double> pointer_array_access(std::vector<size_t>);
+		void following_link_bench();
 
-		std::vector<double> linear_method(std::vector<size_t>);
-		std::vector<double> linear_method_inplace(std::vector<size_t>);
-		std::vector<double> block_qsort(std::vector<size_t>);
+		std::vector<double> linked_list_access();
+		std::vector<double> pointer_array_access();
+
+		std::vector<double> linear_method();
+		std::vector<double> linear_method_inplace();
+		std::vector<double> block_qsort();
 		
-		std::vector<double> one_pass_sorting(std::vector<size_t>);
-		std::vector<double> two_pass_sorting(std::vector<size_t>);
+		std::vector<double> one_pass_sorting();
+		std::vector<double> two_pass_sorting();
 
+		std::vector<double> null_pointer();
+		std::vector<double> null_flag();
 
 		struct Node {
 			size_t key_;
 			size_t group_;
 			size_t data_[2];
+			bool is_null;
+
 			operator size_t() const { return key_ + data_[0] + data_[1]; }
 			Node *next_;
 
@@ -43,6 +54,10 @@ namespace lib_calvin_benchmark
 
 			bool operator== (Node const &rhs) const {
 				return key_ == rhs.key_;
+			}
+
+			bool operator!= (Node const &rhs) const {
+				return key_ != rhs.key_;
 			}
 		};
 
