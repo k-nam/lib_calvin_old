@@ -35,8 +35,6 @@ namespace lib_calvin_container
 
 	template <typename Impl>
 	void setRvalueTest(std::string);
-
-	void randomAccessSpeedTest(size_t size);
 }
 
 #endif

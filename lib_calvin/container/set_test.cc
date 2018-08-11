@@ -46,7 +46,7 @@ void lib_calvin_container::setTest() {
 	int const mediumSize = 10000;
 	int const largeSize = 1000000;	
 	
-	setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
+	//setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
 	setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
 	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
 	
@@ -577,34 +577,4 @@ void lib_calvin_container::setRvalueTest(std::string title) {
 	impl.insert(V(6)); // move ctor
 	impl.insert(std::move(temp2)); // move ctor, move assignment (operation in a b-tree node)
 	std::cout << "\n";
-}
-
-void lib_calvin_container::randomAccessSpeedTest(size_t size) {
-	typedef BinTreeNode<int> ElemType;
-	lib_calvin::vector<ElemType> ElemTypeArray(size, ElemType(1));
-	lib_calvin::vector<size_t> indexArray(size, 0);
-	for (size_t i = 1; i < size; ++i) {
-		indexArray[i] = i;
-	}
-	std::shuffle(indexArray.begin(), indexArray.end(), std::mt19937_64(std::random_device()()));
-	lib_calvin::stopwatch watch;
-	int temp = 0;
-	watch.start();
-	for (size_t i = 0; i < size - 1; ++i) {
-		temp += ElemTypeArray[indexArray[i]].getKey();
-		//ElemTypeArray[indexArray[i]].next_ = (&ElemTypeArray[indexArray[i + 1]]);
-	}
-	watch.stop();
-	std::cout << temp << " ElemType size: " << sizeof(ElemType) << " array length: " << size << 
-		" random access speed: " << size / watch.read() << "\n";
-
-	watch.start();
-	ElemType *thisPointer = &ElemTypeArray[indexArray[0]];
-	for (size_t i = 0; i < size - 1; ++i) {
-		temp += thisPointer->getKey();
-		//thisPointer = thisPointer->next_;
-	}
-	watch.stop();
-	std::cout << temp << " ElemType size: " << sizeof(ElemType) << " array length: " << size << 
-		" random access speed: " << size / watch.read() << "\n";
 }
