@@ -19,10 +19,9 @@ private:
 	vector<std::pair<vector<double>, vector<double>>> 
 		readBinaryFile(std::string imageFileName, std::string labelFileName) const;
 	vector<std::pair<vector<double>, vector<double>>> readFile(std::string fileName, size_t count) const;
-	unsigned char readByte(std::ifstream &) const;
-	int32_t readInt(std::ifstream &) const;
+	unsigned char readUnsignedByte(std::ifstream &) const;
 	// some data is stored in big endian. Convert this to little endian and return the value.
-	uint32_t readOneUnsigned(std::ifstream &) const;
+	uint32_t readUnsignedInt(std::ifstream &) const;
 	uint32_t convertFromBigEndian(char[4]) const;
 	void showBytes(std::ifstream &, size_t size) const;
 private:

@@ -1,7 +1,9 @@
 #include "handwritten_digits_analyzer.h"
 
 int main() {
-	lib_calvin_neural_network::handwritten_digits_analyzer analyzer({ 100, 30 }, 1);
+	double learningRate = 10;
+
+	lib_calvin_neural_network::handwritten_digits_analyzer analyzer({ 100, 30 }, learningRate);
 
 	size_t numEpochs = 50;
 
