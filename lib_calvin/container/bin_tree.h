@@ -155,9 +155,6 @@ namespace lib_calvin_container
 		size_t size_;
 		BinTreeNode<T> *root_; // root_ is end_'s left child
 		BinTreeNode<T> *end_; // iterator for end()
-#ifdef USE_HEAD_NODE
-		BinTreeNode<T> *head_;
-#endif
 	};
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -406,7 +403,7 @@ namespace lib_calvin_container // open for definitions
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	BinTree<T, K, Comp, ExtractKey>::BinTree() :
 #ifdef USE_HEAD_NODE
-		size_(0), root_(nullptr), end_(nullptr), head_(makeHeadNode()) { }
+		size_(0), root_(nullptr), end_(nullptr) { }
 #else
 		size_(0), root_(nullptr), end_(nullptr) { }
 #endif
@@ -414,7 +411,7 @@ namespace lib_calvin_container // open for definitions
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	BinTree<T, K, Comp, ExtractKey>::BinTree(BinTree<T, K, Comp, ExtractKey> const &rhs) :
 #ifdef USE_HEAD_NODE
-		size_(0), root_(nullptr), end_(nullptr), head_(makeHeadNode()) {
+		size_(0), root_(nullptr), end_(nullptr) {
 #else
 		size_(0), root_(nullptr), end_(nullptr) {
 #endif
@@ -424,7 +421,7 @@ namespace lib_calvin_container // open for definitions
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	BinTree<T, K, Comp, ExtractKey>::BinTree(BinTree<T, K, Comp, ExtractKey> &&rhs) :
 #ifdef USE_HEAD_NODE
-		size_(0), root_(nullptr), end_(nullptr), head_(makeHeadNode()) {
+		size_(0), root_(nullptr), end_(nullptr) {
 #else
 		size_(0), root_(nullptr), end_(nullptr) {
 #endif
@@ -449,8 +446,8 @@ namespace lib_calvin_container // open for definitions
 			return;
 		}
 		size_ = rhs.size_;
-		binTreeNodeCopy(rhs.root_, root_);
 		end_ = makeEndNode();
+		binTreeNodeCopy(rhs.root_, root_);		
 		root_->setParent(end_);
 		end_->setLeftChild(root_);
 	}
@@ -470,17 +467,14 @@ namespace lib_calvin_container // open for definitions
 		typedef BinTreeNode<T> * Node;
 		Node tempRoot = root_;
 		Node tempEnd = end_;
-		Node tempHead = head_;
 		size_t tempSize = size_;
 
 		root_ = rhs.root_;
 		end_ = rhs.end_;
-		head_ = rhs.head_;
 		size_ = rhs.size_;
 		
 		rhs.root_ = tempRoot;
 		rhs.end_ = tempEnd;
-		rhs.head_ = tempHead;
 		rhs.size_ = tempSize;
 	}
 
@@ -488,14 +482,11 @@ namespace lib_calvin_container // open for definitions
 	BinTree<T, K, Comp, ExtractKey>::~BinTree() {
 		// --- Misterious runtime error occurs unless we qualify the destructor ---
 		// In fact there is no point in destructing the object in this case.
-		//end_->BinTreeNode<T>::~BinTreeNode();
-		operator delete (end_);
+		//end_->BinTreeNode<T>::~BinTreeNode();		
 		if (!empty()) {
 			binTreeNodeDelete(root_);
 		}
-#ifdef USE_HEAD_NODE
-		operator delete (head_);
-#endif
+		operator delete (end_);
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -668,8 +659,8 @@ namespace lib_calvin_container // open for definitions
 		BinTree<T, K, Comp, ExtractKey>::insert_impl(T1 &&elem) {
 		using std::pair;
 		if (empty()) { // special case for empty tree
-			root_ = makeNewNode(std::forward<T1>(elem));
 			end_ = makeEndNode();
+			root_ = makeNewNode(std::forward<T1>(elem));			
 			root_->setParent(end_);
 			end_->setLeftChild(root_);
 			size_++;
@@ -741,7 +732,7 @@ namespace lib_calvin_container // open for definitions
 		}
 
 #ifdef USE_HEAD_NODE
-		BinTreeNode<T> *nullNode = head_;
+		BinTreeNode<T> *nullNode = end_;
 #else
 		BinTreeNode<T> *nullNode = nullptr;
 #endif
@@ -788,7 +779,7 @@ namespace lib_calvin_container // open for definitions
 		BinTreeNode<T> *nodeToDelete = node;
 		BinTreeNode<T> *next = binTreeSuccessor(nodeToDelete);
 #ifdef USE_HEAD_NODE
-		BinTreeNode<T> *nullNode = head_;
+		BinTreeNode<T> *nullNode = end_;
 #else
 		BinTreeNode<T> *nullNode = nullptr;
 #endif
@@ -870,11 +861,11 @@ namespace lib_calvin_container // open for definitions
 	{
 #ifdef USE_HEAD_NODE
 		if (srcNode->is_null_) {
-			targetNode = head_;
+			targetNode = end_;
 			return;
 		}
-		BinTreeNode<T> *leftChild = head_;
-		BinTreeNode<T> *rightChild = head_;
+		BinTreeNode<T> *leftChild = end_;
+		BinTreeNode<T> *rightChild = end_;
 #else
 		if (srcNode == nullptr) {
 			targetNode = nullptr;
@@ -942,9 +933,9 @@ namespace lib_calvin_container // open for definitions
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	void
 		BinTree<T, K, Comp, ExtractKey>::prepareNode(BinTreeNode<T> *newNode) const {
-		newNode->setParent(head_);
-		newNode->setLeftChild(head_);
-		newNode->setRightChild(head_);
+		newNode->setParent(end_);
+		newNode->setLeftChild(end_);
+		newNode->setRightChild(end_);
 		newNode->is_null_ = false;
 		return;
 	}
@@ -955,10 +946,10 @@ namespace lib_calvin_container // open for definitions
 		BinTree<T, K, Comp, ExtractKey>::makeEndNode() const {
 		BinTreeNode<T> *endNode = static_cast<BinTreeNode<T> *>(operator new(sizeof(BinTreeNode<T>)));
 #ifdef USE_HEAD_NODE
-		endNode->setParent(head_);
-		endNode->setLeftChild(head_);
-		endNode->setRightChild(head_);
-		endNode->is_null_ = false;
+		endNode->setParent(nullptr);
+		endNode->setLeftChild(nullptr);
+		endNode->setRightChild(nullptr);
+		endNode->is_null_ = true;
 
 #else
 		endNode->setParent(nullptr);
@@ -968,19 +959,6 @@ namespace lib_calvin_container // open for definitions
 
 		return endNode;
 	}
-
-#ifdef USE_HEAD_NODE
-	template <typename T, typename K, typename Comp, typename ExtractKey>
-	BinTreeNode<T> *
-		BinTree<T, K, Comp, ExtractKey>::makeHeadNode() const {
-		BinTreeNode<T> *headNode = static_cast<BinTreeNode<T> *>(operator new(sizeof(BinTreeNode<T>)));
-		headNode->setParent(nullptr);
-		headNode->setLeftChild(nullptr);
-		headNode->setRightChild(nullptr);
-		headNode->is_null_ = true;
-		return headNode;
-	}
-#endif
 
 	/************************* functions definitions ********************/
 
