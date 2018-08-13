@@ -447,7 +447,7 @@ std::vector<double> lib_calvin_benchmark::etc::null_pointer() {
 	return results;
 }
 
-std::vector<double> lib_calvin_benchmark::etc::null_pointer() {
+std::vector<double> lib_calvin_benchmark::etc::null_flag() {
 	std::vector<double> results;
 	for (size_t i = 0; i < testSizes.size(); i++) {
 		size_t testSize = testSizes[i];

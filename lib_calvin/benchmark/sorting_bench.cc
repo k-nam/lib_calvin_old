@@ -103,7 +103,9 @@ lib_calvin_benchmark::sorting::getAlgorithmNamesAndTagsVector(std::vector<Algori
 }
 
 void lib_calvin_benchmark::sorting::sortBench() {
+	std::cout << "Size : " << benchTestSize.size() << "\n\n\n";
 	for (size_t i = 0; i < benchTestSize.size(); i++) {
+		std::cout << "Doing : " << i << "\n\n\n";
 		sortBench<object_16>(i);
 		sortBench<object_32>(i);
 		sortBench<object_64>(i);
