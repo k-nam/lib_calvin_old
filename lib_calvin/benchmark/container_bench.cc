@@ -3,6 +3,9 @@
 #include <unordered_set>
 #include <algorithm>
 
+#include "container_bench.h"
+#include "rb_tree.h"
+#include "rb_plus_tree.h"
 #include "boost/unordered_set.hpp"
 #include "boost/container/set.hpp"
 #include "google/btree/google_btree_set.h"
@@ -10,9 +13,9 @@
 #include "hash_table2.h"
 #include "container_test_types.h"
 #include "bench.h"
-#include "container_bench.h"
 #include "random.h"
 #include "vector.h"
+#include "stopwatch.h"
 
 using namespace lib_calvin_benchmark::container;
 
@@ -85,6 +88,8 @@ lib_calvin_benchmark::container::getContainerNamesAndTags(ContainerType containe
 		return { "boost::set" };
 	case LIB_CALVIN_RB_TREE:
 		return { "lib_calvin::rb_tree" };
+	case LIB_CALVIN_RB_PLUS_TREE:
+		return { "lib_calvin::rb_plus_tree" };
 
 	case GOOGLE_BTREE:
 		return { "google::b_tree", "B-tree" };
@@ -161,7 +166,8 @@ void lib_calvin_benchmark::container::containerBenchTemplate(OperationType opera
 	results.push_back(containerBenchSub<std::set<ElemType>>());	
 	results.push_back(containerBenchSub<boost::container::set<ElemType>>());
 	results.push_back(containerBenchSub<lib_calvin_container::RbTree<ElemType>>());
-	
+	results.push_back(containerBenchSub<lib_calvin_container::RbPlusTree<ElemType>>());
+
 	results.push_back(containerBenchSub<btree::btree_set<ElemType>>()); //Google's
 	results.push_back(containerBenchSub<lib_calvin_container::BTree<ElemType>>());
 	results.push_back(containerBenchSub<lib_calvin_container::BPlusTree<ElemType>>());

@@ -6,7 +6,7 @@
 #include <string>
 #include <functional>
 
-#include "container_test.h"
+
 
 namespace lib_calvin_benchmark
 {
@@ -37,6 +37,7 @@ namespace lib_calvin_benchmark
 			STD_SET,
 			BOOST_SET,
 			LIB_CALVIN_RB_TREE,
+			LIB_CALVIN_RB_PLUS_TREE,
 
 			GOOGLE_BTREE,
 			LIB_CALVIN_BTREE,
@@ -49,7 +50,7 @@ namespace lib_calvin_benchmark
 		};
 
 		std::vector<ContainerType> const allContainers = { 
-			STD_SET, BOOST_SET, LIB_CALVIN_RB_TREE, 
+			STD_SET, BOOST_SET, LIB_CALVIN_RB_TREE, LIB_CALVIN_RB_PLUS_TREE,
 			GOOGLE_BTREE, LIB_CALVIN_BTREE, LIB_CALVIN_BPLUS_TREE,
 			STD_UNORDERED_SET, BOOST_UNORDERED_SET, LIB_CALVIN_HASH_TABLE };
 
