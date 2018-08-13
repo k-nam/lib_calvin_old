@@ -210,6 +210,8 @@
     <ClInclude Include="adt.h" />
     <ClInclude Include="array.h" />
     <ClInclude Include="bin_tree.h" />
+    <ClInclude Include="bin_tree_base.h" />
+    <ClInclude Include="bin_plus_tree.h" />
     <ClInclude Include="b_plus_tree.h" />
     <ClInclude Include="b_tree_base.h" />
     <ClInclude Include="container_test.h" />
@@ -227,6 +229,8 @@
     <ClInclude Include="map.h" />
     <ClInclude Include="map_test.h" />
     <ClInclude Include="rb_tree.h" />
+    <ClInclude Include="rb_tree_base.h" />
+    <ClInclude Include="rb_plus_tree.h" />
     <ClInclude Include="set.h" />
     <ClInclude Include="set_test.h" />
     <ClInclude Include="vector.h" />

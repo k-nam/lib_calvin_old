@@ -119,5 +119,17 @@
     <ClInclude Include="hash_set.h">
       <Filter>public</Filter>
     </ClInclude>
+    <ClInclude Include="rb_tree_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bin_tree_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rb_plus_tree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="bin_plus_tree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
