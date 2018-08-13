@@ -9,16 +9,21 @@ namespace lib_calvin_sort
 	void mergeSort(Iterator first, Iterator last, Comparator comp = Comparator());
 
 	template <typename SrcIterator, typename TargetIterator, typename Comparator>
-	void merge(SrcIterator first, SrcIterator middle, SrcIterator last,
-			   TargetIterator target, Comparator comp);
+	void merge_assign(SrcIterator first, SrcIterator middle, SrcIterator last,
+		TargetIterator target, Comparator comp);
+
+	template <typename SrcIterator, typename TargetIterator, typename Comparator>
+	void merge_construct(SrcIterator first, SrcIterator middle, SrcIterator last,
+		TargetIterator target, Comparator comp);
 
 	template <typename SrcIterator, typename TargetIterator, typename Comparator>
 	void merge2(SrcIterator first, SrcIterator middle, SrcIterator last,
-				TargetIterator target, Comparator comp);
+		TargetIterator target, Comparator comp);
 
-
+	// Return true if insertion sort was done
 	template <typename SrcIterator, typename TargetIterator, typename Comparator>
-	void mergeSortSub(SrcIterator first, SrcIterator last, TargetIterator target, Comparator comp, bool targetIsReal);
+	bool mergeSortSub(SrcIterator first, SrcIterator last, TargetIterator target, Comparator comp,
+		bool targetIsReal);
 }
 
 
@@ -32,11 +37,11 @@ void lib_calvin_sort::mergeSort(Iterator first, Iterator last, Comparator comp) 
 	// prepare supplementary array
 	pointerType tempArray = (pointerType)operator new (sizeof(valueType) * num);
 	for (ptrdiff_t i = 0; i < num; ++i) {
-		new (tempArray + i)  valueType(std::move(*(first + i)));
+		//new (tempArray + i)  valueType(std::move(*(first + i)));
 	}
 
 	// mergesort without redundant copying
-	mergeSortSub(tempArray, tempArray + num, first, comp, false);
+	mergeSortSub(tempArray, tempArray + num, first, comp, true);
 	// delete supplementary array
 	for (ptrdiff_t i = 0; i < num; ++i) {
 		tempArray[i].~valueType();
@@ -45,26 +50,32 @@ void lib_calvin_sort::mergeSort(Iterator first, Iterator last, Comparator comp) 
 }
 
 template <typename SrcIterator, typename TargetIterator, typename Comparator>
-void lib_calvin_sort::mergeSortSub(SrcIterator first, SrcIterator last,
-								   TargetIterator target, Comparator comp, bool targetIsReal) {	
+bool lib_calvin_sort::mergeSortSub(SrcIterator first, SrcIterator last,
+	TargetIterator target, Comparator comp,
+	bool targetIsReal) {
 	size_t num = last - first;
 	TargetIterator targetLast = target + num;
 	if (last - first < MERGESORT_THRESHOLD && targetIsReal) {
 		insertionSort(target, targetLast, comp);
-		return;
+		return true;
 	}
 
 	SrcIterator middle = first + num / 2;
 	TargetIterator targetMiddle = target + num / 2;
 	mergeSortSub(target, targetMiddle, first, comp, !targetIsReal);
-	mergeSortSub(targetMiddle, targetLast, middle, comp, !targetIsReal);
-	lib_calvin_sort::merge(first, middle, last, target, comp);
+	bool result = mergeSortSub(targetMiddle, targetLast, middle, comp, !targetIsReal);
+	if (result) {
+		lib_calvin_sort::merge_construct(first, middle, last, target, comp);
+	} else {
+		lib_calvin_sort::merge_assign(first, middle, last, target, comp);
+	}	
+	return false;
 }
 
 // normal two-way merge; input size is not zero (both arrays are not empty)
 template <typename SrcIterator, typename TargetIterator, typename Comparator>
-void lib_calvin_sort::merge(SrcIterator first, SrcIterator middle, SrcIterator last,
-							TargetIterator target, Comparator comp) {
+void lib_calvin_sort::merge_assign(SrcIterator first, SrcIterator middle, SrcIterator last,
+	TargetIterator target, Comparator comp) {
 	SrcIterator left = first, right = middle;
 	TargetIterator dest = target;
 
@@ -79,7 +90,7 @@ void lib_calvin_sort::merge(SrcIterator first, SrcIterator middle, SrcIterator l
 			if (left == middle) {
 				break;
 			}
-		}		
+		}
 	}
 
 	if (right == last) { // right subarray empty
@@ -93,9 +104,43 @@ void lib_calvin_sort::merge(SrcIterator first, SrcIterator middle, SrcIterator l
 	}
 }
 
+// normal two-way merge; input size is not zero (both arrays are not empty)
+template <typename SrcIterator, typename TargetIterator, typename Comparator>
+void lib_calvin_sort::merge_construct(SrcIterator first, SrcIterator middle, SrcIterator last,
+	TargetIterator target, Comparator comp) {
+	SrcIterator left = first, right = middle;
+	TargetIterator dest = target;
+	typedef typename std::iterator_traits<SrcIterator>::pointer pointerType;
+	typedef typename std::iterator_traits<SrcIterator>::value_type valueType;
+
+	while (true) {
+		if (comp(*right, *left)) {
+			new (&(*dest++)) valueType(std::move(*right++));
+			if (right == last) {
+				break;
+			}
+		} else {
+			new (&(*dest++)) valueType(std::move(*left++));
+			if (left == middle) {
+				break;
+			}
+		}
+	}
+
+	if (right == last) { // right subarray empty
+		while (left != middle) {
+			new (&(*dest++)) valueType(std::move(*left++));
+		}
+	} else {
+		while (right != last) { //left subarray empty
+			new (&(*dest++)) valueType(std::move(*right++));
+		}
+	}
+}
+
 template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void lib_calvin_sort::merge2(SrcIterator first, SrcIterator middle, SrcIterator last,
-							 TargetIterator target, Comparator comp) {
+	TargetIterator target, Comparator comp) {
 	// Parameter variables will be used later
 	SrcIterator left = first;
 	SrcIterator leftEnd = middle;

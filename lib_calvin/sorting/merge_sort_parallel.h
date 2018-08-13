@@ -77,7 +77,7 @@ void lib_calvin_sort::mergeSortParallelSub0(SrcIterator first, SrcIterator last,
 		mergeSortParallelSub0ThreadFunction<SrcIterator, TargetIterator, Comparator>, &argRight);
 	lib_calvin::wait_for_thread(leftThread);
 	lib_calvin::wait_for_thread(rightThread);
-	lib_calvin_sort::merge(first, middle, last, target, comp);
+	lib_calvin_sort::merge_assign(first, middle, last, target, comp);
 }
 
 #endif
