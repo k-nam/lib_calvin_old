@@ -16,9 +16,11 @@
 #include "container_test.h"
 
 #include "bin_tree.h"
+#include "bin_plus_tree.h"
 #include "b_tree.h"
 #include "b_plus_tree.h"
 #include "rb_tree.h"  
+#include "rb_plus_tree.h"  
 #include "ptr_set.h"
 #include "hash_table.h"
 #include "hash_table2.h"
@@ -48,8 +50,13 @@ void lib_calvin_container::setTest() {
 	
 	//setFunctionTest<lib_calvin::set<HeavyObject>>(testSize, "lib_calvin::set");
 	setFunctionTest<BinTree<HeavyObject>>(testSize, "lib_calvin_container::BinTree");
+	setFunctionTest<BinPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BinPlusTree");
+
 	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
-	
+	setFunctionTest<RbPlusTree<HeavyObject>>(testSize, "lib_calvin_container::RbPlusTree");
+
+
+
 	setFunctionTest<BTree<HeavyObject>>(testSize, "lib_calvin_container::BTree");
 	setFunctionTest<BPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BPlusTree");
 	//setFunctionTest<OrderedArray<HeavyObject>>(testSize, "lib_calvin_container::OrderedArray");
@@ -68,6 +75,7 @@ void lib_calvin_container::setTest() {
 	setPerformanceTest<boost::container::set<Numeric>>(largeSize, "boost::set / Numeric");
 	//setPerformanceTest<BinTree<Numeric>>(largeSize, "BinTree / Numeric");
 	setPerformanceTest<RbTree<Numeric>>(largeSize, "RbTree / Numeric");
+	setPerformanceTest<RbPlusTree<Numeric>>(largeSize, "RbPlusTree / Numeric");
 	setPerformanceTest<BTree<Numeric>>(largeSize, "BTree / Numeric");
 	setPerformanceTest<BPlusTree<Numeric>>(largeSize, "BPlusTree / Numeric");
 	//setPerformanceTest<OrderedArray<Numeric>>(largeSize, "OrderedArray / Numeric");
