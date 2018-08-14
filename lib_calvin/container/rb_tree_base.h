@@ -15,15 +15,16 @@ namespace lib_calvin_container
 	template <typename T, typename K = T, typename Comp = std::less<K>, typename ExtractKey = Identity<T>>
 	class RB_TREE_BASE : public BIN_TREE_BASE<T, K, Comp, ExtractKey> {
 	public:
-		
-
 		typedef BIN_TREE_BASE<T, K, Comp, ExtractKey> BaseTreeType;
 		typedef BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node BaseNodeType;
+
+		using  BIN_TREE_BASE<T, K, Comp, ExtractKey>::Direction;
 
 		class Node : public BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node {
 		public:
 			using BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node::color_;
-
+			using  BIN_TREE_BASE<T, K, Comp, ExtractKey>::RbColor;
+			
 			// Node is created with its color set to red
 			Node(T const &key);
 			Node(T &&key);
