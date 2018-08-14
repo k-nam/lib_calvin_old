@@ -3,7 +3,7 @@
 
 namespace lib_calvin_sort
 {
-	int const MERGESORT_THRESHOLD = 24;
+	int const MERGESORT_THRESHOLD = 32;
 
 	template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
 	void mergeSort(Iterator first, Iterator last, Comparator comp = Comparator());
