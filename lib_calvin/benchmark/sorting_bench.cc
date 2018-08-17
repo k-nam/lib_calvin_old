@@ -8,7 +8,7 @@
 #include "pdqsort.h"
 #include "bench.h"
 #include "random.h"
-
+#include "boost/sort/sort.hpp"
 
 std::vector<lib_calvin_benchmark::sorting::Algorithm>
 lib_calvin_benchmark::sorting::getBenchAlgorithms() {
@@ -17,14 +17,21 @@ lib_calvin_benchmark::sorting::getBenchAlgorithms() {
 		STD_SORT,
 		LIB_CALVIN_QSORT,
 
-		PDQSORT,
-		LIB_CALVIN_BLOCK_QSORT,
+		ORLP_PDQSORT,
+		BOOST_PDQSORT,
+		LIB_CALVIN_BLOCK_QSORT,		
 
 		STD_STABLE_SORT,
+		BOOST_SPINSORT,
 		LIB_CALVIN_MERGESORT,
+
+		BOOST_FLAT_STABLE_SORT,
 		LIB_CALVIN_IN_PLACE_MERGESORT,
 
-		LIB_CALVIN_HEAPSORT,
+		//LIB_CALVIN_HEAPSORT,
+
+		BOOST_SAMPLE_SORT_PARALLEL,
+		BOOST_BLOCK_INDIRECT_SORT,
 
 		LIB_CALVIN_BLOCK_QSORT_PARALLEL,
 		LIB_CALVIN_MERGESORT_PARALLEL
@@ -40,8 +47,15 @@ lib_calvin_benchmark::sorting::getAlgorithmNamesAndTags(Algorithm algo) {
 	case STD_STABLE_SORT:
 		return { "std::stable_sort", "stable" };
 
-	case PDQSORT:
+	case ORLP_PDQSORT:
 		return { "pdqsort", "in-place" };
+
+	case BOOST_SPINSORT:
+		return { "boost::spinsort", "stable" };
+	case BOOST_FLAT_STABLE_SORT:
+		return { "boost::flat_stable_sort", "stable", "in-place" };
+	case BOOST_PDQSORT:
+		return { "boost::pdqsort", "in-place" };
 
 	case LIB_CALVIN_QSORT:
 		return { "lib_calvin::qsort", "in-place" };
@@ -56,6 +70,11 @@ lib_calvin_benchmark::sorting::getAlgorithmNamesAndTags(Algorithm algo) {
 
 	case LIB_CALVIN_HEAPSORT:
 		return { "lib_calvin::heapsort", "in-place" };
+
+	case BOOST_BLOCK_INDIRECT_SORT:
+		return { "boost::block_indirect_sort_parallel", "in-place", "parallel" };
+	case BOOST_SAMPLE_SORT_PARALLEL:
+		return { "boost::sample_sort_parallel", "stable", "parallel" };
 
 	case LIB_CALVIN_BLOCK_QSORT_PARALLEL:
 		return { "block_qsort_parallel", "parallel", "in-place" };
@@ -144,8 +163,15 @@ double lib_calvin_benchmark::sorting::sortBenchSub(Algorithm algo, size_t testSi
 	case STD_STABLE_SORT:
 		return sortBenchSub2(std::stable_sort<T *, less<T>>, testSize, numIter);
 
-	case PDQSORT:
+	case ORLP_PDQSORT:
 		return sortBenchSub2(pdqsort_branchless<T *, less<T>>, testSize, numIter);
+
+	case BOOST_SPINSORT:
+		return sortBenchSub2(boost::sort::spinsort<T *, less<T>>, testSize, numIter);
+	case BOOST_FLAT_STABLE_SORT:
+		return sortBenchSub2(boost::sort::flat_stable_sort<T *, less<T>>, testSize, numIter);
+	case BOOST_PDQSORT:
+		return sortBenchSub2(boost::sort::pdqsort_branchless<T *, less<T>>, testSize, numIter);
 
 	case LIB_CALVIN_QSORT:
 		return sortBenchSub2(introSort<T *, less<T>>, testSize, numIter);
@@ -160,8 +186,13 @@ double lib_calvin_benchmark::sorting::sortBenchSub(Algorithm algo, size_t testSi
 	case LIB_CALVIN_HEAPSORT:
 		return sortBenchSub2(heapSort<T *, less<T>>, testSize, numIter);
 
+	case BOOST_SAMPLE_SORT_PARALLEL:
+		return sortBenchSub2(boost::sort::sample_sort<T *, less<T>>, testSize, numIter);
+	case BOOST_BLOCK_INDIRECT_SORT:
+		return sortBenchSub2(boost::sort::block_indirect_sort<T *, less<T>>, testSize, numIter);
+
 	case LIB_CALVIN_BLOCK_QSORT_PARALLEL:
-		return sortBenchSub2(introSortParallel<T *, less<T>>, testSize, numIter);
+		return sortBenchSub2(introSortParallelAdvanced2<T *, less<T>>, testSize, numIter);
 	case LIB_CALVIN_MERGESORT_PARALLEL:
 		return sortBenchSub2(mergeSortParallel<T *, less<T>>, testSize, numIter);
 
