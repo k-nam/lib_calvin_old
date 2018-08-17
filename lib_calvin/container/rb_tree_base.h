@@ -17,13 +17,14 @@ namespace lib_calvin_container
 	public:
 		typedef BIN_TREE_BASE<T, K, Comp, ExtractKey> BaseTreeType;
 		typedef BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node BaseNodeType;
+		typedef typename  BIN_TREE_BASE<T, K, Comp, ExtractKey>::RbColor RbColor;
 
 		using  BIN_TREE_BASE<T, K, Comp, ExtractKey>::Direction;
 
 		class Node : public BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node {
 		public:
 			using BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node::color_;
-			using  BIN_TREE_BASE<T, K, Comp, ExtractKey>::RbColor;
+			typedef typename  BIN_TREE_BASE<T, K, Comp, ExtractKey>::RbColor RbColor;
 			
 			// Node is created with its color set to red
 			Node(T const &key);
@@ -59,7 +60,7 @@ namespace lib_calvin_container
 		RB_TREE_BASE<T, K, Comp, ExtractKey>(RB_TREE_BASE<T, K, Comp, ExtractKey> &&rhs) :
 			BIN_TREE_BASE<T, K, Comp, ExtractKey>() {
 			//std::cout << "rb move ctor\n";
-			swap(rhs);
+			BIN_TREE_BASE<T, K, Comp, ExtractKey>::swap(rhs);
 		}
 		RB_TREE_BASE &operator=(RB_TREE_BASE const &rhs) { return static_cast<RB_TREE_BASE &>(BIN_TREE_BASE::operator=(rhs)); }
 		RB_TREE_BASE &operator=(RB_TREE_BASE &&rhs) { return static_cast<RB_TREE_BASE &>(BIN_TREE_BASE::operator=(std::forward<RB_TREE_BASE>(rhs))); }
@@ -194,7 +195,7 @@ namespace lib_calvin_container
 		RB_TREE_BASE<T, K, Comp, ExtractKey>::makeNewNode(T const &key) const {
 		auto newNode = new Node(key);
 #ifdef USE_HEAD_NODE
-		prepareNode(newNode);
+		BIN_TREE_BASE<T, K, Comp, ExtractKey>::prepareNode(newNode);
 #endif	
 		return newNode;
 	}
@@ -204,7 +205,7 @@ namespace lib_calvin_container
 		RB_TREE_BASE<T, K, Comp, ExtractKey>::makeNewNode(T &&key) const {
 		auto newNode = new Node(std::move(key));
 #ifdef USE_HEAD_NODE
-		prepareNode(newNode);
+		BIN_TREE_BASE<T, K, Comp, ExtractKey>::prepareNode(newNode);
 #endif	
 		return newNode;
 	}
@@ -215,7 +216,7 @@ namespace lib_calvin_container
 		auto newNode = new Node(rhs->getKey(),
 			static_cast<Node const *>(rhs)->getColor());
 #ifdef USE_HEAD_NODE
-		prepareNode(newNode);
+		BIN_TREE_BASE<T, K, Comp, ExtractKey>::prepareNode(newNode);
 #endif	
 		return newNode;
 	}
