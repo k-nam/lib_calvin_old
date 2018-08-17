@@ -218,7 +218,7 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 		// Do swap now
 		ptrdiff_t swapCount = min(l_end - l_begin, r_end - r_begin);
 		if (swapCount != 0) {
-			/*
+			
 			// Zig-zag swapping			
 			Iterator temp_left = left + leftBuffer[l_begin];
 			Iterator temp_right = right - rightBuffer[r_begin];
@@ -235,11 +235,13 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 				*temp_left = std::move(*temp_right);
 			}
 			*temp_right = std::move(store);
-			*/
+			
 
+			/*
 			for (ptrdiff_t i = 0; i < swapCount; i++) {
 				std::iter_swap((left + leftBuffer[l_begin + i]), (right - rightBuffer[r_begin + i]));
 			}
+			*/
 			
 		}
 
