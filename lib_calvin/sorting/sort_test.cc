@@ -5,6 +5,7 @@
 #include "random.h"
 #include "pdqsort.h"
 #include "bench.h"
+#include "boost/sort/sort.hpp"
 
 void lib_calvin_sort::sortTest() {
 	std::cout << "---------------- Beginning sort test -----------------\n\n";
@@ -22,9 +23,14 @@ void lib_calvin_sort::sortTest() {
 	//binSearchTest2();
 	//getSamplesTest();
 
+	sortTest<ElemType>(boost::sort::spinsort, "spinsort");
+	sortTest<ElemType>(boost::sort::flat_stable_sort, "flat_stable_sort");
+	sortTest<ElemType>(boost::sort::pdqsort_branchless, "pdqsort");
+
+
 	//sortTest<ElemType>(introSort, "introSort");
 	//sortTest<ElemType>(blockIntroSort, "blockIntroSort");
-	//sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
+	sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
 	//sortTest<ElemType>(introSortParallel, "Parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced, "Advanced parallel introSort");
 	sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
