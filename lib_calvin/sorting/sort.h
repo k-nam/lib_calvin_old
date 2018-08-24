@@ -12,15 +12,9 @@
 #include "thread.h"
 #include "factory.h"
 
-#include "insertion_sort.h"
+
 #include "intro_sort.h"
-#include "intro_sort_parallel.h"
 #include "merge_sort.h"
-#include "merge_sort_parallel.h"
-#include "in_place_merge_sort.h"
-#include "heap_sort.h"
-#include "counting_sort.h"
-#include "sample_sort.h"
 
 namespace lib_calvin_sort
 {
@@ -30,7 +24,7 @@ namespace lib_calvin_sort
 	int const L1_CACHE_SIZE = 32000;
 	int const L2_CACHE_SIZE = 256000;
 	int const CACHE_LINE_SIZE = 64;
-
+	int const PARALLEL_THRE = 8000;
 
 } // end namespace lib_calvin_sort
 

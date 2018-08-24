@@ -2,6 +2,8 @@
 #define LIB_CALVIN__SORT__MERGE_SORT_PARALLEL_H
 
 #include "thread.h"
+#include "random.h"
+#include "merge_sort.h"
 
 namespace lib_calvin_sort
 {
@@ -38,6 +40,11 @@ namespace lib_calvin_sort
 
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::mergeSortParallel(Iterator first, Iterator last, Comparator comp) {
+	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE / 2 ||
+		last - first < PARALLEL_THRE) {
+		mergeSort(first, last, comp);
+		return;
+	}
 	size_t num = last - first;
 	// additional array for operation
 	typedef typename iterator_traits<Iterator>::pointer pointerType;
@@ -59,13 +66,17 @@ template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void lib_calvin_sort::mergeSortParallelSub0(SrcIterator first, SrcIterator last,
 											TargetIterator target, Comparator comp, int thread_limit, bool targetReal) {
 	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE / 2 || thread_limit <= 0) {
-		mergeSortSub(first, last, target, comp, targetReal);
+		mergeSortSub(first, last, target, comp, targetReal, false);
 		return;
 	}
 	size_t num = last - first;
 	TargetIterator targetLast = target + num;
-	SrcIterator middle = first + num / 2;
-	TargetIterator targetMiddle = target + num / 2;
+
+	lib_calvin::random_number_generator gen;
+	size_t leftSize = num / 4 + gen() % (num / 4);
+
+	SrcIterator middle = first + leftSize;
+	TargetIterator targetMiddle = target + leftSize;
 	MergeSortRThreadArg<SrcIterator, TargetIterator, Comparator> argLeft(
 		target, targetMiddle, first, comp, thread_limit - 1, !targetReal);
 	MergeSortRThreadArg<SrcIterator, TargetIterator, Comparator> argRight(
@@ -77,7 +88,7 @@ void lib_calvin_sort::mergeSortParallelSub0(SrcIterator first, SrcIterator last,
 		mergeSortParallelSub0ThreadFunction<SrcIterator, TargetIterator, Comparator>, &argRight);
 	lib_calvin::wait_for_thread(leftThread);
 	lib_calvin::wait_for_thread(rightThread);
-	lib_calvin_sort::merge_assign(first, middle, last, target, comp);
+	lib_calvin_sort::merge_assign(first, middle, middle, last, target, comp);
 }
 
 #endif

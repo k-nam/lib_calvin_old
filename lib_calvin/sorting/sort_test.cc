@@ -5,6 +5,18 @@
 #include "random.h"
 #include "pdqsort.h"
 #include "bench.h"
+
+#include "insertion_sort.h"
+#include "intro_sort.h"
+#include "intro_sort_parallel.h"
+#include "merge_sort.h"
+#include "merge_sort_parallel.h"
+#include "in_place_merge_sort.h"
+#include "in_place_merge_sort_parallel.h"
+#include "heap_sort.h"
+#include "counting_sort.h"
+#include "sample_sort.h"
+
 #include "boost/sort/sort.hpp"
 
 void lib_calvin_sort::sortTest() {
@@ -24,22 +36,27 @@ void lib_calvin_sort::sortTest() {
 	//getSamplesTest();
 
 	sortTest<ElemType>(boost::sort::spinsort, "spinsort");
-	sortTest<ElemType>(boost::sort::flat_stable_sort, "flat_stable_sort");
-	sortTest<ElemType>(boost::sort::pdqsort_branchless, "pdqsort");
-
+	//sortTest<ElemType>(boost::sort::flat_stable_sort, "flat_stable_sort");
+	//sortTest<ElemType>(boost::sort::pdqsort_branchless, "pdqsort");
 
 	//sortTest<ElemType>(introSort, "introSort");
+	//sortTest<ElemType>(stableBlockIntroSort, "stableBlockIntroSort");
 	//sortTest<ElemType>(blockIntroSort, "blockIntroSort");
-	sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
+	//sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
+	//sortTest<ElemType>(boost::sort::block_indirect_sort, "block_indirect_sort parallel");
 	//sortTest<ElemType>(introSortParallel, "Parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced, "Advanced parallel introSort");
-	sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
+	//sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
 	sortTest<ElemType>(mergeSort, "mergeSort");
-	//sortTest<ElemType>(mergeSortParallel, "Parallel mergeSort");
+	sortTest<ElemType>(mergeSort2, "mergeSort 2");
+	//sortTest<ElemType>(boost::sort::sample_sort, "sample_sort");
+	//sortTest<ElemType>(boost::sort::parallel_stable_sort, "parallel_stable_sort");
+	sortTest<ElemType>(mergeSortParallel, "Parallel mergeSort");
+	sortTest<ElemType>(inPlaceMergeSortParallel, "Parallel In-place mergesort");
 	//sortTest<ElemType>(heapSort, "heapSort");
-	//sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");
+	sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");
 	//sortTest<ElemType>(std::sort, "std::sort");
-	sortTest<ElemType>(std::stable_sort, "std::stable_sort");
+	//sortTest<ElemType>(std::stable_sort, "std::stable_sort");
 	//sortTest<ElemType>(pdqsort, "pdqsort");
 	
 

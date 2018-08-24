@@ -53,7 +53,7 @@ void lib_calvin_container::setTest() {
 	setFunctionTest<BinPlusTree<HeavyObject>>(testSize, "lib_calvin_container::BinPlusTree");
 
 	setFunctionTest<RbTree<HeavyObject>>(testSize, "lib_calvin_container::RbTree");
-	setFunctionTest<RbPlusTree<HeavyObject>>(testSize, "lib_calvin_container::RbPlusTree");
+	setFunctionTest<RbPTreeWithHead<HeavyObject>>(testSize, "lib_calvin_container::RbPTreeWithHead");
 
 
 
@@ -75,7 +75,7 @@ void lib_calvin_container::setTest() {
 	setPerformanceTest<boost::container::set<Numeric>>(largeSize, "boost::set / Numeric");
 	//setPerformanceTest<BinTree<Numeric>>(largeSize, "BinTree / Numeric");
 	setPerformanceTest<RbTree<Numeric>>(largeSize, "RbTree / Numeric");
-	setPerformanceTest<RbPlusTree<Numeric>>(largeSize, "RbPlusTree / Numeric");
+	setPerformanceTest<RbPTreeWithHead<Numeric>>(largeSize, "RbPTreeWithHead / Numeric");
 	setPerformanceTest<BTree<Numeric>>(largeSize, "BTree / Numeric");
 	setPerformanceTest<BPlusTree<Numeric>>(largeSize, "BPlusTree / Numeric");
 	//setPerformanceTest<OrderedArray<Numeric>>(largeSize, "OrderedArray / Numeric");

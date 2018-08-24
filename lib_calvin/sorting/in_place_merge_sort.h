@@ -64,7 +64,8 @@ void lib_calvin_sort::inPlaceMergeSort3(Iterator first, Iterator last, Comparato
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::inPlaceMergeSortSub(Iterator first, Iterator last,
 									  Comparator comp, ptrdiff_t threshold) {
-	if (last - first < 100) {
+	ptrdiff_t size = last - first;
+	if (last - first < MERGESORT_THRESHOLD) {
 		insertionSort(first, last, comp);
 		return;
 	}

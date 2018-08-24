@@ -229,7 +229,7 @@ void lib_calvin_sort::introSortParallelSub1(
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSortParallelSub2(Iterator first, Iterator last, Comparator comp,
 											FactoryLoader<pair<Iterator, Iterator>> &factoryLoader) {
-	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE) {
+	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE / 2) {
 		//std::cout << "adding to factory loader: sub2\n";
 		factoryLoader.add(pair<Iterator, Iterator>(first, last));
 	} else {

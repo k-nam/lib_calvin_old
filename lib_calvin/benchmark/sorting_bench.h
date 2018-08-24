@@ -11,9 +11,11 @@ namespace lib_calvin_benchmark
 	{
 		size_t const kilo = 1000;
 		size_t const mega = 1000*1000;
-		std::vector<size_t> const benchTestSize = { kilo, 10*kilo, mega, 10*mega };
-		std::vector<size_t> const benchNumIter = { 1000, 100, 3, 1};
-		std::vector<int> const benchOrder = { 0, 1, 2, 3 };
+		std::vector<size_t> const benchTestSize = 
+			{ 256, kilo, 4*kilo, 16*kilo, 64*kilo, 256*kilo, mega, 4*mega };
+		std::vector<size_t> const benchNumIter = 
+			{ 1000, 100, 100, 30, 10, 10, 3, 2};
+		std::vector<int> const benchOrder = { 0, 1, 2, 3, 4, 5, 6, 7 };
 		std::string const unit = "M/s (higher is better)";
 		std::string const category = "Sorting";
 		std::string const benchTitleSuffix = "objects";
@@ -31,6 +33,7 @@ namespace lib_calvin_benchmark
 			LIB_CALVIN_QSORT,
 			LIB_CALVIN_BLOCK_QSORT,
 
+			LIB_CALVIN_STABLE_BLOCK_QSORT,
 			LIB_CALVIN_MERGESORT,
 			LIB_CALVIN_IN_PLACE_MERGESORT,
 
@@ -43,6 +46,7 @@ namespace lib_calvin_benchmark
 			BOOST_BLOCK_INDIRECT_SORT,
 
 			LIB_CALVIN_BLOCK_QSORT_PARALLEL,
+			LIB_CALVIN_BLOCK_QSORT_PARALLEL_ADVANCED,
 			LIB_CALVIN_MERGESORT_PARALLEL
 		};
 

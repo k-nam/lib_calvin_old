@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <vector>
 #include "sort.h"
 #include "stopwatch.h"
 #include "container_test_types.h"
@@ -119,10 +120,10 @@ void lib_calvin_sort::sortTest(void(*sortingAlg) (T *first, T *last, Comparator 
 	Comparator comp) {
 	stopwatch watch;
 	bool correct = true;
-	bool stable = true;
-	size_t const numTestCases = 4;
-	int arraySize[numTestCases] = { 100, 1000, 10000, 1000000 };
-	int numIteration[numTestCases] = { 1000, 100, 100, 5};
+	bool stable = true;	
+	std::vector<int> const arraySize = { 100, 1000, 10000, 1000000 };
+	std::vector<int> const numIteration = { 1000, 100, 10, 3};
+	size_t const numTestCases = arraySize.size();
 	std::srand(1232); // reset seed to give identical input to algorithms
 	for (int i = 0; i < numTestCases; ++i) {
 		if (arraySize[i] == 0) {
@@ -177,7 +178,8 @@ void lib_calvin_sort::sortTest(void(*sortingAlg) (T *first, T *last, Comparator 
 			cout << "Not stable\n";
 		}
 		cout << sizeof(T) << "Bytes ";
-		cout << arraySize[i] << " speed: " << arraySize[i] / min << " # default ctors: " <<
+		cout << arraySize[i] << " speed: " << arraySize[i] / min << " ( " <<
+			min << " ) # default ctors: " <<
 			SimpleStruct::defaultCtorCount_ / 1000000.0 << "m" << " # copy ctors: " <<
 			SimpleStruct::copyCtorCount_ / 1000000.0 << "m" << " # assignment: " <<
 			SimpleStruct::assignCount_ / 1000000.0 << "m" << "\n";
@@ -199,7 +201,8 @@ void lib_calvin_sort::sortTest(void(*sortingAlgorithm)(Iterator, Iterator, Compa
 	for (ptrdiff_t j = 0; j < size - 1; j++) {
 		if (comp(*(first + (j + 1)), *(first + j))) {
 			isCorrect = false;
-			std::cout << "Sorting wrong!\n" << std::to_string(*(first + (j + 1)));
+			//std::cout << "Sorting wrong!\n" << std::to_string(*(first + (j + 1)));
+			return;
 			exit(0);
 		}
 	}

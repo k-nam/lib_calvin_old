@@ -117,6 +117,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="in_place_merge_sort_parallel.h" />
     <ClInclude Include="sample_sort.h" />
     <ClInclude Include="counting_sort.h" />
     <ClInclude Include="heap_sort.h" />

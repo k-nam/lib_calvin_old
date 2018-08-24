@@ -88,8 +88,8 @@ lib_calvin_benchmark::container::getContainerNamesAndTags(ContainerType containe
 		return { "boost::set" };
 	case LIB_CALVIN_RB_TREE:
 		return { "lib_calvin::rb_tree" };
-	case LIB_CALVIN_RB_PLUS_TREE:
-		return { "lib_calvin::rb_plus_tree" };
+	case LIB_CALVIN_RB_TREE_HEAD_NODE:
+		return { "lib_calvin::rb_tree+" };
 
 	case GOOGLE_BTREE:
 		return { "google::b_tree", "B-tree" };
@@ -166,7 +166,7 @@ void lib_calvin_benchmark::container::containerBenchTemplate(OperationType opera
 	results.push_back(containerBenchSub<std::set<ElemType>>());	
 	results.push_back(containerBenchSub<boost::container::set<ElemType>>());
 	results.push_back(containerBenchSub<lib_calvin_container::RbTree<ElemType>>());
-	results.push_back(containerBenchSub<lib_calvin_container::RbPlusTree<ElemType>>());
+	results.push_back(containerBenchSub<lib_calvin_container::RbPTreeWithHead<ElemType>>());
 
 	results.push_back(containerBenchSub<btree::btree_set<ElemType>>()); //Google's
 	results.push_back(containerBenchSub<lib_calvin_container::BTree<ElemType>>());

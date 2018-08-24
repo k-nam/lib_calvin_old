@@ -1,7 +1,7 @@
 
 #ifdef USE_HEAD_NODE
 #include "bin_plus_tree.h"
-#define RB_TREE_BASE RbPlusTree
+#define RB_TREE_BASE RbPTreeWithHead
 #define BIN_TREE_BASE BinPlusTree
 #else
 #include "bin_tree.h"
