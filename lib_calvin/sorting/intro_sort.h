@@ -19,6 +19,9 @@ namespace lib_calvin_sort {
 	void introSort(Iterator first, Iterator last, Comparator const comp = Comparator());
 
 	template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
+	void stableBlockIntroSort(Iterator first, Iterator last, Comparator const comp = Comparator());
+
+	template <typename Iterator, typename Comparator = std::less<typename std::iterator_traits<Iterator>::value_type>>
 	void blockIntroSort(Iterator first, Iterator last, Comparator const comp = Comparator());
 	// Returns the iterator for the first element of the right subarray
 	// Caution: this assumes that input array has at least 3 elements
@@ -30,6 +33,12 @@ namespace lib_calvin_sort {
 
 	template <typename Iterator, typename Comparator>
 	void introSortSub(Iterator first, Iterator last, Comparator comp, int remainingDepth);
+	
+	// Return true if insertion sort was called
+	template <typename Iterator, typename Comparator>
+	bool stableBlockIntroSortSub(Iterator first, Iterator last, Iterator target,
+		Comparator comp, int remainingDepth, bool firstCalled, bool isSourceReal, bool inReverseOrder,
+		bool *flags);	
 
 	// using counting sort for subroutine
 	template <typename Iterator, typename Comparator>
@@ -41,6 +50,24 @@ namespace lib_calvin_sort {
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSort(Iterator first, Iterator last, Comparator comp) {
 	introSortSub(first, last, comp, lib_calvin_util::log(last - first) * 3);
+}
+
+template <typename Iterator, typename Comparator>
+void lib_calvin_sort::stableBlockIntroSort(Iterator first, Iterator last, Comparator comp) {
+	using namespace std;
+	ptrdiff_t num = last - first;
+	typedef typename iterator_traits<Iterator>::pointer pointerType;
+	typedef typename iterator_traits<Iterator>::value_type valueType;
+	pointerType tempArray = (pointerType)operator new (sizeof(valueType) * num);
+	bool *flags = new bool[num];
+	stableBlockIntroSortSub(first, last, tempArray, comp, lib_calvin_util::log(num) * 3,
+		true, true, false, flags);
+
+	for (ptrdiff_t i = 0; i < num; ++i) {
+		tempArray[i].~valueType();
+	}
+	operator delete(tempArray);
+	delete flags;
 }
 
 template <typename Iterator, typename Comparator>
@@ -67,11 +94,161 @@ void lib_calvin_sort::introSortSub(Iterator first, Iterator last, Comparator com
 }
 
 template <typename Iterator, typename Comparator>
-Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last, Comparator comp) {
+bool lib_calvin_sort::stableBlockIntroSortSub(Iterator first, Iterator last, Iterator target, Comparator comp,
+	int remainingDepth, bool firstCalled, bool isSourceReal, bool inReverseOrder, bool *flags) {
+	 
+	ptrdiff_t num = last - first;
+
+	if (last - first < INTROSORT_THRESHOLD && isSourceReal) {
+		insertionSort(first, last, comp);
+		return true;
+	}
+	if (first == last) {
+		return false;
+	}
+	if (remainingDepth <= 0 && isSourceReal) {
+		mergeSort(first, last, comp);
+		return false;
+	}
+
 	Iterator left = first;
 	Iterator right = last - 1;
 	Iterator middle = first + (last - first) / 2;
 
+	if (comp(*middle, *left)) {
+		std::iter_swap(middle, left);
+	}
+	if (comp(*right, *middle)) {
+		std::iter_swap(right, middle);
+	}
+	if (comp(*middle, *left)) {
+		std::iter_swap(middle, left);
+	}
+	auto pivot = *middle;
+
+	typedef typename std::iterator_traits<Iterator>::pointer pointerType;
+	typedef typename std::iterator_traits<Iterator>::value_type valueType;
+
+	// Do stable partition
+	Iterator targetBegin = target;
+	Iterator targetLast = target + (last - first) - 1;
+	
+
+	size_t const bufferSize = 100;
+	char leftBuffer[bufferSize];
+	char rightBuffer[bufferSize];
+	char leftBufferIndex;
+	char rightBufferIndex;
+
+	Iterator loopFirst = first;
+	Iterator loopLast = last;
+
+	if (!inReverseOrder) {
+		while (loopFirst != loopLast) {
+			leftBufferIndex = 0;
+			rightBufferIndex = 0;
+
+			ptrdiff_t loopSize = 0;
+			if (loopLast - loopFirst >= bufferSize) {
+				loopSize = bufferSize;
+			} else {
+				loopSize = loopLast - loopFirst;
+			}
+			Iterator temp = loopFirst;
+
+
+
+			for (auto i = 0; i < loopSize; i++) {
+				leftBuffer[leftBufferIndex] = i;
+				rightBuffer[rightBufferIndex] = i;
+				leftBufferIndex += comp(*temp, pivot);
+				rightBufferIndex += !comp(*temp, pivot);
+				temp++;
+			}
+	
+
+			if (firstCalled) {
+				for (auto i = 0; i < leftBufferIndex; i++) {
+					new (&(*targetBegin++)) valueType(std::move(*(loopFirst + leftBuffer[i])));
+					//targetBegin++;
+				}
+				for (auto i = 0; i <rightBufferIndex; i++) {
+					new (&(*targetLast--)) valueType(std::move(*(loopFirst + rightBuffer[i])));
+					//*targetLast--;
+				}
+			} else {
+				for (auto i = 0; i < leftBufferIndex; i++) {
+					*targetBegin++ = std::move(*(loopFirst + leftBuffer[i]));
+					//targetBegin++;
+				}
+				for (auto i = 0; i < rightBufferIndex; i++) {
+					*targetLast-- = std::move(*(loopFirst + rightBuffer[i]));
+					//targetLast--;
+				}
+			}
+
+			loopFirst += loopSize;
+		}
+	} else {
+		while (loopFirst != loopLast) {
+			leftBufferIndex = 0;
+			rightBufferIndex = 0;
+
+			ptrdiff_t loopSize = 0;
+			if (loopLast - loopFirst >= bufferSize) {
+				loopSize = bufferSize;
+			} else {
+				loopSize = loopLast - loopFirst;
+			}
+			Iterator temp = loopLast - 1;
+
+			for (auto i = 0; i < loopSize; i++) {
+				leftBuffer[leftBufferIndex] = i;
+				rightBuffer[rightBufferIndex] = i;
+				leftBufferIndex += comp(*temp, pivot);
+				rightBufferIndex += !comp(*temp, pivot);
+				temp--;
+			}
+
+
+			if (firstCalled) {
+				for (auto i = 0; i < leftBufferIndex; i++) {
+					new (&(*targetBegin++)) valueType(std::move(*(loopLast - 1 - leftBuffer[i])));
+					//targetBegin++;
+				}
+				for (auto i = 0; i < rightBufferIndex; i++) {
+					new (&(*targetLast--)) valueType(std::move(*(loopLast - 1 - rightBuffer[i])));
+					//targetLast--;
+				}
+			} else {
+				for (auto i = 0; i < leftBufferIndex; i++) {
+					*targetBegin++ = std::move(*(loopLast - 1 - leftBuffer[i]));
+					//targetBegin++;
+				}
+				for (auto i = 0; i < rightBufferIndex; i++) {
+					*targetLast-- = std::move(*(loopLast - 1 - rightBuffer[i]));
+					//targetLast--;
+				}
+			}
+
+			loopLast -= loopSize;
+		}		
+	}
+
+	size_t leftPartitionSize = targetBegin - target;
+	stableBlockIntroSortSub(target, targetBegin, first, comp, remainingDepth - 1,
+		false, !isSourceReal, false, flags);
+	stableBlockIntroSortSub(targetBegin, target + (last - first), first + leftPartitionSize, 
+		comp, remainingDepth - 1,
+		false, !isSourceReal, true, flags + leftPartitionSize);
+	return false;
+}
+
+template <typename Iterator, typename Comparator>
+Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last, Comparator comp) {
+	Iterator left = first;
+	Iterator right = last - 1;
+	Iterator middle = first + (last - first) / 2;
 
 	if (comp(*middle, *left)) {
 		std::iter_swap(middle, left);
