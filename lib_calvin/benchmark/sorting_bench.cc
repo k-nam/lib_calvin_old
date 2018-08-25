@@ -237,6 +237,10 @@ lib_calvin_benchmark::sorting::sortBenchSub2(void(*sorter)(T *first, T *last, st
 
 		sortTest(sorter, testSet, testSet + testSize, "", time, isCorrect, isStable, std::less<T>());
 
+		for (int j = 0; j < testSize; j++) {
+			testSet[j].~T();
+		}
+
 		if (time < min) {
 			min = time;
 		}

@@ -155,6 +155,10 @@ void lib_calvin_sort::sortTest(void(*sortingAlg) (T *first, T *last, Comparator 
 			numCopyCtor = SimpleStruct::copyCtorCount_;
 			numAssign = SimpleStruct::assignCount_;
 
+			for (int j = 0; j < arraySize[i]; j++) {
+				testSet[j].~T();
+			}
+
 			if (time < min) {
 				min = time;
 			}
