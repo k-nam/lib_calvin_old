@@ -95,7 +95,7 @@ void lib_calvin_sort::mergeSort2(Iterator first, Iterator last, Comparator comp)
 
 	// This will force merge-move, and there will be no copying
 	if (numStages % 2 == 0) {
-		numStages--;
+		//numStages--;
 	}
 
 	if (numStages % 2 == 0) { 
