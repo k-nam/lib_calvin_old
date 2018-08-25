@@ -66,7 +66,14 @@ template <typename SrcIterator, typename TargetIterator, typename Comparator>
 void lib_calvin_sort::mergeSortParallelSub0(SrcIterator first, SrcIterator last,
 											TargetIterator target, Comparator comp, int thread_limit, bool targetReal) {
 	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE / 2 || thread_limit <= 0) {
-		mergeSortSub(first, last, target, comp, targetReal, false);
+		size_t numStages = static_cast<size_t>(
+			std::ceil(std::log2(static_cast<double>(last - first) / MERGESORT_THRESHOLD)));
+
+		if (targetReal ^ (numStages % 2 == 0)) {
+			numStages--;
+		}
+
+		mergeSortSub(first, last, target, comp, targetReal, false, numStages);
 		return;
 	}
 	size_t num = last - first;
