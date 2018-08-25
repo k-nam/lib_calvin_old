@@ -99,7 +99,7 @@ namespace lib_calvin_sort {
 // efficiently (in the same sense as that of multi-programming in OS).
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSortParallel(Iterator first, Iterator last, Comparator comp) {
-	introSortParallelSub0(first, last, comp, 8);
+	introSortParallelSub0(first, last, comp, 4);
 }
 
 // Blocking method
