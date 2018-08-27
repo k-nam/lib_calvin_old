@@ -35,7 +35,7 @@ void lib_calvin_sort::sortTest() {
 	//binSearchTest2();
 	//getSamplesTest();
 
-	sortTest<ElemType>(boost::sort::spinsort, "spinsort");
+	//sortTest<ElemType>(boost::sort::spinsort, "spinsort");
 	//sortTest<ElemType>(boost::sort::flat_stable_sort, "flat_stable_sort");
 	//sortTest<ElemType>(boost::sort::pdqsort_branchless, "pdqsort");
 
@@ -47,14 +47,14 @@ void lib_calvin_sort::sortTest() {
 	//sortTest<ElemType>(introSortParallel, "Parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced, "Advanced parallel introSort");
 	//sortTest<ElemType>(introSortParallelAdvanced2, "Advanced2 parallel introSort");
-	sortTest<ElemType>(mergeSort, "mergeSort");
-	sortTest<ElemType>(mergeSort2, "mergeSort 2");
-	//sortTest<ElemType>(boost::sort::sample_sort, "sample_sort");
+	//sortTest<ElemType>(mergeSort, "mergeSort");
+	//sortTest<ElemType>(mergeSort2, "mergeSort 2");
+	sortTest<ElemType>(boost::sort::sample_sort, "sample_sort");
 	//sortTest<ElemType>(boost::sort::parallel_stable_sort, "parallel_stable_sort");
 	sortTest<ElemType>(mergeSortParallel, "Parallel mergeSort");
-	sortTest<ElemType>(inPlaceMergeSortParallel, "Parallel In-place mergesort");
+	//sortTest<ElemType>(inPlaceMergeSortParallel, "Parallel In-place mergesort");
 	//sortTest<ElemType>(heapSort, "heapSort");
-	sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");
+	//sortTest<ElemType>(inPlaceMergeSort, "inPlaceMergeSort");
 	//sortTest<ElemType>(std::sort, "std::sort");
 	//sortTest<ElemType>(std::stable_sort, "std::stable_sort");
 	//sortTest<ElemType>(pdqsort, "pdqsort");
