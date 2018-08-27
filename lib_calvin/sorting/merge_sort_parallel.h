@@ -55,7 +55,7 @@ void lib_calvin_sort::mergeSortParallel(Iterator first, Iterator last, Comparato
 	for (auto copy = tempArray; original != last; ++original, ++copy) {
 		new (copy) valueType(std::move(*original));
 	}
-	mergeSortParallelSub0(tempArray, tempArray + num, first, comp, 4, false);
+	mergeSortParallelSub0(tempArray, tempArray + num, first, comp, 3, false);
 	for (size_t i = 0; i < num; i++) {
 		tempArray[i].~valueType();
 	}
@@ -80,7 +80,7 @@ void lib_calvin_sort::mergeSortParallelSub0(SrcIterator first, SrcIterator last,
 	TargetIterator targetLast = target + num;
 
 	lib_calvin::random_number_generator gen;
-	size_t leftSize = num / 4 + gen() % (num / 4);
+	size_t leftSize = num / 2;
 
 	SrcIterator middle = first + leftSize;
 	TargetIterator targetMiddle = target + leftSize;
