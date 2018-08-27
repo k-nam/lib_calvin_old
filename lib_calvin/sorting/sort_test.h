@@ -121,8 +121,8 @@ void lib_calvin_sort::sortTest(void(*sortingAlg) (T *first, T *last, Comparator 
 	stopwatch watch;
 	bool correct = true;
 	bool stable = true;	
-	std::vector<int> const arraySize = { 100, 1000, 10000, 1000000 };
-	std::vector<int> const numIteration = { 1000, 100, 10, 3};
+	std::vector<int> const arraySize = { 100, 1000, 10*1000, 100*1000, 1000*1000 };
+	std::vector<int> const numIteration = { 1000, 100, 10, 10, 3};
 	size_t const numTestCases = arraySize.size();
 	std::srand(1232); // reset seed to give identical input to algorithms
 	for (int i = 0; i < numTestCases; ++i) {
