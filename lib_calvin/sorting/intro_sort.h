@@ -6,6 +6,7 @@
 #include "insertion_sort.h"
 #include "heap_sort.h"
 #include "utility.h"
+#include "in_place_merge_sort.h"
 
 namespace lib_calvin_sort {
 
@@ -33,12 +34,11 @@ namespace lib_calvin_sort {
 
 	template <typename Iterator, typename Comparator>
 	void introSortSub(Iterator first, Iterator last, Comparator comp, int remainingDepth);
-	
+
 	// Return true if insertion sort was called
 	template <typename Iterator, typename Comparator>
 	bool stableBlockIntroSortSub(Iterator first, Iterator last, Iterator target,
-		Comparator comp, int remainingDepth, bool firstCalled, bool isSourceReal, bool inReverseOrder,
-		bool *flags);	
+		Comparator comp, int remainingDepth, bool firstCalled, bool isSourceReal, bool inReverseOrder);
 
 	// using counting sort for subroutine
 	template <typename Iterator, typename Comparator>
@@ -59,15 +59,13 @@ void lib_calvin_sort::stableBlockIntroSort(Iterator first, Iterator last, Compar
 	typedef typename iterator_traits<Iterator>::pointer pointerType;
 	typedef typename iterator_traits<Iterator>::value_type valueType;
 	pointerType tempArray = (pointerType)operator new (sizeof(valueType) * num);
-	bool *flags = new bool[num];
 	stableBlockIntroSortSub(first, last, tempArray, comp, lib_calvin_util::log(num) * 3,
-		true, true, false, flags);
+		true, true, false);
 
 	for (ptrdiff_t i = 0; i < num; ++i) {
 		tempArray[i].~valueType();
 	}
 	operator delete(tempArray);
-	delete flags;
 }
 
 template <typename Iterator, typename Comparator>
@@ -77,7 +75,7 @@ void lib_calvin_sort::blockIntroSort(Iterator first, Iterator last, Comparator c
 
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSortSub(Iterator first, Iterator last, Comparator comp,
-								   int remainingDepth) {
+	int remainingDepth) {
 	if (last - first < INTROSORT_THRESHOLD) {
 		insertionSort(first, last, comp);
 		return;
@@ -95,36 +93,49 @@ void lib_calvin_sort::introSortSub(Iterator first, Iterator last, Comparator com
 
 template <typename Iterator, typename Comparator>
 bool lib_calvin_sort::stableBlockIntroSortSub(Iterator first, Iterator last, Iterator target, Comparator comp,
-	int remainingDepth, bool firstCalled, bool isSourceReal, bool inReverseOrder, bool *flags) {
-	 
+	int remainingDepth, bool firstCalled, bool isSourceReal, bool inReverseOrder) {
+
 	ptrdiff_t num = last - first;
 
-	if (last - first < INTROSORT_THRESHOLD && isSourceReal) {
-		insertionSort(first, last, comp);
+	if ((last - first < INTROSORT_THRESHOLD || remainingDepth <= 0) && isSourceReal) {
+		if (inReverseOrder) {
+			reverse(first, last);
+		} else {
+		}
+		mergeSort(first, last, comp);
 		return true;
 	}
-	if (first == last) {
-		return false;
-	}
-	if (remainingDepth <= 0 && isSourceReal) {
-		mergeSort(first, last, comp);
+
+	if (first + 1 >= last) {
 		return false;
 	}
 
 	Iterator left = first;
 	Iterator right = last - 1;
 	Iterator middle = first + (last - first) / 2;
+	auto pivot = first;
 
-	if (comp(*middle, *left)) {
-		std::iter_swap(middle, left);
+	if (comp(*left, *middle)) {
+		if (comp(*middle, *right)) { // left, middle, right
+			pivot = middle;
+		} else {
+			if (comp(*left, *right)) { // left, right, middle
+				pivot = right;
+			} else { // right, left, middle
+				pivot = left;
+			}
+		}
+	} else {
+		if (comp(*left, *right)) { // middle, left, right
+			pivot = left;
+		} else {
+			if (comp(*middle, *right)) { // middle, right, left
+				pivot = right;
+			} else { // right, middle, left
+				pivot = middle;
+			}
+		}
 	}
-	if (comp(*right, *middle)) {
-		std::iter_swap(right, middle);
-	}
-	if (comp(*middle, *left)) {
-		std::iter_swap(middle, left);
-	}
-	auto pivot = *middle;
 
 	typedef typename std::iterator_traits<Iterator>::pointer pointerType;
 	typedef typename std::iterator_traits<Iterator>::value_type valueType;
@@ -132,7 +143,7 @@ bool lib_calvin_sort::stableBlockIntroSortSub(Iterator first, Iterator last, Ite
 	// Do stable partition
 	Iterator targetBegin = target;
 	Iterator targetLast = target + (last - first) - 1;
-	
+
 
 	size_t const bufferSize = 100;
 	char leftBuffer[bufferSize];
@@ -156,23 +167,21 @@ bool lib_calvin_sort::stableBlockIntroSortSub(Iterator first, Iterator last, Ite
 			}
 			Iterator temp = loopFirst;
 
-
-
 			for (auto i = 0; i < loopSize; i++) {
 				leftBuffer[leftBufferIndex] = i;
 				rightBuffer[rightBufferIndex] = i;
-				leftBufferIndex += comp(*temp, pivot);
-				rightBufferIndex += !comp(*temp, pivot);
+				leftBufferIndex += comp(*temp, *pivot);
+				rightBufferIndex += !comp(*temp, *pivot);
 				temp++;
 			}
-	
+
 
 			if (firstCalled) {
 				for (auto i = 0; i < leftBufferIndex; i++) {
 					new (&(*targetBegin++)) valueType(std::move(*(loopFirst + leftBuffer[i])));
 					//targetBegin++;
 				}
-				for (auto i = 0; i <rightBufferIndex; i++) {
+				for (auto i = 0; i < rightBufferIndex; i++) {
 					new (&(*targetLast--)) valueType(std::move(*(loopFirst + rightBuffer[i])));
 					//*targetLast--;
 				}
@@ -205,8 +214,8 @@ bool lib_calvin_sort::stableBlockIntroSortSub(Iterator first, Iterator last, Ite
 			for (auto i = 0; i < loopSize; i++) {
 				leftBuffer[leftBufferIndex] = i;
 				rightBuffer[rightBufferIndex] = i;
-				leftBufferIndex += comp(*temp, pivot);
-				rightBufferIndex += !comp(*temp, pivot);
+				leftBufferIndex += comp(*temp, *pivot);
+				rightBufferIndex += !comp(*temp, *pivot);
 				temp--;
 			}
 
@@ -232,15 +241,15 @@ bool lib_calvin_sort::stableBlockIntroSortSub(Iterator first, Iterator last, Ite
 			}
 
 			loopLast -= loopSize;
-		}		
+		}
 	}
 
 	size_t leftPartitionSize = targetBegin - target;
 	stableBlockIntroSortSub(target, targetBegin, first, comp, remainingDepth - 1,
-		false, !isSourceReal, false, flags);
-	stableBlockIntroSortSub(targetBegin, target + (last - first), first + leftPartitionSize, 
+		false, !isSourceReal, false);
+	stableBlockIntroSortSub(targetBegin, target + (last - first), first + leftPartitionSize,
 		comp, remainingDepth - 1,
-		false, !isSourceReal, true, flags + leftPartitionSize);
+		false, !isSourceReal, true);
 	return false;
 }
 
@@ -294,7 +303,7 @@ Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last, Comparat
 
 template <typename Iterator, typename Comparator>
 Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparator comp) {
-	
+
 	blockQsortIndexType leftBuffer[blockQsortBufferSize];
 	blockQsortIndexType rightBuffer[blockQsortBufferSize];
 
@@ -359,7 +368,7 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 			} else {
 				rightBatchSize = numUnprocessed;
 			}
-		} 
+		}
 
 		if (isLeftEmpty) {
 			Iterator tempIter = left;
@@ -395,7 +404,7 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 		// Do swap now
 		ptrdiff_t swapCount = min(l_end - l_begin, r_end - r_begin);
 		if (swapCount != 0) {
-			
+
 			// Zig-zag swapping			
 			Iterator temp_left = left + leftBuffer[l_begin];
 			Iterator temp_right = right - rightBuffer[r_begin];
@@ -404,22 +413,22 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 			*temp_left = std::move(*temp_right);
 
 			ptrdiff_t i = 1;
-			for ( ; i < swapCount; i++) {
+			for (; i < swapCount; i++) {
 				temp_left = left + leftBuffer[l_begin + i];
-				*temp_right = std::move(*temp_left);				
+				*temp_right = std::move(*temp_left);
 
 				temp_right = right - rightBuffer[r_begin + i];
 				*temp_left = std::move(*temp_right);
 			}
 			*temp_right = std::move(store);
-			
+
 
 			/*
 			for (ptrdiff_t i = 0; i < swapCount; i++) {
 				std::iter_swap((left + leftBuffer[l_begin + i]), (right - rightBuffer[r_begin + i]));
 			}
 			*/
-			
+
 		}
 
 		l_begin += swapCount;
