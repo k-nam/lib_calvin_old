@@ -281,6 +281,7 @@ namespace lib_calvin_container
 		typedef value_type & reference;
 		typedef ptrdiff_t difference_type;
 		typedef typename std::iterator_traits<Impl>::iterator_category iterator_category;
+		using ConstReverseIterator<Impl>::impl_;
 
 		ReverseIterator() : ConstReverseIterator<Impl>() { }
 		ReverseIterator(Impl impl) : ConstReverseIterator<Impl>(impl) { }
