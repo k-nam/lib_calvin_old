@@ -929,7 +929,7 @@ namespace lib_calvin_container // open for definitions
 		binTreeSuccessor(typename BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node const *node) {
 
 		if (node->hasRightChild()) { // successor is in this subtree
-			BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node *temp = node->getRightChild();
+			typename BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node *temp = node->getRightChild();
 			while (temp->hasLeftChild()) {
 				temp = temp->getLeftChild();
 			}
@@ -950,7 +950,7 @@ namespace lib_calvin_container // open for definitions
 		binTreePredecessor(typename BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node const *node) {
 
 		if (node->hasLeftChild()) { // predecessor is in this subtree
-			BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node *temp = node->getLeftChild();
+			typename BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node *temp = node->getLeftChild();
 			while (temp->hasRightChild()) {
 				temp = temp->getRightChild();
 			}
