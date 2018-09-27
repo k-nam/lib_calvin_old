@@ -65,7 +65,7 @@ namespace lib_calvin_benchmark
 		object_16(object_16 const &rhs) : object_8(rhs), value_(rhs.value_) {}
 		object_16 & operator=(object_16 const &rhs) { key_ = rhs.key_; value_ = rhs.value_;  return *this; }
 		static std::string to_string() { return std::to_string(sizeof(object_16)) + "byte"; }
-		dummy<1> value_;
+		size_t value_;
 	};
 	
 	struct object_32 : public object_8 {
@@ -74,7 +74,8 @@ namespace lib_calvin_benchmark
 		object_32(object_32 const &rhs) : object_8(rhs), value_(rhs.value_) {}
 		object_32 & operator=(object_32 const &rhs) { key_ = rhs.key_; value_ = rhs.value_; return *this; }
 		static std::string to_string() { return std::to_string(sizeof(object_32)) + "byte"; }
-		dummy<3> value_;
+		size_t value_;
+		dummy<2> dummy_;
 	};
 
 	struct object_64 : public object_8 {
@@ -83,7 +84,8 @@ namespace lib_calvin_benchmark
 		object_64(object_64 const &rhs) : object_8(rhs), value_(rhs.value_) {}
 		object_64 & operator=(object_64 const &rhs) { key_ = rhs.key_; value_ = rhs.value_; return *this; }
 		static std::string to_string() { return std::to_string(sizeof(object_64)) + "byte"; }
-		dummy<7> value_;
+		size_t value_;
+		dummy<6> dummy_;
 	};
 
 	struct object_vector {
