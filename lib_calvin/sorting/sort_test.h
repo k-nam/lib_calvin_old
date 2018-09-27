@@ -121,8 +121,8 @@ void lib_calvin_sort::sortTest(void(*sortingAlg) (T *first, T *last, Comparator 
 	stopwatch watch;
 	bool correct = true;
 	bool stable = true;	
-	std::vector<int> const arraySize = { 100, 1000, 10*1000, 100*1000, 1000*1000 };
-	std::vector<int> const numIteration = { 1000, 100, 10, 10, 3};
+	std::vector<size_t> const arraySize = { 100, 1000, 10*1000, 100*1000, 1000*1000 };
+	std::vector<size_t> const numIteration = { 1000, 100, 10, 10, 3};
 	size_t const numTestCases = arraySize.size();
 	std::srand(1232); // reset seed to give identical input to algorithms
 	for (int i = 0; i < numTestCases; ++i) {
@@ -135,15 +135,19 @@ void lib_calvin_sort::sortTest(void(*sortingAlg) (T *first, T *last, Comparator 
 		bool isTotallyStable = true;
 		size_t numCopyCtor = 0;
 		size_t numAssign = 0;
+		size_t checkSum = 0;
 
 		for (int j = 0; j < numIteration[i]; j++) {
-			for (int j = 0; j < arraySize[i]; j++) {
-				new (testSet + j) T(j);
+			checkSum = 0;
+			for (size_t j = 0; j < arraySize[i]; j++) {
+				size_t elem = j / 2;
+				new (testSet + j) T(elem);
+				checkSum += elem;
 				//testSet[j].first = -j / 3; // reverse ordered input array
 			}
 			std::shuffle(testSet, testSet + arraySize[i], std::mt19937(std::random_device()()));
 			for (int j = 0; j < arraySize[i]; j++) {
-				//testSet[j].second = j; // for testing stability
+				testSet[j].value_ = j; // for testing stability
 			}
 			double time = 0;
 			bool isCorrect = true;
@@ -151,9 +155,16 @@ void lib_calvin_sort::sortTest(void(*sortingAlg) (T *first, T *last, Comparator 
 
 			SimpleStruct::copyCtorCount_ = 0;
 			SimpleStruct::assignCount_ = 0;
+
+			// Do sorting
 			sortTest(sortingAlg, testSet, testSet + arraySize[i], title, time, isCorrect, isStable, comp);
+
 			numCopyCtor = SimpleStruct::copyCtorCount_;
 			numAssign = SimpleStruct::assignCount_;
+
+			for (size_t j = 0; j < arraySize[i]; j++) {
+				checkSum -= (size_t)testSet[j];
+			}
 
 			for (int j = 0; j < arraySize[i]; j++) {
 				testSet[j].~T();
@@ -174,6 +185,10 @@ void lib_calvin_sort::sortTest(void(*sortingAlg) (T *first, T *last, Comparator 
 		if (isTotallyCorrect == true) {
 		} else {
 			cout << "Sorting: failure!!! ";
+			exit(0);
+		}
+		if (checkSum != 0) {
+			cout << "Sorting: check error!!! ";
 			exit(0);
 		}
 		if (isTotallyStable) {
@@ -203,11 +218,18 @@ void lib_calvin_sort::sortTest(void(*sortingAlgorithm)(Iterator, Iterator, Compa
 	time = watch.read();
 	// check correctness
 	for (ptrdiff_t j = 0; j < size - 1; j++) {
-		if (comp(*(first + (j + 1)), *(first + j))) {
+		auto x = *(first + j);
+		auto y = *(first + (j + 1));
+		if (comp(y, x)) {
 			isCorrect = false;
 			//std::cout << "Sorting wrong!\n" << std::to_string(*(first + (j + 1)));
 			return;
 			exit(0);
+		}
+		if (!comp(x, y) && !comp(y, x)) {
+			if (!(x.value_ < y.value_)) {
+				isStable = false;
+			}
 		}
 	}
 }
