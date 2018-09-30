@@ -21,7 +21,7 @@ lib_calvin_benchmark::sorting::getBenchAlgorithms() {
 		STD_SORT,
 		LIB_CALVIN_QSORT,
 
-		ORLP_PDQSORT,
+		//ORLP_PDQSORT,
 		BOOST_PDQSORT,
 		LIB_CALVIN_BLOCK_QSORT,		
 
