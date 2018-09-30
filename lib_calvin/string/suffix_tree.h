@@ -18,22 +18,6 @@ namespace lib_calvin_string {
 							std::vector<size_t> &result);
 }
 
-
-template <typename Alphabet, 
-	template <typename V, typename E, typename K, typename ExtractKey> class Graph>
-void lib_calvin_string::suffixTreeMatching(lib_calvin::abstract_string<Alphabet> const &text,
-										   lib_calvin::abstract_string<Alphabet> const &pattern,
-										   std::vector<size_t> &result) {
-	lib_calvin::suffix_tree<Alphabet, Graph> tree(text);
-	// return value of find_pattern is (textId, startIndex) pair
-	tree.build();
-	auto temp = tree.find_pattern(pattern);
-	for (auto iter = temp.begin(); iter != temp.end(); ++iter) {
-		result.push_back(iter->second);
-	}
-}
-
-
 namespace lib_calvin
 {
 	template <typename Alphabet,
@@ -838,4 +822,21 @@ namespace lib_calvin
 	}
 
 }
+
+template <typename Alphabet,
+	template <typename V, typename E, typename K, typename ExtractKey> class Graph>
+void lib_calvin_string::suffixTreeMatching(lib_calvin::abstract_string<Alphabet> const &text,
+	lib_calvin::abstract_string<Alphabet> const &pattern,
+	std::vector<size_t> &result) {
+
+	lib_calvin::suffix_tree<Alphabet, Graph> tree(text);
+	// return value of find_pattern is (textId, startIndex) pair
+	tree.build();
+	auto temp = tree.find_pattern(pattern);
+	for (auto iter = temp.begin(); iter != temp.end(); ++iter) {
+		result.push_back(iter->second);
+	}
+}
+
+
 #endif

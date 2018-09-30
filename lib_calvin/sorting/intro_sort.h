@@ -13,6 +13,7 @@ namespace lib_calvin_sort {
 	int const INTROSORT_THRESHOLD = 24;
 	typedef unsigned char blockQsortIndexType;
 	size_t const blockQsortBufferSize = 192;
+	size_t const cacheLineSize = 64;
 
 	// quicksort with pivot selection with median, hoare partitioning,
 	// ...and using heapsort to make worst performance n*log(n)
@@ -303,9 +304,14 @@ Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last, Comparat
 
 template <typename Iterator, typename Comparator>
 Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparator comp) {
-
-	blockQsortIndexType leftBuffer[blockQsortBufferSize];
-	blockQsortIndexType rightBuffer[blockQsortBufferSize];
+	
+	unsigned char leftBufferRaw[blockQsortBufferSize + cacheLineSize];
+	unsigned char rightBufferRaw[blockQsortBufferSize + cacheLineSize];
+	
+	unsigned char *leftBuffer = leftBufferRaw - reinterpret_cast<size_t>(leftBufferRaw) % cacheLineSize
+		+ cacheLineSize;
+	unsigned char *rightBuffer = rightBufferRaw - reinterpret_cast<size_t>(rightBufferRaw) % cacheLineSize
+		+ cacheLineSize;
 
 
 	typedef typename std::iterator_traits<Iterator>::value_type T;
@@ -334,7 +340,7 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 		std::iter_swap(left, middle + 4);
 	}
 
-	T pivot = *left;
+	T const &pivot = (*left);
 	left++;
 
 	// These buffers contain index of elements to be swapped
@@ -409,7 +415,7 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 			Iterator temp_left = left + leftBuffer[l_begin];
 			Iterator temp_right = right - rightBuffer[r_begin];
 
-			T store = *(left + leftBuffer[l_begin]);
+			T store = std::move(*(left + leftBuffer[l_begin]));
 			*temp_left = std::move(*temp_right);
 
 			ptrdiff_t i = 1;
@@ -469,12 +475,11 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 		pivotPosition = left - 1;
 	}
 
+	//*begin = std::move(*pivotPosition);
+	//*pivotPosition = std::move(pivot);
 	std::iter_swap(begin, pivotPosition);
 	return pivotPosition;
 }
-
-
-
 
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::blockQsortSub(Iterator first, Iterator last, Comparator comp, int remainingDepth) {
@@ -492,5 +497,6 @@ void lib_calvin_sort::blockQsortSub(Iterator first, Iterator last, Comparator co
 	blockQsortSub(first, left, comp, remainingDepth - 1);
 	blockQsortSub(left + 1, last, comp, remainingDepth - 1);
 }
+
 #endif
 
