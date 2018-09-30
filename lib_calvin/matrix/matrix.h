@@ -545,6 +545,7 @@ matrix<T>::operator+ (matrix<T> const &rhs) const {
 template <typename T>
 matrix<T> const
 matrix<T>::operator- (matrix<T> const &rhs) const {
+	using std::cout;
 	size_t num = height_ * width_;
 	matrix<T> result(height_, width_);
 	if (height_ != rhs.height_ || width_ != rhs.width_) {
@@ -561,6 +562,7 @@ matrix<T>::operator- (matrix<T> const &rhs) const {
 template <typename T>
 matrix<T> &
 matrix<T>::operator+= (matrix<T> const &rhs) {
+	using std::cout;
 	size_t num = height_ * width_;
 	if (height_ != rhs.height_ || width_ != rhs.width_) {
 		cout << "raise exception here.\n";
@@ -575,6 +577,7 @@ matrix<T>::operator+= (matrix<T> const &rhs) {
 template <typename T>
 matrix<T> &
 matrix<T>::operator-= (matrix<T> const &rhs) {
+	using std::cout;
 	size_t num = height_ * width_;
 	if (height_ != rhs.height_ || width_ != rhs.width_) {
 		cout << "raise exception here.\n";
@@ -1122,6 +1125,7 @@ void lib_calvin_matrix::strassenMultiAddGeneral(
 
 template <typename T>
 void lib_calvin_matrix::recursiveSelfMultiAdd(matrix<T> &A) {
+	using std::cout;
 	if (A.width() != A.height()) {
 		cout << "self multiply not compatible\n";
 		exit(0);
