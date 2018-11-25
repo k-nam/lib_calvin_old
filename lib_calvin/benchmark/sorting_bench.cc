@@ -231,15 +231,32 @@ lib_calvin_benchmark::sorting::sortBenchSub2(void(*sorter)(T *first, T *last, st
 													size_t testSize, size_t numIter) {
 	using namespace lib_calvin_sort;
 	lib_calvin::stopwatch watch;
+	lib_calvin::random_number_generator gen;
 
 	T *testSet = static_cast<T *>(operator new(sizeof(T) * testSize));
 	double min = 1000000;
 
 	for (int i = 0; i < numIter; i++) {
-		for (int j = 0; j < testSize; j++) {
-			new (testSet + j) T(j);
+		if (currentInputPattern == RANDOM_ORDER) {
+			for (int j = 0; j < testSize; j++) {
+				new (testSet + j) T(j);
+			}
+			std::shuffle(testSet, testSet + testSize, std::mt19937_64(std::random_device()()));
+		} else if (currentInputPattern == SORTED_90_PERCENT) {
+			for (int j = 0; j < testSize; j++) {
+				if (i % 10 == 0) {
+					new (testSet + j) T(gen() % testSize);
+				} else {
+					new (testSet + j) T(j);
+				}				
+			}
+		} else {
+			cout << "sortBenchSub2 error!";
+			exit(0);
 		}
-		std::shuffle(testSet, testSet + testSize, std::mt19937_64(std::random_device()()));
+
+
+
 		double time = 0;
 		bool isCorrect = true;
 		bool isStable = true;
