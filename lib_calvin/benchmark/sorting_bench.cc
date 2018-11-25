@@ -102,23 +102,22 @@ lib_calvin_benchmark::sorting::getTitle(size_t num) {
 		" " + benchTitleSuffix;
 }
 
-std::string
-lib_calvin_benchmark::sorting::getSubCategory(SubCategory subCategory) {
-	switch (subCategory) {
-	case BYTE_8:
-		return "8byte (int)";
-	case BYTE_16:
-		return "16byte (int)";
-	case BYTE_32:
-		return "32byte (int)";
-	case BYTE_64:
-		return "64byte (int)";
-	case VECTOR:
-		return "48byte (string)";
-	default:
-		cout << "getSubCategory error!";
-		exit(0);
+std::string 
+lib_calvin_benchmark::sorting::getPatternString(InputPattern pattern) {
+	switch (pattern) {
+		case RANDOM_ORDER:
+			return "Random array";
+		case SORTED_90_PERCENT:
+			return "Nearly sorted (10% randomized)";
+		default:
+			return "Error";
 	}
+}
+
+template <typename T>
+std::string
+lib_calvin_benchmark::sorting::getSubCategory(InputPattern pattern) {
+	return T::to_string() + " / " + getPatternString(pattern);
 }
 
 std::vector<std::vector<std::string>>
@@ -132,7 +131,14 @@ lib_calvin_benchmark::sorting::getAlgorithmNamesAndTagsVector(std::vector<Algori
 }
 
 void lib_calvin_benchmark::sorting::sortBench() {
+	sortBench(RANDOM_ORDER);
+	sortBench(SORTED_90_PERCENT);
+}
+
+void lib_calvin_benchmark::sorting::sortBench(InputPattern pattern) {
 	std::cout << "Size : " << benchTestSize.size() << "\n\n\n";
+	currentInputPattern = pattern;
+
 	for (size_t i = 0; i < benchTestSize.size(); i++) {
 		std::cout << "Doing : " << i << "\n\n\n";
 		sortBench<object_16>(i);
@@ -153,19 +159,22 @@ void lib_calvin_benchmark::sorting::sortBench(size_t num) {
 	auto algorithms = getBenchAlgorithms();
 	vector<vector<double>> results;
 	for (auto algorithm : algorithms) {
-		results.push_back({ sortBenchSub<T>(algorithm, benchTestSize[num], benchNumIter[num]) });
+		results.push_back(
+			{ sortBenchSub<T>(algorithm, benchTestSize[num], benchNumIter[num]) });
 	}
 
-	lib_calvin_benchmark::save_bench(category, T::to_string(), getTitle(num), comment,
+	lib_calvin_benchmark::save_bench(category, getSubCategory<T>(currentInputPattern), getTitle(num), comment,
 									 getAlgorithmNamesAndTagsVector(algorithms),
 									 results, testCases, unit, benchOrder[num]);
 }
 
 template <typename T>
-double lib_calvin_benchmark::sorting::sortBenchSub(Algorithm algo, size_t testSize, size_t numIter) {
+double lib_calvin_benchmark::sorting::sortBenchSub(
+	Algorithm algo, size_t testSize, size_t numIter) {
 	using namespace lib_calvin_sort;
 	using std::less;
 	std::cout << "Now benchmarking: " << testSize << " " << "object size: " << sizeof(T) <<
+		" " << getSubCategory<T>(currentInputPattern) << 
 		" " << getAlgorithmNamesAndTags(algo)[0] << "\n";
 	switch (algo) {
 	case STD_SORT:

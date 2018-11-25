@@ -12,10 +12,17 @@ namespace lib_calvin_benchmark
 		size_t const kilo = 1000;
 		size_t const mega = 1000*1000;
 		std::vector<size_t> const benchTestSize = 
-			{ 256, kilo, 4*kilo, 16*kilo, 64*kilo, 256*kilo, mega, 4*mega };
+			{ kilo, 10 * kilo, 100 * kilo, mega };
 		std::vector<size_t> const benchNumIter = 
-			{ 1000, 100, 100, 30, 10, 10, 3, 2};
-		std::vector<int> const benchOrder = { 0, 1, 2, 3, 4, 5, 6, 7 };
+			{ 1000, 100, 30, 5};
+
+		enum InputPattern {
+			RANDOM_ORDER, SORTED_90_PERCENT
+		};
+
+		static InputPattern currentInputPattern;
+
+		std::vector<int> const benchOrder = { 0, 1, 2, 3 };
 		std::string const unit = "M/s (higher is better)";
 		std::string const category = "Sorting";
 		std::string const benchTitleSuffix = "objects";
@@ -50,13 +57,18 @@ namespace lib_calvin_benchmark
 			LIB_CALVIN_MERGESORT_PARALLEL
 		};
 
+
+
 		enum SubCategory {
 			BYTE_8, BYTE_16, BYTE_32, BYTE_64, VECTOR
 		};
 
 		std::string getTitle(size_t num);
 
-		std::string getSubCategory(SubCategory);
+		std::string getPatternString(InputPattern);
+
+		template <typename T>
+		std::string getSubCategory(InputPattern);
 
 		std::vector<Algorithm> getBenchAlgorithms();
 
@@ -65,6 +77,8 @@ namespace lib_calvin_benchmark
 		std::vector<std::vector<std::string>> getAlgorithmNamesAndTagsVector(std::vector<Algorithm>);
 
 		void sortBench();
+
+		void sortBench(InputPattern);
 
 		template <typename T>
 		void sortBench(size_t num);
