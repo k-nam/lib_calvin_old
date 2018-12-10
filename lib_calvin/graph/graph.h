@@ -176,7 +176,7 @@ protected:
 	path getPathAfterAlgorithm(vector<Tail<T>> result, size_t src, size_t target) const;
 	path getPathFromReversedPath(size_t src, vector<size_t> const &reversedPath) const;
 protected:
-	lib_calvin_adt::IntIndexer<K> mapping_; // 1:1 mapping of verticex and size_tegers
+	lib_calvin_adt::IntIndexer<K> mapping_; // 1:1 mapping of vertex to int
 	lib_calvin_container::BTree<V, K, std::less<K>, ExtractKey> vertices_;
 	//lib_calvin_container::HashTable<V, K, ExtractKey> vertices_;
 	map<size_t, map<size_t, E>> outLinks_;
