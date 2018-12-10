@@ -43,7 +43,7 @@ namespace lib_calvin_sort {
 
 	// Singled threaded version of sub1
 	template <typename Iterator, typename Comparator>
-	void introSortParallelSub2(Iterator first, Iterator last, Comparator comp,
+	void introSortParallelSub2(Iterator first, Iterator last, Comparator comp, int remainingDepth,
 							   FactoryLoader<pair<Iterator, Iterator>> &factoryLoader);
 
 	// Argument type of quicksort for multithreaded quicksort
@@ -205,7 +205,8 @@ void lib_calvin_sort::introSortParallelSub1(
 	FactoryLoader<pair<Iterator, Iterator>> &factoryLoader)
 {
 	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE || thread_limit <= 0) {
-		introSortParallelSub2(first, last, comp, factoryLoader);
+		introSortParallelSub2(first, last, comp, lib_calvin_util::log(last - first) * 3, 
+			factoryLoader);
 		return;
 	}
 	Iterator left = betterPartition(first, last, comp);
@@ -227,15 +228,15 @@ void lib_calvin_sort::introSortParallelSub1(
 
 // This subroutine supplements sub1 (single-threaded)
 template <typename Iterator, typename Comparator>
-void lib_calvin_sort::introSortParallelSub2(Iterator first, Iterator last, Comparator comp,
+void lib_calvin_sort::introSortParallelSub2(Iterator first, Iterator last, Comparator comp, int remainingDepth, 
 											FactoryLoader<pair<Iterator, Iterator>> &factoryLoader) {
-	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE / 2) {
+	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE / 2 || remainingDepth == 0) {
 		//std::cout << "adding to factory loader: sub2\n";
 		factoryLoader.add(pair<Iterator, Iterator>(first, last));
 	} else {
 		Iterator left = betterPartition(first, last, comp);
-		introSortParallelSub2(first, left, comp, factoryLoader);
-		introSortParallelSub2(left, last, comp, factoryLoader);
+		introSortParallelSub2(first, left, comp, remainingDepth - 1, factoryLoader);
+		introSortParallelSub2(left, last, comp, remainingDepth - 1, factoryLoader);
 	}
 }
 
