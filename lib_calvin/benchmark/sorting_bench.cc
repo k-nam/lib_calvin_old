@@ -28,7 +28,7 @@ lib_calvin_benchmark::sorting::getBenchAlgorithms() {
 		STD_STABLE_SORT,
 		BOOST_SPINSORT,
 		LIB_CALVIN_MERGESORT,
-		LIB_CALVIN_STABLE_BLOCK_QSORT,
+		//LIB_CALVIN_STABLE_BLOCK_QSORT, // weak to all equal
 		
 		BOOST_FLAT_STABLE_SORT,
 		LIB_CALVIN_IN_PLACE_MERGESORT,
@@ -109,6 +109,10 @@ lib_calvin_benchmark::sorting::getPatternString(InputPattern pattern) {
 			return "Random array";
 		case SORTED_90_PERCENT:
 			return "Nearly sorted (10% randomized)";
+		case SORTED:
+			return "Sorted";
+		case ALL_EQUAL:
+			return "All equal";
 		default:
 			return "Error";
 	}
@@ -132,7 +136,8 @@ lib_calvin_benchmark::sorting::getAlgorithmNamesAndTagsVector(std::vector<Algori
 
 void lib_calvin_benchmark::sorting::sortBench() {
 	sortBench(RANDOM_ORDER);
-	sortBench(SORTED_90_PERCENT);
+	//sortBench(SORTED);
+	sortBench(ALL_EQUAL);
 }
 
 void lib_calvin_benchmark::sorting::sortBench(InputPattern pattern) {
@@ -249,6 +254,14 @@ lib_calvin_benchmark::sorting::sortBenchSub2(void(*sorter)(T *first, T *last, st
 				} else {
 					new (testSet + j) T(j);
 				}				
+			}
+		} else if (currentInputPattern == SORTED) {
+			for (int j = 0; j < testSize; j++) {
+				new (testSet + j) T(j);
+			}
+		} else if (currentInputPattern == ALL_EQUAL) {
+			for (int j = 0; j < testSize; j++) {
+				new (testSet + j) T(0);
 			}
 		} else {
 			cout << "sortBenchSub2 error!";

@@ -14,10 +14,10 @@ namespace lib_calvin_benchmark
 		std::vector<size_t> const benchTestSize = 
 			{ kilo, 10 * kilo, 100 * kilo, mega };
 		std::vector<size_t> const benchNumIter = 
-			{ 1000, 100, 30, 5};
+			{ 1000, 100, 30, 10};
 
 		enum InputPattern {
-			RANDOM_ORDER, SORTED_90_PERCENT
+			RANDOM_ORDER, SORTED, ALL_EQUAL, SORTED_90_PERCENT
 		};
 
 		static InputPattern currentInputPattern;
