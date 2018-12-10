@@ -279,7 +279,7 @@ Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last, Comparat
 	while (left < last && comp(*left, pivot)) {
 		++left;
 	}
-	while (right > first && !comp(*right, pivot)) {
+	while (right > first && comp(pivot, *right)) {
 		--right;
 	}
 	//if (right == first) { // all elements are >= pivot
@@ -293,7 +293,7 @@ Iterator lib_calvin_sort::hoarePartition(Iterator first, Iterator last, Comparat
 		while (comp(*left, pivot)) {
 			++left;
 		}
-		while (!comp(*right, pivot)) {
+		while (comp(pivot, *right)) {
 			--right;
 		}
 	}
@@ -356,6 +356,8 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 	bool isLeftEmpty = true;
 	bool isRightEmpty = true;
 	bool mustBreak = false;
+	// Defense for all equal input
+	bool previousWasLeft = false;
 
 	while (true) {
 		if (mustBreak) {
@@ -376,22 +378,24 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 			}
 		}
 
-		if (isLeftEmpty) {
+		if (isLeftEmpty && (!isRightEmpty || (isRightEmpty && !previousWasLeft))) {
+			previousWasLeft = true;
 			Iterator tempIter = left;
 			if (mustBreak) {
 				for (blockQsortIndexType i = 0; i < leftBatchSize; ) {
-					leftBuffer[l_end] = i++; l_end += !comp(*tempIter++, pivot);
+					leftBuffer[l_end] = i++; l_end += (comp(pivot, *tempIter++));
 				}
 			} else {
 				for (blockQsortIndexType i = 0; i < leftBatchSize; ) {
-					leftBuffer[l_end] = i++; l_end += !(comp(*tempIter++, pivot));
-					leftBuffer[l_end] = i++; l_end += !(comp(*tempIter++, pivot));
-					leftBuffer[l_end] = i++; l_end += !(comp(*tempIter++, pivot));
-					leftBuffer[l_end] = i++; l_end += !(comp(*tempIter++, pivot));
+					leftBuffer[l_end] = i++; l_end += (comp(pivot, *tempIter++));
+					leftBuffer[l_end] = i++; l_end += (comp(pivot, *tempIter++));
+					leftBuffer[l_end] = i++; l_end += (comp(pivot, *tempIter++));
+					leftBuffer[l_end] = i++; l_end += (comp(pivot, *tempIter++));
 				}
 			}
 		}
 		if (isRightEmpty) {
+			previousWasLeft = false;
 			auto tempIter = right;
 			if (mustBreak) {
 				for (blockQsortIndexType i = 0; i < rightBatchSize; i) {
