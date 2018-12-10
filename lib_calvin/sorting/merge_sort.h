@@ -1,6 +1,8 @@
 #ifndef LIB_CALVIN__SORT__MERGE_SORT_H
 #define LIB_CALVIN__SORT__MERGE_SORT_H
 
+#include "insertion_sort.h"
+
 namespace lib_calvin_sort
 {
 	int const MERGESORT_THRESHOLD = 32;
