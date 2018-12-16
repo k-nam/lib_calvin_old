@@ -417,28 +417,23 @@ void lib_calvin_container::destruct(T *elements, size_t size) {
 
 // This leads to lower_bound position
 template <typename T, typename K, typename Comp, typename ExtractKey>
-size_t lib_calvin_container::binarySearch(T const *begin, T const *end, K const &key) {
-	if (begin == end) {
-		return 0;
-		//std::cout << "binary search called on empty array!\n";
-		//exit(0);
-	}
-	if (Comp()(ExtractKey()(*begin), key) == false) { // special case
-		return 0;
-	}
+size_t lib_calvin_container::binarySearch(T const *begin, T const *end, K const &key) {	
 	T const *left = begin;
 	T const *right = end;
-	T const *temp = begin + (end - begin) / 2;
+	T const *mid = begin + (end - begin) / 2;
+
+	// Invariant: the answer is in range [left, right]
 	while (true) {
-		if (right - left == 1) {
+		if (right == left) {
 			return static_cast<size_t>(right - begin);
 		}
-		if (Comp()(ExtractKey()(*temp), key)) {
-			left = temp;
+
+		if (Comp()(ExtractKey()(*mid), key)) {
+			left = mid + 1;
 		} else {
-			right = temp;
+			right = mid;
 		}
-		temp = left + (right - left) / 2;
+		mid = left + (right - left) / 2;
 	}
 }
 
