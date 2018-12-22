@@ -48,16 +48,9 @@ namespace lib_calvin_benchmark
 			operator size_t() const { return key_ + data_[0] + data_[1]; }
 			Node *next_;
 
-			bool operator< (Node const &rhs) const {
-				return key_ < rhs.key_;
-			}
 
 			bool operator== (Node const &rhs) const {
-				return key_ == rhs.key_;
-			}
-
-			bool operator!= (Node const &rhs) const {
-				return key_ != rhs.key_;
+				return key_ == rhs.key_ && group_ == rhs.group_;
 			}
 		};
 

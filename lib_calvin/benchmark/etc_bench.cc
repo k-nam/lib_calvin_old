@@ -14,17 +14,17 @@
 using namespace lib_calvin_benchmark::etc;
 
 void lib_calvin_benchmark::etc::etc_bench() {
-	//memory_access_bench();
+	memory_access_bench();
 	//linear_time_sorting_bench();
 	//sort_by_group_bench();
-	following_link_bench();
+	//following_link_bench();
 }
 
 void lib_calvin_benchmark::etc::memory_access_bench() {
 	using namespace std;
 	string category = "Etc.";
 	string subCategory = "Parallelism";
-	string title = "Random access speed (minimum working set)";
+	string title = "Iterating speed (minimum working set)";
 	string comment = "";
 	string unit = "M/s";
 	size_t benchOrder = 0;
@@ -43,7 +43,7 @@ void lib_calvin_benchmark::etc::linear_time_sorting_bench() {
 	using namespace std;
 	string category = "Etc.";
 	string subCategory = "Algorithm complexity (+ overhead), cache efficiency, and parallelism";
-	string title = "Sorting elements with special property";
+	string title = "Sorting (final positions of elemements are known)";
 	string comment = "";
 	string unit = "M/s";
 	size_t benchOrder = 0;
@@ -64,7 +64,7 @@ void lib_calvin_benchmark::etc::sort_by_group_bench() {
 	using namespace std;
 	string category = "Etc.";
 	string subCategory = "Conditional branches";
-	string title = "Sorting by group of " + std::to_string(numGroups);
+	string title = "Sorting into " + std::to_string(numGroups) + " groups, and sorting each group";
 	string comment = "";
 	string unit = "M/s";
 	size_t benchOrder = 0;
@@ -84,7 +84,7 @@ void lib_calvin_benchmark::etc::following_link_bench() {
 	using namespace std;
 	string category = "Etc.";
 	string subCategory = "Conditional branches";
-	string title = "Following random links of length " + std::to_string(numGroups);
+	string title = "Iterating binary tree";
 	string comment = "";
 	string unit = "M/s";
 	size_t benchOrder = 0;
@@ -92,10 +92,12 @@ void lib_calvin_benchmark::etc::following_link_bench() {
 	vector<size_t> testSizes = { 1000, 1000 * 10, 1000 * 100, 1000 * 1000, 1000 * 1000 * 10 };
 	vector<vector<double>> results;
 
+	
 	results.push_back(null_pointer());
+	results.push_back(null_flag());
 
 	lib_calvin_benchmark::save_bench(category, subCategory, title, comment,
-		{ { "null_pointer" } },
+		{ { "null pointer" }, { "null flag" } },
 		results, testCases, unit, benchOrder++);
 }
 
@@ -375,7 +377,7 @@ std::vector<double> lib_calvin_benchmark::etc::two_pass_sorting() {
 
 			lib_calvin_sort::blockIntroSort(copy.begin(), copy.end(), all_compare());
 			if (inputArray != copy) {
-				std::cout << "linear_method_inplace error\n";
+				std::cout << "two_pass_sorting error\n";
 				exit(0);
 			}
 		}
@@ -418,16 +420,12 @@ std::vector<double> lib_calvin_benchmark::etc::null_pointer() {
 			size_t index = 0;
 			for (size_t i = 0; i < testSize; i++) {
 				auto curNode = chains[index];
-				/*
-				while (!curNode->is_null) {
-					checksum += size_t(*curNode);
-					curNode = curNode->next_;
-				}*/
 				
-				while (curNode->next_) {
+				while (curNode) {
 					checksum += size_t(*curNode);
 					curNode = curNode->next_;
 				}
+				
 				index = (index + 9973) % testSize;
 			}
 
@@ -438,11 +436,14 @@ std::vector<double> lib_calvin_benchmark::etc::null_pointer() {
 			}
 		}
 
-		/* Memory free */
+		for (size_t i = 0; i < testSize; i++) {
+			delete chains[i]->next_;
+			delete chains[i];
+		}
 
 		double speed = testSize / min / 1000 / 1000;
 		results.push_back(speed);
-		std::cout << "Checksum: " << checksum << " speed: " << speed << "\n";
+		std::cout << "null_pointer Checksum: " << checksum << " speed: " << speed << "\n";
 	}
 	return results;
 }
@@ -458,7 +459,7 @@ std::vector<double> lib_calvin_benchmark::etc::null_flag() {
 			Node * node1 = new Node();
 			Node * node2 = new Node();
 			node1->next_ = node2;
-			node2->next_ = nullptr;
+			node2->next_ = nullptr; 
 			node1->is_null = false;
 			node2->is_null = true;
 
@@ -475,13 +476,8 @@ std::vector<double> lib_calvin_benchmark::etc::null_flag() {
 			size_t index = 0;
 			for (size_t i = 0; i < testSize; i++) {
 				auto curNode = chains[index];
-				/*
-				while (!curNode->is_null) {
-				checksum += size_t(*curNode);
-				curNode = curNode->next_;
-				}*/
 
-				while (curNode->next_) {
+				while (!curNode->is_null) {
 					checksum += size_t(*curNode);
 					curNode = curNode->next_;
 				}
@@ -495,11 +491,14 @@ std::vector<double> lib_calvin_benchmark::etc::null_flag() {
 			}
 		}
 
-		/* Memory free */
+		for (size_t i = 0; i < testSize; i++) {
+			delete chains[i]->next_;
+			delete chains[i];
+		}
 
 		double speed = testSize / min / 1000 / 1000;
 		results.push_back(speed);
-		std::cout << "Checksum: " << checksum << " speed: " << speed << "\n";
+		std::cout << "null flag Checksum: " << checksum << " speed: " << speed << "\n";
 	}
 	return results;
 }
@@ -512,8 +511,8 @@ std::vector<lib_calvin_benchmark::etc::Node> lib_calvin_benchmark::etc::getRando
 
 	for (size_t i = 0; i < size; i++) {
 		size_t random = g();
-		test_vector[i].key_ = i * 10 + random % 10;
-		test_vector[i].group_ = i / numGroups;
+		test_vector[i].key_ = random;
+		test_vector[i].group_ = i % numGroups;
 	}
 	std::shuffle(test_vector.begin(), test_vector.end(),
 		std::mt19937(std::random_device()()));
