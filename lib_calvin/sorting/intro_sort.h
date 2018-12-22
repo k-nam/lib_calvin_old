@@ -378,7 +378,7 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 			}
 		}
 
-		if (isLeftEmpty && (!isRightEmpty || (isRightEmpty && !previousWasLeft))) {
+		if (isLeftEmpty) {
 			previousWasLeft = true;
 			Iterator tempIter = left;
 			if (mustBreak) {
