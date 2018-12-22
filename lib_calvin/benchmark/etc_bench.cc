@@ -2,6 +2,7 @@
 #include <string>
 #include <algorithm>
 #include <random>
+#include <unordered_set>
 
 #include "random.h"
 #include "etc_bench.h"
@@ -14,16 +15,17 @@
 using namespace lib_calvin_benchmark::etc;
 
 void lib_calvin_benchmark::etc::etc_bench() {
-	memory_access_bench();
+	//memory_access_bench();
 	//linear_time_sorting_bench();
 	//sort_by_group_bench();
 	//following_link_bench();
+	n_nlogn_bench();
 }
 
 void lib_calvin_benchmark::etc::memory_access_bench() {
 	using namespace std;
 	string category = "Etc.";
-	string subCategory = "Parallelism";
+	string subCategory = "Instruction-level parallelism";
 	string title = "Iterating speed (minimum working set)";
 	string comment = "";
 	string unit = "M/s";
@@ -42,7 +44,7 @@ void lib_calvin_benchmark::etc::memory_access_bench() {
 void lib_calvin_benchmark::etc::linear_time_sorting_bench() {
 	using namespace std;
 	string category = "Etc.";
-	string subCategory = "Algorithm complexity (+ overhead), cache efficiency, and parallelism";
+	string subCategory = "Algorithm complexity (+ overhead), cache efficiency, and instruction-level parallelism";
 	string title = "Sorting (final positions of elemements are known)";
 	string comment = "";
 	string unit = "M/s";
@@ -98,6 +100,29 @@ void lib_calvin_benchmark::etc::following_link_bench() {
 
 	lib_calvin_benchmark::save_bench(category, subCategory, title, comment,
 		{ { "null pointer" }, { "null flag" } },
+		results, testCases, unit, benchOrder++);
+}
+
+void lib_calvin_benchmark::etc::n_nlogn_bench() {
+	using namespace std;
+	string category = "Etc.";
+	string subCategory = "Algorithm complexity (+ overhead), cache efficiency, and instruction-level parallelism";
+	string title = "O(N) vs O(Nlog(N))";
+	string comment = "";
+	string unit = "M/s";
+	size_t benchOrder = 0;
+	vector<string> testCases = { "1K", "10K", "100K", "1M", "10M" };
+	vector<size_t> testSizes = { 1000, 1000 * 10, 1000 * 100, 1000 * 1000, 1000 * 1000 * 10 };
+	vector<vector<double>> results;
+
+
+	results.push_back(hashing());
+	results.push_back(build_tree());
+	results.push_back(sorting());
+	results.push_back(block_qsort_int());
+
+	lib_calvin_benchmark::save_bench(category, subCategory, title, comment,
+		{ { "std::unordered_set" }, { "std::set" }, { "std::sort" }, { "lib_calvin::block_qsort" } },
 		results, testCases, unit, benchOrder++);
 }
 
@@ -503,6 +528,149 @@ std::vector<double> lib_calvin_benchmark::etc::null_flag() {
 	return results;
 }
 
+std::vector<double> lib_calvin_benchmark::etc::hashing() {
+	using namespace lib_calvin;
+	stopwatch watch;
+
+	std::vector<double> results;
+	for (size_t i = 0; i < testSizes.size(); i++) {
+		size_t testSize = testSizes[i];
+		size_t numIter = numIters[i];
+
+		double min = 1000000;
+		for (size_t j = 0; j < numIter; j++) {
+			auto inputArray = getRandomIntArray(testSize);
+			std::unordered_set<size_t> hashSet;
+
+			watch.start();
+
+			for (size_t i = 0; i < testSize; i++) {
+				hashSet.insert(inputArray[i]);
+			}
+
+			watch.stop();
+
+			if (watch.read() < min) {
+				min = watch.read();
+			}
+		}
+
+		double speed = testSize / min / 1000 / 1000;
+		results.push_back(speed);
+		std::cout << "hashing speed: " << speed << "\n";
+	}
+	return results;
+}
+
+std::vector<double> lib_calvin_benchmark::etc::build_tree() {
+	using namespace lib_calvin;
+	stopwatch watch;
+
+	std::vector<double> results;
+	for (size_t i = 0; i < testSizes.size(); i++) {
+		size_t testSize = testSizes[i];
+		size_t numIter = numIters[i];
+
+		double min = 1000000;
+		for (size_t j = 0; j < numIter; j++) {
+			auto inputArray = getRandomIntArray(testSize);
+			std::set<size_t> treeSet;
+
+			watch.start();
+
+			for (size_t i = 0; i < testSize; i++) {
+				treeSet.insert(inputArray[i]);
+			}
+
+			watch.stop();
+
+			if (watch.read() < min) {
+				min = watch.read();
+			}
+		}
+
+		double speed = testSize / min / 1000 / 1000;
+		results.push_back(speed);
+		std::cout << "tree speed: " << speed << "\n";
+	}
+	return results;
+}
+
+std::vector<double> lib_calvin_benchmark::etc::sorting() {
+	using namespace lib_calvin;
+	stopwatch watch;
+
+	std::vector<double> results;
+	for (size_t i = 0; i < testSizes.size(); i++) {
+		size_t testSize = testSizes[i];
+		size_t numIter = numIters[i];
+
+		double min = 1000000;
+		for (size_t j = 0; j < numIter; j++) {
+			auto inputArray = getRandomIntArray(testSize);
+			auto copy = inputArray;
+
+			watch.start();
+
+			std::sort(inputArray.begin(), inputArray.end());
+
+			watch.stop();
+
+			if (watch.read() < min) {
+				min = watch.read();
+			}
+		}
+
+		double speed = testSize / min / 1000 / 1000;
+		results.push_back(speed);
+		std::cout << "tree speed: " << speed << "\n";
+	}
+	return results;
+}
+
+std::vector<double> lib_calvin_benchmark::etc::block_qsort_int() {
+	using namespace lib_calvin;
+	stopwatch watch;
+
+	std::vector<double> results;
+	for (size_t i = 0; i < testSizes.size(); i++) {
+		size_t testSize = testSizes[i];
+		size_t numIter = numIters[i];
+
+		double min = 1000000;
+		for (size_t j = 0; j < numIter; j++) {
+			auto inputArray = getRandomIntArray(testSize);
+			auto copy = inputArray;
+
+			watch.start();
+
+			lib_calvin_sort::blockIntroSort(inputArray.begin(), inputArray.end());
+
+			watch.stop();
+
+			if (watch.read() < min) {
+				min = watch.read();
+			}
+		}
+
+		double speed = testSize / min / 1000 / 1000;
+		results.push_back(speed);
+		std::cout << "tree speed: " << speed << "\n";
+	}
+	return results;
+}
+
+std::vector<size_t> lib_calvin_benchmark::etc::getRandomIntArray(size_t size) {
+	using namespace lib_calvin;
+	std::vector<size_t> test_vector(size);
+	for (size_t i = 0; i < size; i++) {
+		test_vector[i] = i;
+	}
+	std::shuffle(test_vector.begin(), test_vector.end(),
+		std::mt19937(std::random_device()()));
+	return test_vector;
+}
+
 std::vector<lib_calvin_benchmark::etc::Node> lib_calvin_benchmark::etc::getRandomNodeArray(size_t size) {
 	using namespace lib_calvin;
 
@@ -511,7 +679,7 @@ std::vector<lib_calvin_benchmark::etc::Node> lib_calvin_benchmark::etc::getRando
 
 	for (size_t i = 0; i < size; i++) {
 		size_t random = g();
-		test_vector[i].key_ = random;
+		test_vector[i].key_ = i * 10; // multiply 10 to use it in linear_method
 		test_vector[i].group_ = i % numGroups;
 	}
 	std::shuffle(test_vector.begin(), test_vector.end(),

@@ -26,6 +26,8 @@ namespace lib_calvin_benchmark
 
 		void following_link_bench();
 
+		void n_nlogn_bench();
+
 		std::vector<double> linked_list_access();
 		std::vector<double> pointer_array_access();
 
@@ -38,6 +40,13 @@ namespace lib_calvin_benchmark
 
 		std::vector<double> null_pointer();
 		std::vector<double> null_flag();
+
+		std::vector<double> hashing();
+		std::vector<double> build_tree();
+		std::vector<double> sorting();
+		std::vector<double> block_qsort_int();
+
+		std::vector<size_t> getRandomIntArray(size_t size);
 
 		struct Node {
 			size_t key_;
