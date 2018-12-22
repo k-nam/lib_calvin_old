@@ -41,7 +41,7 @@ void lib_calvin_sort::sortTest() {
 
 	//sortTest<ElemType>(introSort, "introSort");
 	//sortTest<ElemType>(stableBlockIntroSort, "stableBlockIntroSort");
-	//sortTest<ElemType>(blockIntroSort, "blockIntroSort");
+	sortTest<ElemType>(blockIntroSort, "blockIntroSort");
 	//sortTest<ElemType>(pdqsort_branchless, "pdqsort_branchless");
 	//sortTest<ElemType>(boost::sort::block_indirect_sort, "block_indirect_sort parallel");
 	//sortTest<ElemType>(introSortParallel, "Parallel introSort");
