@@ -65,10 +65,11 @@ namespace lib_calvin_adt
 		void reserve(size_t maxsize);
 		size_t capacity() { return maxsize_; }
 		size_t size() const { return size_; }
-		pair<size_t, P> const & peek() const; // returns the top element 
-		pair<size_t, P> pop(); // pop top element (key, priority)
-							   // returns true if actioned performed (insert or decrease-priority)
-							   // retuns false if new prioritoy was not lower than before.
+		pair<size_t, P> const & peek() const;
+		// pop top element (key, priority)
+		pair<size_t, P> pop();
+		// returns true if actioned performed (insert or decrease-priority)
+		// retuns false if new prioritoy was not lower than before.
 		template <typename P1>
 		bool insert(size_t key, P1 &&priority);
 		P const & getPriority(size_t key) const;
