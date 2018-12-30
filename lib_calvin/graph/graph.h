@@ -47,8 +47,9 @@ struct Tail {
 	Tail<W> & operator= (Tail<W> const &rhs);
 	// operators tuned to specific purposes: this will enable us to just
 	// ...use matrix multiplication for shortest path algorithms.
-	Tail<W> operator* (Tail<W> const &rhs) const; // addition of weights.
-												  // take minimum of weights.
+	// Multiplication of weights means concatenation of path
+	Tail<W> operator* (Tail<W> const &rhs) const; 
+	// Addition of weights take minimum of weights.
 	Tail<W> const & operator+ (Tail<W> const &rhs) const;
 	Tail<W> & operator+= (Tail<W> const &rhs);
 	bool operator== (Tail<W> const &rhs) const;
