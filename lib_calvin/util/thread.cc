@@ -4,6 +4,7 @@
 #ifdef _WIN32
 
 // Windows version
+#define NOMINMAX 
 #include <Windows.h>
 namespace lib_calvin
 {
