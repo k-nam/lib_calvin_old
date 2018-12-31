@@ -1,8 +1,6 @@
 #ifndef LIB_CALVIN__SORT__INTRO_SORT_H
 #define LIB_CALVIN__SORT__INTRO_SORT_H
 
-#include <minmax.h>
-
 #include "insertion_sort.h"
 #include "heap_sort.h"
 #include "utility.h"
@@ -412,7 +410,7 @@ Iterator lib_calvin_sort::betterPartition(Iterator begin, Iterator end, Comparat
 		}
 
 		// Do swap now
-		ptrdiff_t swapCount = min(l_end - l_begin, r_end - r_begin);
+		ptrdiff_t swapCount = std::min(l_end - l_begin, r_end - r_begin);
 		if (swapCount != 0) {
 
 			// Zig-zag swapping			

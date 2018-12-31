@@ -70,7 +70,7 @@ void lib_calvin_string::boyerMoore(
 
 		//std::cout << "Suffix: " << goodSuffixJump << " ";
 		//std::cout << "Badchar: " <<  badCharJump << " ";
-		//std::cout << "Jumping: " << max(goodSuffixJump, badCharJump) << "\n";
+		//std::cout << "Jumping: " << std::max(goodSuffixJump, badCharJump) << "\n";
 	}
 }
 

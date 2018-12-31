@@ -237,7 +237,7 @@ lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, siz
 				watch.start();				
 				tree.find_pattern(pattern);
 				watch.stop();
-				best = min(best, watch.read());
+				best = std::min(best, watch.read());
 			}			
 		} else {
 			
@@ -279,7 +279,7 @@ lib_calvin_benchmark::string::stringBenchSub(TextType type, CharSet charSet, siz
 					exit(0);
 				}
 				watch.stop();
-				best = min(best, watch.read());
+				best = std::min(best, watch.read());
 			}		
 		}
 		cout << "Measured: " << textLen / best / 1000 / 1000 << "\n";
