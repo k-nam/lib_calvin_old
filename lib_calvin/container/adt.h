@@ -88,6 +88,29 @@ namespace lib_calvin_adt
 		void percolateDown(size_t index);
 	};
 
+	template <typename K, typename P>
+	class Pq {
+	public:
+		Pq();
+		pair<K, P> const & peek() const;
+		pair<K, P> pop();
+		bool insert(K const &, P const &);
+	private:
+
+	};
+
+	template <typename K, typename P>
+	class PqCorrect {
+	public:
+		PqCorrect();
+		pair<K, P> const & peek() const;
+		pair<K, P> pop();
+		bool insert(K const &, P const &);
+	private:
+		IntIndexer<K> intIndexer_;
+		IntPq<P> intPq_;
+	};
+
 	// Careful: this is not normal Stack; only for DFS implementation!
 	// Supports decreace-priority function (when push existing number, move it  
 	// ..to the top of the Stack)
@@ -295,41 +318,22 @@ namespace lib_calvin_adt // open for definitions
 
 	template <typename P>
 	void IntPq<P>::percolateDown(size_t index) {
-		while (true) {
-			if (d_ * index + d_ < size_) { // all children are in valid range
-				size_t minIndex = d_ * index + 1; // lowest priority child's index
-				size_t tempIndex = d_ * index + 2; // second child
-				size_t endIndex = d_ * index + d_ + 1; // first illegal index
-				for (; tempIndex < endIndex; ++tempIndex) {
-					if (heap_[tempIndex].second < heap_[minIndex].second) {
-						minIndex = tempIndex;
-					}
+		while (true) {			
+			size_t minIndex = index;
+			size_t endIndex = index * d_ + d_ + 1;
+			endIndex = std::min(endIndex, size_);
+
+			for (size_t i = d_ * index + 1; i < endIndex; i++) {
+				if (heap_[i].second < heap_[minIndex].second) {
+					minIndex = i;
 				}
-				if (heap_[minIndex].second < heap_[index].second) {
-					// swap and recursive call
-					swap_(index, minIndex);
-					index = minIndex;
-					continue;
-				} else {
-					return;
-				}
-			} else if (d_ * index + 1 >= size_) { // no children are in valid range
-				return;
-			} else { // some children are in valid range
-				size_t minIndex = d_ * index + 1; // lowest priority child's index
-				size_t tempIndex = d_ * index + 1;
-				size_t endIndex = size_; // end of heap
-				for (; tempIndex < endIndex; ++tempIndex) {
-					if (heap_[tempIndex].second < heap_[minIndex].second) {
-						minIndex = tempIndex;
-					}
-				}
-				if (heap_[minIndex].second < heap_[index].second) {
-					swap_(index, minIndex);
-					return;
-				} else {
-					return;
-				}
+			}
+
+			if (index != minIndex) {
+				swap_(minIndex, index);
+				index = minIndex;
+			} else {
+				break;
 			}
 		}
 	}
