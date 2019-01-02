@@ -1287,11 +1287,6 @@ void dijkstra2(vector<vector<pair<size_t, W>>> const &graph, size_t source,
 			}
 			GeneralTail<W> arc(curVertex, curWeight + targetWeight, static_cast<size_t>(curNode.getNumPathFoundUntilNow()));
 			targetNode.relax(arc);
-			if (pq.insert(targetVertex, targetNode) == true) {
-			} else {
-				std::cout << "dijkstra2 error: relaxing error\n";
-				exit(0);
-			}
 		}
 		numFinishedPath[curVertex]++;
 		curNode.foundPath();
