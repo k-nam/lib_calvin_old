@@ -45,6 +45,9 @@
     <ClCompile Include="container_test_types.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="adt_test.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="adt.h">
@@ -129,6 +132,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="bin_plus_tree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="adt_test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

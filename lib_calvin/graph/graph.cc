@@ -9,7 +9,7 @@ using std::cout;
 using std::endl;
 
 // For graph algorithms (priority queue)
-using namespace lib_calvin_adt;
+using namespace lib_calvin_container;
 
 void lib_calvin_graph::dfs(vector<vector<size_t>> const &graph,
 		vector<size_t> const &visitOrder, vector<size_t> &returnOrder) {

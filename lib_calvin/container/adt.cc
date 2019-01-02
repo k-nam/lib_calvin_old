@@ -5,7 +5,7 @@
 #include <utility>
 #include "adt.h"
 
-using namespace lib_calvin_adt;
+using namespace lib_calvin_container;
 
 
 /******************* IntStack definitions *******************/

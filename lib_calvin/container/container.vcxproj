@@ -198,6 +198,7 @@
   <ItemGroup>
     <ClCompile Include="..\util\random.cc" />
     <ClCompile Include="adt.cc" />
+    <ClCompile Include="adt_test.cc" />
     <ClCompile Include="b_tree_test.cc" />
     <ClCompile Include="container_main.cc" />
     <ClCompile Include="container_test.cc" />
@@ -208,6 +209,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="adt.h" />
+    <ClInclude Include="adt_test.h" />
     <ClInclude Include="array.h" />
     <ClInclude Include="bin_tree.h" />
     <ClInclude Include="bin_tree_base.h" />

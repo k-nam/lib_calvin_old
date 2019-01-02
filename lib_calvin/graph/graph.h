@@ -177,7 +177,7 @@ protected:
 	path getPathAfterAlgorithm(vector<Tail<T>> result, size_t src, size_t target) const;
 	path getPathFromReversedPath(size_t src, vector<size_t> const &reversedPath) const;
 protected:
-	lib_calvin_adt::IntIndexer<K> mapping_; // 1:1 mapping of vertex to int
+	lib_calvin_container::IntIndexer<K> mapping_; // 1:1 mapping of vertex to int
 	lib_calvin_container::BTree<V, K, std::less<K>, ExtractKey> vertices_;
 	//lib_calvin_container::HashTable<V, K, ExtractKey> vertices_;
 	map<size_t, map<size_t, E>> outLinks_;
@@ -1199,7 +1199,7 @@ void transpose(vector<vector<pair<size_t, E>>> const &source,
 //------------------------------ Algorithms ------------------------------
 
 // For graph algorithms (priority queue)
-using lib_calvin_adt::IntPq;
+using lib_calvin_container::IntPq;
 
 // arcs in result: stores total weight of paths
 template <typename W>
@@ -1471,7 +1471,7 @@ void kruskal(vector<vector<pair<size_t, W>>> const &graph,
 	size_t numE, curE; // curE: current num of edges in temporary MST
 	W total = W(); // for debugging
 	vector<WeightedEdge<W>> edges;
-	lib_calvin_adt::DisjointSet sets(numV);
+	lib_calvin_container::DisjointSet sets(numV);
 	result.clear();
 	// Insert all edges size_to an array
 	for (size_t src = 0; src < numV; src++) {
