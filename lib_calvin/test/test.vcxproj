@@ -175,6 +175,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\container\adt.cc" />
+    <ClCompile Include="..\container\adt_test.cc" />
     <ClCompile Include="..\container\b_tree_test.cc" />
     <ClCompile Include="..\container\container_test.cc" />
     <ClCompile Include="..\container\container_test_types.cc" />

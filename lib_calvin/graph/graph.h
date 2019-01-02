@@ -68,6 +68,8 @@ struct GeneralTail : public Tail<W> {
 	bool operator< (GeneralTail<W> const &) const;
 	// denotes that the path to predecessor is n'th closest path.
 	size_t nThClosest_;
+
+	using Tail<W>::weight_;
 };
 
 // extension of Tail for n'th closest path algorithm
@@ -196,11 +198,12 @@ private:
 }; // end graph
 
 template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>,
-	typename W = E, typename ExtractWeight = Identity<E>>
-	class weighted_graph_base : public virtual graph_base<V, E, K, ExtractKey> {
+typename W = E, typename ExtractWeight = Identity<E>>
+class weighted_graph_base : public virtual graph_base<V, E, K, ExtractKey> {
 	public:
-		class weighted_path : public graph_base::path {
+		class weighted_path : public graph_base<V, E, K, ExtractKey>::path {
 		public:
+			typedef graph_base<V, E, K, ExtractKey>::path path;
 			weighted_path(path const &);
 			W const total_weight() const;
 		};
@@ -218,6 +221,7 @@ template <typename V, typename E = null_edge, typename K = V, typename ExtractKe
 	public:
 		friend class lib_calvin_graph::GraphTest<V, E>;
 	protected:
+		using graph_base<V, E, K, ExtractKey>::getPathAfterAlgorithm;
 		template <typename T>
 		vector<weighted_path> getPathsAfterAlgorithm(vector<vector<GeneralTail<T>>> result,
 			size_t src, size_t target) const;
@@ -230,6 +234,14 @@ template <typename V, typename E = null_edge, typename K = V, typename ExtractKe
 		// Apsp solution; not solved if size is 1.
 		mutable lib_calvin::matrix<lib_calvin_graph::Tail<W>> matrixData_; 
 		mutable lib_calvin::matrix<lib_calvin_graph::Tail<W>> apspSolution_;
+
+		using graph_base<V, E, K, ExtractKey>::has_vertex;
+		using graph_base<V, E, K, ExtractKey>::getPathFromReversedPath;
+		using graph_base<V, E, K, ExtractKey>::mapping_;
+		using graph_base<V, E, K, ExtractKey>::arrayData_;
+		using graph_base<V, E, K, ExtractKey>::isDynamic_;
+		using graph_base<V, E, K, ExtractKey>::outLinks_;
+
 };
 
 template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>>
@@ -299,8 +311,9 @@ using lib_calvin::matrix;
 template <typename W>
 bool relax(Tail<W> const &lhs1, Tail<W> const &lhs2, Tail<W> &rhs);
 
+
 template <typename E, typename W, typename ExtractWeight>
-void makeArrayData(vector<map<size_t, E>> const &dynamicData,
+void makeArrayData(map<size_t, map<size_t, E>> const &dynamicData,
 	vector<vector<pair<size_t, W>>> &arrayData);
 
 template <typename E>
@@ -326,9 +339,9 @@ void transpose(vector<vector<pair<size_t, E>>> const &source,
 
 namespace lib_calvin_graph { // namespace for graph algorithms
 
-							 // dfs on this graph, using visitOrder as starting order of vertices
-							 // ...i.e) starting with vertex visitOrder[0].
-							 // ...save the result(return order of vertices) through argument.
+// dfs on this graph, using visitOrder as starting order of vertices
+// ...i.e) starting with vertex visitOrder[0].
+// ...save the result(return order of vertices) through argument.
 void dfs(vector<vector<size_t>> const &graph, vector<size_t> const &visitOrder,
 	vector<size_t> &returnOrder);
 
@@ -862,17 +875,18 @@ graph_base<V, E, K, ExtractKey>::get_closest_path(K const &src, K const &target)
 }
 
 template <typename V, typename E, typename K, typename ExtractKey, typename W, typename ExtractWeight>
-weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_graph_base() : graph_base(),
-matrixData_(1), apspSolution_(1) { }
+weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_graph_base(): 
+	graph_base<V, E, K, ExtractKey>(),
+	matrixData_(1), apspSolution_(1) { }
 
 template <typename V, typename E, typename K, typename ExtractKey, typename W, typename ExtractWeight>
 weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_graph_base(weighted_graph_base const &rhs) :
-	graph_base(rhs), matrixData_(rhs.matrixData_), apspSolution_(rhs.apspSolution_) { }
+	graph_base<V, E, K, ExtractKey>(rhs), matrixData_(rhs.matrixData_), apspSolution_(rhs.apspSolution_) { }
 
 template <typename V, typename E, typename K, typename ExtractKey, typename W, typename ExtractWeight>
 weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight> &
 weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::operator= (weighted_graph_base const &rhs) {
-	graph_base::operator=(rhs);
+	graph_base<V, E, K, ExtractKey>::operator=(rhs);
 	matrixData_ = rhs.matrixData_;
 	apspSolution_ = rhs.apspSolution_;
 }
@@ -1023,7 +1037,7 @@ template <typename V, typename E, typename K, typename ExtractKey>
 typename graph_base<V, E, K, ExtractKey>::path &
 graph_base<V, E, K, ExtractKey>::path::operator= (path &&rhs) {
 	source_ = rhs.source_;
-	path_ = std::forward<vector<std::pair<V, E>>(rhs.path_);
+	path_ = std::forward<vector<std::pair<V, E>>>(rhs.path_);
 	return *this;
 }
 

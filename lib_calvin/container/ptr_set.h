@@ -92,7 +92,7 @@ public:
 		return reverse_iterator(set_.begin()); }
 public:
 
-	void print() const { bTree_.print(); }
+	void print() const {  }
 protected:
 	SetImpl set_;
 };
@@ -161,7 +161,7 @@ PtrSet<T, K, Comp, ExtractKey, SetImpl>::clear() {
 	for (iterator iter = begin(); iter != end(); iter++) {
 		ptrToDelete.push_back(&(*iter));	
 	}
-	for (vector<T *>::iterator iter = ptrToDelete.begin(); iter != ptrToDelete.end();
+	for (typename vector<T *>::iterator iter = ptrToDelete.begin(); iter != ptrToDelete.end();
 			++iter) {
 		delete *iter;
 	}

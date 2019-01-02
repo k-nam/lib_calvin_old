@@ -253,13 +253,13 @@ void lib_calvin_container::mapIteratorTest()
 	map<K, V> & ref = testMap;
 	map<K, V> const & c_ref = testMap;
 
-	map<K, V>::const_iterator c_iter;
+	typename map<K, V>::const_iterator c_iter;
 	c_iter = c_ref.begin();
 	c_iter = c_ref.end();
 	c_iter = ref.begin();
 	c_iter = ref.end();
 
-	map<K, V>::iterator iter;
+	typename map<K, V>::iterator iter;
 	// Below two line MUST produce compile errors
 	//iter = c_ref.begin();
 	//iter = c_ref.end();
@@ -273,7 +273,7 @@ void lib_calvin_container::mapIteratorTest()
 	}
 	std::cout << "\n";
 	// Should produce in-order sequence
-	for (map<K, V>::reverse_iterator r_iter = --ref.rend(); ; r_iter--) {
+	for (auto r_iter = --ref.rend(); ; r_iter--) {
 		std::cout << r_iter->first << ": ";
 		std::cout << r_iter->second << " , ";
 		if (r_iter == ref.rbegin()) {
@@ -282,7 +282,7 @@ void lib_calvin_container::mapIteratorTest()
 	}
 	std::cout << "\n";
 	// Should produce reverse-order sequence
-	for (map<K, V>::reverse_iterator r_iter = ref.rbegin(); r_iter != ref.rend(); ++r_iter) {
+	for (auto r_iter  = ref.rbegin(); r_iter != ref.rend(); ++r_iter) {
 		std::cout << r_iter->first << ": ";
 		std::cout << r_iter->second << " , ";
 	}

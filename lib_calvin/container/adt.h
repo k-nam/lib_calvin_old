@@ -48,8 +48,8 @@ public:
 	K & operator[] (size_t index);
 private:
 	size_t newIndex_;
-	hash_map<size_t, K> indexToKey_;
-	lib_calvin::btree_map<K, size_t> keyToIndex_; 
+	map<size_t, K> indexToKey_;
+	lib_calvin::map<K, size_t> keyToIndex_; 
 };
 
 // P: priority should have < operator

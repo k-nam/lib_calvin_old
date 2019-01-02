@@ -63,7 +63,7 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 	int const testSize = 100;
 	// basic interface
 	for (int i = 0; i < testSize; ++i) {
-		Impl::value_type temp(i);
+		typename Impl::value_type temp(i);
 		impl.push_back(temp);
 		if (impl.back() != temp) {
 			cout << "vector push_back/back error\n";
@@ -103,7 +103,7 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 		resetVectorForSize(impl, arraySize);
 		resetVectorForSize(stdVector, arraySize);
 		int const positionToInsert = (rand() % arraySize + rand() + 30) % arraySize;
-		Impl::value_type temp(iter);
+		typename Impl::value_type temp(iter);
 		for (int j = 0; j < arraySize; ++j) { // force reserving
 			impl.insert(advanceIteratorBy(impl.begin(), positionToInsert), temp);
 			stdVector.insert(advanceIteratorBy(stdVector.begin(), positionToInsert), temp);
@@ -179,7 +179,7 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 	intSet.insert(Impl::value_type(5));
 	intSet.insert(Impl::value_type(7));
 	
-	typedef decltype(intSet.begin())::iterator_category tag;
+	typedef typename decltype(intSet.begin())::iterator_category tag;
 	Impl impl4(intSet.begin(), intSet.end());
 	std::vector<size_t> temp(intSet.begin(), intSet.end());
 	if (containerEqual(impl4.begin(), impl4.end(), intSet.begin(), intSet.end())) {
@@ -240,18 +240,18 @@ void lib_calvin_container::vectorIteratorTest(Impl && impl, std::string title) {
 	impl.push_back(pair<int, int>(6, 1));
 	impl.push_back(pair<int, int>(7, 1));
 
-	Impl::iterator iter1 = impl.begin();
-	Impl::iterator iter2 = impl.end();
-	Impl::const_iterator c_iter1 = const_reference.begin();
-	Impl::const_iterator c_iter2 = const_reference.end();
+	typename Impl::iterator iter1 = impl.begin();
+	typename Impl::iterator iter2 = impl.end();
+	typename Impl::const_iterator c_iter1 = const_reference.begin();
+	typename Impl::const_iterator c_iter2 = const_reference.end();
 	
 	c_iter1 = iter1;
 	c_iter2 = iter2;
 
-	Impl::reverse_iterator r_iter1 = impl.rbegin();
-	Impl::reverse_iterator r_iter2 = impl.rend();
-	Impl::const_reverse_iterator c_r_iter1 = const_reference.rbegin();
-	Impl::const_reverse_iterator c_r_iter2 = const_reference.rend();
+	typename Impl::reverse_iterator r_iter1 = impl.rbegin();
+	typename Impl::reverse_iterator r_iter2 = impl.rend();
+	typename Impl::const_reverse_iterator c_r_iter1 = const_reference.rbegin();
+	typename Impl::const_reverse_iterator c_r_iter2 = const_reference.rend();
 
 	c_r_iter1 = r_iter2;
 	c_r_iter1 = iter2;
@@ -296,7 +296,7 @@ void lib_calvin_container::vectorPerformanceTest(Impl && impl, std::string title
 	watch.stop();
 	cout << "push_back speed is: " << testSize / watch.read() << "/s\n";
 
-	Impl::value_type temp = 0;
+	typename Impl::value_type temp = 0;
 	watch.start();
 	for (auto iter = impl.begin(); iter != impl.end(); ++iter) {
 		temp = *iter;

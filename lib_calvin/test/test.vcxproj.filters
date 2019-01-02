@@ -114,6 +114,9 @@
     <ClCompile Include="..\matrix\naive_multi2.cc">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\container\adt_test.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="..\matrix\matrix_multi.asm">

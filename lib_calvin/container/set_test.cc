@@ -495,13 +495,13 @@ void lib_calvin_container::setIteratorTest(std::string title) {
 	Impl & ref = impl;
 	Impl const & c_ref = impl;
 
-	Impl::const_iterator c_iter;
+	typename Impl::const_iterator c_iter;
 	c_iter = c_ref.begin();
 	c_iter = c_ref.end();
 	c_iter = ref.begin();
 	c_iter = ref.end();
 
-	Impl::iterator iter;
+	typename Impl::iterator iter;
 	// Below two line MUST produce compile errors
 	//iter = c_ref.begin();
 	//iter = c_ref.end();
@@ -515,7 +515,7 @@ void lib_calvin_container::setIteratorTest(std::string title) {
 	}
 	std::cout << "\n";
 	// Should produce in-order sequence
-	for (Impl::reverse_iterator r_iter = --ref.rend(); ; r_iter--) {
+	for (typename Impl::reverse_iterator r_iter = --ref.rend(); ; r_iter--) {
 		std::cout << *r_iter << " ";
 		if (r_iter == ref.rbegin()) {
 			break;
@@ -523,12 +523,12 @@ void lib_calvin_container::setIteratorTest(std::string title) {
 	}
 	std::cout << "\n";
 	// Should produce reverse-order sequence
-	for (Impl::reverse_iterator r_iter = ref.rbegin(); r_iter != ref.rend(); ++r_iter) {
+	for (typename Impl::reverse_iterator r_iter = ref.rbegin(); r_iter != ref.rend(); ++r_iter) {
 		std::cout << *r_iter << " ";
 	}
 	std::cout << "\n";
 	// Should produce reverse-order sequence
-	for (Impl::iterator iter = --ref.end(); ; iter--) {
+	for (typename Impl::iterator iter = --ref.end(); ; iter--) {
 		std::cout << *iter << " ";
 		if (iter == ref.begin()) {
 			break;

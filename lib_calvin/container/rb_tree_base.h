@@ -62,8 +62,12 @@ namespace lib_calvin_container
 			//std::cout << "rb move ctor\n";
 			BIN_TREE_BASE<T, K, Comp, ExtractKey>::swap(rhs);
 		}
-		RB_TREE_BASE &operator=(RB_TREE_BASE const &rhs) { return static_cast<RB_TREE_BASE &>(BIN_TREE_BASE::operator=(rhs)); }
-		RB_TREE_BASE &operator=(RB_TREE_BASE &&rhs) { return static_cast<RB_TREE_BASE &>(BIN_TREE_BASE::operator=(std::forward<RB_TREE_BASE>(rhs))); }
+		RB_TREE_BASE<T, K, Comp, ExtractKey> &operator=(
+			RB_TREE_BASE<T, K, Comp, ExtractKey> const &rhs) { 
+			return static_cast<RB_TREE_BASE<T, K, Comp, ExtractKey> &>(BIN_TREE_BASE<T, K, Comp, ExtractKey>::operator=(rhs)); }
+		RB_TREE_BASE<T, K, Comp, ExtractKey> &operator=(
+			RB_TREE_BASE<T, K, Comp, ExtractKey> &&rhs) { 
+			return static_cast<RB_TREE_BASE<T, K, Comp, ExtractKey> &>(BIN_TREE_BASE<T, K, Comp, ExtractKey>::operator=(std::forward<RB_TREE_BASE>(rhs))); }
 		~RB_TREE_BASE() { }
 		typedef BIN_TREE_BASE<T, K, Comp, ExtractKey>::iterator iterator;
 		std::pair<iterator, bool> insert(T const &);

@@ -47,13 +47,13 @@ void BTreeTest<T>::bTreeIteratorTest() {
 	for (int i = 100; i > 0 ; --i) {
 		tree.insert(i);
 	}	
-	BTree<T>::Node *node = tree.getFirstNode();
+	typename BTree<T>::Node *node = tree.getFirstNode();
 	tree.printNode(node);
-	BTree<T>::iterator iter = tree.begin();
+	typename BTree<T>::iterator iter = tree.begin();
 	for ( ; iter != tree.end(); ++iter) {
 		std::cout << "this iter: " << *iter << "\n";
 	}
-	BTree<T>::reverse_iterator r_iter = tree.rbegin();
+	typename BTree<T>::reverse_iterator r_iter = tree.rbegin();
 	for ( ; r_iter != tree.rend(); ++r_iter) {
 		std::cout << "this iter: " << *r_iter << "\n";
 	}
@@ -105,6 +105,7 @@ template <typename T>
 void BTreeTest<T>::searchAlgoTest() {
 	BTree<int> tree;
 	int testArray[10] = { 0, 1, 1, 2, 3, 4, 4, 5, 6, 7 };
+	using std::cout;
 	cout << "sequential: \n";
 	cout << "0: " << sequentialSearch<int, int, std::less<int>, Identity<int>>(testArray, testArray + 10, 0) << "\n";
 	cout << "1: " << sequentialSearch<int, int, std::less<int>, Identity<int>>(testArray, testArray + 10, 1) << "\n";
