@@ -19,9 +19,9 @@ template <typename K, typename P,
 size_t
 pqTest() {
 	
-	size_t const numOps = 10000;
-	size_t const numKeys = 1000;
-	size_t const numPriorities = 100;
+	size_t const numOps = 100000;
+	size_t const numKeys = 10000;
+	size_t const relaxPerPop = 100;
 
 	// Giving seed to provide identical input sequence for each call
 	lib_calvin::random_number_generator gen(0);
@@ -30,13 +30,14 @@ pqTest() {
 
 	Impl<K, P> pq(numKeys);
 	for (size_t i = 0; i < numOps; i++) {
-		checkSum += pq.insert(gen() % numKeys, gen() % numPriorities);
-		checkSum += pq.insert(gen() % numKeys, gen() % numPriorities);
+		for (size_t j = 0; j < relaxPerPop; j++) {
+			// Note that identical priority values will cause ambiguity
+			checkSum += pq.insert(gen() % numKeys, gen());
+		}
 		auto popped = pq.pop();
 		checkSum += popped.first;
 		checkSum += popped.second;
 	}
-
 	return checkSum;
 }
 

@@ -49,9 +49,7 @@ public:
 private:
 	size_t newIndex_;
 	hash_map<size_t, K> indexToKey_;
-	//hash_map<K, size_t> keyToIndex_;
-	//map<size_t, K> indexToKey_; // map indx to key
-	map<K, size_t> keyToIndex_; // map key to index
+	lib_calvin::btree_map<K, size_t> keyToIndex_; 
 };
 
 // P: priority should have < operator
@@ -78,25 +76,15 @@ private:
 	size_t size_; // current num of elements (size of heap)
 	size_t const maxsize_;
 	size_t d_; // d-aray heap: important for performance
-	vector<pair<size_t, P>> heap_; // pair of (key, priority)
-								   // NULL_INDEX if not inserted yet, index if in heap
+	// pair of (key, priority)	
+	vector<pair<size_t, P>> heap_;
+	// NULL_INDEX if not inserted yet, index if in heap
 	vector<size_t> indexArray_; // key(int) -> index(int)
 private:
 	void swap_(size_t index1, size_t index2);
 	// heap index starts from 0
 	void percolateUp(size_t index);
 	void percolateDown(size_t index);
-};
-
-template <typename K, typename P>
-class Pq {
-public:
-	Pq();
-	pair<K, P> const & peek() const;
-	pair<K, P> pop();
-	bool insert(K const &, P const &);
-private:
-
 };
 
 template <typename K, typename P>
@@ -109,6 +97,18 @@ public:
 private:
 	IntIndexer<K> intIndexer_;
 	IntPq<P> intPq_;
+};
+
+template <typename K, typename P>
+class Pq {
+public:
+	Pq(size_t maxSize);
+	pair<K, P> const & peek() const;
+	pair<K, P> pop();
+	bool insert(K const &, P const &);
+private:
+	std::set<std::pair<P, K>> priorityToKey_;
+	lib_calvin::btree_map<K, P> keyToPriority_;
 };
 
 // Careful: this is not normal Stack; only for DFS implementation!
@@ -128,8 +128,8 @@ public:
 private:
 	size_t size_;
 	size_t maxsize_;
-	list<size_t> stack_; // Stack
-						 // pointer to elements in Stack
+	list<size_t> stack_; 
+	// pointer to elements in Stack
 	vector<list<size_t>::iterator> intToListIterator_;
 	// stores elements' status
 	vector<bool> isInserted_;
@@ -172,7 +172,7 @@ namespace lib_calvin_container // open for definitions
 /******************* IntIndexer definitions *******************/
 
 template <typename K>
-IntIndexer<K>::IntIndexer() : newIndex_(0) { }
+IntIndexer<K>::IntIndexer(): newIndex_(0) { }
 
 template <typename K>
 size_t IntIndexer<K>::size() const {
@@ -222,7 +222,7 @@ IntIndexer<K>::operator[] (size_t index) {
 /******************* IntPq definitions *******************/
 
 template <typename P>
-IntPq<P>::IntPq(size_t maxsize) : size_(0), maxsize_(maxsize), d_(HEAP_D),
+IntPq<P>::IntPq(size_t maxsize): size_(0), maxsize_(maxsize), d_(HEAP_D),
 heap_(maxsize), indexArray_(maxsize, NULL_INDEX) { // LibrarySetAdaptor indices to NULL_INDEX
 }
 
@@ -262,13 +262,14 @@ template <typename P1>
 bool IntPq<P>::insert(size_t key, P1 &&priority) {
 	size_t index = indexArray_[key];
 	if (index != NULL_INDEX) { // key exists; decrease key operation
-		if (heap_[index].second < priority) { // new priority is higher: wrong input
-			return false;
-		} else {
+		if (priority < heap_[index].second) {
 			// decrease priority. no-op for identical priority, but that is OK
 			heap_[index].second = std::forward<P1>(priority);
 			percolateUp(index);
 			return true;
+		} else {
+			// new priority is higher: wrong input
+			return false;
 		}
 	} else { // new key: insert operation
 		heap_[size_] = pair<size_t, P>(key, std::forward<P1>(priority));
@@ -342,7 +343,7 @@ void IntPq<P>::percolateDown(size_t index) {
 /************************** Pq definitions **************************/
 
 template <typename K, typename P>
-PqCorrect<K, P>::PqCorrect(size_t maxSize) : intIndexer_(), intPq_(maxSize) {}
+PqCorrect<K, P>::PqCorrect(size_t maxSize): intIndexer_(), intPq_(maxSize) {}
 
 template <typename K, typename P>
 std::pair<K, P> const &
@@ -365,10 +366,54 @@ PqCorrect<K, P>::insert(K const &key, P const &priority) {
 	return intPq_.insert(indexOfKey, priority);
 }
 
+template <typename K, typename P>
+Pq<K, P>::Pq(size_t maxSize): priorityToKey_(), keyToPriority_() {}
+
+template <typename K, typename P>
+std::pair<K, P> const &
+Pq<K, P>::peek() const {
+	auto peeked = *priorityToKey_.begin();
+	return std::make_pair(peeked.second, peeked.first);
+}
+
+template <typename K, typename P>
+std::pair<K, P>
+Pq<K, P>::pop() {
+	auto peeked = *priorityToKey_.begin();
+	K const &key = peeked.second;
+	P const &priority = peeked.first;
+
+	keyToPriority_.erase(key);
+	priorityToKey_.erase(priorityToKey_.begin());
+
+	return std::make_pair(peeked.second, peeked.first);
+}
+
+template <typename K, typename P>
+bool
+Pq<K, P>::insert(K const &key, P const &priority) {
+	auto iter = keyToPriority_.find(key);
+	if (iter == keyToPriority_.end()) {
+		keyToPriority_[key] = priority;
+		priorityToKey_.insert(std::make_pair(priority, key));
+		return true;
+	} else {
+		auto oldPriority = keyToPriority_[key];
+		if (priority < oldPriority) {
+			keyToPriority_[key] = priority;
+			priorityToKey_.erase(std::make_pair(oldPriority, key));
+			priorityToKey_.insert(std::make_pair(priority, key));
+			return true;
+		} else {
+			return false;
+		}
+	}
+}
+
 /************************** Stack definitions **************************/
 
 template <typename T>
-Stack<T>::Stack() : stack_(0) {
+Stack<T>::Stack(): stack_(0) {
 }
 
 template <typename T>
