@@ -152,7 +152,7 @@ class Master extends Actor with ActorLogging {
 	val array: Array[ElemType] = Array.fill(arraySize){ Math.abs(gen.nextInt)} 
 	val copy: Array[ElemType] = array.clone()
 
-	util.Sorting.quickSort(copy)
+	java.util.Arrays.sort(copy)
 
 	val t0 = System.currentTimeMillis()
 
