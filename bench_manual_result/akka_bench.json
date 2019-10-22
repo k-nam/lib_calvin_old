@@ -1,0 +1,73 @@
+{
+	"category": "Etc.",
+	"comment": "",
+	"data": {
+		"algorithms": [
+			[
+				"util.Sorting.quickSort"
+			],
+			[
+				"java.util.Arrays.sort"
+			],
+						[
+				"lib_calvin::quicksort"
+			],
+						[
+				"Parallel (Actor), threshold: 10"
+			],
+						[
+				"Parallel (Actor), threshold: 100"
+			],
+			[
+				"Parallel (Actor), threshold: 1K"
+			],
+			[
+				"Parallel (Actor), threshold: 10K"
+			],
+			[
+				"Parallel (Actor), threshold: 100K"
+			],
+			[
+				"Parallel (Actor), threshold: 1M"
+			]
+		],
+		"results": [
+			[
+				61
+			],
+			[
+				205
+			],
+			[
+				199
+			],
+			[
+				7.5
+			],
+			[
+				53
+			],
+			[
+				407
+			],
+			[
+				732
+			],
+			[
+				965
+			],
+			[
+				822
+			]
+		],
+		"test_cases": [
+			"10K"
+		],
+		"unit": "M/s (higher is better)"
+	},
+	"datetime": "20-01-2019 03:16:32",
+	"env": "Intel 8700",
+	"order": 1,
+	"sub_category": "Akka (Scala)",
+	"title": "Sorting 10M elements (type: Long)"
+}
