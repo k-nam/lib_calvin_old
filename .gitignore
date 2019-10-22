@@ -402,7 +402,7 @@ akka.sublime-workspace
 akka.tmproj
 beanstalk/
 bin/
-data
+
 deploy/*.jar
 etags
 lib_managed
