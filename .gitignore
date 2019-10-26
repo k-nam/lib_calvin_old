@@ -437,3 +437,5 @@ factorial2.txt
 
 # Default sigar library extract location.
 native/
+
+_build
