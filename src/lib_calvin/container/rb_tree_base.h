@@ -16,10 +16,10 @@ namespace lib_calvin_container
 	class RB_TREE_BASE : public BIN_TREE_BASE<T, K, Comp, ExtractKey> {
 	public:
 		typedef BIN_TREE_BASE<T, K, Comp, ExtractKey> BaseTreeType;
-		typedef BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node BaseNodeType;
-		typedef typename  BIN_TREE_BASE<T, K, Comp, ExtractKey>::RbColor RbColor;
+		typedef typename BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node BaseNodeType;
+		typedef typename BIN_TREE_BASE<T, K, Comp, ExtractKey>::RbColor RbColor;
 
-		using  BIN_TREE_BASE<T, K, Comp, ExtractKey>::Direction;
+		typedef typename BIN_TREE_BASE<T, K, Comp, ExtractKey>::Direction Direction;
 
 		class Node : public BIN_TREE_BASE<T, K, Comp, ExtractKey>::Node {
 		public:
@@ -69,7 +69,7 @@ namespace lib_calvin_container
 			RB_TREE_BASE<T, K, Comp, ExtractKey> &&rhs) { 
 			return static_cast<RB_TREE_BASE<T, K, Comp, ExtractKey> &>(BIN_TREE_BASE<T, K, Comp, ExtractKey>::operator=(std::forward<RB_TREE_BASE>(rhs))); }
 		~RB_TREE_BASE() { }
-		typedef BIN_TREE_BASE<T, K, Comp, ExtractKey>::iterator iterator;
+		typedef typename BIN_TREE_BASE<T, K, Comp, ExtractKey>::iterator iterator;
 		std::pair<iterator, bool> insert(T const &);
 		std::pair<iterator, bool> insert(T &&);
 		template <typename InputIterator>
@@ -227,8 +227,8 @@ namespace lib_calvin_container
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	typename RB_TREE_BASE<T, K, Comp, ExtractKey>::Node *
-		RB_TREE_BASE<T, K, Comp, ExtractKey>::rotate(Node *node, Direction direction) {
-		Direction oppositeDirection = BaseNodeType::getOpposite(direction);
+		RB_TREE_BASE<T, K, Comp, ExtractKey>::rotate(Node *node, typename BIN_TREE_BASE<T, K, Comp, ExtractKey>::Direction direction) {
+		typename BIN_TREE_BASE<T, K, Comp, ExtractKey>::Direction oppositeDirection = BaseNodeType::getOpposite(direction);
 		Node *child = node->getChild(oppositeDirection);
 		if (is_null<T, K, Comp, ExtractKey>(child)) {
 			std::cout << "rotate error: child null\n";

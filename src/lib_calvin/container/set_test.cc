@@ -137,7 +137,7 @@ void lib_calvin_container::setTest() {
 
 template <typename Impl>
 void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
-	typedef Impl::value_type T;
+	typedef typename Impl::value_type T;
 	cout << "Starting set function test for " << title <<  "\n";
 	Impl impl;
 	vector<T> testVector(testSize);
@@ -148,8 +148,8 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 	for (unsigned i = 0; i < testSize; ++i) {			
 		T temp = gen();
 		testVector[i] = temp;
-		std::pair<Impl::iterator, bool> a = impl.insert(temp);
-		std::pair<std::set<T>::iterator, bool> b = stdSet.insert(temp);
+		auto a = impl.insert(temp);
+		auto b = stdSet.insert(temp);
 		size_t count1 = impl.count(temp);
 		size_t count2 = stdSet.count(temp);
 		if (a.second != b.second || impl.size() != stdSet.size() || count1 != count2 ||
@@ -286,7 +286,7 @@ void lib_calvin_container::setFunctionTest(size_t testSize, std::string title) {
 
 template <typename Impl>
 void lib_calvin_container::setFunctionTest2(size_t testSize, std::string title) {
-	typedef Impl::value_type T;
+	typedef typename Impl::value_type T;
 	cout << "Starting set function test2 for " << title << "\n";
 	Impl impl;
 	bool correct = true;
@@ -334,7 +334,7 @@ void lib_calvin_container::setFunctionTest2(size_t testSize, std::string title) 
 
 template <typename Impl>
 void lib_calvin_container::setPerformanceTest(int n, std::string title) {
-	typedef Impl::value_type T;
+	typedef typename Impl::value_type T;
 	cout << "Starting set performance test for " << title << " container size: " << sizeof(Impl) <<
 		", objecct size: " << sizeof(T) << "\n";	
 	std::vector<T> testVector(n), testVector2(n);
@@ -570,7 +570,7 @@ void lib_calvin_container::setMemoryTest(std::string title) {
 template <typename Impl>
 void lib_calvin_container::setRvalueTest(std::string title) {
 	std::cout << "Starting set rvalue test for: " << title << "\n";
-	typedef Impl::value_type V;
+	typedef typename Impl::value_type V;
 	std::cout << "Test copy & assignment of container itself:\n";
 	Impl impl;
 	Impl impl2;

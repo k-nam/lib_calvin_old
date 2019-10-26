@@ -417,7 +417,7 @@ namespace lib_calvin_container // open for definitions
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	typename BIN_TREE_BASE<T, K, Comp, ExtractKey> &
+	BIN_TREE_BASE<T, K, Comp, ExtractKey> &
 		BIN_TREE_BASE<T, K, Comp, ExtractKey>::operator=(BIN_TREE_BASE<T, K, Comp, ExtractKey> const &rhs) {
 		//std::cout << "bintree assign\n";
 		if (&rhs != this) {
@@ -441,7 +441,7 @@ namespace lib_calvin_container // open for definitions
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
-	typename BIN_TREE_BASE<T, K, Comp, ExtractKey> &
+	BIN_TREE_BASE<T, K, Comp, ExtractKey> &
 		BIN_TREE_BASE<T, K, Comp, ExtractKey>::operator=(BIN_TREE_BASE<T, K, Comp, ExtractKey> &&rhs) {
 		//std::cout << "bintree move assign\n";
 		if (&rhs != this) {

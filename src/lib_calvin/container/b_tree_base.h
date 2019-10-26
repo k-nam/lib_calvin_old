@@ -1694,7 +1694,7 @@ namespace lib_calvin_container
 		//std::cout << "size of full internal node is " << 
 		//	sizeof(B_TREE_BASE<T, K, Comp, ExtractKey>::FullInternalNode) << "\n";
 		capacity = B_TREE_FULL_NODE_CAPACITY;
-		size_t basicSize = sizeof(Node::BasicFields);
+		size_t basicSize = sizeof(typename Node::BasicFields);
 		size_t elemsSize = sizeof(T) * capacity;
 
 		Node *newObject = reinterpret_cast<Node *>(operator new(basicSize + elemsSize));

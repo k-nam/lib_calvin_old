@@ -73,11 +73,11 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 	cout << "vector push_back/back() OK!\n";
 
 	for (int i = 0; i < testSize; ++i) {
-		if (*advanceIteratorBy(impl.begin(), i) != Impl::value_type(i)) {
+		if (*advanceIteratorBy(impl.begin(), i) != typename Impl::value_type(i)) {
 			cout << "vector random access error\n";
 			exit(0);
 		}
-		if (impl[i] != Impl::value_type(i)) {
+		if (impl[i] != typename Impl::value_type(i)) {
 			cout << "vector random access2 error\n";
 			exit(0);
 		}
@@ -97,7 +97,7 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 	// additional interface
 	// insert single element
 	int numIteration = 100;
-	std::vector<Impl::value_type> stdVector;
+	std::vector<typename Impl::value_type> stdVector;
 	for (int iter = 0; iter < numIteration; ++iter) {
 		int const arraySize = rand() % testSize + 1; // prevent 0
 		resetVectorForSize(impl, arraySize);
@@ -174,10 +174,10 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 	}
 
 	
-	std::set<Impl::value_type> intSet;
-	intSet.insert(Impl::value_type(3));
-	intSet.insert(Impl::value_type(5));
-	intSet.insert(Impl::value_type(7));
+	std::set<typename Impl::value_type> intSet;
+	intSet.insert(typename Impl::value_type(3));
+	intSet.insert(typename Impl::value_type(5));
+	intSet.insert(typename Impl::value_type(7));
 	
 	typedef typename decltype(intSet.begin())::iterator_category tag;
 	Impl impl4(intSet.begin(), intSet.end());
@@ -189,7 +189,7 @@ void lib_calvin_container::vectorFunctionTest(Impl && impl, std::string title) {
 		exit(0);
 	}
 
-	Impl impl5 { Impl::value_type(3), Impl::value_type(5), Impl::value_type(7) };
+	Impl impl5 { typename Impl::value_type(3), typename Impl::value_type(5), typename Impl::value_type(7) };
 	//std::vector<Impl::value_type> ss { Impl::value_type(3), Impl::value_type(5), Impl::value_type(7) };
 	if (containerEqual(impl5.begin(), impl5.end(), intSet.begin(), intSet.end())) {
 		cout << "vector initializer list ctor OK!\n";
@@ -286,7 +286,7 @@ void lib_calvin_container::vectorPerformanceTest(Impl && impl, std::string title
 	using std::cout;
 	cout << "Starting vector performance test for: " << title << "\n";
 	cout << "size of container is " << sizeof(impl) << "\n";
-	typedef Impl::value_type T;
+	typedef typename Impl::value_type T;
 
 	lib_calvin::stopwatch watch;
 	watch.start();
@@ -431,7 +431,7 @@ void lib_calvin_container::resetVectorForSize(Impl &impl, size_t size) {
 	int i = 0;
 	auto iter = impl.begin();
 	for ( ; iter != impl.end(); ++i, ++iter) {
-		*iter = Impl::value_type(i);
+		*iter = typename Impl::value_type(i);
 	}
 
 }
