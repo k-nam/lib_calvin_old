@@ -184,12 +184,6 @@ BundleArtifacts/
 Package.StoreAssociation.xml
 _pkginfo.txt
 
-# Visual Studio cache files
-# files ending in .cache can be ignored
-*.[Cc]ache
-# but keep track of directories ending in .cache
-!*.[Cc]ache/
-
 # Others
 ClientBin/
 ~$*
@@ -438,4 +432,4 @@ factorial2.txt
 # Default sigar library extract location.
 native/
 
-_build
+**/_build/**/*
