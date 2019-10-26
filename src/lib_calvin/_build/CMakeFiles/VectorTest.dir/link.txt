@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/VectorTest.dir/container/vector_test.cc.o  -o VectorTest 

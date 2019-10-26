@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/AdtTest.dir/container/adt_test.cc.o  -o AdtTest 
