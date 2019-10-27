@@ -44,6 +44,4 @@ add_executable (Container container/container_main)
 
 target_link_libraries (Container ContainerTest SetTest MapTest VectorTest AdtTest BTreeTest Adt ContainerTestTypes Random)
 
-add_definitions(
-    -Wfatal-errors
-    )
+add_definitions(-Wfatal-errors)
