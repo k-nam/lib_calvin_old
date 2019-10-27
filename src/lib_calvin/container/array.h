@@ -73,8 +73,7 @@ namespace lib_calvin_container
 		// starts with initSize objects (using default ctor if second arg is absent)
 		Array(size_t initSize, T const &value);
 		Array(size_t initSize);
-		template <typename InputIter, typename =
-			std::void_t<typename InputIter::iterator_category>>
+		template <typename InputIter>
 			Array(InputIter begin, InputIter end);
 		Array(std::initializer_list<T> const &);
 
@@ -208,7 +207,7 @@ namespace lib_calvin_container
 	}
 
 	template <typename T>
-	template <typename InputIter, typename Void>
+	template <typename InputIter>
 	Array<T>::Array(InputIter begin, InputIter end) {
 		// InputIter is an iterator. 
 		init();

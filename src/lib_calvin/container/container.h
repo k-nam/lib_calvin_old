@@ -6,6 +6,8 @@
 
 namespace lib_calvin_container
 {
+	using std::ptrdiff_t;
+
 	template <typename T>
 	void moveConstructAndDestruct(T const *source, T *target, size_t number);
 
@@ -560,19 +562,19 @@ Iterator lib_calvin_container::advanceIteratorBy(Iterator iterator, ptrdiff_t di
 }
 
 template <typename Iterator>
-ptrdiff_t lib_calvin_container::distanceBetweenIterator(Iterator begin, Iterator end) {
+std::ptrdiff_t lib_calvin_container::distanceBetweenIterator(Iterator begin, Iterator end) {
 	typename std::iterator_traits<Iterator>::iterator_category category;
 	return distanceBetweenIterator(begin, end, category);
 }
 
 template <typename Iterator>
-ptrdiff_t lib_calvin_container::distanceBetweenIterator(Iterator begin, Iterator end, 
+std::ptrdiff_t lib_calvin_container::distanceBetweenIterator(Iterator begin, Iterator end, 
 	std::random_access_iterator_tag category) {
 	return end - begin;
 }
 
 template <typename Iterator>
-ptrdiff_t lib_calvin_container::distanceBetweenIterator(Iterator begin, Iterator end, 
+std::ptrdiff_t lib_calvin_container::distanceBetweenIterator(Iterator begin, Iterator end, 
 	std::bidirectional_iterator_tag category) {
 	size_t distance = 0;
 	while (begin != end) {
@@ -582,7 +584,7 @@ ptrdiff_t lib_calvin_container::distanceBetweenIterator(Iterator begin, Iterator
 }
 
 template <typename Iterator>
-ptrdiff_t lib_calvin_container::distanceBetweenIterator(Iterator begin, Iterator end, 
+std::ptrdiff_t lib_calvin_container::distanceBetweenIterator(Iterator begin, Iterator end, 
 	std::forward_iterator_tag category) {
 	std::cout << "distanceBetweenIterator function error\n";
 	exit(0);
