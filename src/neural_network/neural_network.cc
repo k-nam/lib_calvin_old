@@ -9,7 +9,7 @@
 namespace lib_calvin_neural_network
 {
 
-neural_network::neural_network(size_t numInput, size_t numOutput, 
+neural_network::neural_network(size_t numInput, size_t numOutput,
 							   vector<size_t> hiddenLayers, double learningRate) {
 	layers_ = vector<layer>(hiddenLayers.size() + 1);
 	learningRate_ = learningRate;
@@ -39,11 +39,11 @@ neural_network::neural_network(size_t numInput, size_t numOutput,
 	}
 }
 
-vector<double> 
+vector<double>
 neural_network::train(size_t numIter,
 					  vector<std::pair<vector<double>, vector<double>>> trainData,
 					  vector<std::pair<vector<double>, vector<double>>> testData) {
-	size_t subsetSize = 10;	
+	size_t subsetSize = 10;
 	size_t num_epoch = numIter;
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -62,10 +62,10 @@ neural_network::train(size_t numIter,
 		std::cout << "Epoch: " << i << " Current sigma: " << pow(epochTotalCost / trainData.size(), 0.5) <<
 			". Subset sigma: " << pow(subsetAvgCost, 0.5) << ". Ratio: " << accuracy << "%\n";
 
-		if (accuracy > maxAccuracy) { // save as JSON 
+		if (accuracy > maxAccuracy) { // save as JSON
 			saveJson();
 		}
-		
+
 		std::shuffle(trainData.begin(), trainData.end(), gen);
 		epochTotalCost = 0.0;
 		subsetAvgCost = 0.0;
@@ -74,7 +74,7 @@ neural_network::train(size_t numIter,
 			auto subsetEnd = subsetBegin + subsetSize;
 			if (subsetEnd > trainData.end()) {
 				subsetEnd = trainData.end();
-			} 
+			}
 			vector<std::pair<vector<double>, vector<double>>> subset(subsetBegin, subsetEnd);
 			// Calling learnFromData() will also update all z and output values in the network.
 			subsetAvgCost = learnFromData(subset);
@@ -85,8 +85,8 @@ neural_network::train(size_t numIter,
 	return result;
 }
 
-double 
-neural_network::test(vector<std::pair<vector<double>, vector<double>>> testData) const {	
+double
+neural_network::test(vector<std::pair<vector<double>, vector<double>>> testData) const {
 	size_t numCorrectAnswer = 0;
 	for (auto pair : testData) {
 		auto input = pair.first;
@@ -123,7 +123,7 @@ neural_network::test(vector<std::pair<vector<double>, vector<double>>> testData)
 	return static_cast<double>(numCorrectAnswer) / testData.size();
 }
 
-double 
+double
 neural_network::learnFromData(vector<std::pair<vector<double>, vector<double>>> const &trainData) {
 	// get avg of square sum of deviation
 	double totalCost = 0;
@@ -155,7 +155,7 @@ neural_network::learnFromData(vector<double> const &input, vector<double> const 
 	vector<double> networkOutput = runNetwork(input);
 	if (networkOutput.size() != output.size()) {
 		std::cout << "runNetwork error\n";
-		exit(0);	
+		exit(0);
 	}
 
 	// Backpropagate to calculate and accumulate gradient
@@ -249,12 +249,12 @@ neural_network::layer::operator=(layer const &rhs) {
 	return *this;
 }
 
-size_t 
+size_t
 neural_network::layer::getNumInput() const {
 	return weights_.height();
 }
 
-size_t 
+size_t
 neural_network::layer::getNumOutput() const {
 	return weights_.width();
 }
@@ -283,7 +283,7 @@ neural_network::layer::randomize() {
 	}
 }
 
-void 
+void
 neural_network::layer::clearGradient() const {
 	for (size_t i = 0; i < accumulated_gradient_weights_.height(); i++) {
 		for (size_t j = 0; j < accumulated_gradient_weights_.width(); j++) {
@@ -320,8 +320,8 @@ neural_network::layer::runNetwork(vector<double> const &previousLayerOutput) con
 	return outputs_;
 }
 
-void 
-neural_network::layer::addGradient(vector<double> const &previousLayerOutput, 
+void
+neural_network::layer::addGradient(vector<double> const &previousLayerOutput,
 		vector<double> const &nextLayerMultiplier) const {
 	if (isOutputLayer_) {
 		calculateErrorsForOutputLayer(nextLayerMultiplier);
@@ -341,7 +341,7 @@ neural_network::layer::addGradient(vector<double> const &previousLayerOutput,
 	}
 }
 
-void 
+void
 neural_network::layer::adjustVariablesWithMultiplier(double multipler) {
 	for (size_t i = 0; i < weights_.height(); i++) {
 		for (size_t j = 0; j < weights_.width(); j++) {
@@ -359,7 +359,7 @@ neural_network::layer::adjustVariablesWithMultiplier(double multipler) {
 	}
 }
 
-vector<double> 
+vector<double>
 neural_network::layer::getLayerMultiplier() const {
 	matrix<double> error_vector(errors_.size(), 1);
 	for (size_t i = 0; i < errors_.size(); i++) {
@@ -377,7 +377,7 @@ neural_network::layer::getLayerMultiplier() const {
 	return result;
 }
 
-void 
+void
 neural_network::layer::calculateErrorsForHiddenLayer(vector<double> const &nextLayerMultiplier) const {
 	if (getNumOutput() != nextLayerMultiplier.size()) {
 		std::cout << "calculateErrorsForHiddenLayer dimension error\n";
@@ -401,26 +401,26 @@ neural_network::layer::calculateErrorsForOutputLayer(vector<double> const &outpu
 }
 
 double
-neural_network::layer::getSigmoid(double x) const {	
-	return 1 / (1 + exp(-x));	
-	
-	//return tanh(x);	
-	
+neural_network::layer::getSigmoid(double x) const {
+	return 1 / (1 + exp(-x));
+
+	//return tanh(x);
+
 	//return x > 0 ? x : 0;
-	
+
 }
 
-double 
+double
 neural_network::layer::getDerivativeOfSigmoid(double x) const {
-	
+
 	double temp = exp(-x);
 	return temp / (1 + temp) / (1 + temp);
-		
+
 	//double a = tanh(x);
-	//return (1 - a * a);	
-	
+	//return (1 - a * a);
+
 	//return x > 0 ? 1 : 0;
-	
+
 }
 
 }
