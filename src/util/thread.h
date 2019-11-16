@@ -16,11 +16,12 @@ namespace lib_calvin
 }
 
 #else
+#include <pthread.h>
 // Unix version
 namespace lib_calvin
 {
-	typedef ptheard_t thread_type;
-	typedef pthread_mutex_lock *lock_type;
+	typedef pthread_t thread_type;
+	typedef pthread_mutex_t lock_type;
 }
 
 #endif

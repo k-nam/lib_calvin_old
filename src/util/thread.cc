@@ -42,7 +42,7 @@ namespace lib_calvin
 namespace lib_calvin
 {
 	thread_type create_thread(thread_function_type function, void * arg) {
-		pthread newThread;
+		pthread_t newThread;
 		pthread_create(&newThread, NULL, function, arg);
 		return newThread;
 	}
@@ -52,19 +52,19 @@ namespace lib_calvin
 	}
 
 	lock_type create_lock() {
-		return CreateMutex(NULL, false, NULL);
+		lock_type lock;
+		return lock;
 	}
 
 	void acquire_lock(lock_type lock) {
-		WaitForSingleObject(lock);
+		pthread_mutex_lock(&lock);
 	}
 
 	void release_lock(lock_type lock) {
-		ReleaseMutex(lock);
+		pthread_mutex_unlock(&lock);
 	}
 
 	void destroy_lock(lock_type lock) {
-		CloseHandle(lock);
 	}
 }
 
