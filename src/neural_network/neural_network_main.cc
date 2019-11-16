@@ -7,10 +7,10 @@ int main() {
 
 	size_t numEpochs = 50;
 
-	analyzer.trainWithBinaryFile(numEpochs, "../../../data/mnist/train-images.idx3-ubyte",
-		"../../../data/mnist/train-labels.idx1-ubyte",
-		"../../../data/mnist/t10k-images.idx3-ubyte",
-		"../../../data/mnist/t10k-labels.idx1-ubyte");
+	analyzer.trainWithBinaryFile(numEpochs, "../../data/mnist/train-images.idx3-ubyte",
+		"../../data/mnist/train-labels.idx1-ubyte",
+		"../../data/mnist/t10k-images.idx3-ubyte",
+		"../../data/mnist/t10k-labels.idx1-ubyte");
 
 	//analyzer.trainWithTextFile(numEpochs, "../../../data/mnist/mnist_train.csv",
 		//"../../../data/mnist/mnist_test.csv");
