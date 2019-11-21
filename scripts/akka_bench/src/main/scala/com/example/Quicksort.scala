@@ -182,9 +182,9 @@ class Master extends Actor with ActorLogging {
 			}
 
 			if (sortingCorrect) {
-				log.error("Sorting correct")
+				log.info("Sorting correct")
 			} else {
-				log.error("Sorting failed")
+				log.info("Sorting failed")
 			}
 
 			//log.info(array.mkString(", "))
