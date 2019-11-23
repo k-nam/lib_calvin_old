@@ -49,25 +49,5 @@ _deps
 
 _build
 
-############# scala (sbt)  ##############
-*.class
-*.log
-
-# sbt specific
-.cache/
-.history/
-.lib/
-dist/*
-target/
-lib_managed/
-src_managed/
-project/boot/
-project/plugins/project/
-
-# Scala-IDE specific
-.scala_dependencies
-.worksheet
-.idea
-
 ################# mkl must be in git ###################
 !lib/mkl/**
