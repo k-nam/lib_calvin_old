@@ -37,18 +37,10 @@ add_library (ContainerTest container/container_test)
 add_library (MapTest container/map_test)
 add_library (SetTest container/set_test)
 add_library (VectorTest container/vector_test)
-
-add_library (HandwrittenDigitsAnalyzer neural_network/handwritten_digits_analyzer)
-add_library (NeuralNetwork neural_network/neural_network)
-
 add_library (Random util/random)
 
-
 add_executable (Container container/container_main)
-add_executable (Mnist neural_network/neural_network_main)
 
 target_link_libraries (Container ContainerTest SetTest MapTest VectorTest AdtTest BTreeTest Adt ContainerTestTypes Random)
-target_link_libraries (Mnist  HandwrittenDigitsAnalyzer NeuralNetwork)
-
 
 add_definitions(-Wfatal-errors)
