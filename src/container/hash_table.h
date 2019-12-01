@@ -470,9 +470,7 @@ HashTable<T, K, ExtractKey, HashFunc>::insert(T1 &&elem)
 		}
 		else if (ExtractKey()(thisNode->elem_) == ExtractKey()(elem))
 		{
-			return std::pair<iterator, bool>(iterator(
-												 IteratorImpl(table_, tableSize_, index, thisNode)),
-											 false);
+			return std::pair<iterator, bool>(iterator(IteratorImpl(table_, tableSize_, index, thisNode)), false);
 		}
 		else
 		{
@@ -490,9 +488,7 @@ HashTable<T, K, ExtractKey, HashFunc>::insert(T1 &&elem)
 		//exit(0);
 	}
 	size_++;
-	return std::pair<iterator, bool>(iterator(
-										 IteratorImpl(table_, tableSize_, index, newNode)),
-									 true);
+	return std::pair<iterator, bool>(iterator(IteratorImpl(table_, tableSize_, index, newNode)), true);
 }
 
 template <typename T, typename K, typename ExtractKey, typename HashFunc>
@@ -518,8 +514,8 @@ HashTable<T, K, ExtractKey, HashFunc>::erase(K const &key)
 			{
 				previous->next_ = thisNode->next_;
 			}
-			else
-			{ // first node in chain
+			else // first node in chain
+			{
 				table_[index] = thisNode->next_;
 			}
 			delete thisNode;

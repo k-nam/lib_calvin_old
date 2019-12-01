@@ -490,7 +490,8 @@ HashTable2<T, K, ExtractKey, HashFunc>::insert_(U &&elem)
 	Node *thisNode = bucket;
 	int count = 0;
 	if (bucket->next_ == nullptr)
-	{ // empty bucket, just insert
+	{
+		// empty bucket, just insert
 		new (&bucket->elem_) T(std::forward<U>(elem));
 		bucket->next_ = bucket;
 	}
@@ -500,9 +501,7 @@ HashTable2<T, K, ExtractKey, HashFunc>::insert_(U &&elem)
 		{
 			if (ExtractKey()(thisNode->elem_) == ExtractKey()(elem))
 			{
-				return std::pair<iterator, bool>(iterator(
-													 IteratorImpl(table_, tableSize_, bucket, thisNode)),
-												 false);
+				return std::pair<iterator, bool>(iterator(IteratorImpl(table_, tableSize_, bucket, thisNode)), false);
 			}
 			else
 			{
@@ -524,10 +523,7 @@ HashTable2<T, K, ExtractKey, HashFunc>::insert_(U &&elem)
 		//std::cout << "count was " << count << " size was " << size_ << " table size was " << tableSize_ << "\n";
 		//exit(0);
 	}
-	//return std::pair<iterator, bool>(iterator(findIterator(ExtractKey()(elem))), true);
-	return std::pair<iterator, bool>(iterator(
-										 IteratorImpl(table_, tableSize_, bucket, bucket->next_)),
-									 true);
+	return std::pair<iterator, bool>(iterator(IteratorImpl(table_, tableSize_, bucket, bucket->next_)), true);
 }
 
 template <typename T, typename K, typename ExtractKey, typename HashFunc>
