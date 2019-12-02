@@ -790,7 +790,13 @@ namespace lib_calvin_container
 		} \
 		node_ = temp; \
 		index_ = ARG6;	\
-	} 
+	}
+
+#define ITERATOR_INCREASE \
+	ITERATOR_MOVE_ROUTINE(<node_->getSize()-1, ++, <node_->getParent()->getSize(), , +1, 0, 0)
+
+#define ITERATOR_DECREASE \
+	ITERATOR_MOVE_ROUTINE(>0, --, >0, -1, , temp->getSize(), temp->getSize()-1)
 
 	//------------------------------------------------------- MACRO END -----//
 
@@ -805,12 +811,9 @@ namespace lib_calvin_container
 			index_ = 0;
 		}
 #else
-		ITERATOR_MOVE_ROUTINE(<node_->getSize()-1, ++, <node_->getParent()->getSize(), , +1, 0, 0)
+		ITERATOR_INCREASE
 #endif
-			//if (node_->getParent() == NULL) {
-			//	int64_t a = 0;
-			//}
-			return *this;
+		return *this;
 	}
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
@@ -828,12 +831,14 @@ namespace lib_calvin_container
 			index_ = node_->getSize() - 1;
 		}
 #else
-		ITERATOR_MOVE_ROUTINE(>0, --, >0, -1, , temp->getSize(), temp->getSize()-1)
+		ITERATOR_DECREASE
 #endif
-			return *this;
+		return *this;
 	}
-#undef ITERATOR_MOVE_ROUTINE
 
+#undef ITERATOR_MOVE_ROUTINE
+#undef ITERATOR_INCREASE
+#undef ITERATOR_DECREASE
 
 	template <typename T, typename K, typename Comp, typename ExtractKey>
 	typename B_TREE_BASE<T, K, Comp, ExtractKey>::IteratorImpl const
