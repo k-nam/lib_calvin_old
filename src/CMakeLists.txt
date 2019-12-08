@@ -39,8 +39,8 @@ add_library (SetTest container/set_test)
 add_library (VectorTest container/vector_test)
 add_library (Random util/random)
 
-add_executable (Container container/container_main)
+add_executable (Container.exe container/container_main)
 
-target_link_libraries (Container ContainerTest SetTest MapTest VectorTest AdtTest BTreeTest Adt ContainerTestTypes Random)
+target_link_libraries (Container.exe ContainerTest SetTest MapTest VectorTest AdtTest BTreeTest Adt ContainerTestTypes Random)
 
 add_definitions(-Wfatal-errors)
