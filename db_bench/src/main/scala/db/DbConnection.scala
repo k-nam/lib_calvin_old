@@ -12,13 +12,13 @@ abstract class DbConnection(val databaseName: String) extends Thread {
 	}
 
 	def selectData() {
-		val tableName = "imdb_alternative_raw"
+		val tableName = "movie2"
 		val stmt = connection.prepareStatement("select id from " + tableName + " where id=?")
 		val startTime: Double = System.currentTimeMillis()
 		val testSize = 100000
 		val r = scala.util.Random
 		for (i <- 1 to testSize) {
-			stmt.setInt(1, 2)
+			stmt.setInt(1, 1)
 			stmt.execute()
 			if (i % 10000 == 0) {
 				println("Now done " + i / 1000 + " k'th row")

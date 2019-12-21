@@ -7,7 +7,7 @@ object Main {
 	}
 
 	def dbBench(): Unit = {
-		val numThead = 4
+		val numThead = 15
 		for (i <- 1 to numThead) {
 			new MysqlConnection("movie").start()
 

@@ -21,7 +21,7 @@ class MysqlConnection(override val databaseName: String) extends DbConnection(da
 				"jdbc:mysql://" + hostName + ":3306/" + databaseName + "?" +
 					"user=calvin&password=calvin1729&characterEncoding=UTF-8")
 			println("mysql connection successful")
-			conn.setAutoCommit(false);
+			conn.setAutoCommit(true);
 			return conn
 
 		} catch {
