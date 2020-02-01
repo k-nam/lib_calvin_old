@@ -3,9 +3,9 @@ package db
 import java.sql.{ DriverManager, Connection };
 
 class MysqlConnection(override val databaseName: String) extends DbConnection(databaseName) {
-	// val hostName = "localhost";
-	val hostName = "52.192.80.188";
-	val password = "ca!vinl729";
+	val hostName = "localhost";
+	// val hostName = "52.192.80.188";
+	val password = "calvin1729";
 	override val connection: Connection = getConnection()
 	def getConnection(): Connection = {
 		try {
