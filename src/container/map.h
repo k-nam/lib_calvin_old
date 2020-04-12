@@ -12,9 +12,9 @@
 namespace lib_calvin_container
 {
 	// This class makes it easy to switch among various implementations
-	// We use another class for test wrapping purpose: SetAdaptor, as 
+	// We use another class for test wrapping purpose: SetAdaptor, as
 	// insert method's return type contains iterator, which can not be included
-	// in the base class. 
+	// in the base class.
 	template <typename K, typename V, typename Comp, typename Set>
 	class MapWrapper : public Set {
 	public:
@@ -36,7 +36,7 @@ namespace lib_calvin_container
 
 	template <typename K, typename V, typename Comp>
 	using BTreeMap = MapWrapper<K, V, Comp, BTree<std::pair<K, V>, K, Comp, TakeFirstOfPair<K, V>>>;
-} 
+}
 
 namespace lib_calvin
 {

@@ -1,15 +1,16 @@
-#ifndef LIB_CALVIN__GRAPH__SIMPLE_GRAPH_H 
-#define LIB_CALVIN__GRAPH__SIMPLE_GRAPH_H 
+#ifndef LIB_CALVIN__GRAPH__SIMPLE_GRAPH_H
+#define LIB_CALVIN__GRAPH__SIMPLE_GRAPH_H
 
 #include <utility>
 #include <map>
 #include "map.h"
 #include "set.h"
 #include "vector.h"
-#include "stopwatch.h" 
-#include "utility.h" 
+#include "stopwatch.h"
+#include "utility.h"
 #include "container.h"
 #include "rb_tree.h"
+#include "graph.h"
 
 
 
@@ -19,9 +20,8 @@ namespace lib_calvin_graph {
 	// V must support '<'and '==' operator (key).
 	// At least two subclasses will be derived from this: undirected graph and
 	// ..network flow.
-	
+
 	using lib_calvin::vector;
-	using lib_calvin::map;
 	using lib_calvin::set;
 	using lib_calvin::btree_map;
 
@@ -141,7 +141,7 @@ namespace lib_calvin_graph { // open for definitions
 		outLinks_[src][dest] = std::make_pair(& get_vertex(dest), edge);
 		//inLinks_[dest].insert(src);
 		numEdges_++;
-		return true;		
+		return true;
 	}
 
 	template <typename V, typename E, typename K, typename ExtractKey>
@@ -172,7 +172,7 @@ namespace lib_calvin_graph { // open for definitions
 	vector<std::pair<V, E>>
 		simple_graph<V, E, K, ExtractKey>::get_vertex_edge_pairs_from(K const &src) const {
 
-		vector<std::pair<V, E>> result;	
+		vector<std::pair<V, E>> result;
 		auto iter = outLinks_.find(src);
 		if (iter == outLinks_.end()) {
 		} else {

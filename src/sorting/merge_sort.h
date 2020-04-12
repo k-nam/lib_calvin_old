@@ -2,6 +2,7 @@
 #define LIB_CALVIN__SORT__MERGE_SORT_H
 
 #include "insertion_sort.h"
+#include <cmath>
 
 namespace lib_calvin_sort
 {
@@ -100,7 +101,7 @@ void lib_calvin_sort::mergeSort2(Iterator first, Iterator last, Comparator comp)
 		//numStages--;
 	}
 
-	if (numStages % 2 == 0) { 
+	if (numStages % 2 == 0) {
 		// Make left larger
 		size_t leftSize = num - num / 2;
 		Iterator middle = first + leftSize;
@@ -121,7 +122,7 @@ void lib_calvin_sort::mergeSort2(Iterator first, Iterator last, Comparator comp)
 		for (size_t i = 0; i < leftSize; ++i) {
 			tempArray[i].~valueType();
 		}
-	} else { 
+	} else {
 		// Make left smaller
 		size_t leftSize = num / 2;
 		size_t rightSize = num - leftSize;

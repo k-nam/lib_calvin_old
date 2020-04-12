@@ -25,7 +25,7 @@ namespace lib_calvin_sort {
 
 	// Subroutines for introSortParallel. Proceeds partitioning and creating new
 	// threads for each sub-arrays until we reach the threshold (typically L2 size)
-	// sub-array size, 
+	// sub-array size,
 	// or the maximum number of threads (this is for ensuring we are not creating too
 	// many threads and ruin the system).
 	// And then calls another routine for pending remaining task for later stage.
@@ -92,10 +92,10 @@ namespace lib_calvin_sort {
 }
 
 // 2009 - 01 - 26: I discovered that if the problem size is bigger than L2, multi -
-// threading does not accelerate the partitioning at all, which means that the 
+// threading does not accelerate the partitioning at all, which means that the
 // bottleneck is memory bandwidth (not CPU) for that case. And if the problem lies
-// within L2, we get almost maximum speedup. Therefore, The key is to mix memory 
-// intensive part and CPU intensive part of the operation, to utilize both resources 
+// within L2, we get almost maximum speedup. Therefore, The key is to mix memory
+// intensive part and CPU intensive part of the operation, to utilize both resources
 // efficiently (in the same sense as that of multi-programming in OS).
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSortParallel(Iterator first, Iterator last, Comparator comp) {
@@ -161,13 +161,13 @@ void lib_calvin_sort::introSortParallelAdvanced2(Iterator first, Iterator last, 
 // processing. If the problem size is bigger than L2, and if we use 2-threaded
 // quicksort, it helps to use two cores who does not share L2 cache (by avoiding
 // conflict miss). On the other hand, it is vice versa if the problem size is
-// smaller than L2. The generalization of this problem (i.e., we are using N 
-// number of cores for quicksort algorithm, and some layers of cache are shared) 
-// is very interesting and I figured out a tentative solution. 
-// 2009-01-17: It brings quite a large performance boost if we simply run 
+// smaller than L2. The generalization of this problem (i.e., we are using N
+// number of cores for quicksort algorithm, and some layers of cache are shared)
+// is very interesting and I figured out a tentative solution.
+// 2009-01-17: It brings quite a large performance boost if we simply run
 // multiple threads by creating separate threads for partitioned sub-arrays. But
-// for maximum cache efficiency, I will try to do something like blocking - 
-// when partition proceeds to certain level (typically L2 size), it stops and 
+// for maximum cache efficiency, I will try to do something like blocking -
+// when partition proceeds to certain level (typically L2 size), it stops and
 // pends the remaining task for later stage. And lastly we sort each small arrays
 // sequentially, without any cache miss for L2. Of course we will use multiple
 // threads in that last stage, too.
@@ -187,8 +187,8 @@ void lib_calvin_sort::introSortParallelSub0(
 	leftThread = lib_calvin::create_thread(introSortParallelSub0ThreadFunction<Iterator, Comparator>, &argLeft);
 	//SetThreadAffinityMask(leftThread, 1 << 0);
 	// For unbalancing left and right sub-threads, thereby letting left sub-thread
-	// reach bottom, and start CPU-intensive-thread quickly. 
-	//Sleep(10); 
+	// reach bottom, and start CPU-intensive-thread quickly.
+	//Sleep(10);
 	rightThread =
 		lib_calvin::create_thread(introSortParallelSub0ThreadFunction<Iterator, Comparator>, &argRight);
 	//SetThreadAffinityMask(rightThread, 1 << 1);
@@ -198,14 +198,14 @@ void lib_calvin_sort::introSortParallelSub0(
 	//CloseHandle(rightThread);
 }
 
-// multi threaded partitioning 
+// multi threaded partitioning
 template <typename Iterator, typename Comparator>
 void lib_calvin_sort::introSortParallelSub1(
 	Iterator first, Iterator last, Comparator comp, int thread_limit,
 	FactoryLoader<pair<Iterator, Iterator>> &factoryLoader)
 {
 	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE || thread_limit <= 0) {
-		introSortParallelSub2(first, last, comp, lib_calvin_util::log(last - first) * 3, 
+		introSortParallelSub2(first, last, comp, lib_calvin_util::log(last - first) * 3,
 			factoryLoader);
 		return;
 	}
@@ -221,14 +221,14 @@ void lib_calvin_sort::introSortParallelSub1(
 		lib_calvin::create_thread(introSortParallelSub1ThreadFunction<Iterator, Comparator>, &argRight);
 	//SetThreadAffinityMask(leftThread, 1 << 3);
 	lib_calvin::wait_for_thread(leftThread);
-	CloseHandle(leftThread);
+	// CloseHandle(leftThread);
 	lib_calvin::wait_for_thread(rightThread);
-	CloseHandle(rightThread);
+	// CloseHandle(rightThread);
 }
 
 // This subroutine supplements sub1 (single-threaded)
 template <typename Iterator, typename Comparator>
-void lib_calvin_sort::introSortParallelSub2(Iterator first, Iterator last, Comparator comp, int remainingDepth, 
+void lib_calvin_sort::introSortParallelSub2(Iterator first, Iterator last, Comparator comp, int remainingDepth,
 											FactoryLoader<pair<Iterator, Iterator>> &factoryLoader) {
 	if (sizeof(*first)*(last - first) < L2_CACHE_SIZE / 2 || remainingDepth == 0) {
 		//std::cout << "adding to factory loader: sub2\n";

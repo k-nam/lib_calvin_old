@@ -1,5 +1,5 @@
-#ifndef LIB_CALVIN__GRAPH__GRAPH_H 
-#define LIB_CALVIN__GRAPH__GRAPH_H 
+#ifndef LIB_CALVIN__GRAPH__GRAPH_H
+#define LIB_CALVIN__GRAPH__GRAPH_H
 
 /*
 * 2008-03-08: completed all shortest pair algorithms.
@@ -8,14 +8,15 @@
 */
 
 #include <utility>
+#include <functional>
 #include "matrix.h"
 #include "adt.h"
 #include "set.h"
 #include "map.h"
 #include "vector.h"
 #include "sort.h"
-#include "stopwatch.h" 
-#include "utility.h" 
+#include "stopwatch.h"
+#include "utility.h"
 #include "container.h"
 
 // 2008-03-25
@@ -24,7 +25,7 @@
 // ..my programming.
 // 2008-10-17
 // Revising inheritance structure. Undirected graph should derive from directed
-// ..one. Network flow derives from weighted graph. 
+// ..one. Network flow derives from weighted graph.
 // 2010-04-05
 // Got rid of weighted_graph class and thus inheritance relationship.
 
@@ -48,7 +49,7 @@ struct Tail {
 	// operators tuned to specific purposes: this will enable us to just
 	// ...use matrix multiplication for shortest path algorithms.
 	// Multiplication of weights means concatenation of path
-	Tail<W> operator* (Tail<W> const &rhs) const; 
+	Tail<W> operator* (Tail<W> const &rhs) const;
 	// Addition of weights take minimum of weights.
 	Tail<W> const & operator+ (Tail<W> const &rhs) const;
 	Tail<W> & operator+= (Tail<W> const &rhs);
@@ -56,7 +57,7 @@ struct Tail {
 	bool operator!= (Tail<W> const &rhs) const;
 	bool isUnreachable() const;
 	size_t predecessor_; // negative value indicates non-reachability.
-	W weight_; // may be single or total weight, depending on context.  
+	W weight_; // may be single or total weight, depending on context.
 };
 
 // not necessarily the closest path
@@ -176,7 +177,7 @@ public:
 	friend class lib_calvin_graph::GraphTest<V, E>;
 protected:
 	template <typename T>
-	path getPathAfterAlgorithm(vector<Tail<T>> result, size_t src, size_t target) const;
+	  path getPathAfterAlgorithm(vector<Tail<T>> result, size_t src, size_t target) const;
 	path getPathFromReversedPath(size_t src, vector<size_t> const &reversedPath) const;
 protected:
 	lib_calvin_container::IntIndexer<K> mapping_; // 1:1 mapping of vertex to int
@@ -203,8 +204,7 @@ class weighted_graph_base : public virtual graph_base<V, E, K, ExtractKey> {
 	public:
 		class weighted_path : public graph_base<V, E, K, ExtractKey>::path {
 		public:
-			typedef graph_base<V, E, K, ExtractKey>::path path;
-			weighted_path(path const &);
+			weighted_path(typename graph_base<V, E, K, ExtractKey>::path const &);
 			W const total_weight() const;
 		};
 	public:
@@ -230,9 +230,9 @@ class weighted_graph_base : public virtual graph_base<V, E, K, ExtractKey> {
 		// graph algorithms are performed only with size_tegers (not V type)
 		// For matrix computation:
 		// SSSP solution; not solved if size is 0.
-		// vector<vector<Tail<W>>> SSSP_; 
+		// vector<vector<Tail<W>>> SSSP_;
 		// Apsp solution; not solved if size is 1.
-		mutable lib_calvin::matrix<lib_calvin_graph::Tail<W>> matrixData_; 
+		mutable lib_calvin::matrix<lib_calvin_graph::Tail<W>> matrixData_;
 		mutable lib_calvin::matrix<lib_calvin_graph::Tail<W>> apspSolution_;
 
 		using graph_base<V, E, K, ExtractKey>::has_vertex;
@@ -270,17 +270,19 @@ template <typename V, typename E = null_edge, typename K = V, typename ExtractKe
   // ..simplicity. For example, I wanted my dfs algorithms to perform both on
   // ..dynamic(map<>) and array(vector<>) input type, because if it works only
   // ..on array type, we have to convert dynamic data size_to array data each time
-  // ..dfs is called (which is a waste). 
-  // And I want to avoid redundant codes for those input types. So I need an 
+  // ..dfs is called (which is a waste).
+  // And I want to avoid redundant codes for those input types. So I need an
   // ..adaptor.
   // 2010-04-05
   // Abandoned above change. It size_troduces needless indirection. Using specific data
-  // types like vector and map does not harm generality of algorithms, as we can 
+  // types like vector and map does not harm generality of algorithms, as we can
   // substitue implementations for those containers at will. And algorithms should be
-  // defined with minimal size_terface in the first place. 
+  // defined with minimal size_terface in the first place.
   //----------------------------- END --------------------------------------------
 
 namespace lib_calvin {
+typedef typename lib_calvin_graph::null_edge null_edge;
+using lib_calvin_container::Identity;
 
 template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>>
 using graph = lib_calvin_graph::graph_base<V, E, K, ExtractKey>;
@@ -358,7 +360,7 @@ void dfs2(vector<vector<size_t>> const &graph,
 void bfs(vector<vector<size_t>> const &graph, size_t source, vector<Tail<size_t>> &result);
 
 // Find strongly connected components of a directed graph.
-// Each value in result indicates the set to which the vertex belongs 
+// Each value in result indicates the set to which the vertex belongs
 // ..value is in range [0 , #sets - 1]
 
 // Solve Scc using dfs method
@@ -509,7 +511,7 @@ GeneralTail<W>::GeneralTail(size_t predecessor, W weight, size_t nThClosest) :
 
 template <typename W>
 void GeneralTail<W>::prsize_t() const {
-	//std::cout << "This arc. predecessor = " << predecessor_ << ", weight: " << weight_ << 
+	//std::cout << "This arc. predecessor = " << predecessor_ << ", weight: " << weight_ <<
 	//"nThClosest: " << nThClosest_ << "\n";
 }
 
@@ -539,7 +541,7 @@ Node<W>::Node(Node &&rhs) :
 }
 
 template <typename W>
-typename Node<W> &
+Node<W> &
 Node<W>::operator= (Node const &rhs) {
 	numPathsToFind_ = rhs.numPathsToFind_;
 	numPathsFoundUntilNow_ = rhs.numPathsFoundUntilNow_;
@@ -549,7 +551,7 @@ Node<W>::operator= (Node const &rhs) {
 }
 
 template <typename W>
-typename Node<W> &
+Node<W> &
 Node<W>::operator= (Node &&rhs) {
 	numPathsToFind_ = rhs.numPathsToFind_;
 	numPathsFoundUntilNow_ = rhs.numPathsFoundUntilNow_;
@@ -571,7 +573,7 @@ void Node<W>::relax(GeneralTail<W> const &arc) { // general arcs should be in as
 		}
 	}
 	if (!isInserted) { // this arc is biggest
-		if (isFull()) { // we have already enough arcs	
+		if (isFull()) { // we have already enough arcs
 		} else {
 			arcs_.push_back(arc);
 		}
@@ -815,14 +817,15 @@ vector<V>
 graph_base<V, E, K, ExtractKey>::get_vertices_to(K const &dest) const {
 	size_t destId = mapping_.indexOf(dest).first;
 	vector<V> result;
-	result.reserve(inLinks_[destId].size());
-	for (auto iter = inLinks_[destId].begin(); iter != inLinks_[destId].end(); ++iter) {
+  auto targetIds = inLinks_.find(destId)->second;
+	result.reserve(targetIds.size());
+	for (auto iter = targetIds.begin(); iter != targetIds.end(); ++iter) {
 		result.push_back(*vertices_.find(mapping_[*iter]));
 	}
 	return result;
 }
 
-/*------------- prsize_t -------------*/  
+/*------------- prsize_t -------------*/
 
 /*
 // assuming the V and E can be prsize_ted with cout
@@ -875,7 +878,7 @@ graph_base<V, E, K, ExtractKey>::get_closest_path(K const &src, K const &target)
 }
 
 template <typename V, typename E, typename K, typename ExtractKey, typename W, typename ExtractWeight>
-weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_graph_base(): 
+weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_graph_base():
 	graph_base<V, E, K, ExtractKey>(),
 	matrixData_(1), apspSolution_(1) { }
 
@@ -908,7 +911,7 @@ weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::get_shortest_path(K 
 	//std::cout << "after dijkstra\n";
 	if (result[targetVertex].isUnreachable()) { // not reachable
 	} else {
-		paths.push_back(getPathAfterAlgorithm<W>(result, srcVertex, targetVertex));
+		paths.push_back(getPathAfterAlgorithm(result, srcVertex, targetVertex));
 	}
 	return paths;
 }
@@ -1042,15 +1045,16 @@ graph_base<V, E, K, ExtractKey>::path::operator= (path &&rhs) {
 }
 
 template <typename V, typename E, typename K, typename ExtractKey, typename W, typename ExtractWeight>
-weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_path::weighted_path(graph_base<V, E, K, ExtractKey>::path const &path) :
-	path(path) { }
+weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_path::weighted_path(
+  typename graph_base<V, E, K, ExtractKey>::path const & inPath) :
+	graph_base<V, E, K, ExtractKey>(inPath) { }
 
 template <typename V, typename E, typename K, typename ExtractKey, typename W, typename ExtractWeight>
 W const
 weighted_graph_base<V, E, K, ExtractKey, W, ExtractWeight>::weighted_path::total_weight() const {
 	W totalWeight = 0;
-	for (size_t i = 0; i < path::length(); i++) {
-		totalWeight += ExtractWeight()(path::get_edge(i));
+	for (size_t i = 0; i < graph_base<V, E, K, ExtractKey>::path::length(); i++) {
+		totalWeight += ExtractWeight()(graph_base<V, E, K, ExtractKey>::path::get_edge(i));
 	}
 	return totalWeight;
 }
@@ -1143,7 +1147,7 @@ void makeArrayData(map<size_t, map<size_t, E>> const &dynamicData,
 template <typename E>
 void makeSymArrayData(vector<map<size_t, E>> const &dynamicData,
 	vector<vector<pair<size_t, E>>> &arrayData) {
-	// dynamicData has edges only for src < dest now.  
+	// dynamicData has edges only for src < dest now.
 	size_t numV = dynamicData.size();
 	arrayData.clear();
 	arrayData.resize(numV);
@@ -1267,8 +1271,8 @@ void dijkstra2(vector<vector<pair<size_t, W>>> const &graph, size_t source,
 		Node curNode = topElem.second;
 		W const & curWeight = curNode.getGeneralTail().weight_;
 		result[curVertex].push_back(curNode.getGeneralTail());
-		//std::cout << "Node popped curVertex; " << curVertex << ", nTh: " << 
-		//curNode.getNumPathFoundUntilNow() << 
+		//std::cout << "Node popped curVertex; " << curVertex << ", nTh: " <<
+		//curNode.getNumPathFoundUntilNow() <<
 		//" weight = " << curNode.getWeight() << "\n";
 		if (result[curVertex].size() > numPathsToFind) {
 			std::cout << "dijkstra2 error1\n";
@@ -1310,7 +1314,7 @@ void bellmanFord(vector<vector<pair<size_t, W>>> const &graph,
 	bool finished = false;
 	for (size_t i = 0; i < numV - 1; ++i) {
 		finished = true;
-		// relaxation for every edges  
+		// relaxation for every edges
 		for (size_t src = 0; src < numV; src++) {
 			for (size_t j = 0; j < graph[src].size(); j++) {
 				pair<size_t, W> const &iter = graph[src][j];
@@ -1378,12 +1382,12 @@ void matrixApsp(matrix<Tail<W>> const &graph,
 }
 
 // Slower than johnson upto E = 0.5 * V^0.5; fast in very dense graph
-// There is a room for performance boost: making * and + operations of 
-// ...Tail simpler by omitting consideration for infinity (no edge). To do so, 
+// There is a room for performance boost: making * and + operations of
+// ...Tail simpler by omitting consideration for infinity (no edge). To do so,
 // ...there should a limit on possible edge weight of graph. And then, we can
-// ...use a very big positive weight to represent no-edge. But it turned out 
+// ...use a very big positive weight to represent no-edge. But it turned out
 // ...that it provides only about 10% boost, so I rejected it because it hampers
-// ...design and clarity. 
+// ...design and clarity.
 template <typename W>
 void floydWarshall(matrix<Tail<W>> const &graph,
 	matrix<Tail<W>> &result) {
@@ -1408,7 +1412,7 @@ void johnson(vector<vector<pair<size_t, W>>> const &graph,
 	size_t numV = static_cast<size_t>(graph.size());
 	W zero = W();
 	result.reset(numV);
-	// Use bellmanFord to calculate offsets 
+	// Use bellmanFord to calculate offsets
 	vector<W> offsets(numV); // offset for each vertex
 	vector<vector<pair<size_t, W>>> tempGraph = graph;
 	tempGraph.push_back(vector<pair<size_t, W>>(numV)); // artificial vertex
@@ -1420,7 +1424,7 @@ void johnson(vector<vector<pair<size_t, W>>> const &graph,
 	for (size_t i = 0; i < numV; ++i) {
 		offsets[i] = tempTails[i].weight_;
 	}
-	// Use offsets to adjust graph to a positive weighted one 
+	// Use offsets to adjust graph to a positive weighted one
 	vector<vector<pair<size_t, W>>> &positiveGraph = tempGraph;
 	positiveGraph.pop_back(); // remove artificial vertex
 	for (size_t i = 0; i < numV; ++i) {
@@ -1431,7 +1435,7 @@ void johnson(vector<vector<pair<size_t, W>>> const &graph,
 			iter->second += (offsets[i] - offsets[iter->first]);
 		}
 	}
-	// Use dijkstra on transformed graph for every source vertex 
+	// Use dijkstra on transformed graph for every source vertex
 	vector<Tail<W>> SSSP_result; // single source shortest path
 	for (size_t i = 0; i < numV; ++i) {
 		dijkstra(positiveGraph, i, SSSP_result);

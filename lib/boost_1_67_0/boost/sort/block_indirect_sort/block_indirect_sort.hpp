@@ -223,7 +223,8 @@ block_indirect_sort<Block_size, Group_size, Iter_t, Compare>
 
         uint32_t nbits_size = (nbits64(sizeof(value_t)) >> 1);
         if (nbits_size > 5) nbits_size = 5;
-        size_t max_per_thread = 1i64 << (18 - nbits_size);
+        // size_t max_per_thread = 1i64 << (18 - nbits_size);
+        size_t max_per_thread = 1 << (18 - nbits_size);
 
         if (nelem < (max_per_thread) or nthread < 2)
         {

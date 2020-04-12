@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <random>
 #include "sort.h"
 #include "stopwatch.h"
 #include "container_test_types.h"
@@ -26,18 +27,18 @@ namespace lib_calvin_sort
 
 
 	struct SimpleStruct {
-		SimpleStruct(int value) : first(value), second(value + 1) { 
-			//defaultCtorCount_;  
-			//objectCount_++; 
+		SimpleStruct(int value) : first(value), second(value + 1) {
+			//defaultCtorCount_;
+			//objectCount_++;
 		}
 		SimpleStruct() : first(0) { objectCount_++; }
-		SimpleStruct(SimpleStruct const &rhs) : first(rhs.first), second(rhs.second) { 
+		SimpleStruct(SimpleStruct const &rhs) : first(rhs.first), second(rhs.second) {
 			//std::cout << "ctor!\n";
-			//objectCount_++; 
+			//objectCount_++;
 			//assignCount_++;
 		}
-		//SimpleStruct & operator=(SimpleStruct const &rhs) { 
-			//first = rhs.first; 
+		//SimpleStruct & operator=(SimpleStruct const &rhs) {
+			//first = rhs.first;
 			//second = rhs.second;
 			//assignCount_++;
 			//return *this;
@@ -55,15 +56,15 @@ namespace lib_calvin_sort
 		//int array[10];
 
 		// for checking memory leak
-		static int objectCount_; 
+		static int objectCount_;
 
-		// for performance test		
-		static size_t defaultCtorCount_; 
+		// for performance test
+		static size_t defaultCtorCount_;
 		static size_t copyCtorCount_;
 		static size_t assignCount_;
 	};
 
-	
+
 
 	struct StringStruct : public SimpleStruct {
 		//StringStruct(): value(getRandomString(5)) {
@@ -120,7 +121,7 @@ void lib_calvin_sort::sortTest(void(*sortingAlg) (T *first, T *last, Comparator 
 	Comparator comp) {
 	stopwatch watch;
 	bool correct = true;
-	bool stable = true;	
+	bool stable = true;
 	std::vector<size_t> const arraySize = { 100, 1000, 10*1000, 100*1000, 1000*1000 };
 	std::vector<size_t> const numIteration = { 1000, 100, 10, 10, 3};
 	size_t const numTestCases = arraySize.size();

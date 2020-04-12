@@ -19,7 +19,13 @@ namespace lib_calvin
 }
 
 template <typename Alphabet>
-std::ostream & operator<< (std::ostream& os, lib_calvin::abstract_string<Alphabet> const &string);
+std::ostream & operator<< (std::ostream& os, lib_calvin::abstract_string<Alphabet> const &string)
+{
+	for (auto character : string.vector_) {
+		os << character;
+	}
+	return os;
+}
 
 namespace lib_calvin
 {
@@ -73,7 +79,7 @@ namespace lib_calvin
 		friend abstract_string<Alphabet> &&
 			operator+<> (abstract_string<Alphabet> &&lhs, abstract_string<Alphabet> const &rhs);
 		abstract_string & operator+= (abstract_string<Alphabet> const &rhs);
-		friend std::ostream & ::operator<< (std::ostream & os, abstract_string<Alphabet> const &);
+		friend std::ostream & operator<< <>(std::ostream & os, abstract_string<Alphabet> const &);
 	public:
 		void print() const;
 		void println() const;
@@ -111,14 +117,7 @@ namespace lib_calvin
 
 } // end namespace lib_calvin
 
-template <typename Alphabet>
-std::ostream & operator<< (std::ostream& os, lib_calvin::abstract_string<Alphabet> const &string)
-{
-	for (auto character : string.vector_) {
-		os << character;
-	}
-	return os;
-}
+
 
 namespace lib_calvin
 {

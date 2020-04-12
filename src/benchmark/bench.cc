@@ -2,6 +2,7 @@
 #include "json/json.hpp"
 #include "random.h"
 #include <ctime>
+#include <time.h>
 
 using namespace std;
 
@@ -9,7 +10,7 @@ std::string lib_calvin_benchmark::getDatetime() {
 	time_t rawtime;
 	time(&rawtime);
 	struct tm timeinfo;
-	localtime_s(&timeinfo, &rawtime);
+	localtime_r(&rawtime, &timeinfo);
 	char buffer[80];
 	strftime(buffer, sizeof(buffer), "%d-%m-%Y %I:%M:%S", &timeinfo);
 	return buffer;
@@ -37,7 +38,7 @@ std::vector<std::string> lib_calvin_benchmark::getSizeStrings(std::vector<size_t
 void lib_calvin_benchmark::save_bench(std::string category, std::string subCategory,
 									  string title, string comment,
 									  vector<vector<string>> algorithms,
-									  vector<vector<double>> results, vector<string> testCases, string unit, 
+									  vector<vector<double>> results, vector<string> testCases, string unit,
 									  size_t order) {
 	using json = nlohmann::json;
 	json benchData;

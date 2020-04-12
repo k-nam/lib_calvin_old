@@ -26,7 +26,7 @@ lib_calvin_benchmark::container::getTitle(OperationType operation) {
 }
 
 template <typename ElemType>
-std::string 
+std::string
 lib_calvin_benchmark::container::getSubCategory() {
 	auto result = ElemType::to_string();
 	result += " / ";
@@ -122,7 +122,7 @@ lib_calvin_benchmark::container::getContainerNamesAndTagsVector(std::vector<Cont
 }
 
 std::vector<std::vector<std::string>>
-lib_calvin_benchmark::container::getAllContainerNamesAndTags() {	
+lib_calvin_benchmark::container::getAllContainerNamesAndTags() {
 	return getContainerNamesAndTagsVector(allContainers);
 }
 
@@ -138,7 +138,7 @@ lib_calvin_benchmark::container::containerBench(size_t workingSetSize) {
 	using namespace lib_calvin_benchmark;
 	currentWorkingSetSize = workingSetSize;
 	containerBenchTemplate<object_16>();
-	containerBenchTemplate<object_32>();	
+	containerBenchTemplate<object_32>();
 	containerBenchTemplate<object_64>();
 	containerBenchTemplate<object_vector>();
 
@@ -160,10 +160,10 @@ void lib_calvin_benchmark::container::containerBenchTemplate(OperationType opera
 	using std::string;
 	using lib_calvin_container::Identity;
 	vector<vector<double>> results;
-	
+
 	currentOperation = operation;
 
-	results.push_back(containerBenchSub<std::set<ElemType>>());	
+	results.push_back(containerBenchSub<std::set<ElemType>>());
 	results.push_back(containerBenchSub<boost::container::set<ElemType>>());
 	results.push_back(containerBenchSub<lib_calvin_container::RbTree<ElemType>>());
 	results.push_back(containerBenchSub<lib_calvin_container::RbPTreeWithHead<ElemType>>());
@@ -171,11 +171,11 @@ void lib_calvin_benchmark::container::containerBenchTemplate(OperationType opera
 	results.push_back(containerBenchSub<btree::btree_set<ElemType>>()); //Google's
 	results.push_back(containerBenchSub<lib_calvin_container::BTree<ElemType>>());
 	results.push_back(containerBenchSub<lib_calvin_container::BPlusTree<ElemType>>());
-	
+
 	results.push_back(containerBenchSub<std::unordered_set<ElemType, myHasher<ElemType>>>());
 	results.push_back(containerBenchSub<boost::unordered_set<ElemType, myHasher<ElemType>>>());
 	results.push_back(containerBenchSub<lib_calvin_container::HashTable<ElemType, ElemType, Identity<ElemType>, myHasher<ElemType>>>());
-	
+
 	auto testCases = lib_calvin_benchmark::getSizeStrings(benchTestSize);
 
 	lib_calvin_benchmark::save_bench(category, getSubCategory<ElemType>(),
@@ -186,15 +186,15 @@ void lib_calvin_benchmark::container::containerBenchTemplate(OperationType opera
 
 template <typename Container>
 std::vector<double>
-lib_calvin_benchmark::container::containerBenchSub() {	
+lib_calvin_benchmark::container::containerBenchSub() {
 	using namespace std;
 	vector<double> result;
-	typedef Container::value_type ElemType;
+	typedef typename Container::value_type ElemType;
 	lib_calvin::random_number_generator gen;
 	lib_calvin::stopwatch watch;
 	size_t checkSum = 0;
 
-	std::cout << "Now testing " << std::to_string(sizeof(ElemType)) << 
+	std::cout << "Now testing " << std::to_string(sizeof(ElemType)) <<
 		"bytes " << getString(currentOperation) << " working size: " << currentWorkingSetSize << "\n";
 
 	for (size_t i = 0; i < benchTestSize.size(); i++) {
@@ -206,7 +206,7 @@ lib_calvin_benchmark::container::containerBenchSub() {
 		if (currentWorkingSetSize > 0 || ElemType::to_string().size() > 6) {
 			numIter = 1;
 		}
-		double min = 1000;		
+		double min = 1000;
 		size_t problemSize = totalNumOps * static_cast<size_t>(std::log(testSize));
 		//std::cout << "Test size " << testSize << "numContainers " << numContainers << "\n";
 		for (size_t i = 0; i < numIter; i++) {
@@ -221,7 +221,7 @@ lib_calvin_benchmark::container::containerBenchSub() {
 						container.insert(elem);
 					}
 				}
-			}		
+			}
 
 			watch.start();
 			switch (currentOperation)
@@ -231,7 +231,7 @@ lib_calvin_benchmark::container::containerBenchSub() {
 					for (size_t j = 0; j < numContainers; j++) {
 						containers[j].insert(std::move(dataArray[i * numContainers + j]));
 						checkSum += containers[j].size();
-					}		
+					}
 				}
 				break;
 			case INSERT_DELETE:
@@ -270,7 +270,7 @@ lib_calvin_benchmark::container::containerBenchSub() {
 			watch.stop();
 			min = std::min(min, watch.read());
 		}
-		
+
 		double record = problemSize / min / 1000000;
 		std::cout << "record was " << record << " checksum: " << checkSum << "\n";
 		result.push_back(record);

@@ -5,14 +5,9 @@
 #include "vector.h"
 #include "boost/graph/adjacency_list.hpp"
 #include "boost/container/map.hpp"
+#include "graph.h"
 
 namespace lib_calvin_graph {
-	template <typename T>
-	class Identity {
-	public:
-		T const & operator()(T const &elem) const { return elem; }
-	};
-
 	template <typename V, typename E = null_edge, typename K = V, typename ExtractKey = Identity<V>>
 	class boost_graph {
 	public:
@@ -140,8 +135,8 @@ namespace lib_calvin_graph {
 
 	template <typename V, typename E, typename K, typename ExtractKey>
 	E const & boost_graph<V, E, K, ExtractKey>::get_edge(K const &src, K const &dest) const {
-		edge_descriptor e = boost::edge(key_to_descriptor_.find(src)->second, 
-										key_to_descriptor_.find(dest)->second, 
+		edge_descriptor e = boost::edge(key_to_descriptor_.find(src)->second,
+										key_to_descriptor_.find(dest)->second,
 										graph_).first;
 		return boost::get(boost::edge_weight, graph_, e);
 	}
