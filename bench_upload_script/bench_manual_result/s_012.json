@@ -1,0 +1,75 @@
+{
+	"category": "Paiza",
+	"comment": "100K opeerations for each run",
+	"data": {
+		"algorithms": [
+			[
+				"Python (list)"
+			],
+			[
+				"Python (BitVector)"
+			],
+			[
+				"C++ (std::vector<bool>)"
+			],
+			[
+				"C++ (std::bitvector)"
+			],
+			[
+				"C++ (std::map)"
+			]
+		],
+		"results": [
+			[	
+				0.062,
+				0.056,
+				0.03,
+				0.005,
+				0
+				
+			],
+			[
+				0.023,
+				0.013,
+				0.003,
+				0,
+				0
+			],
+			[
+				1.9,
+				1.58,
+				0.97,
+				0.23,
+				0.023
+			],
+			[
+				1.72,
+				1.47,
+				0.93,
+				0.19,
+				0.02
+			],
+			[
+				3.3,
+				2.96,
+				2.68,
+				2.44,
+				2.43
+			]
+
+		],
+		"test_cases": [
+			"1K",
+			"10K",
+			"100K",
+			"1M",
+			"10M"
+		],
+		"unit": "M/s (higher is better)"
+	},
+	"datetime": "31-03-2018 03:16:32",
+	"env": "Intel 4790K with 16GB ram, Windows 10, Visual Studio 2017 (Python 3.6.3)",
+	"order": 1,
+	"sub_category": "",
+	"title": "S_012 ハイライト機能"
+}

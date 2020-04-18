@@ -1,0 +1,61 @@
+{
+	"category": "Etc.",
+	"comment": "",
+	"data": {
+		"algorithms": [
+			[
+				"Version 1"
+			],
+			[
+				"Version 2"
+			],
+						[
+				"Version 3"
+			],
+						[
+				"Version 4"
+			],
+			[
+				"Mathematical solution"
+			]
+		],
+		"results": [
+			[
+				7142,
+				8264,
+				8064
+			],
+			[
+				12345,
+				12195,
+				12254
+			],
+			[
+				13698,
+				13531,
+				13679
+			],
+			[
+				22222,
+				21929,
+				21944
+			],
+			[
+				500000,
+				5000000,
+				50000000
+			]
+		],
+		"test_cases": [
+			"1K",
+			"10K",
+			"100K"
+		],
+		"unit": "M/s (higher is better)"
+	},
+	"datetime": "25-03-2018 03:16:32",
+	"env": "Intel 4790K with 16GB ram, Windows 10, Visual Studio 2017 (Python 3.6.3)",
+	"order": 1,
+	"sub_category": "Paiza",
+	"title": "S_018 天気の予報"
+}
